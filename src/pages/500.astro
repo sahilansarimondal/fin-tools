@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+---
+
+<BaseLayout
+  title="Server Error"
+  description="Something went wrong on our end. Please try again later or head back to True Finance Tools."
+  canonical="https://truefinancetools.com/500"
+  pageType="website"
+>
+  <Header />
+
+  <main>
+    <section class="relative overflow-hidden border-b border-hairline bg-canvas py-20 sm:py-28">
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--color-gradient-start)_0%,_transparent_50%)] opacity-10"></div>
+
+      <div class="relative mx-auto max-w-4xl px-4 text-center sm:px-6">
+        <p class="mb-4 font-mono text-6xl font-semibold tracking-tight text-hairline-strong sm:text-8xl">
+          500
+        </p>
+
+        <h1 class="mb-4 text-2xl font-semibold tracking-tight text-ink sm:text-3xl" style="letter-spacing: -0.03em;">
+          Server Error
+        </h1>
+
+        <p class="mx-auto mb-8 max-w-md text-body">
+          Something went wrong on our end. We're working on fixing it. Please try again in a moment.
+        </p>
+
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <a
+            href="/"
+            class="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-base font-medium text-canvas transition-opacity hover:opacity-90"
+          >
+            Back to Home
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </a>
+
+          <button
+            onclick="window.location.reload()"
+            class="inline-flex items-center gap-2 rounded-full border border-hairline bg-canvas px-6 py-3 text-base font-medium text-ink transition-colors hover:bg-canvas-soft-2"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-canvas py-16">
+      <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+        <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+          Still having issues?
+        </h2>
+        <p class="mb-8 text-body">
+          If this problem persists, please contact us and we'll help you out.
+        </p>
+
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <a
+            href="/contact"
+            class="inline-flex items-center gap-2 rounded-full border border-hairline bg-canvas px-6 py-3 text-base font-medium text-ink transition-colors hover:bg-canvas-soft-2"
+          >
+            Contact Support
+          </a>
+
+          <a
+            href="/fire-calculator"
+            class="inline-flex items-center gap-2 rounded-full border border-hairline bg-canvas px-6 py-3 text-base font-medium text-ink transition-colors hover:bg-canvas-soft-2"
+          >
+            Open Calculator
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
