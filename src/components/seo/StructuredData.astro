@@ -45,50 +45,82 @@ const faqData = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'What is a FIRE Calculator?',
+      name: 'What is a FIRE calculator?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'A FIRE Calculator is a tool that helps you estimate how much money you need to retire early and achieve financial independence. It calculates the total retirement corpus based on your expenses, savings, and expected investment returns.',
+        text: 'A FIRE calculator is a free online tool that estimates how much money you need to achieve Financial Independence and Retire Early. It projects your retirement timeline based on your age, income, savings rate, annual expenses, and expected investment returns. Our calculator supports <b>Lean FIRE</b>, <b>Regular FIRE</b>, <b>Fat FIRE</b>, <b>Coast FIRE</b>, and <b>Barista FIRE</b> strategies, with interactive charts and instant results.',
       },
     },
     {
       '@type': 'Question',
-      name: 'How much do I need to retire early?',
+      name: 'What are the different FIRE strategies?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The most common rule is the 25x rule: save 25 times your annual expenses. For a more comfortable retirement, some use 30x (Fat FIRE). The safe withdrawal rate of 4% is commonly used.',
+        text: 'The five main FIRE strategies are:\n<ul><li><b>Lean FIRE</b> — Minimalist lifestyle on $25K–$40K/year. Target: 20× annual expenses.</li><li><b>Regular FIRE</b> — Comfortable middle-class retirement. Target: 25× annual expenses.</li><li><b>Fat FIRE</b> — Luxury lifestyle with higher spending. Target: 30× annual expenses.</li><li><b>Coast FIRE</b> — Saved enough that compound interest alone reaches your goal by 65. No additional contributions needed.</li><li><b>Barista FIRE</b> — Part-time work covers some expenses; investments cover the rest.</li></ul>Each strategy targets a different balance between savings effort and retirement lifestyle.',
       },
     },
     {
       '@type': 'Question',
-      name: 'What is the 4% rule?',
+      name: 'How do I calculate my FIRE number?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'The 4% rule states that you can safely withdraw 4% of your portfolio annually in retirement without running out of money. This is based on the Trinity Study research.',
+        text: 'Use this formula:<br /><b>FIRE Number = Annual Retirement Expenses × Multiplier</b><br /><br />The multiplier depends on your strategy:<ul><li><b>20×</b> for Lean FIRE</li><li><b>25×</b> for Regular FIRE</li><li><b>30×</b> for Fat FIRE</li></ul><b>Example:</b> If you need $50,000/year, your Regular FIRE number is $50,000 × 25 = <b>$1,250,000</b>. The 25× multiplier assumes a 4% safe withdrawal rate, meaning your portfolio should sustain 30+ years of withdrawals.',
       },
     },
     {
       '@type': 'Question',
-      name: 'What is Coast FIRE?',
+      name: 'What is a Coast FIRE calculator and how does it work?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Coast FIRE is when you have saved enough that compound interest will grow your portfolio to your retirement number by traditional retirement age, without any additional contributions.',
+        text: 'A Coast FIRE calculator determines the age when your current portfolio—growing at expected returns with <b>zero additional contributions</b>—will reach your retirement number by age 65. <b>How it works:</b> It compounds your existing balance forward using your expected rate of return, then calculates the crossover point where projected growth meets your target. Once you hit Coast FIRE, you only need to earn enough to cover current living expenses. No more aggressive saving required.',
       },
     },
     {
       '@type': 'Question',
-      name: 'What is Barista FIRE?',
+      name: 'When can I retire using a FIRE calculator?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Barista FIRE is a hybrid approach where you save enough to cover most expenses, then work a part-time job for benefits like health insurance and extra income. Your investments only need to cover the gap between your expenses and part-time income, so you need less savings than traditional FIRE.',
+        text: 'A FIRE calculator shows your exact retirement date by projecting portfolio growth year-by-year. Enter your <b>current age</b>, <b>target retirement age</b>, <b>annual income</b>, <b>savings rate</b>, <b>annual expenses</b>, and <b>expected returns</b>. The calculator then displays the year you will reach financial independence. Adjust any input to see how it shifts your timeline—increasing your savings rate from 20% to 40% can cut years off your journey.',
       },
     },
     {
       '@type': 'Question',
-      name: 'How much do I need for Barista FIRE?',
+      name: 'What should I look for in the best FIRE calculator?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'For Barista FIRE, calculate (Annual Expenses − Part-Time Annual Income) × 25. For example, if you spend $50,000/year and earn $20,000/year part-time, you need ($50,000 − $20,000) × 25 = $750,000 invested.',
+        text: 'The best FIRE calculator should offer:<ul><li><b>Multiple strategies</b> — Lean, Regular, Fat, Coast, and Barista FIRE</li><li><b>Interactive charts</b> — Visualize portfolio growth over time</li><li><b>Scenario comparison</b> — Test different savings rates or retirement ages side by side</li><li><b>Privacy</b> — No data collection, all calculations in-browser</li><li><b>PDF export</b> — Download your plan for offline review</li><li><b>Shareable links</b> — Send your projection to a partner or advisor</li></ul>Our free calculator includes all of these features with no signup required.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the 25x rule for FIRE?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The 25x rule says you need to save <b>25 times your annual expenses</b> to retire early. It is derived from the 4% safe withdrawal rate: if you withdraw 4% of your portfolio each year, historical data shows it should last at least 30 years.<br /><br /><b>Example:</b> Spend $40,000/year → need $1,000,000 invested. Spend $80,000/year → need $2,000,000. This is the baseline for <b>Regular FIRE</b>. Lean FIRE uses 20×; Fat FIRE uses 30×.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the 4% rule for FIRE?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The 4% rule states you can safely withdraw <b>4% of your portfolio annually</b> in retirement without depleting your savings over a 30-year period. It comes from the <b>Trinity Study</b>, which analyzed historical stock and bond returns. <b>Example:</b> With a $1,250,000 portfolio, you withdraw $50,000/year (4%). Adjusted annually for inflation, this strategy has historically succeeded in over 95% of 30-year periods.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the 30/30/30/10 rule for retirement savings?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The 30/30/30/10 rule is a budgeting framework for FIRE savers:<ul><li><b>30%</b> — Housing (mortgage, rent, taxes, insurance)</li><li><b>30%</b> — Living expenses (food, transport, utilities)</li><li><b>30%</b> — Savings and investments (your FIRE engine)</li><li><b>10%</b> — Insurance, emergencies, and miscellaneous</li></ul>This allocation ensures you save aggressively while maintaining a sustainable lifestyle. Hitting 30% savings rate puts you on track for early retirement in roughly 25 years.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the 3-6-9 rule of money?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The 3-6-9 rule is a graduated emergency fund strategy:<ul><li><b>3 months</b> of expenses — minimum safety net</li><li><b>6 months</b> — stable financial foundation</li><li><b>9–12 months</b> — complete security before aggressive FIRE investing</li></ul>Build your emergency fund in stages. Start with 3 months, then redirect that saving power toward investments. A fully funded 9-month buffer protects against job loss, medical emergencies, or market downturns while you pursue early retirement.',
       },
     },
   ],

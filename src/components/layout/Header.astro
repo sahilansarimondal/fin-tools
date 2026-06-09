@@ -36,13 +36,22 @@ const currentPath = Astro.url.pathname;
         Learn
       </a>
       <a
-        href="/learn/fire-strategies"
+        href="/about"
         class:list={[
           'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
-          currentPath === '/learn/fire-strategies' ? 'bg-ink text-canvas' : 'text-body hover:text-ink',
+          currentPath === '/about' ? 'bg-ink text-canvas' : 'text-body hover:text-ink',
         ]}
       >
-        Strategies
+        About
+      </a>
+      <a
+        href="/contact"
+        class:list={[
+          'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
+          currentPath === '/contact' ? 'bg-ink text-canvas' : 'text-body hover:text-ink',
+        ]}
+      >
+        Contact
       </a>
     </nav>
 
@@ -83,10 +92,16 @@ const currentPath = Astro.url.pathname;
         Learn
       </a>
       <a
-        href="/learn/fire-strategies"
+        href="/about"
         class="rounded-lg px-3 py-2 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
       >
-        Strategies
+        About
+      </a>
+      <a
+        href="/contact"
+        class="rounded-lg px-3 py-2 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
+      >
+        Contact
       </a>
     </nav>
   </div>

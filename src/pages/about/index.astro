@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+---
+
+<BaseLayout
+  title="About Us"
+  description="Learn about True Finance Tools — our mission to provide free, private, and accurate FIRE calculators and financial independence resources for everyone."
+  canonical="https://truefinancetools.com/about"
+  keywords="about true finance tools, fire calculator team, financial independence tools, free retirement calculator"
+>
+  <Header />
+
+  <main>
+    <section class="border-b border-hairline bg-canvas py-16 sm:py-20">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6">
+        <p class="mb-4 font-mono text-xs uppercase tracking-wider text-mute">About</p>
+        <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+          About True Finance Tools
+        </h1>
+        <p class="text-lg text-body">Free, private, and accurate financial calculators for everyone pursuing FIRE.</p>
+      </div>
+    </section>
+
+    <article class="bg-canvas py-12 sm:py-16">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6">
+        <div class="prose prose-sm max-w-none space-y-8 text-body">
+
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">Our Mission</h2>
+            <p>True Finance Tools exists to make financial independence accessible to everyone. We believe that accurate retirement planning tools shouldn't be locked behind paywalls or require handing over your personal data.</p>
+            <p>Our goal is simple: provide the best free FIRE calculator on the web — one that's accurate, easy to use, and completely private.</p>
+          </section>
+
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">Why We Built This</h2>
+            <p>The FIRE movement has helped thousands of people take control of their financial future. But most calculators available online either cost money, require sign-ups, or collect your financial data.</p>
+            <p>We wanted to build something different:</p>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="rounded-lg border border-hairline bg-canvas-soft p-4">
+                <h3 class="mb-2 text-sm font-semibold text-ink">100% Free</h3>
+                <p class="text-sm text-body">No hidden fees, no premium tiers, no paywalls. Every feature is available to everyone.</p>
+              </div>
+              <div class="rounded-lg border border-hairline bg-canvas-soft p-4">
+                <h3 class="mb-2 text-sm font-semibold text-ink">Completely Private</h3>
+                <p class="text-sm text-body">All calculations happen in your browser. Your financial data never leaves your device.</p>
+              </div>
+              <div class="rounded-lg border border-hairline bg-canvas-soft p-4">
+                <h3 class="mb-2 text-sm font-semibold text-ink">No Signup Required</h3>
+                <p class="text-sm text-body">Start calculating immediately. No accounts, no email, no strings attached.</p>
+              </div>
+              <div class="rounded-lg border border-hairline bg-canvas-soft p-4">
+                <h3 class="mb-2 text-sm font-semibold text-ink">Accurate &amp; Transparent</h3>
+                <p class="text-sm text-body">Our calculations are based on established financial principles and clearly documented.</p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">Our Calculator</h2>
+            <p>The True Finance Tools FIRE Calculator supports multiple FIRE strategies:</p>
+            <ul class="list-inside list-disc space-y-1 text-sm text-body">
+              <li><strong>Lean FIRE:</strong> Minimalist approach with lower annual expenses</li>
+              <li><strong>Regular FIRE:</strong> Comfortable middle-class lifestyle in retirement</li>
+              <li><strong>Fat FIRE:</strong> Maintaining a higher standard of living</li>
+              <li><strong>Coast FIRE:</strong> Saving enough early for compound interest to finish the job</li>
+              <li><strong>Barista FIRE:</strong> Part-time work combined with investment income</li>
+            </ul>
+            <p class="mt-4">Each strategy includes interactive charts, scenario comparisons, PDF export, and shareable links — all running entirely in your browser.</p>
+          </section>
+
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">Our Values</h2>
+            <div class="space-y-4">
+              <div class="rounded-lg border border-hairline bg-canvas p-4">
+                <h3 class="mb-1 text-sm font-semibold text-ink">Privacy First</h3>
+                <p class="text-sm text-body">Your financial data is yours alone. We designed our tools so that sensitive information never needs to leave your device.</p>
+              </div>
+              <div class="rounded-lg border border-hairline bg-canvas p-4">
+                <h3 class="mb-1 text-sm font-semibold text-ink">Accessibility</h3>
+                <p class="text-sm text-body">Financial tools should be available to everyone, regardless of income level or technical expertise.</p>
+              </div>
+              <div class="rounded-lg border border-hairline bg-canvas p-4">
+                <h3 class="mb-1 text-sm font-semibold text-ink">Education Over Sales</h3>
+                <p class="text-sm text-body">We provide educational content and tools, not financial products. Our goal is to empower your decision-making.</p>
+              </div>
+              <div class="rounded-lg border border-hairline bg-canvas p-4">
+                <h3 class="mb-1 text-sm font-semibold text-ink">Simplicity</h3>
+                <p class="text-sm text-body">Complex calculations shouldn't require complex interfaces. We focus on making powerful tools that are easy to use.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-lg bg-canvas-soft-2 p-6">
+            <h2 class="mb-3 text-lg font-semibold text-ink">Ready to Start Planning?</h2>
+            <p class="mb-4 text-sm text-body">Calculate your FIRE number in seconds. It's free, private, and requires no signup.</p>
+            <a
+              href="/fire-calculator"
+              class="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-medium text-canvas transition-opacity hover:opacity-90"
+            >
+              Open Calculator
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </a>
+          </section>
+
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>

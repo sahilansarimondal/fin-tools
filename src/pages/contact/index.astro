@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+---
+
+<BaseLayout
+  title="Contact Us"
+  description="Get in touch with True Finance Tools. Have questions, feedback, or suggestions? We'd love to hear from you."
+  canonical="https://truefinancetools.com/contact"
+  keywords="contact true finance tools, get in touch, support, feedback"
+>
+  <Header />
+
+  <main>
+    <section class="border-b border-hairline bg-canvas py-16 sm:py-20">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6">
+        <p class="mb-4 font-mono text-xs uppercase tracking-wider text-mute">Contact</p>
+        <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+          Contact Us
+        </h1>
+        <p class="text-lg text-body">Have questions, feedback, or suggestions? We'd love to hear from you.</p>
+      </div>
+    </section>
+
+    <article class="bg-canvas py-12 sm:py-16">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6">
+        <div class="prose prose-sm max-w-none space-y-8 text-body">
+
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">Get In Touch</h2>
+            <p>Whether you have a question about our FIRE calculator, found a bug, have a feature request, or just want to share your FIRE journey, we're here to listen.</p>
+
+            <div class="mt-6 grid gap-6 sm:grid-cols-2">
+              <div class="rounded-lg border border-hairline bg-canvas p-6">
+                <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-canvas-soft-2 text-ink">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                  </svg>
+                </div>
+                <h3 class="mb-2 text-sm font-semibold text-ink">Email</h3>
+                <p class="text-sm text-body">The best way to reach us for any inquiry.</p>
+                <a href="mailto:contact@truefinancetools.com" class="mt-3 inline-block text-sm text-link hover:text-link-deep underline">contact@truefinancetools.com</a>
+              </div>
+
+              <div class="rounded-lg border border-hairline bg-canvas p-6">
+                <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-canvas-soft-2 text-ink">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path d="M12 12.75c1.148 0 2.278.08 3.383.237 1.037.146 1.866.966 1.866 2.013 0 3.728-2.35 6.75-5.25 6.75S6.75 18.728 6.75 15c0-1.046.83-1.867 1.866-2.013A24.204 24.204 0 0112 12.75zm0 0c2.883 0 5.647.508 8.207 1.44a23.91 23.91 0 01-1.152-6.135c-.22-2.058-1.88-3.555-3.93-3.555h-6.25c-2.05 0-3.71 1.497-3.93 3.555A23.867 23.867 0 013.793 14.19c2.56-.932 5.324-1.44 8.207-1.44zM12 6V4.5" />
+                  </svg>
+                </div>
+                <h3 class="mb-2 text-sm font-semibold text-ink">Response Time</h3>
+                <p class="text-sm text-body">We aim to respond within 2-3 business days.</p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">What We Can Help With</h2>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="rounded-lg border border-hairline bg-canvas-soft p-4">
+                <h3 class="mb-2 text-sm font-semibold text-ink">Calculator Questions</h3>
+                <p class="text-sm text-body">Questions about how the FIRE calculator works, what the results mean, or how to interpret the projections.</p>
+              </div>
+              <div class="rounded-lg border border-hairline bg-canvas-soft p-4">
+                <h3 class="mb-2 text-sm font-semibold text-ink">Bug Reports</h3>
+                <p class="text-sm text-body">Found something that isn't working correctly? Let us know and we'll fix it.</p>
+              </div>
+              <div class="rounded-lg border border-hairline bg-canvas-soft p-4">
+                <h3 class="mb-2 text-sm font-semibold text-ink">Feature Requests</h3>
+                <p class="text-sm text-body">Have an idea for a new feature or improvement? We're always looking for ways to make our tools better.</p>
+              </div>
+              <div class="rounded-lg border border-hairline bg-canvas-soft p-4">
+                <h3 class="mb-2 text-sm font-semibold text-ink">General Feedback</h3>
+                <p class="text-sm text-body">Share your thoughts, suggestions, or just say hello. We love hearing from our users.</p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">Other Resources</h2>
+            <p>Before reaching out, you might find your answer in our existing resources:</p>
+            <ul class="list-inside list-disc space-y-1 text-sm text-body">
+              <li><a href="/learn/what-is-fire" class="text-link hover:text-link-deep underline">What is FIRE?</a> — Learn the basics of the FIRE movement</li>
+              <li><a href="/learn/fire-strategies" class="text-link hover:text-link-deep underline">FIRE Strategies</a> — Compare different approaches to financial independence</li>
+              <li><a href="/learn/fire-number" class="text-link hover:text-link-deep underline">Your FIRE Number</a> — Understand how to calculate your target</li>
+              <li><a href="/fire-calculator" class="text-link hover:text-link-deep underline">FIRE Calculator</a> — Start planning your retirement</li>
+            </ul>
+          </section>
+
+          <section class="rounded-lg bg-canvas-soft-2 p-6">
+            <h2 class="mb-3 text-lg font-semibold text-ink">Privacy Reminder</h2>
+            <p class="text-sm text-body">Remember, all calculations on our FIRE calculator happen entirely in your browser. We never see or store any of your financial information. You can calculate with confidence knowing your data stays private.</p>
+          </section>
+
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>
