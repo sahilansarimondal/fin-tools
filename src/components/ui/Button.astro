@@ -1,0 +1,46 @@
+---
+export interface Props {
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
+  class?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  disabled = false,
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const baseStyles = 'inline-flex items-center justify-center font-medium transition-all focus-visible:ring-2 focus-visible:ring-link focus-visible:ring-offset-2 focus-visible:outline-none';
+
+const variants = {
+  primary: 'bg-ink text-white hover:opacity-90 active:opacity-80',
+  secondary: 'bg-canvas text-ink border border-hairline hover:bg-canvas-soft-2 active:bg-canvas-soft',
+  ghost: 'bg-transparent text-body hover:text-ink hover:bg-canvas-soft-2',
+};
+
+const sizes = {
+  sm: 'h-8 px-3 text-sm rounded-md gap-1.5',
+  md: 'h-10 px-4 text-sm rounded-full gap-2',
+  lg: 'h-12 px-6 text-base rounded-full gap-2',
+};
+
+const classes = `${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`.trim();
+---
+
+{href ? (
+  <a href={href} class={classes} {...rest}>
+    <slot />
+  </a>
+) : (
+  <button type={type} disabled={disabled} class={classes} {...rest}>
+    <slot />
+  </button>
+)}

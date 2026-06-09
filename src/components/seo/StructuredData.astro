@@ -1,0 +1,71 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  url: string;
+  type?: string;
+}
+
+const { title, description, url, type = 'website' } = Astro.props;
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: title,
+  description,
+  url,
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Web',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+  author: {
+    '@type': 'Person',
+    name: 'Sahil',
+  },
+};
+
+const faqData = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is a FIRE Calculator?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'A FIRE Calculator is a tool that helps you estimate how much money you need to retire early and achieve financial independence. It calculates the total retirement corpus based on your expenses, savings, and expected investment returns.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How much do I need to retire early?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The most common rule is the 25x rule: save 25 times your annual expenses. For a more comfortable retirement, some use 30x (Fat FIRE). The safe withdrawal rate of 4% is commonly used.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the 4% rule?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The 4% rule states that you can safely withdraw 4% of your portfolio annually in retirement without running out of money. This is based on the Trinity Study research.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is Coast FIRE?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Coast FIRE is when you have saved enough that compound interest will grow your portfolio to your retirement number by traditional retirement age, without any additional contributions.',
+      },
+    },
+  ],
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+<script type="application/ld+json" set:html={JSON.stringify(faqData)} />

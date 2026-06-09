@@ -1,0 +1,702 @@
+---
+import Card from '../ui/Card.astro';
+---
+
+<div id="fire-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="mb-8 text-center">
+    <p class="mb-2 font-mono text-xs uppercase tracking-wider text-mute">Free Calculator</p>
+    <h1 class="mb-3 text-3xl font-semibold tracking-tight text-ink sm:text-4xl lg:text-5xl" style="letter-spacing: -0.02em;">
+      Plan Your Financial Independence
+    </h1>
+    <p class="mx-auto max-w-2xl text-body">
+      Calculate your FIRE number, compare scenarios, and build a roadmap to early retirement.
+    </p>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-12">
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="sticky top-24">
+        <div id="fire-type-tabs" class="mb-6 flex flex-wrap gap-2">
+          <button data-fire-type="lean" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-white bg-canvas-soft-2 text-body hover:text-ink">
+            Lean FIRE
+          </button>
+          <button data-fire-type="regular" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-white bg-ink text-white" data-active="true">
+            Regular FIRE
+          </button>
+          <button data-fire-type="fat" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-white bg-canvas-soft-2 text-body hover:text-ink">
+            Fat FIRE
+          </button>
+          <button data-fire-type="coast" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-white bg-canvas-soft-2 text-body hover:text-ink">
+            Coast FIRE
+          </button>
+        </div>
+
+        <div id="fire-type-description" class="mb-6 rounded-md bg-canvas-soft-2 p-3 text-xs text-body">
+          <span class="font-medium text-ink">Regular FIRE:</span> Comfortable middle-class lifestyle (25x annual expenses)
+        </div>
+
+        <form id="fire-form" class="space-y-4">
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="flex flex-col gap-1.5">
+              <label for="currentAge" class="text-sm font-medium text-ink">Current Age</label>
+              <input
+                id="currentAge"
+                name="currentAge"
+                type="number"
+                value="30"
+                min="18"
+                max="70"
+                required
+                class="h-10 w-full rounded-md border border-hairline bg-canvas px-3 text-sm text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
+              />
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label for="retirementAge" class="text-sm font-medium text-ink">Retirement Age</label>
+              <input
+                id="retirementAge"
+                name="retirementAge"
+                type="number"
+                value="50"
+                min="30"
+                max="70"
+                required
+                class="h-10 w-full rounded-md border border-hairline bg-canvas px-3 text-sm text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
+              />
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="currentSavings" class="text-sm font-medium text-ink">Current Savings & Investments ($)</label>
+            <input
+              id="currentSavings"
+              name="currentSavings"
+              type="number"
+              value="50000"
+              min="0"
+              step="1000"
+              required
+              class="h-10 w-full rounded-md border border-hairline bg-canvas px-3 text-sm text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
+            />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="monthlyIncome" class="text-sm font-medium text-ink">Monthly Income ($)</label>
+            <input
+              id="monthlyIncome"
+              name="monthlyIncome"
+              type="number"
+              value="8000"
+              min="0"
+              step="100"
+              required
+              class="h-10 w-full rounded-md border border-hairline bg-canvas px-3 text-sm text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
+            />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <div class="flex items-center justify-between">
+              <label for="savingsRate" class="text-sm font-medium text-ink">Savings Rate</label>
+              <span id="savingsRateValue" class="font-mono text-sm font-medium text-ink tabular-nums">25%</span>
+            </div>
+            <input
+              id="savingsRate"
+              name="savingsRate"
+              type="range"
+              value="25"
+              min="5"
+              max="80"
+              step="1"
+              class="w-full accent-ink"
+            />
+            <div class="flex justify-between text-xs text-mute">
+              <span>5%</span>
+              <span>80%</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="monthlyExpenses" class="text-sm font-medium text-ink">Monthly Expenses ($)</label>
+            <input
+              id="monthlyExpenses"
+              name="monthlyExpenses"
+              type="number"
+              value="5000"
+              min="0"
+              step="100"
+              required
+              class="h-10 w-full rounded-md border border-hairline bg-canvas px-3 text-sm text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
+            />
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="flex flex-col gap-1.5">
+              <div class="flex items-center justify-between">
+                <label for="annualReturn" class="text-sm font-medium text-ink">Annual Return</label>
+                <span id="annualReturnValue" class="font-mono text-sm font-medium text-ink tabular-nums">7%</span>
+              </div>
+              <input
+                id="annualReturn"
+                name="annualReturn"
+                type="range"
+                value="7"
+                min="1"
+                max="15"
+                step="0.5"
+                class="w-full accent-ink"
+              />
+              <div class="flex justify-between text-xs text-mute">
+                <span>1%</span>
+                <span>15%</span>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <div class="flex items-center justify-between">
+                <label for="inflation" class="text-sm font-medium text-ink">Inflation Rate</label>
+                <span id="inflationValue" class="font-mono text-sm font-medium text-ink tabular-nums">3%</span>
+              </div>
+              <input
+                id="inflation"
+                name="inflation"
+                type="range"
+                value="3"
+                min="1"
+                max="8"
+                step="0.5"
+                class="w-full accent-ink"
+              />
+              <div class="flex justify-between text-xs text-mute">
+                <span>1%</span>
+                <span>8%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <div class="flex items-center justify-between">
+              <label for="swr" class="text-sm font-medium text-ink">Safe Withdrawal Rate</label>
+              <span id="swrValue" class="font-mono text-sm font-medium text-ink tabular-nums">4%</span>
+            </div>
+            <input
+              id="swr"
+              name="swr"
+              type="range"
+              value="4"
+              min="2"
+              max="6"
+              step="0.5"
+              class="w-full accent-ink"
+            />
+            <div class="flex justify-between text-xs text-mute">
+              <span>2%</span>
+              <span>6%</span>
+            </div>
+          </div>
+        </form>
+      </Card>
+    </div>
+
+    <div class="space-y-6 lg:col-span-7">
+      <div id="results-summary" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
+          <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">FIRE Number</p>
+          <p id="fire-number" class="text-2xl font-semibold text-ink tabular-nums">$1,200,000</p>
+          <p class="mt-1 text-xs text-mute">Amount needed for retirement</p>
+        </div>
+
+        <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
+          <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Monthly Investment</p>
+          <p id="monthly-investment" class="text-2xl font-semibold text-link tabular-nums">$1,500</p>
+          <p class="mt-1 text-xs text-mute">To reach your goal</p>
+        </div>
+
+        <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm sm:col-span-2 lg:col-span-1">
+          <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Progress</p>
+          <p id="fire-progress" class="text-2xl font-semibold text-success-deep tabular-nums">4.2%</p>
+          <p class="mt-1 text-xs text-mute">Towards your FIRE number</p>
+        </div>
+      </div>
+
+      <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">Portfolio Growth Projection</h2>
+          <div class="flex gap-2">
+            <button id="chart-type-line" class="chart-type-btn rounded-md bg-ink px-2 py-1 text-xs font-medium text-white" data-active="true">Line</button>
+            <button id="chart-type-bar" class="chart-type-btn rounded-md bg-canvas-soft-2 px-2 py-1 text-xs font-medium text-body hover:text-ink" data-active="false">Bar</button>
+          </div>
+        </div>
+        <div class="relative h-64 sm:h-80">
+          <canvas id="projection-chart"></canvas>
+        </div>
+      </div>
+
+      <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
+        <h2 class="mb-4 text-sm font-medium text-ink">Coast FIRE Analysis</h2>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <p class="mb-1 text-xs text-mute">Coast FIRE Number</p>
+            <p id="coast-fire-number" class="text-lg font-semibold text-ink tabular-nums">$180,000</p>
+            <p class="text-xs text-mute">Save this once, then let compounding work</p>
+          </div>
+          <div>
+            <p class="mb-1 text-xs text-mute">Coast FIRE Progress</p>
+            <div class="mt-2 h-2 w-full overflow-hidden rounded-full bg-canvas-soft-2">
+              <div id="coast-fire-bar" class="h-full rounded-full bg-success transition-all" style="width: 27%"></div>
+            </div>
+            <p id="coast-fire-progress-text" class="mt-1 text-xs text-mute">27.8% there</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
+        <h2 class="mb-4 text-sm font-medium text-ink">Scenario Comparison</h2>
+        <div id="scenario-comparison" class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline">
+                <th class="pb-2 pr-4 text-xs font-medium text-mute">FIRE Type</th>
+                <th class="pb-2 pr-4 text-xs font-medium text-mute">Target</th>
+                <th class="pb-2 pr-4 text-xs font-medium text-mute">Monthly</th>
+                <th class="pb-2 text-xs font-medium text-mute">Survivability</th>
+              </tr>
+            </thead>
+            <tbody id="scenario-table-body" class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 pr-4 text-body">Lean FIRE</td>
+                <td class="py-2 pr-4 text-ink">$960K</td>
+                <td class="py-2 pr-4 text-link">$1,200</td>
+                <td class="py-2 text-ink">40 yrs</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 pr-4 font-medium text-ink">Regular FIRE</td>
+                <td class="py-2 pr-4 font-medium text-ink">$1.2M</td>
+                <td class="py-2 pr-4 font-medium text-link">$1,500</td>
+                <td class="py-2 font-medium text-ink">50 yrs</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 pr-4 text-body">Fat FIRE</td>
+                <td class="py-2 pr-4 text-ink">$1.44M</td>
+                <td class="py-2 pr-4 text-link">$1,800</td>
+                <td class="py-2 text-ink">60 yrs</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <button
+          id="export-pdf"
+          class="inline-flex items-center gap-2 rounded-full border border-hairline bg-canvas px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-canvas-soft-2"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Export PDF
+        </button>
+
+        <button
+          id="share-results"
+          class="inline-flex items-center gap-2 rounded-full border border-hairline bg-canvas px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-canvas-soft-2"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+          </svg>
+          Share
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { calculateFIRE, generateScenarios, type FIREType, type FIREInput } from '../../utils/calculations';
+
+  let currentFireType: FIREType = 'regular';
+  let chart: any = null;
+
+  const fireTypeDescriptions: Record<FIREType, string> = {
+    lean: '<span class="font-medium text-ink">Lean FIRE:</span> Minimalist lifestyle, lower expenses (20x annual expenses)',
+    regular: '<span class="font-medium text-ink">Regular FIRE:</span> Comfortable middle-class lifestyle (25x annual expenses)',
+    fat: '<span class="font-medium text-ink">Fat FIRE:</span> Luxury lifestyle, higher expenses (30x annual expenses)',
+    coast: '<span class="font-medium text-ink">Coast FIRE:</span> Let compound interest do the work',
+  };
+
+  function getFormData(): FIREInput {
+    const form = document.getElementById('fire-form') as HTMLFormElement;
+    const formData = new FormData(form);
+
+    return {
+      currentAge: Number(formData.get('currentAge')) || 30,
+      retirementAge: Number(formData.get('retirementAge')) || 50,
+      currentSavings: Number(formData.get('currentSavings')) || 50000,
+      monthlyIncome: Number(formData.get('monthlyIncome')) || 8000,
+      savingsRate: Number(formData.get('savingsRate')) || 25,
+      monthlyExpenses: Number(formData.get('monthlyExpenses')) || 5000,
+      annualReturnRate: Number(formData.get('annualReturn')) || 7,
+      inflationRate: Number(formData.get('inflation')) || 3,
+      safeWithdrawalRate: Number(formData.get('swr')) || 4,
+      fireType: currentFireType,
+    };
+  }
+
+  function formatCurrencyShort(value: number): string {
+    if (value >= 1_000_000) {
+      return `$${(value / 1_000_000).toFixed(1)}M`;
+    }
+    if (value >= 1_000) {
+      return `$${(value / 1_000).toFixed(0)}K`;
+    }
+    return `$${value.toFixed(0)}`;
+  }
+
+  function formatCurrency(value: number): string {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  }
+
+  function updateResults() {
+    const input = getFormData();
+    const result = calculateFIRE(input);
+    const scenarios = generateScenarios(input);
+
+    document.getElementById('fire-number')!.textContent = formatCurrency(result.fireNumber);
+    document.getElementById('monthly-investment')!.textContent = formatCurrency(result.monthlyInvestmentNeeded);
+    document.getElementById('fire-progress')!.textContent = `${result.fireProgress.toFixed(1)}%`;
+
+    document.getElementById('coast-fire-number')!.textContent = formatCurrency(result.coastFireNumber);
+    document.getElementById('coast-fire-bar')!.style.width = `${result.coastFireProgress}%`;
+    document.getElementById('coast-fire-progress-text')!.textContent = `${result.coastFireProgress.toFixed(1)}% there`;
+
+    const tbody = document.getElementById('scenario-table-body')!;
+    const types: FIREType[] = ['lean', 'regular', 'fat'];
+    tbody.innerHTML = types.map((type) => {
+      const s = scenarios[type];
+      const isActive = type === currentFireType;
+      return `
+        <tr class="${isActive ? 'bg-canvas-soft-2' : ''} ${type !== 'fat' ? 'border-b border-hairline/50' : ''}">
+          <td class="py-2 pr-4 ${isActive ? 'font-medium text-ink' : 'text-body'}">${type.charAt(0).toUpperCase() + type.slice(1)} FIRE</td>
+          <td class="py-2 pr-4 ${isActive ? 'font-medium text-ink' : 'text-ink'}">${formatCurrencyShort(s.fireNumber)}</td>
+          <td class="py-2 pr-4 ${isActive ? 'font-medium text-link' : 'text-link'}">${formatCurrency(s.monthlyInvestmentNeeded)}</td>
+          <td class="py-2 ${isActive ? 'font-medium text-ink' : 'text-ink'}">${Math.floor(s.survivabilityYears)} yrs</td>
+        </tr>
+      `;
+    }).join('');
+
+    updateChart(result.projection, result.fireNumber);
+  }
+
+  function updateChart(projection: any[], fireNumber: number) {
+    const ctx = document.getElementById('projection-chart') as HTMLCanvasElement;
+    if (!ctx) return;
+
+    const labels = projection.filter((_, i) => i % 2 === 0 || i === projection.length - 1).map((p) => `Age ${p.age}`);
+    const savingsData = projection.filter((_, i) => i % 2 === 0 || i === projection.length - 1).map((p) => p.savings);
+    const targetData = projection.filter((_, i) => i % 2 === 0 || i === projection.length - 1).map((p) => p.target);
+
+    if (chart) {
+      chart.destroy();
+    }
+
+    const isDark = false;
+    const gridColor = '#ebebeb';
+    const textColor = '#888888';
+
+    chart = new (window as any).Chart(ctx, {
+      type: document.getElementById('chart-type-line')?.dataset.active === 'true' ? 'line' : 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Portfolio Value',
+            data: savingsData,
+            borderColor: '#0070f3',
+            backgroundColor: 'rgba(0, 112, 243, 0.1)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+          },
+          {
+            label: 'FIRE Target',
+            data: targetData,
+            borderColor: '#ee0000',
+            backgroundColor: 'transparent',
+            borderDash: [5, 5],
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 2,
+              usePointStyle: false,
+              padding: 16,
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: '#171717',
+            titleColor: '#ffffff',
+            bodyColor: '#ffffff',
+            borderColor: '#171717',
+            borderWidth: 1,
+            padding: 12,
+            titleFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: 500,
+            },
+            bodyFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+            },
+            callbacks: {
+              label: function (context: any) {
+                return `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`;
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              maxTicksLimit: 8,
+            },
+            border: {
+              display: false,
+            },
+          },
+          y: {
+            grid: {
+              color: gridColor,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              callback: function (value: any) {
+                return formatCurrencyShort(value);
+              },
+            },
+            border: {
+              display: false,
+            },
+          },
+        },
+      },
+    });
+  }
+
+  function initSliders() {
+    const sliders = [
+      { id: 'savingsRate', displayId: 'savingsRateValue', suffix: '%' },
+      { id: 'annualReturn', displayId: 'annualReturnValue', suffix: '%' },
+      { id: 'inflation', displayId: 'inflationValue', suffix: '%' },
+      { id: 'swr', displayId: 'swrValue', suffix: '%' },
+    ];
+
+    sliders.forEach(({ id, displayId, suffix }) => {
+      const slider = document.getElementById(id) as HTMLInputElement;
+      const display = document.getElementById(displayId);
+
+      if (slider && display) {
+        slider.addEventListener('input', () => {
+          display.textContent = `${slider.value}${suffix}`;
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFireTypeTabs() {
+    const tabs = document.querySelectorAll('.fire-type-tab');
+    const description = document.getElementById('fire-type-description');
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((t) => {
+          t.setAttribute('data-active', 'false');
+          t.classList.remove('bg-ink', 'text-white');
+          t.classList.add('bg-canvas-soft-2', 'text-body');
+        });
+
+        tab.setAttribute('data-active', 'true');
+        tab.classList.add('bg-ink', 'text-white');
+        tab.classList.remove('bg-canvas-soft-2', 'text-body');
+
+        currentFireType = (tab as HTMLElement).dataset.fireType as FIREType;
+        if (description) {
+          description.innerHTML = fireTypeDescriptions[currentFireType];
+        }
+
+        updateResults();
+      });
+    });
+  }
+
+  function initChartTypeToggle() {
+    const lineBtn = document.getElementById('chart-type-line');
+    const barBtn = document.getElementById('chart-type-bar');
+
+    lineBtn?.addEventListener('click', () => {
+      lineBtn.dataset.active = 'true';
+      lineBtn.classList.add('bg-ink', 'text-white');
+      lineBtn.classList.remove('bg-canvas-soft-2', 'text-body');
+      barBtn!.dataset.active = 'false';
+      barBtn!.classList.remove('bg-ink', 'text-white');
+      barBtn!.classList.add('bg-canvas-soft-2', 'text-body');
+      updateResults();
+    });
+
+    barBtn?.addEventListener('click', () => {
+      barBtn.dataset.active = 'true';
+      barBtn.classList.add('bg-ink', 'text-white');
+      barBtn.classList.remove('bg-canvas-soft-2', 'text-body');
+      lineBtn!.dataset.active = 'false';
+      lineBtn!.classList.remove('bg-ink', 'text-white');
+      lineBtn!.classList.add('bg-canvas-soft-2', 'text-body');
+      updateResults();
+    });
+  }
+
+  function initFormListeners() {
+    const form = document.getElementById('fire-form') as HTMLFormElement;
+    form?.addEventListener('input', () => {
+      updateResults();
+    });
+  }
+
+  function initExport() {
+    document.getElementById('export-pdf')?.addEventListener('click', async () => {
+      const { default: html2canvas } = await import('html2canvas');
+      const { default: jsPDF } = await import('jspdf');
+
+      const element = document.getElementById('fire-calculator')!;
+      const canvas = await html2canvas(element);
+      const imgData = canvas.toDataURL('image/png');
+
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('fire-calculator-results.pdf');
+    });
+  }
+
+  function initShare() {
+    document.getElementById('share-results')?.addEventListener('click', async () => {
+      const input = getFormData();
+      const params = new URLSearchParams({
+        age: input.currentAge.toString(),
+        retire: input.retirementAge.toString(),
+        savings: input.currentSavings.toString(),
+        income: input.monthlyIncome.toString(),
+        rate: input.savingsRate.toString(),
+        expenses: input.monthlyExpenses.toString(),
+        return: input.annualReturnRate.toString(),
+        inflation: input.inflationRate.toString(),
+        swr: input.safeWithdrawalRate.toString(),
+        type: input.fireType,
+      });
+
+      const url = `${window.location.origin}/calculator?${params.toString()}`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'My FIRE Calculator Results',
+            text: 'Check out my FIRE retirement plan!',
+            url,
+          });
+        } catch (err) {
+          navigator.clipboard.writeText(url);
+          alert('Link copied to clipboard!');
+        }
+      } else {
+        navigator.clipboard.writeText(url);
+        alert('Link copied to clipboard!');
+      }
+    });
+  }
+
+  function loadFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('age')) {
+      const form = document.getElementById('fire-form') as HTMLFormElement;
+      const fields: Record<string, string> = {
+        currentAge: 'age',
+        retirementAge: 'retire',
+        currentSavings: 'savings',
+        monthlyIncome: 'income',
+        savingsRate: 'rate',
+        monthlyExpenses: 'expenses',
+        annualReturn: 'return',
+        inflation: 'inflation',
+        swr: 'swr',
+      };
+
+      Object.entries(fields).forEach(([fieldId, param]) => {
+        const input = document.getElementById(fieldId) as HTMLInputElement;
+        if (input && params.has(param)) {
+          input.value = params.get(param)!;
+        }
+      });
+
+      if (params.has('type')) {
+        const type = params.get('type') as FIREType;
+        const tab = document.querySelector(`[data-fire-type="${type}"]`) as HTMLElement;
+        if (tab) tab.click();
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadFromUrl();
+    initSliders();
+    initFireTypeTabs();
+    initChartTypeToggle();
+    initFormListeners();
+    initExport();
+    initShare();
+    updateResults();
+  });
+</script>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>

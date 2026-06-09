@@ -1,0 +1,33 @@
+---
+export interface Props {
+  variant?: 'default' | 'soft' | 'bordered';
+  padding?: 'sm' | 'md' | 'lg' | 'xl';
+  class?: string;
+}
+
+const {
+  variant = 'default',
+  padding = 'lg',
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const variants = {
+  default: 'bg-canvas border border-hairline shadow-sm',
+  soft: 'bg-canvas-soft',
+  bordered: 'bg-canvas border border-hairline',
+};
+
+const paddings = {
+  sm: 'p-3',
+  md: 'p-4',
+  lg: 'p-6',
+  xl: 'p-8',
+};
+
+const classes = `rounded-lg ${variants[variant]} ${paddings[padding]} ${className}`.trim();
+---
+
+<div class={classes} {...rest}>
+  <slot />
+</div>

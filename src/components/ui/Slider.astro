@@ -1,0 +1,67 @@
+---
+export interface Props {
+  label: string;
+  name: string;
+  value: number;
+  min: number;
+  max: number;
+  step?: number;
+  suffix?: string;
+  showValue?: boolean;
+  formatValue?: (value: number) => string;
+  helpText?: string;
+  class?: string;
+}
+
+const {
+  label,
+  name,
+  value,
+  min,
+  max,
+  step = 1,
+  suffix = '',
+  showValue = true,
+  formatValue,
+  helpText,
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const sliderId = `slider-${name}`;
+const displayValue = formatValue ? formatValue(value) : value.toLocaleString();
+---
+
+<div class:list={['flex flex-col gap-2', className]}>
+  <div class="flex items-center justify-between">
+    <label for={sliderId} class="text-sm font-medium text-ink">
+      {label}
+    </label>
+    {showValue && (
+      <span class="font-mono text-sm font-medium text-ink tabular-nums">
+        {displayValue}{suffix}
+      </span>
+    )}
+  </div>
+
+  <input
+    id={sliderId}
+    name={name}
+    type="range"
+    value={value}
+    min={min}
+    max={max}
+    step={step}
+    class="w-full accent-ink"
+    {...rest}
+  />
+
+  <div class="flex justify-between text-xs text-mute">
+    <span>{min.toLocaleString()}{suffix}</span>
+    <span>{max.toLocaleString()}{suffix}</span>
+  </div>
+
+  {helpText && (
+    <p class="text-xs text-mute">{helpText}</p>
+  )}
+</div>

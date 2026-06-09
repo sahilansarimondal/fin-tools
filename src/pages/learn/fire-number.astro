@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+---
+
+<BaseLayout
+  title="Your FIRE Number — How Much Do You Need to Retire Early?"
+  description="Learn how to calculate your FIRE number — the amount of money you need to retire early. Understand the 25x rule, 4% rule, and how to personalize your target."
+  canonical="https://tools.devsahil.com/learn/fire-number"
+>
+  <Header />
+
+  <main>
+    <section class="border-b border-hairline bg-canvas py-16 sm:py-20">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6">
+        <p class="mb-4 font-mono text-xs uppercase tracking-wider text-mute">Learn</p>
+        <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+          Your FIRE Number
+        </h1>
+        <p class="text-lg text-body">How to calculate exactly how much you need to retire early.</p>
+      </div>
+    </section>
+
+    <article class="bg-canvas py-12 sm:py-16">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6">
+        <div class="prose prose-sm max-w-none space-y-8 text-body">
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">What is the FIRE Number?</h2>
+            <p>Your <strong>FIRE Number</strong> is the total amount of money you need to have invested to retire early. Once you hit this number, you can withdraw 4% annually (or your chosen safe withdrawal rate) and never run out of money.</p>
+            <p>The FIRE Number is based on your <strong>annual expenses</strong>, not your income. This is why reducing expenses is so powerful — it directly lowers your FIRE Number.</p>
+          </section>
+
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">The 25x Rule</h2>
+            <p>The most common way to calculate your FIRE Number is the <strong>25x Rule</strong>:</p>
+            <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+              FIRE Number = Annual Expenses × 25
+            </div>
+            <p>This is based on the 4% safe withdrawal rate (100 ÷ 4 = 25). If you withdraw 4% of your portfolio each year, your money should last at least 30 years, and likely much longer.</p>
+          </section>
+
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">Examples by Expense Level</h2>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead>
+                  <tr class="border-b border-hairline">
+                    <th class="pb-2 pr-4 text-xs font-medium text-mute">Monthly Expenses</th>
+                    <th class="pb-2 pr-4 text-xs font-medium text-mute">Annual Expenses</th>
+                    <th class="pb-2 text-xs font-medium text-mute">FIRE Number (25x)</th>
+                  </tr>
+                </thead>
+                <tbody class="font-mono text-xs tabular-nums">
+                  <tr class="border-b border-hairline/50"><td class="py-2 pr-4">$2,000</td><td class="py-2 pr-4">$24,000</td><td class="py-2">$600,000</td></tr>
+                  <tr class="border-b border-hairline/50"><td class="py-2 pr-4">$3,000</td><td class="py-2 pr-4">$36,000</td><td class="py-2">$900,000</td></tr>
+                  <tr class="border-b border-hairline/50"><td class="py-2 pr-4">$4,000</td><td class="py-2 pr-4">$48,000</td><td class="py-2">$1,200,000</td></tr>
+                  <tr class="border-b border-hairline/50"><td class="py-2 pr-4">$5,000</td><td class="py-2 pr-4">$60,000</td><td class="py-2">$1,500,000</td></tr>
+                  <tr class="border-b border-hairline/50"><td class="py-2 pr-4">$6,000</td><td class="py-2 pr-4">$72,000</td><td class="py-2">$1,800,000</td></tr>
+                  <tr><td class="py-2 pr-4">$8,000</td><td class="py-2 pr-4">$96,000</td><td class="py-2">$2,400,000</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">Adjusting for Inflation</h2>
+            <p>Your FIRE Number isn't static — it grows with inflation. If you're 10 years from retirement and expenses are $50,000 today, at 3% inflation, you'll need about $67,000 per year in retirement.</p>
+            <p>This is why our calculator factors in inflation automatically — giving you a more accurate picture of what you'll actually need.</p>
+          </section>
+
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">The Safe Withdrawal Rate</h2>
+            <p>The <strong>Safe Withdrawal Rate (SWR)</strong> is how much you can withdraw from your portfolio each year without running out of money:</p>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2">
+                <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-canvas-soft-2 font-mono text-xs text-ink">3%</span>
+                <span class="text-sm text-body">Very conservative — higher probability of success</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-ink font-mono text-xs text-white">4%</span>
+                <span class="text-sm text-body">Standard — based on the Trinity Study research</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-canvas-soft-2 font-mono text-xs text-ink">5%</span>
+                <span class="text-sm text-body">Aggressive — higher risk of running out</span>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">Personalizing Your Number</h2>
+            <p>Your FIRE Number is personal. Consider these factors:</p>
+            <ul class="list-inside list-disc space-y-1 text-sm text-body">
+              <li><strong>Healthcare costs:</strong> Factor in insurance premiums before Medicare eligibility</li>
+              <li><strong>Lifestyle changes:</strong> Travel, hobbies, or relocation plans</li>
+              <li><strong>Passive income:</strong> Rental income, royalties, or side projects</li>
+              <li><strong>Social Security:</strong> May supplement your portfolio after age 62</li>
+            </ul>
+          </section>
+
+          <section class="rounded-lg bg-canvas-soft-2 p-6">
+            <h2 class="mb-3 text-lg font-semibold text-ink">Calculate Your Personal FIRE Number</h2>
+            <p class="mb-4 text-sm text-body">Use our calculator to get a personalized estimate based on your specific situation.</p>
+            <a
+              href="/calculator"
+              class="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
+            >
+              Open Calculator
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </a>
+          </section>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>

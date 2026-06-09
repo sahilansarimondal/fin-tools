@@ -1,11 +1,203 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<BaseLayout
+  title="FIRE Calculator — Financial Independence, Retire Early"
+  description="Free FIRE calculator to plan your financial independence and early retirement. Calculate your FIRE number, compare scenarios, and track your progress with interactive charts."
+  canonical="https://tools.devsahil.com"
+>
+  <Header />
+
+  <main>
+    <section class="relative overflow-hidden border-b border-hairline bg-canvas py-20 sm:py-28">
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--color-gradient-start)_0%,_transparent_50%)] opacity-10"></div>
+
+      <div class="relative mx-auto max-w-4xl px-4 text-center sm:px-6">
+        <p class="mb-4 font-mono text-xs uppercase tracking-wider text-mute">Free Calculator</p>
+
+        <h1 class="mb-6 text-4xl font-semibold tracking-tight text-ink sm:text-5xl lg:text-6xl" style="letter-spacing: -0.03em;">
+          Plan Your Path to<br />Financial Independence
+        </h1>
+
+        <p class="mx-auto mb-8 max-w-2xl text-lg text-body">
+          Calculate your FIRE number, compare Lean, Regular, and Fat FIRE scenarios, and build a roadmap to early retirement.
+        </p>
+
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <a
+            href="/calculator"
+            class="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-base font-medium text-white transition-opacity hover:opacity-90"
+          >
+            Start Calculating
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </a>
+
+          <a
+            href="/learn/what-is-fire"
+            class="inline-flex items-center gap-2 rounded-full border border-hairline bg-canvas px-6 py-3 text-base font-medium text-ink transition-colors hover:bg-canvas-soft-2"
+          >
+            Learn About FIRE
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-b border-hairline bg-canvas py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <div class="mb-12 text-center">
+          <p class="mb-2 font-mono text-xs uppercase tracking-wider text-mute">Features</p>
+          <h2 class="text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+            Everything You Need to Plan Early Retirement
+          </h2>
+        </div>
+
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm">
+            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-canvas-soft-2 text-ink">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25v-.008zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007v-.008zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008v-.008zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008v-.008zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z" />
+              </svg>
+            </div>
+            <h3 class="mb-2 text-sm font-semibold text-ink">Multiple FIRE Types</h3>
+            <p class="text-sm text-body">Compare Lean, Regular, Fat, and Coast FIRE strategies to find what works for you.</p>
+          </div>
+
+          <div class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm">
+            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-canvas-soft-2 text-ink">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+              </svg>
+            </div>
+            <h3 class="mb-2 text-sm font-semibold text-ink">Interactive Charts</h3>
+            <p class="text-sm text-body">Visualize your portfolio growth with beautiful, interactive charts and projections.</p>
+          </div>
+
+          <div class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm">
+            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-canvas-soft-2 text-ink">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+              </svg>
+            </div>
+            <h3 class="mb-2 text-sm font-semibold text-ink">Scenario Comparison</h3>
+            <p class="text-sm text-body">Compare different savings rates, investment returns, and retirement ages side by side.</p>
+          </div>
+
+          <div class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm">
+            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-canvas-soft-2 text-ink">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 class="mb-2 text-sm font-semibold text-ink">Coast FIRE Analysis</h3>
+            <p class="text-sm text-body">See when you've saved enough to let compound interest finish the job for you.</p>
+          </div>
+
+          <div class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm">
+            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-canvas-soft-2 text-ink">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+            </div>
+            <h3 class="mb-2 text-sm font-semibold text-ink">Export & Share</h3>
+            <p class="text-sm text-body">Download your results as PDF or share your FIRE plan with a unique link.</p>
+          </div>
+
+          <div class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm">
+            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-canvas-soft-2 text-ink">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+              </svg>
+            </div>
+            <h3 class="mb-2 text-sm font-semibold text-ink">Real-Time Calculations</h3>
+            <p class="text-sm text-body">Results update instantly as you adjust your inputs. No waiting, no page reloads.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-b border-hairline bg-canvas-soft py-16">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6">
+        <div class="mb-12 text-center">
+          <p class="mb-2 font-mono text-xs uppercase tracking-wider text-mute">How It Works</p>
+          <h2 class="text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+            Simple Steps to Financial Independence
+          </h2>
+        </div>
+
+        <div class="grid gap-8 sm:grid-cols-3">
+          <div class="text-center">
+            <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-ink font-mono text-lg font-semibold text-white">1</div>
+            <h3 class="mb-2 text-sm font-semibold text-ink">Enter Your Details</h3>
+            <p class="text-sm text-body">Input your age, income, savings rate, expenses, and expected investment returns.</p>
+          </div>
+
+          <div class="text-center">
+            <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-ink font-mono text-lg font-semibold text-white">2</div>
+            <h3 class="mb-2 text-sm font-semibold text-ink">See Your FIRE Number</h3>
+            <p class="text-sm text-body">Get instant calculations showing how much you need and how long it will take.</p>
+          </div>
+
+          <div class="text-center">
+            <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-ink font-mono text-lg font-semibold text-white">3</div>
+            <h3 class="mb-2 text-sm font-semibold text-ink">Plan Your Journey</h3>
+            <p class="text-sm text-body">Compare scenarios, adjust your strategy, and export your personalized FIRE plan.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-b border-hairline bg-canvas py-16">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6">
+        <div class="mb-12 text-center">
+          <p class="mb-2 font-mono text-xs uppercase tracking-wider text-mute">Learn</p>
+          <h2 class="text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+            Start Your FIRE Journey
+          </h2>
+        </div>
+
+        <div class="grid gap-6 sm:grid-cols-3">
+          <a href="/learn/what-is-fire" class="group rounded-lg border border-hairline bg-canvas p-6 shadow-sm transition-all hover:shadow-md">
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">What is FIRE?</h3>
+            <p class="text-sm text-body">Learn the basics of Financial Independence, Retire Early and how it works.</p>
+          </a>
+
+          <a href="/learn/fire-strategies" class="group rounded-lg border border-hairline bg-canvas p-6 shadow-sm transition-all hover:shadow-md">
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Strategies</h3>
+            <p class="text-sm text-body">Discover different approaches to achieve financial independence.</p>
+          </a>
+
+          <a href="/learn/fire-number" class="group rounded-lg border border-hairline bg-canvas p-6 shadow-sm transition-all hover:shadow-md">
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Your FIRE Number</h3>
+            <p class="text-sm text-body">Calculate exactly how much you need to retire early.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-canvas py-16">
+      <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+        <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+          Ready to Start Planning?
+        </h2>
+        <p class="mb-8 text-body">Calculate your FIRE number in seconds. It's free, private, and no signup required.</p>
+
+        <a
+          href="/calculator"
+          class="inline-flex items-center gap-2 rounded-full bg-ink px-8 py-3 text-base font-medium text-white transition-opacity hover:opacity-90"
+        >
+          Open Calculator
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          </svg>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

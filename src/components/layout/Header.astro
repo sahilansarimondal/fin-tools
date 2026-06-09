@@ -1,0 +1,99 @@
+---
+const currentPath = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-50 border-b border-hairline bg-canvas/80 backdrop-blur-md">
+  <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+    <a href="/" class="flex items-center gap-2 text-ink transition-opacity hover:opacity-70">
+      <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+        <path d="M2 17l10 5 10-5" />
+        <path d="M2 12l10 5 10-5" />
+      </svg>
+      <span class="font-semibold tracking-tight">FIRE Calculator</span>
+    </a>
+
+    <nav class="hidden items-center gap-1 md:flex">
+      <a
+        href="/calculator"
+        class:list={[
+          'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
+          currentPath === '/calculator' || currentPath.startsWith('/calculator/')
+            ? 'bg-ink text-white'
+            : 'text-body hover:text-ink',
+        ]}
+      >
+        Calculator
+      </a>
+      <a
+        href="/learn/what-is-fire"
+        class:list={[
+          'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
+          currentPath.startsWith('/learn') ? 'bg-ink text-white' : 'text-body hover:text-ink',
+        ]}
+      >
+        Learn
+      </a>
+      <a
+        href="/learn/fire-strategies"
+        class:list={[
+          'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
+          currentPath === '/learn/fire-strategies' ? 'bg-ink text-white' : 'text-body hover:text-ink',
+        ]}
+      >
+        Strategies
+      </a>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <a
+        href="/calculator"
+        class="rounded-full bg-ink px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
+      >
+        Start Planning
+      </a>
+
+      <button
+        id="mobile-menu-toggle"
+        class="flex items-center justify-center rounded-md p-2 text-ink md:hidden"
+        aria-label="Toggle menu"
+      >
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M3 12h18M3 6h18M3 18h18" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="hidden border-t border-hairline bg-canvas md:hidden">
+    <nav class="flex flex-col gap-1 p-4">
+      <a
+        href="/calculator"
+        class="rounded-lg px-3 py-2 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
+      >
+        Calculator
+      </a>
+      <a
+        href="/learn/what-is-fire"
+        class="rounded-lg px-3 py-2 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
+      >
+        Learn
+      </a>
+      <a
+        href="/learn/fire-strategies"
+        class="rounded-lg px-3 py-2 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
+      >
+        Strategies
+      </a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('mobile-menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+
+  toggle?.addEventListener('click', () => {
+    menu?.classList.toggle('hidden');
+  });
+</script>
