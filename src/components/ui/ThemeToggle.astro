@@ -3,10 +3,10 @@
 
 <button
   id="theme-toggle"
-  class="relative flex h-8 w-[52px] items-center rounded-full bg-canvas-soft-2 p-1 transition-colors dark:bg-canvas"
+  class="relative flex h-10 w-[56px] items-center rounded-full bg-canvas-soft-2 p-1 transition-colors dark:bg-canvas"
   aria-label="Toggle theme"
 >
-  <span id="theme-toggle-knob" class="relative z-10 flex h-6 w-6 items-center justify-center rounded-full bg-ink shadow-sm transition-transform dark:bg-white">
+  <span id="theme-toggle-knob" class="relative z-10 flex h-7 w-7 items-center justify-center rounded-full bg-ink shadow-sm transition-transform dark:bg-white">
     <svg id="theme-icon-moon" class="h-3.5 w-3.5 text-canvas dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
       <path d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
     </svg>
@@ -27,7 +27,7 @@
     if (isCurrentlyDark()) {
       knob.style.transform = 'translateX(0)';
     } else {
-      knob.style.transform = 'translateX(24px)';
+      knob.style.transform = 'translateX(28px)';
     }
   }
 

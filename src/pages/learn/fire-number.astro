@@ -47,17 +47,17 @@ import Footer from '../../components/layout/Footer.astro';
                 <thead>
                   <tr class="border-b border-hairline">
                     <th class="pb-2 pr-4 text-xs font-medium text-mute">Monthly Expenses</th>
-                    <th class="pb-2 pr-4 text-xs font-medium text-mute">Annual Expenses</th>
+                    <th class="hidden pb-2 pr-4 text-xs font-medium text-mute sm:table-cell">Annual Expenses</th>
                     <th class="pb-2 text-xs font-medium text-mute">FIRE Number (25x)</th>
                   </tr>
                 </thead>
                 <tbody class="font-mono text-xs tabular-nums">
-                  <tr class="border-b border-hairline/50"><td class="py-2 pr-4">$2,000</td><td class="py-2 pr-4">$24,000</td><td class="py-2">$600,000</td></tr>
-                  <tr class="border-b border-hairline/50"><td class="py-2 pr-4">$3,000</td><td class="py-2 pr-4">$36,000</td><td class="py-2">$900,000</td></tr>
-                  <tr class="border-b border-hairline/50"><td class="py-2 pr-4">$4,000</td><td class="py-2 pr-4">$48,000</td><td class="py-2">$1,200,000</td></tr>
-                  <tr class="border-b border-hairline/50"><td class="py-2 pr-4">$5,000</td><td class="py-2 pr-4">$60,000</td><td class="py-2">$1,500,000</td></tr>
-                  <tr class="border-b border-hairline/50"><td class="py-2 pr-4">$6,000</td><td class="py-2 pr-4">$72,000</td><td class="py-2">$1,800,000</td></tr>
-                  <tr><td class="py-2 pr-4">$8,000</td><td class="py-2 pr-4">$96,000</td><td class="py-2">$2,400,000</td></tr>
+                  <tr class="border-b border-hairline/50"><td class="py-2 pr-4">$2,000</td><td class="hidden py-2 pr-4 sm:table-cell">$24,000</td><td class="py-2">$600,000</td></tr>
+                  <tr class="border-b border-hairline/50"><td class="py-2 pr-4">$3,000</td><td class="hidden py-2 pr-4 sm:table-cell">$36,000</td><td class="py-2">$900,000</td></tr>
+                  <tr class="border-b border-hairline/50"><td class="py-2 pr-4">$4,000</td><td class="hidden py-2 pr-4 sm:table-cell">$48,000</td><td class="py-2">$1,200,000</td></tr>
+                  <tr class="border-b border-hairline/50"><td class="py-2 pr-4">$5,000</td><td class="hidden py-2 pr-4 sm:table-cell">$60,000</td><td class="py-2">$1,500,000</td></tr>
+                  <tr class="border-b border-hairline/50"><td class="py-2 pr-4">$6,000</td><td class="hidden py-2 pr-4 sm:table-cell">$72,000</td><td class="py-2">$1,800,000</td></tr>
+                  <tr><td class="py-2 pr-4">$8,000</td><td class="hidden py-2 pr-4 sm:table-cell">$96,000</td><td class="py-2">$2,400,000</td></tr>
                 </tbody>
               </table>
             </div>
@@ -78,7 +78,7 @@ import Footer from '../../components/layout/Footer.astro';
                 <span class="text-sm text-body">Very conservative — higher probability of success</span>
               </div>
               <div class="flex items-center gap-2">
-                <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-ink font-mono text-xs text-white">4%</span>
+                <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-ink font-mono text-xs text-canvas">4%</span>
                 <span class="text-sm text-body">Standard — based on the Trinity Study research</span>
               </div>
               <div class="flex items-center gap-2">
@@ -104,7 +104,7 @@ import Footer from '../../components/layout/Footer.astro';
             <p class="mb-4 text-sm text-body">Use our calculator to get a personalized estimate based on your specific situation.</p>
             <a
               href="/fire-calculator"
-              class="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
+              class="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-medium text-canvas transition-opacity hover:opacity-90"
             >
               Open Calculator
               <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
