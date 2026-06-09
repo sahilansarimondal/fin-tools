@@ -6,5 +6,5 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  site: 'https://tools.devsahil.com',
+  site: 'https://truefinancetools.com',
 });

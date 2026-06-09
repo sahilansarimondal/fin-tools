@@ -17,16 +17,16 @@ import Card from '../ui/Card.astro';
     <div class="lg:col-span-5">
       <Card padding="lg" class="sticky top-24">
         <div id="fire-type-tabs" class="mb-6 flex flex-wrap gap-2">
-          <button data-fire-type="lean" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-white bg-canvas-soft-2 text-body hover:text-ink">
+          <button data-fire-type="lean" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
             Lean FIRE
           </button>
-          <button data-fire-type="regular" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-white bg-ink text-white" data-active="true">
+          <button data-fire-type="regular" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-white dark:data-[active=true]:text-ink bg-ink text-white dark:text-ink" data-active="true">
             Regular FIRE
           </button>
-          <button data-fire-type="fat" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-white bg-canvas-soft-2 text-body hover:text-ink">
+          <button data-fire-type="fat" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-white dark:data-[active=true]:text-ink bg-canvas-soft-2 text-body hover:text-ink">
             Fat FIRE
           </button>
-          <button data-fire-type="coast" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-white bg-canvas-soft-2 text-body hover:text-ink">
+          <button data-fire-type="coast" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-white dark:data-[active=true]:text-ink bg-canvas-soft-2 text-body hover:text-ink">
             Coast FIRE
           </button>
         </div>
@@ -222,7 +222,7 @@ import Card from '../ui/Card.astro';
         <div class="mb-4 flex items-center justify-between">
           <h2 class="text-sm font-medium text-ink">Portfolio Growth Projection</h2>
           <div class="flex gap-2">
-            <button id="chart-type-line" class="chart-type-btn rounded-md bg-ink px-2 py-1 text-xs font-medium text-white" data-active="true">Line</button>
+            <button id="chart-type-line" class="chart-type-btn rounded-md bg-ink px-2 py-1 text-xs font-medium text-white dark:text-ink" data-active="true">Line</button>
             <button id="chart-type-bar" class="chart-type-btn rounded-md bg-canvas-soft-2 px-2 py-1 text-xs font-medium text-body hover:text-ink" data-active="false">Bar</button>
           </div>
         </div>
@@ -403,9 +403,13 @@ import Card from '../ui/Card.astro';
       chart.destroy();
     }
 
-    const isDark = false;
-    const gridColor = '#ebebeb';
-    const textColor = '#888888';
+    const isDark = document.documentElement.classList.contains('dark');
+    const gridColor = isDark ? '#262626' : '#ebebeb';
+    const textColor = isDark ? '#737373' : '#888888';
+    const tooltipBg = isDark ? '#ededed' : '#171717';
+    const tooltipText = isDark ? '#171717' : '#ffffff';
+    const linkColor = isDark ? '#3291ff' : '#0070f3';
+    const errorColor = isDark ? '#ff4444' : '#ee0000';
 
     chart = new (window as any).Chart(ctx, {
       type: document.getElementById('chart-type-line')?.dataset.active === 'true' ? 'line' : 'bar',
@@ -415,8 +419,8 @@ import Card from '../ui/Card.astro';
           {
             label: 'Portfolio Value',
             data: savingsData,
-            borderColor: '#0070f3',
-            backgroundColor: 'rgba(0, 112, 243, 0.1)',
+            borderColor: linkColor,
+            backgroundColor: isDark ? 'rgba(50, 145, 255, 0.1)' : 'rgba(0, 112, 243, 0.1)',
             fill: true,
             tension: 0.4,
             pointRadius: 0,
@@ -426,7 +430,7 @@ import Card from '../ui/Card.astro';
           {
             label: 'FIRE Target',
             data: targetData,
-            borderColor: '#ee0000',
+            borderColor: errorColor,
             backgroundColor: 'transparent',
             borderDash: [5, 5],
             tension: 0.4,
@@ -461,10 +465,10 @@ import Card from '../ui/Card.astro';
             },
           },
           tooltip: {
-            backgroundColor: '#171717',
-            titleColor: '#ffffff',
-            bodyColor: '#ffffff',
-            borderColor: '#171717',
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
             borderWidth: 1,
             padding: 12,
             titleFont: {
@@ -552,12 +556,12 @@ import Card from '../ui/Card.astro';
       tab.addEventListener('click', () => {
         tabs.forEach((t) => {
           t.setAttribute('data-active', 'false');
-          t.classList.remove('bg-ink', 'text-white');
+          t.classList.remove('bg-ink', 'text-white', 'dark:text-ink');
           t.classList.add('bg-canvas-soft-2', 'text-body');
         });
 
         tab.setAttribute('data-active', 'true');
-        tab.classList.add('bg-ink', 'text-white');
+        tab.classList.add('bg-ink', 'text-white', 'dark:text-ink');
         tab.classList.remove('bg-canvas-soft-2', 'text-body');
 
         currentFireType = (tab as HTMLElement).dataset.fireType as FIREType;
@@ -576,20 +580,20 @@ import Card from '../ui/Card.astro';
 
     lineBtn?.addEventListener('click', () => {
       lineBtn.dataset.active = 'true';
-      lineBtn.classList.add('bg-ink', 'text-white');
+      lineBtn.classList.add('bg-ink', 'text-white', 'dark:text-ink');
       lineBtn.classList.remove('bg-canvas-soft-2', 'text-body');
       barBtn!.dataset.active = 'false';
-      barBtn!.classList.remove('bg-ink', 'text-white');
+      barBtn!.classList.remove('bg-ink', 'text-white', 'dark:text-ink');
       barBtn!.classList.add('bg-canvas-soft-2', 'text-body');
       updateResults();
     });
 
     barBtn?.addEventListener('click', () => {
       barBtn.dataset.active = 'true';
-      barBtn.classList.add('bg-ink', 'text-white');
+      barBtn.classList.add('bg-ink', 'text-white', 'dark:text-ink');
       barBtn.classList.remove('bg-canvas-soft-2', 'text-body');
       lineBtn!.dataset.active = 'false';
-      lineBtn!.classList.remove('bg-ink', 'text-white');
+      lineBtn!.classList.remove('bg-ink', 'text-white', 'dark:text-ink');
       lineBtn!.classList.add('bg-canvas-soft-2', 'text-body');
       updateResults();
     });
@@ -636,7 +640,7 @@ import Card from '../ui/Card.astro';
         type: input.fireType,
       });
 
-      const url = `${window.location.origin}/calculator?${params.toString()}`;
+      const url = `${window.location.origin}/fire-calculator?${params.toString()}`;
 
       if (navigator.share) {
         try {
@@ -696,6 +700,15 @@ import Card from '../ui/Card.astro';
     initExport();
     initShare();
     updateResults();
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      updateResults();
+    });
+
+    const observer = new MutationObserver(() => {
+      updateResults();
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
   });
 </script>
 

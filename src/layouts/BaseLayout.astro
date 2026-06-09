@@ -9,12 +9,12 @@ export interface Props {
 const {
   title,
   description = 'Free FIRE calculator to plan your financial independence and early retirement. Calculate your FIRE number, compare scenarios, and track your progress.',
-  canonical = 'https://tools.devsahil.com/calculator',
-  ogImage = 'https://tools.devsahil.com/og.png',
+  canonical = 'https://truefinancetools.com/fire-calculator',
+  ogImage = 'https://truefinancetools.com/og.png',
 } = Astro.props;
 
-const siteTitle = 'FIRE Calculator — Financial Independence, Retire Early';
-const fullTitle = title === siteTitle ? title : `${title} | FIRE Calculator`;
+const siteTitle = 'True Finance Tools — Financial Independence, Retire Early';
+const fullTitle = title === siteTitle ? title : `${title} | True Finance Tools`;
 ---
 
 <!doctype html>
@@ -48,6 +48,27 @@ const fullTitle = title === siteTitle ? title : `${title} | FIRE Calculator`;
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+
+    <script is:inline>
+      (function () {
+        var stored = localStorage.getItem('theme');
+        var theme = stored || 'system';
+        var isDark =
+          theme === 'dark' ||
+          (theme === 'system' &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        // Update theme-color meta
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) {
+          meta.setAttribute('content', isDark ? '#0a0a0a' : '#fafafa');
+        }
+      })();
+    </script>
 
     <script
       async
