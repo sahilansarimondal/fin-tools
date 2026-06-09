@@ -1,0 +1,10 @@
+{
+  "name": "fin-tools",
+  "compatibility_date": "2026-06-09",
+  "kv_namespaces": [
+    {
+      "binding": "SESSION",
+      "id": "0423bbadff534ba38a8f6a8f657891db"
+    }
+  ]
+}
