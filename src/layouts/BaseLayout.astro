@@ -4,6 +4,9 @@ export interface Props {
   description?: string;
   canonical?: string;
   ogImage?: string;
+  ogImageAlt?: string;
+  pageType?: 'website' | 'article';
+  keywords?: string;
 }
 
 const {
@@ -11,6 +14,9 @@ const {
   description = 'Free FIRE calculator to plan your financial independence and early retirement. Calculate your FIRE number, compare scenarios, and track your progress.',
   canonical = 'https://truefinancetools.com/fire-calculator',
   ogImage = 'https://truefinancetools.com/og.png',
+  ogImageAlt = 'True Finance Tools - FIRE Calculator',
+  pageType = 'website',
+  keywords = 'FIRE calculator, coast fire calculator, barista fire calculator, lean fire calculator, fat fire calculator, retirement calculator, financial independence',
 } = Astro.props;
 
 const siteTitle = 'True Finance Tools — Financial Independence, Retire Early';
@@ -29,16 +35,22 @@ const fullTitle = title === siteTitle ? title : `${title} | True Finance Tools`;
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
 
-    <meta property="og:type" content="website" />
+    <meta name="keywords" content={keywords} />
+
+    <meta property="og:type" content={pageType} />
     <meta property="og:url" content={canonical} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    <meta property="og:site_name" content="True Finance Tools" />
+    <meta property="og:locale" content="en_US" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 

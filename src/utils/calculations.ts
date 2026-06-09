@@ -1,4 +1,4 @@
-export type FIREType = 'lean' | 'regular' | 'fat' | 'coast';
+export type FIREType = 'lean' | 'regular' | 'fat' | 'coast' | 'barista';
 
 export type FIREMultipliers = Record<FIREType, number>;
 
@@ -7,6 +7,7 @@ export const FIRE_MULTIPLIERS: FIREMultipliers = {
   regular: 25,
   fat: 30,
   coast: 25,
+  barista: 25,
 };
 
 export type FIREInput = {
@@ -20,6 +21,7 @@ export type FIREInput = {
   inflationRate: number;
   safeWithdrawalRate: number;
   fireType: FIREType;
+  partTimeIncome: number;
 };
 
 export type FIREProjection = {
@@ -61,13 +63,17 @@ export function calculateFIRE(input: FIREInput): FIREResult {
     inflationRate,
     safeWithdrawalRate,
     fireType,
+    partTimeIncome,
   } = input;
 
   const yearsToRetirement = Math.max(retirementAge - currentAge, 0);
   const multiplier = FIRE_MULTIPLIERS[fireType];
   const annualExpenses = monthlyExpenses * 12;
   const adjustedExpenses = annualExpenses * Math.pow(1 + inflationRate / 100, yearsToRetirement);
-  const fireNumber = adjustedExpenses * multiplier;
+  const effectiveExpenses = fireType === 'barista'
+    ? Math.max(adjustedExpenses - partTimeIncome * 12, 0)
+    : adjustedExpenses;
+  const fireNumber = effectiveExpenses * multiplier;
 
   const monthlyReturnRate = annualReturnRate / 100 / 12;
   const monthlySavingsAmount = monthlyIncome * (savingsRate / 100);
@@ -171,5 +177,6 @@ export function generateScenarios(input: FIREInput): Record<FIREType, FIREResult
     regular: calculateFIRE({ ...input, fireType: 'regular' }),
     fat: calculateFIRE({ ...input, fireType: 'fat' }),
     coast: calculateFIRE({ ...input, fireType: 'coast' }),
+    barista: calculateFIRE({ ...input, fireType: 'barista' }),
   };
 }

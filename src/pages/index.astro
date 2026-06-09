@@ -5,9 +5,12 @@ import Footer from '../components/layout/Footer.astro';
 ---
 
 <BaseLayout
-  title="True Finance Tools — Financial Independence, Retire Early"
-  description="Free FIRE calculator to plan your financial independence and early retirement. Calculate your FIRE number, compare scenarios, and track your progress with interactive charts."
+  title="FIRE Calculator — Best Free Retirement Calculator for Financial Independence"
+  description="Use our free FIRE calculator to plan early retirement. Calculate your FIRE number with coast, barista, lean, and fat fire strategies. Interactive charts and instant results."
   canonical="https://truefinancetools.com"
+  ogImage="https://truefinancetools.com/og.png"
+  ogImageAlt="FIRE Calculator - Plan Your Path to Financial Independence"
+  keywords="FIRE calculator, coast fire calculator, barista fire calculator, fire calculator retirement, fat fire calculator, best fire calculator, lean fire calculator, financial independence calculator"
 >
   <Header />
 
@@ -29,7 +32,7 @@ import Footer from '../components/layout/Footer.astro';
         <div class="flex flex-wrap items-center justify-center gap-3">
           <a
             href="/fire-calculator"
-            class="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-base font-medium text-white transition-opacity hover:opacity-90"
+            class="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-base font-medium text-canvas transition-opacity hover:opacity-90"
           >
             Start Calculating
             <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -43,6 +46,48 @@ import Footer from '../components/layout/Footer.astro';
           >
             Learn About FIRE
           </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-b border-hairline bg-canvas py-16">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6">
+        <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+          The Best FIRE Calculator for Early Retirement Planning
+        </h2>
+        
+        <div class="prose prose-gray max-w-none text-body">
+          <p class="mb-4">
+            Our free <strong>FIRE calculator</strong> helps you determine exactly how much money you need to achieve financial independence and retire early. Whether you're just starting your FIRE journey or are well on your way, this powerful retirement calculator provides instant, accurate projections based on your unique financial situation.
+          </p>
+          
+          <p class="mb-4">
+            The FIRE movement (Financial Independence, Retire Early) has helped thousands escape the traditional 9-to-5 grind. Our calculator supports multiple FIRE strategies including <strong>Lean FIRE</strong> for minimalist lifestyles, <strong>Regular FIRE</strong> for comfortable retirement, <strong>Fat FIRE</strong> for those wanting to maintain higher spending, and <strong>Coast FIRE</strong> for those who've saved enough to let compound interest finish the job.
+          </p>
+
+          <h3 class="mb-3 text-lg font-semibold text-ink">How Our FIRE Calculator Works</h3>
+          
+          <p class="mb-4">
+            Simply enter your current age, target retirement age, annual income, savings rate, and expected investment returns. Our <strong>coast fire calculator</strong> instantly shows your projected portfolio growth, the year you'll reach financial independence, and exactly how much you need to save each month. The interactive charts visualize your path to FIRE, making it easy to see how different variables impact your timeline.
+          </p>
+
+          <p class="mb-4">
+            Want to know what happens if you increase your savings rate by 5%? Or how market fluctuations might affect your retirement date? Our scenario comparison feature lets you test multiple strategies side by side. Compare <strong>barista fire calculator</strong> scenarios where you work part-time in retirement against full early retirement options.
+          </p>
+
+          <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose Our Best Fire Calculator</h3>
+          
+          <p class="mb-4">
+            Unlike other retirement calculators that require sign-ups or limit features behind paywalls, our <strong>fat fire calculator</strong> is completely free and private. No data is stored on our servers—everything runs in your browser. Get instant results with beautiful, interactive charts that update in real-time as you adjust your inputs.
+          </p>
+
+          <p class="mb-4">
+            Export your personalized FIRE plan as a PDF, share it with your partner via a unique link, or save your progress for later. Our <strong>fire calculator retirement</strong> tool also includes a comprehensive FAQ section explaining key concepts like the 4% rule, safe withdrawal rates, and how to calculate your FIRE number.
+          </p>
+
+          <p class="mb-4">
+            Whether you're calculating Coast FIRE to see when you can switch to a lower-stress job, exploring Barista FIRE for a hybrid work-retirement lifestyle, or planning full early retirement, our calculator provides the accurate projections you need to make informed financial decisions. Start planning your path to financial independence today—it's free, instant, and requires no signup.
+          </p>
         </div>
       </div>
     </section>
@@ -131,19 +176,19 @@ import Footer from '../components/layout/Footer.astro';
 
         <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           <div class="text-center">
-            <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-ink font-mono text-lg font-semibold text-white">1</div>
+            <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-ink font-mono text-lg font-semibold text-canvas">1</div>
             <h3 class="mb-2 text-sm font-semibold text-ink">Enter Your Details</h3>
             <p class="text-sm text-body">Input your age, income, savings rate, expenses, and expected investment returns.</p>
           </div>
 
           <div class="text-center">
-            <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-ink font-mono text-lg font-semibold text-white">2</div>
+            <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-ink font-mono text-lg font-semibold text-canvas">2</div>
             <h3 class="mb-2 text-sm font-semibold text-ink">See Your FIRE Number</h3>
             <p class="text-sm text-body">Get instant calculations showing how much you need and how long it will take.</p>
           </div>
 
           <div class="text-center">
-            <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-ink font-mono text-lg font-semibold text-white">3</div>
+            <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-ink font-mono text-lg font-semibold text-canvas">3</div>
             <h3 class="mb-2 text-sm font-semibold text-ink">Plan Your Journey</h3>
             <p class="text-sm text-body">Compare scenarios, adjust your strategy, and export your personalized FIRE plan.</p>
           </div>
@@ -188,7 +233,7 @@ import Footer from '../components/layout/Footer.astro';
 
         <a
           href="/fire-calculator"
-          class="inline-flex items-center gap-2 rounded-full bg-ink px-8 py-3 text-base font-medium text-white transition-opacity hover:opacity-90"
+          class="inline-flex items-center gap-2 rounded-full bg-ink px-8 py-3 text-base font-medium text-canvas transition-opacity hover:opacity-90"
         >
           Open Calculator
           <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">

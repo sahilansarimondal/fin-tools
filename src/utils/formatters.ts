@@ -57,6 +57,7 @@ export function getFIRELabel(type: string): string {
     regular: 'Regular FIRE',
     fat: 'Fat FIRE',
     coast: 'Coast FIRE',
+    barista: 'Barista FIRE',
   };
   return labels[type] || type;
 }
@@ -67,6 +68,7 @@ export function getFireDescription(type: string): string {
     regular: 'Comfortable middle-class lifestyle (25x annual expenses)',
     fat: 'Luxury lifestyle, higher expenses (30x annual expenses)',
     coast: 'Let compound interest do the work',
+    barista: 'Work part-time, let investments cover the rest',
   };
   return descriptions[type] || '';
 }

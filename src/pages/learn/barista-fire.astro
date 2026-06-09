@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+---
+
+<BaseLayout
+  title="Barista FIRE — What It Is and How to Calculate It"
+  description="Learn what Barista FIRE is, how it differs from traditional FIRE, and how to calculate your Barista FIRE number. A hybrid approach to early retirement with part-time work."
+  canonical="https://truefinancetools.com/learn/barista-fire"
+>
+  <Header />
+
+  <main>
+    <section class="border-b border-hairline bg-canvas py-16 sm:py-20">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6">
+        <p class="mb-4 font-mono text-xs uppercase tracking-wider text-mute">Learn</p>
+        <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+          Barista FIRE
+        </h1>
+        <p class="text-lg text-body">The hybrid approach: work part-time for benefits, let investments cover the rest.</p>
+      </div>
+    </section>
+
+    <article class="bg-canvas py-12 sm:py-16">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6">
+        <div class="prose prose-sm max-w-none space-y-8 text-body">
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">What is Barista FIRE?</h2>
+            <p><strong>Barista FIRE</strong> is a hybrid approach to early retirement where you save enough to cover most of your expenses, then supplement your income with part-time work. The name comes from the idea of working as a barista — a low-stress job that often provides health insurance benefits.</p>
+            <p>Unlike traditional FIRE, where your investments must cover 100% of your expenses, Barista FIRE acknowledges that many people enjoy some work but want freedom from the 9-5 grind. Your investments cover the gap between your expenses and your part-time income.</p>
+          </section>
+
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">How Barista FIRE Works</h2>
+            <p>The math behind Barista FIRE is straightforward. Instead of needing your investments to cover all your expenses, you only need them to cover the difference:</p>
+            <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+              FIRE Number = (Annual Expenses − Part-Time Annual Income) × 25
+            </div>
+            <p>For example, if you spend $50,000 per year and earn $20,000 per year part-time:</p>
+            <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+              ($50,000 − $20,000) × 25 = $750,000
+            </div>
+            <p>That's $500,000 less than the $1,250,000 you'd need for traditional FIRE — a significant difference that can shave years off your savings timeline.</p>
+          </section>
+
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">Why Choose Barista FIRE?</h2>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div class="rounded-lg border border-hairline bg-canvas-soft p-4">
+                <h3 class="mb-2 text-sm font-semibold text-ink">Lower Savings Target</h2>
+                <p class="text-sm text-body">You need less money to reach semi-retirement, which means you can "retire" earlier or save less aggressively.</p>
+              </div>
+              <div class="rounded-lg border border-hairline bg-canvas-soft p-4">
+                <h3 class="mb-2 text-sm font-semibold text-ink">Health Insurance</h3>
+                <p class="text-sm text-body">Many part-time jobs offer health benefits, solving one of the biggest challenges in early retirement.</p>
+              </div>
+              <div class="rounded-lg border border-hairline bg-canvas-soft p-4">
+                <h3 class="mb-2 text-sm font-semibold text-ink">Social Connection</h3>
+                <p class="text-sm text-body">Part-time work provides structure and social interaction that some people miss in full retirement.</p>
+              </div>
+              <div class="rounded-lg border border-hairline bg-canvas-soft p-4">
+                <h3 class="mb-2 text-sm font-semibold text-ink">Flexible Lifestyle</h3>
+                <p class="text-sm text-body">Choose when and where you work. Travel, pursue hobbies, or spend time with family — all while earning some income.</p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">Barista FIRE vs Other FIRE Types</h2>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead>
+                  <tr class="border-b border-hairline">
+                    <th class="pb-2 pr-4 text-xs font-medium text-mute">FIRE Type</th>
+                    <th class="pb-2 pr-4 text-xs font-medium text-mute">Savings Needed</th>
+                    <th class="pb-2 text-xs font-medium text-mute">Work Required</th>
+                  </tr>
+                </thead>
+                <tbody class="font-mono text-xs tabular-nums">
+                  <tr class="border-b border-hairline/50">
+                    <td class="py-2 pr-4 text-body">Lean FIRE</td>
+                    <td class="py-2 pr-4 text-ink">20× expenses</td>
+                    <td class="py-2 text-body">None</td>
+                  </tr>
+                  <tr class="border-b border-hairline/50">
+                    <td class="py-2 pr-4 text-body">Regular FIRE</td>
+                    <td class="py-2 pr-4 text-ink">25× expenses</td>
+                    <td class="py-2 text-body">None</td>
+                  </tr>
+                  <tr class="border-b border-hairline/50">
+                    <td class="py-2 pr-4 text-body">Fat FIRE</td>
+                    <td class="py-2 pr-4 text-ink">30× expenses</td>
+                    <td class="py-2 text-body">None</td>
+                  </tr>
+                  <tr class="border-b border-hairline/50">
+                    <td class="py-2 pr-4 text-body">Coast FIRE</td>
+                    <td class="py-2 pr-4 text-ink">Enough to compound</td>
+                    <td class="py-2 text-body">Optional</td>
+                  </tr>
+                  <tr>
+                    <td class="py-2 pr-4 font-medium text-ink">Barista FIRE</td>
+                    <td class="py-2 pr-4 font-medium text-ink">(Expenses − PT Income) × 25</td>
+                    <td class="py-2 font-medium text-ink">Part-time</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">Popular Barista FIRE Jobs</h2>
+            <p>The best Barista FIRE jobs offer flexibility, enjoyment, and often health benefits:</p>
+            <ul class="list-inside list-disc space-y-1 text-sm text-body">
+              <li>Barista or coffee shop work (hence the name)</li>
+              <li>Park ranger or outdoor recreation guide</li>
+              <li>Librarian or bookstore clerk</li>
+              <li>Freelance consulting in your previous field</li>
+              <li>Teaching or tutoring</li>
+              <li>Retail at outdoor/hobby stores (REI, Patagonia)</li>
+              <li>Seasonal work at national parks or ski resorts</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 class="mb-4 text-xl font-semibold text-ink">Things to Consider</h2>
+            <div class="space-y-4">
+              <div class="rounded-lg border border-hairline bg-canvas p-4">
+                <h3 class="mb-1 text-sm font-semibold text-ink">Market Risk</h3>
+                <p class="text-sm text-body">With a smaller portfolio, you have less buffer against market downturns. Consider a slightly more conservative withdrawal rate or maintain a larger emergency fund.</p>
+              </div>
+              <div class="rounded-lg border border-hairline bg-canvas p-4">
+                <h3 class="mb-1 text-sm font-semibold text-ink">Inflation Over Time</h3>
+                <p class="text-sm text-body">Your part-time income may not keep pace with inflation. Factor in potential wage growth or plan for your investment withdrawals to increase over time.</p>
+              </div>
+              <div class="rounded-lg border border-hairline bg-canvas p-4">
+                <h3 class="mb-1 text-sm font-semibold text-ink">Healthcare Before Medicare</h3>
+                <p class="text-sm text-body">If your part-time job doesn't offer health insurance, you'll need to budget for marketplace coverage until Medicare eligibility at 65.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-lg bg-canvas-soft-2 p-6">
+            <h2 class="mb-3 text-lg font-semibold text-ink">Calculate Your Barista FIRE Number</h2>
+            <p class="mb-4 text-sm text-body">See how much less you need to save with our calculator. Select Barista FIRE and enter your expected part-time income.</p>
+            <a
+              href="/fire-calculator?fireType=barista"
+              class="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-medium text-canvas transition-opacity hover:opacity-90"
+            >
+              Open Calculator
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </a>
+          </section>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>

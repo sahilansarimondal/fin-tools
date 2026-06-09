@@ -29,6 +29,9 @@ import Card from '../ui/Card.astro';
           <button data-fire-type="coast" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
             Coast FIRE
           </button>
+          <button data-fire-type="barista" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
+            Barista FIRE
+          </button>
         </div>
 
         <div id="fire-type-description" class="mb-6 rounded-md bg-canvas-soft-2 p-3 text-xs text-body">
@@ -193,6 +196,27 @@ import Card from '../ui/Card.astro';
               <span>6%</span>
             </div>
           </div>
+
+          <div id="part-time-income-group" class="flex flex-col gap-1.5 hidden">
+            <div class="flex items-center justify-between">
+              <label for="partTimeIncome" class="text-sm font-medium text-ink">Part-Time Monthly Income</label>
+              <span id="partTimeIncomeValue" class="font-mono text-sm font-medium text-ink tabular-nums">$1,500</span>
+            </div>
+            <input
+              id="partTimeIncome"
+              name="partTimeIncome"
+              type="range"
+              value="1500"
+              min="0"
+              max="5000"
+              step="100"
+              class="w-full accent-ink"
+            />
+            <div class="flex justify-between text-xs text-mute">
+              <span>$0</span>
+              <span>$5,000</span>
+            </div>
+          </div>
         </form>
       </Card>
     </div>
@@ -321,6 +345,7 @@ import Card from '../ui/Card.astro';
     regular: '<span class="font-medium text-ink">Regular FIRE:</span> Comfortable middle-class lifestyle (25x annual expenses)',
     fat: '<span class="font-medium text-ink">Fat FIRE:</span> Luxury lifestyle, higher expenses (30x annual expenses)',
     coast: '<span class="font-medium text-ink">Coast FIRE:</span> Let compound interest do the work',
+    barista: '<span class="font-medium text-ink">Barista FIRE:</span> Work part-time, let investments cover the rest',
   };
 
   function getFormData(): FIREInput {
@@ -338,6 +363,7 @@ import Card from '../ui/Card.astro';
       inflationRate: Number(formData.get('inflation')) || 3,
       safeWithdrawalRate: Number(formData.get('swr')) || 4,
       fireType: currentFireType,
+      partTimeIncome: Number(formData.get('partTimeIncome')) || 0,
     };
   }
 
@@ -374,12 +400,12 @@ import Card from '../ui/Card.astro';
     document.getElementById('coast-fire-progress-text')!.textContent = `${result.coastFireProgress.toFixed(1)}% there`;
 
     const tbody = document.getElementById('scenario-table-body')!;
-    const types: FIREType[] = ['lean', 'regular', 'fat'];
+    const types: FIREType[] = ['lean', 'regular', 'fat', 'barista'];
     tbody.innerHTML = types.map((type) => {
       const s = scenarios[type];
       const isActive = type === currentFireType;
       return `
-        <tr class="${isActive ? 'bg-canvas-soft-2' : ''} ${type !== 'fat' ? 'border-b border-hairline/50' : ''}">
+        <tr class="${isActive ? 'bg-canvas-soft-2' : ''} ${type !== 'barista' ? 'border-b border-hairline/50' : ''}">
           <td class="py-2 pr-4 ${isActive ? 'font-medium text-ink' : 'text-body'}">${type.charAt(0).toUpperCase() + type.slice(1)} FIRE</td>
           <td class="py-2 pr-4 ${isActive ? 'font-medium text-ink' : 'text-ink'}">${formatCurrencyShort(s.fireNumber)}</td>
           <td class="py-2 pr-4 ${isActive ? 'font-medium text-link' : 'text-link'}">${formatCurrency(s.monthlyInvestmentNeeded)}</td>
@@ -533,15 +559,20 @@ import Card from '../ui/Card.astro';
       { id: 'annualReturn', displayId: 'annualReturnValue', suffix: '%' },
       { id: 'inflation', displayId: 'inflationValue', suffix: '%' },
       { id: 'swr', displayId: 'swrValue', suffix: '%' },
+      { id: 'partTimeIncome', displayId: 'partTimeIncomeValue', prefix: '$' },
     ];
 
-    sliders.forEach(({ id, displayId, suffix }) => {
+    sliders.forEach(({ id, displayId, suffix, prefix }) => {
       const slider = document.getElementById(id) as HTMLInputElement;
       const display = document.getElementById(displayId);
 
       if (slider && display) {
         slider.addEventListener('input', () => {
-          display.textContent = `${slider.value}${suffix}`;
+          if (prefix) {
+            display.textContent = `${prefix}${Number(slider.value).toLocaleString()}`;
+          } else {
+            display.textContent = `${slider.value}${suffix}`;
+          }
           updateResults();
         });
       }
@@ -551,6 +582,7 @@ import Card from '../ui/Card.astro';
   function initFireTypeTabs() {
     const tabs = document.querySelectorAll('.fire-type-tab');
     const description = document.getElementById('fire-type-description');
+    const partTimeGroup = document.getElementById('part-time-income-group');
 
     tabs.forEach((tab) => {
       tab.addEventListener('click', () => {
@@ -567,6 +599,10 @@ import Card from '../ui/Card.astro';
         currentFireType = (tab as HTMLElement).dataset.fireType as FIREType;
         if (description) {
           description.innerHTML = fireTypeDescriptions[currentFireType];
+        }
+
+        if (partTimeGroup) {
+          partTimeGroup.classList.toggle('hidden', currentFireType !== 'barista');
         }
 
         updateResults();
@@ -638,6 +674,7 @@ import Card from '../ui/Card.astro';
         inflation: input.inflationRate.toString(),
         swr: input.safeWithdrawalRate.toString(),
         type: input.fireType,
+        ptIncome: input.partTimeIncome.toString(),
       });
 
       const url = `${window.location.origin}/fire-calculator?${params.toString()}`;
@@ -674,6 +711,7 @@ import Card from '../ui/Card.astro';
         annualReturn: 'return',
         inflation: 'inflation',
         swr: 'swr',
+        partTimeIncome: 'ptIncome',
       };
 
       Object.entries(fields).forEach(([fieldId, param]) => {
@@ -687,6 +725,13 @@ import Card from '../ui/Card.astro';
         const type = params.get('type') as FIREType;
         const tab = document.querySelector(`[data-fire-type="${type}"]`) as HTMLElement;
         if (tab) tab.click();
+      }
+
+      if (params.has('ptIncome')) {
+        const display = document.getElementById('partTimeIncomeValue');
+        if (display) {
+          display.textContent = `$${Number(params.get('ptIncome')).toLocaleString()}`;
+        }
       }
     }
   }
