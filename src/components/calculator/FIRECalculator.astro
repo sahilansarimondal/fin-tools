@@ -16,20 +16,20 @@ import Card from '../ui/Card.astro';
   <div class="grid gap-6 lg:grid-cols-12">
     <div class="lg:col-span-5">
       <Card padding="lg" class="lg:sticky lg:top-24">
-        <div id="fire-type-tabs" class="mb-6 flex flex-wrap gap-2">
-          <button data-fire-type="lean" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
+        <div id="fire-type-tabs" class="mb-6 flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
+          <button data-fire-type="lean" class="fire-type-tab flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
             Lean FIRE
           </button>
-          <button data-fire-type="regular" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-ink text-canvas" data-active="true">
+          <button data-fire-type="regular" class="fire-type-tab flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-ink text-canvas" data-active="true">
             Regular FIRE
           </button>
-          <button data-fire-type="fat" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
+          <button data-fire-type="fat" class="fire-type-tab flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
             Fat FIRE
           </button>
-          <button data-fire-type="coast" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
+          <button data-fire-type="coast" class="fire-type-tab flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
             Coast FIRE
           </button>
-          <button data-fire-type="barista" class="fire-type-tab rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
+          <button data-fire-type="barista" class="fire-type-tab flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
             Barista FIRE
           </button>
         </div>
@@ -50,7 +50,7 @@ import Card from '../ui/Card.astro';
                 min="18"
                 max="70"
                 required
-                class="h-10 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors placeholder:text-mute focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20 sm:text-sm"
+                class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors placeholder:text-mute focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20 sm:text-sm"
               />
             </div>
 
@@ -64,7 +64,7 @@ import Card from '../ui/Card.astro';
                 min="30"
                 max="70"
                 required
-                class="h-10 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors placeholder:text-mute focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20 sm:text-sm"
+                class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors placeholder:text-mute focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20 sm:text-sm"
               />
             </div>
           </div>
@@ -79,7 +79,7 @@ import Card from '../ui/Card.astro';
               min="0"
               step="1000"
               required
-              class="h-10 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors placeholder:text-mute focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20 sm:text-sm"
+              class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors placeholder:text-mute focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20 sm:text-sm"
             />
           </div>
 
@@ -93,7 +93,7 @@ import Card from '../ui/Card.astro';
               min="0"
               step="100"
               required
-              class="h-10 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors placeholder:text-mute focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20 sm:text-sm"
+              class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors placeholder:text-mute focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20 sm:text-sm"
             />
           </div>
 
@@ -128,7 +128,7 @@ import Card from '../ui/Card.astro';
               min="0"
               step="100"
               required
-              class="h-10 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors placeholder:text-mute focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20 sm:text-sm"
+              class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors placeholder:text-mute focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20 sm:text-sm"
             />
           </div>
 
@@ -246,8 +246,8 @@ import Card from '../ui/Card.astro';
         <div class="mb-4 flex items-center justify-between">
           <h2 class="text-sm font-medium text-ink">Portfolio Growth Projection</h2>
           <div class="flex gap-2">
-            <button id="chart-type-line" class="chart-type-btn rounded-md bg-ink px-3 py-2 text-xs font-medium text-canvas" data-active="true">Line</button>
-            <button id="chart-type-bar" class="chart-type-btn rounded-md bg-canvas-soft-2 px-3 py-2 text-xs font-medium text-body hover:text-ink" data-active="false">Bar</button>
+            <button id="chart-type-line" class="chart-type-btn rounded-md bg-ink px-3 py-2.5 text-xs font-medium text-canvas" data-active="true">Line</button>
+            <button id="chart-type-bar" class="chart-type-btn rounded-md bg-canvas-soft-2 px-3 py-2.5 text-xs font-medium text-body hover:text-ink" data-active="false">Bar</button>
           </div>
         </div>
         <div class="relative h-64 sm:h-80">

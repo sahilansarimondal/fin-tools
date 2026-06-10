@@ -69,6 +69,7 @@ const currentPath = Astro.url.pathname;
         id="mobile-menu-toggle"
         class="flex items-center justify-center rounded-md p-3 text-ink md:hidden"
         aria-label="Toggle menu"
+        aria-expanded="false"
       >
         <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M3 12h18M3 6h18M3 18h18" />
@@ -77,29 +78,33 @@ const currentPath = Astro.url.pathname;
     </div>
   </div>
 
-  <div id="mobile-menu" class="hidden border-t border-hairline bg-canvas md:hidden">
+  <div id="mobile-menu" class="hidden border-t border-hairline bg-canvas transition-all duration-200 ease-in-out md:hidden" role="menu" aria-hidden="true">
     <nav class="flex flex-col gap-1 p-4">
       <a
         href="/fire-calculator"
-        class="rounded-lg px-3 py-2 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
+        class="rounded-lg px-3 py-3 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
+        role="menuitem"
       >
         FIRE Calculator
       </a>
       <a
         href="/learn/what-is-fire"
-        class="rounded-lg px-3 py-2 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
+        class="rounded-lg px-3 py-3 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
+        role="menuitem"
       >
         Learn
       </a>
       <a
         href="/about"
-        class="rounded-lg px-3 py-2 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
+        class="rounded-lg px-3 py-3 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
+        role="menuitem"
       >
         About
       </a>
       <a
         href="/contact"
-        class="rounded-lg px-3 py-2 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
+        class="rounded-lg px-3 py-3 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
+        role="menuitem"
       >
         Contact
       </a>
@@ -111,7 +116,42 @@ const currentPath = Astro.url.pathname;
   const toggle = document.getElementById('mobile-menu-toggle');
   const menu = document.getElementById('mobile-menu');
 
-  toggle?.addEventListener('click', () => {
-    menu?.classList.toggle('hidden');
+  function openMenu() {
+    menu?.classList.remove('hidden');
+    menu?.setAttribute('aria-hidden', 'false');
+    toggle?.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeMenu() {
+    menu?.classList.add('hidden');
+    menu?.setAttribute('aria-hidden', 'true');
+    toggle?.setAttribute('aria-expanded', 'false');
+  }
+
+  function toggleMenu() {
+    if (menu?.classList.contains('hidden')) {
+      openMenu();
+    } else {
+      closeMenu();
+    }
+  }
+
+  toggle?.addEventListener('click', toggleMenu);
+
+  menu?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', closeMenu);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!menu?.classList.contains('hidden') && !menu?.contains(e.target as Node) && !toggle?.contains(e.target as Node)) {
+      closeMenu();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !menu?.classList.contains('hidden')) {
+      closeMenu();
+      toggle?.focus();
+    }
   });
 </script>

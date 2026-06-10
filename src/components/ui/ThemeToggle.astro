@@ -3,18 +3,32 @@
 
 <button
   id="theme-toggle"
-  class="relative inline-flex h-5 w-9 items-center justify-between rounded-full bg-canvas-soft-2 transition-colors hover:scale-105 dark:bg-ink"
+  class="inline-flex h-11 w-11 items-center justify-center rounded-md border border-hairline bg-canvas text-ink hover:bg-canvas-soft-2 dark:text-body"
   aria-label="Toggle theme"
 >
-  <span class="absolute inset-0 flex items-center justify-between px-1 pointer-events-none">
-    <svg class="h-3 w-3 text-ink dark:text-body" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-    </svg>
-    <svg class="h-3 w-3 text-ink dark:text-body" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-    </svg>
-  </span>
-  <span id="theme-toggle-knob" class="absolute top-0.5 left-1 z-10 flex h-4 w-4 items-center justify-center rounded-full bg-canvas shadow-xs transition-transform duration-200 ease-out"></span>
+  <!-- Sun icon (light mode) -->
+  <svg
+    id="sun-icon"
+    class="h-[1.2rem] w-[1.2rem]"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+  >
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+  </svg>
+  <!-- Moon icon (dark mode) -->
+  <svg
+    id="moon-icon"
+    class="hidden h-[1.2rem] w-[1.2rem]"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+  >
+    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+  </svg>
 </button>
 
 <script>
@@ -22,13 +36,17 @@
     return document.documentElement.classList.contains('dark');
   }
 
-  function updateKnobPosition() {
-    const knob = document.getElementById('theme-toggle-knob');
-    if (!knob) return;
+  function updateIcon() {
+    const sunIcon = document.getElementById('sun-icon');
+    const moonIcon = document.getElementById('moon-icon');
+    if (!sunIcon || !moonIcon) return;
+
     if (isCurrentlyDark()) {
-      knob.style.transform = 'translateX(20px)';
+      sunIcon.classList.add('hidden');
+      moonIcon.classList.remove('hidden');
     } else {
-      knob.style.transform = 'translateX(0)';
+      sunIcon.classList.remove('hidden');
+      moonIcon.classList.add('hidden');
     }
   }
 
@@ -44,7 +62,7 @@
       meta.setAttribute('content', dark ? '#0a0a0a' : '#fafafa');
     }
 
-    updateKnobPosition();
+    updateIcon();
   }
 
   function toggleTheme() {
@@ -55,7 +73,7 @@
 
   document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
 
-  updateKnobPosition();
+  updateIcon();
 
   window
     .matchMedia('(prefers-color-scheme: dark)')
