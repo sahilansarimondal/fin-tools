@@ -27,6 +27,17 @@ const currentPath = Astro.url.pathname;
         FIRE Calculator
       </a>
       <a
+        href="/tools"
+        class:list={[
+          'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
+          currentPath === '/tools' || currentPath.startsWith('/tools/')
+            ? 'bg-ink text-canvas'
+            : 'text-body hover:text-ink',
+        ]}
+      >
+        Tools
+      </a>
+      <a
         href="/learn/what-is-fire"
         class:list={[
           'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
@@ -86,6 +97,13 @@ const currentPath = Astro.url.pathname;
         role="menuitem"
       >
         FIRE Calculator
+      </a>
+      <a
+        href="/tools"
+        class="rounded-lg px-3 py-3 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
+        role="menuitem"
+      >
+        Tools
       </a>
       <a
         href="/learn/what-is-fire"

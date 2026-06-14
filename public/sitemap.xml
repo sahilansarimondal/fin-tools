@@ -1,52 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://truefinancetools.com/</loc>
+    <loc>https://truefinancetools.com</loc>
+    <lastmod>2026-06-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://truefinancetools.com/fire-calculator</loc>
+    <loc>https://truefinancetools.com/fire-calculator/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://truefinancetools.com/learn/what-is-fire</loc>
+    <loc>https://truefinancetools.com/learn/what-is-fire/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://truefinancetools.com/learn/fire-strategies</loc>
+    <loc>https://truefinancetools.com/learn/fire-strategies/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://truefinancetools.com/learn/fire-number</loc>
+    <loc>https://truefinancetools.com/learn/fire-number/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://truefinancetools.com/learn/barista-fire</loc>
+    <loc>https://truefinancetools.com/learn/barista-fire/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://truefinancetools.com/about</loc>
+    <loc>https://truefinancetools.com/about/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://truefinancetools.com/contact</loc>
+    <loc>https://truefinancetools.com/contact/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://truefinancetools.com/privacy</loc>
+    <loc>https://truefinancetools.com/privacy/</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://truefinancetools.com/terms</loc>
+    <loc>https://truefinancetools.com/terms/</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
