@@ -154,3 +154,18 @@ Most components auto-switch via CSS variables. For anything with hardcoded color
 1. Use CSS variable tokens instead of hex values
 2. For JS-rendered content, check `document.documentElement.classList.contains('dark')`
 3. For Chart.js, pass dynamic colors from the detection above
+
+### Git Branching Rules
+
+All implementations MUST be done on dedicated branches — never directly on `main`.
+
+| Fix Size | Branch Naming | Description |
+|----------|---------------|-------------|
+| Small (typo, simple refactor) | `quick-fix/{description}` | Single file, minimal changes |
+| Medium (component refactor) | `refactor/{description}` | Multi-file, related changes |
+| Large (feature, major refactor) | `feat/{description}` | Complex changes across codebase |
+
+**Examples:**
+- `quick-fix/remove-dead-code`
+- `refactor/consolidate-ui-components`
+- `feat/add-mortgage-calculator`
