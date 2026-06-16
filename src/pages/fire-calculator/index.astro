@@ -1,11 +1,9 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Header from '../../components/layout/Header.astro';
-import Footer from '../../components/layout/Footer.astro';
+import PageLayout from '../../layouts/PageLayout.astro';
 import FIRECalculator from '../../components/calculator/FIRECalculator.astro';
 ---
 
-<BaseLayout
+<PageLayout
   title="FIRE Calculator — Best Free Retirement Calculator for Financial Independence"
   description="Use our free FIRE calculator to plan early retirement. Calculate your FIRE number with coast, barista, lean, and fat fire strategies. Interactive charts and instant results."
   canonical="https://truefinancetools.com/fire-calculator/"
@@ -14,9 +12,6 @@ import FIRECalculator from '../../components/calculator/FIRECalculator.astro';
   pageType="article"
   keywords="FIRE calculator, coast fire calculator, barista fire calculator, fire calculator retirement, fat fire calculator, best fire calculator, lean fire calculator, retirement calculator"
 >
-  <Header />
-
-  <main>
     <FIRECalculator />
 
     <section class="border-t border-hairline bg-canvas py-16">
@@ -198,7 +193,4 @@ import FIRECalculator from '../../components/calculator/FIRECalculator.astro';
         </div>
       </div>
     </section>
-  </main>
-
-  <Footer />
-</BaseLayout>
+</PageLayout>

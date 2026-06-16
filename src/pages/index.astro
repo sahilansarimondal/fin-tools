@@ -1,10 +1,8 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/layout/Header.astro';
-import Footer from '../components/layout/Footer.astro';
+import PageLayout from '../layouts/PageLayout.astro';
 ---
 
-<BaseLayout
+<PageLayout
   title="True Finance Tools — Free Financial Calculators for FIRE, Retirement & Smart Planning"
   description="Free financial calculators for FIRE planning, retirement, and investment decisions. Calculate your FIRE number, compare strategies, and build a roadmap to financial independence. No signup required."
   canonical="https://truefinancetools.com"
@@ -12,9 +10,6 @@ import Footer from '../components/layout/Footer.astro';
   ogImageAlt="True Finance Tools - Free Financial Calculators for FIRE and Retirement Planning"
   keywords="financial calculators, FIRE calculator, retirement calculator, financial independence calculator, early retirement planning, investment calculator, savings calculator, coast fire calculator, lean fire calculator, fat fire calculator"
 >
-  <Header />
-
-  <main>
     <section class="relative overflow-hidden border-b border-hairline bg-canvas py-20 sm:py-28">
       <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--color-gradient-start)_0%,_transparent_50%)] opacity-10"></div>
 
@@ -242,7 +237,4 @@ import Footer from '../components/layout/Footer.astro';
         </a>
       </div>
     </section>
-  </main>
-
-  <Footer />
-</BaseLayout>
+</PageLayout>
