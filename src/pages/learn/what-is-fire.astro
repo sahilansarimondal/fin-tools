@@ -1,17 +1,12 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Header from '../../components/layout/Header.astro';
-import Footer from '../../components/layout/Footer.astro';
+import PageLayout from '../../layouts/PageLayout.astro';
 ---
 
-<BaseLayout
+<PageLayout
   title="What is FIRE? — Financial Independence, Retire Early Explained"
   description="Learn what FIRE means, how it works, and why millions of people are pursuing financial independence and early retirement. Complete guide to the FIRE movement."
   canonical="https://truefinancetools.com/learn/what-is-fire"
 >
-  <Header />
-
-  <main>
     <section class="border-b border-hairline bg-canvas py-16 sm:py-20">
       <div class="mx-auto max-w-3xl px-4 sm:px-6">
         <p class="mb-4 font-mono text-xs uppercase tracking-wider text-mute">Learn</p>
@@ -121,7 +116,4 @@ import Footer from '../../components/layout/Footer.astro';
         </div>
       </div>
     </article>
-  </main>
-
-  <Footer />
-</BaseLayout>
+</PageLayout>

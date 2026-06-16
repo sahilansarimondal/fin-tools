@@ -1,17 +1,12 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Header from '../../components/layout/Header.astro';
-import Footer from '../../components/layout/Footer.astro';
+import PageLayout from '../../layouts/PageLayout.astro';
 ---
 
-<BaseLayout
+<PageLayout
   title="Your FIRE Number — How Much Do You Need to Retire Early?"
   description="Learn how to calculate your FIRE number — the amount of money you need to retire early. Understand the 25x rule, 4% rule, and how to personalize your target."
   canonical="https://truefinancetools.com/learn/fire-number"
 >
-  <Header />
-
-  <main>
     <section class="border-b border-hairline bg-canvas py-16 sm:py-20">
       <div class="mx-auto max-w-3xl px-4 sm:px-6">
         <p class="mb-4 font-mono text-xs uppercase tracking-wider text-mute">Learn</p>
@@ -115,7 +110,4 @@ import Footer from '../../components/layout/Footer.astro';
         </div>
       </div>
     </article>
-  </main>
-
-  <Footer />
-</BaseLayout>
+</PageLayout>
