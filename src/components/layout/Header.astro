@@ -1,16 +1,13 @@
 ---
 import ThemeToggle from '../ui/ThemeToggle.astro';
+import Logo from '../ui/Logo.astro';
 const currentPath = Astro.url.pathname;
 ---
 
 <header class="sticky top-0 z-50 border-b border-hairline bg-canvas/80 backdrop-blur-md">
   <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
     <a href="/" class="flex items-center gap-2 text-ink transition-opacity hover:opacity-70">
-      <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 2L2 7l10 5 10-5-10-5z" />
-        <path d="M2 17l10 5 10-5" />
-        <path d="M2 12l10 5 10-5" />
-      </svg>
+      <Logo class="h-6 w-6" />
       <span class="hidden font-semibold tracking-tight sm:inline">True Finance Tools</span>
     </a>
 
