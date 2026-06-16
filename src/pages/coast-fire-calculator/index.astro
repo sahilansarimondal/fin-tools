@@ -1,0 +1,87 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import FIRECalculatorBase from '../../components/calculator/FIRECalculatorBase.astro';
+---
+
+<PageLayout
+  title="Coast FIRE Calculator — Find Your Coast FIRE Number"
+  description="Free Coast FIRE calculator to find when you've saved enough to let compound interest work. Calculate your Coast FIRE number and see when you can stop aggressive saving."
+  canonical="https://truefinancetools.com/coast-fire-calculator"
+  ogImage="https://truefinancetools.com/og-coast-fire-calculator.png"
+  ogImageAlt="Coast FIRE Calculator - Let Compound Interest Work for You"
+  pageType="article"
+  keywords="coast fire calculator, coast fire number, compound interest retirement, fire calculator coast, coast fire strategy, semi-retirement"
+>
+    <FIRECalculatorBase fireType="coast" />
+
+    <section class="border-t border-hairline bg-canvas-soft py-16">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6">
+        <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+          What is Coast FIRE?
+        </h2>
+
+        <div class="prose prose-gray max-w-none text-body">
+          <p class="mb-4">
+            <strong>Coast FIRE</strong> is the point where you've saved enough that compound interest alone will grow your portfolio to your retirement number by the time you retire. You no longer need to save aggressively — you just need to cover your current expenses.
+          </p>
+
+          <p class="mb-4">
+            Unlike traditional FIRE where you keep saving until you hit your full FIRE number, Coast FIRE lets you relax earlier. You can switch to a lower-stress job, work part-time, or simply reduce your savings rate while your investments do the heavy lifting.
+          </p>
+
+          <h3 class="mb-3 text-lg font-semibold text-ink">The Coast FIRE Formula</h3>
+          <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+            Coast FIRE Number = FIRE Number / (1 + Return Rate)^Years to Retirement
+          </div>
+
+          <p class="mb-4">
+            For example, if your FIRE number is $1,250,000, you're 30, plan to retire at 55, and earn 7% annually: $1,250,000 / (1.07)^25 = $231,000. Once you hit $231,000, you've "coasted" — compound interest will grow it to $1.25M by age 55.
+          </p>
+
+          <h3 class="mb-3 text-lg font-semibold text-ink">Who Should Choose Coast FIRE?</h3>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="rounded-lg border border-hairline bg-canvas p-4">
+              <h4 class="mb-2 text-sm font-semibold text-ink">Career Changers</h4>
+              <p class="text-sm text-body">People who want to switch to lower-paying but more fulfilling work without financial stress.</p>
+            </div>
+            <div class="rounded-lg border border-hairline bg-canvas p-4">
+              <h4 class="mb-2 text-sm font-semibold text-ink">Semi-Retirees</h4>
+              <p class="text-sm text-body">Those who want to reduce work hours gradually rather than stop working completely.</p>
+            </div>
+            <div class="rounded-lg border border-hairline bg-canvas p-4">
+              <h4 class="mb-2 text-sm font-semibold text-ink">Young Savers</h4>
+              <p class="text-sm text-body">People in their 20s-30s who have time for compound interest to work its magic.</p>
+            </div>
+            <div class="rounded-lg border border-hairline bg-canvas p-4">
+              <h4 class="mb-2 text-sm font-semibold text-ink">Parents</h4>
+              <p class="text-sm text-body">Those who want to be present for their children's childhood without full-time work pressure.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-hairline bg-canvas py-16">
+      <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+        <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+          Explore Other FIRE Strategies
+        </h2>
+        <p class="mb-8 text-body">Compare different approaches to find the right one for your lifestyle.</p>
+
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <a href="/lean-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Lean FIRE Calculator</h3>
+            <p class="text-xs text-body">Minimalist approach with lower expenses.</p>
+          </a>
+          <a href="/fat-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Fat FIRE Calculator</h3>
+            <p class="text-xs text-body">For those who want a luxury retirement lifestyle.</p>
+          </a>
+          <a href="/barista-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Calculator</h3>
+            <p class="text-xs text-body">Work part-time, let investments cover the rest.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+</PageLayout>

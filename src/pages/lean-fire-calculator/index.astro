@@ -1,0 +1,87 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import FIRECalculatorBase from '../../components/calculator/FIRECalculatorBase.astro';
+---
+
+<PageLayout
+  title="Lean FIRE Calculator — Calculate Your Minimalist Early Retirement Number"
+  description="Free Lean FIRE calculator to plan minimalist early retirement. Calculate your FIRE number using the 25x rule with conservative 20x multiplier. Instant results with interactive charts."
+  canonical="https://truefinancetools.com/lean-fire-calculator"
+  ogImage="https://truefinancetools.com/og-lean-fire-calculator.png"
+  ogImageAlt="Lean FIRE Calculator - Plan Your Minimalist Early Retirement"
+  pageType="article"
+  keywords="lean fire calculator, lean fire number, minimalist retirement, early retirement calculator, fire calculator 20x, lean fire strategy"
+>
+    <FIRECalculatorBase fireType="lean" />
+
+    <section class="border-t border-hairline bg-canvas-soft py-16">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6">
+        <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+          What is Lean FIRE?
+        </h2>
+
+        <div class="prose prose-gray max-w-none text-body">
+          <p class="mb-4">
+            <strong>Lean FIRE</strong> is a minimalist approach to early retirement that requires just <strong>20x your annual expenses</strong> saved. It's designed for people who are comfortable living on less — digital nomads, minimalists, or those in low cost-of-living areas.
+          </p>
+
+          <p class="mb-4">
+            Unlike Regular FIRE (25x) or Fat FIRE (30x), Lean FIRE prioritizes time freedom over lifestyle spending. The trade-off is clear: you can retire years earlier, but you'll need to maintain a leaner budget in retirement.
+          </p>
+
+          <h3 class="mb-3 text-lg font-semibold text-ink">The Lean FIRE Formula</h3>
+          <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+            Lean FIRE Number = Annual Expenses × 20
+          </div>
+
+          <p class="mb-4">
+            For example, if you spend $40,000 per year, your Lean FIRE number is $800,000. That's $200,000 less than Regular FIRE ($1,000,000) for the same expenses.
+          </p>
+
+          <h3 class="mb-3 text-lg font-semibold text-ink">Who Should Choose Lean FIRE?</h3>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="rounded-lg border border-hairline bg-canvas p-4">
+              <h4 class="mb-2 text-sm font-semibold text-ink">Digital Nomads</h4>
+              <p class="text-sm text-body">Location-independent workers who can live affordably in low-cost countries while traveling the world.</p>
+            </div>
+            <div class="rounded-lg border border-hairline bg-canvas p-4">
+              <h4 class="mb-2 text-sm font-semibold text-ink">Minimalists</h4>
+              <p class="text-sm text-body">People who find happiness in experiences rather than possessions and naturally spend less.</p>
+            </div>
+            <div class="rounded-lg border border-hairline bg-canvas p-4">
+              <h4 class="mb-2 text-sm font-semibold text-ink">Early Savers</h4>
+              <p class="text-sm text-body">Those who want to retire as quickly as possible and are willing to make lifestyle trade-offs.</p>
+            </div>
+            <div class="rounded-lg border border-hairline bg-canvas p-4">
+              <h4 class="mb-2 text-sm font-semibold text-ink">Low COL Areas</h4>
+              <p class="text-sm text-body">People living in areas with affordable housing, healthcare, and daily expenses.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-hairline bg-canvas py-16">
+      <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+        <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+          Explore Other FIRE Strategies
+        </h2>
+        <p class="mb-8 text-body">Compare different approaches to find the right one for your lifestyle.</p>
+
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <a href="/fat-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Fat FIRE Calculator</h3>
+            <p class="text-xs text-body">For those who want a luxury retirement lifestyle.</p>
+          </a>
+          <a href="/coast-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Calculator</h3>
+            <p class="text-xs text-body">Let compound interest do the heavy lifting.</p>
+          </a>
+          <a href="/barista-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Calculator</h3>
+            <p class="text-xs text-body">Work part-time, let investments cover the rest.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+</PageLayout>
