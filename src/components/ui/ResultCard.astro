@@ -1,0 +1,25 @@
+---
+export interface Props {
+  label: string;
+  valueId: string;
+  value: string;
+  valueClass?: string;
+  description: string;
+  class?: string;
+}
+
+const {
+  label,
+  valueId,
+  value,
+  valueClass = 'text-ink',
+  description,
+  class: className = '',
+} = Astro.props;
+---
+
+<div class:list={['rounded-lg border border-hairline bg-canvas p-5 shadow-sm', className]}>
+  <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">{label}</p>
+  <p id={valueId} class:list={['text-2xl font-semibold tabular-nums', valueClass]}>{value}</p>
+  <p class="mt-1 text-xs text-mute">{description}</p>
+</div>

@@ -1,0 +1,23 @@
+---
+export interface Props {
+  title: string;
+  subtitle?: string;
+}
+
+const { title, subtitle } = Astro.props;
+---
+
+<section class="border-t border-hairline bg-canvas py-16">
+  <div class="mx-auto max-w-4xl px-4 sm:px-6">
+    <div class="mb-12 text-center">
+      {subtitle && <p class="mb-2 font-mono text-xs uppercase tracking-wider text-mute">{subtitle}</p>}
+      <h2 class="text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        {title}
+      </h2>
+    </div>
+
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <slot />
+    </div>
+  </div>
+</section>

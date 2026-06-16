@@ -1,7 +1,22 @@
 ---
 import ThemeToggle from '../ui/ThemeToggle.astro';
 import Logo from '../ui/Logo.astro';
+
 const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { href: '/fire-calculator', label: 'FIRE Calculator', match: 'prefix' as const },
+  { href: '/tools', label: 'Tools', match: 'prefix' as const },
+  { href: '/learn/what-is-fire', label: 'Learn', match: 'prefix-start' as const },
+  { href: '/about', label: 'About', match: 'exact' as const },
+  { href: '/contact', label: 'Contact', match: 'exact' as const },
+];
+
+function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boolean {
+  if (match === 'prefix') return currentPath === href || currentPath.startsWith(href + '/');
+  if (match === 'prefix-start') return currentPath.startsWith('/learn');
+  return currentPath === href;
+}
 ---
 
 <header class="sticky top-0 z-50 border-b border-hairline bg-canvas/80 backdrop-blur-md">
@@ -12,55 +27,17 @@ const currentPath = Astro.url.pathname;
     </a>
 
     <nav class="hidden items-center gap-1 md:flex">
-      <a
-        href="/fire-calculator"
-        class:list={[
-          'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
-          currentPath === '/fire-calculator' || currentPath.startsWith('/fire-calculator/')
-            ? 'bg-ink text-canvas'
-            : 'text-body hover:text-ink',
-        ]}
-      >
-        FIRE Calculator
-      </a>
-      <a
-        href="/tools"
-        class:list={[
-          'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
-          currentPath === '/tools' || currentPath.startsWith('/tools/')
-            ? 'bg-ink text-canvas'
-            : 'text-body hover:text-ink',
-        ]}
-      >
-        Tools
-      </a>
-      <a
-        href="/learn/what-is-fire"
-        class:list={[
-          'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
-          currentPath.startsWith('/learn') ? 'bg-ink text-canvas' : 'text-body hover:text-ink',
-        ]}
-      >
-        Learn
-      </a>
-      <a
-        href="/about"
-        class:list={[
-          'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
-          currentPath === '/about' ? 'bg-ink text-canvas' : 'text-body hover:text-ink',
-        ]}
-      >
-        About
-      </a>
-      <a
-        href="/contact"
-        class:list={[
-          'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
-          currentPath === '/contact' ? 'bg-ink text-canvas' : 'text-body hover:text-ink',
-        ]}
-      >
-        Contact
-      </a>
+      {navLinks.map(({ href, label, match }) => (
+        <a
+          href={href}
+          class:list={[
+            'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
+            isActive(href, match) ? 'bg-ink text-canvas' : 'text-body hover:text-ink',
+          ]}
+        >
+          {label}
+        </a>
+      ))}
     </nav>
 
     <div class="flex items-center gap-2">
@@ -88,41 +65,20 @@ const currentPath = Astro.url.pathname;
 
   <div id="mobile-menu" class="hidden border-t border-hairline bg-canvas transition-all duration-200 ease-in-out md:hidden" role="menu" aria-hidden="true">
     <nav class="flex flex-col gap-1 p-4">
-      <a
-        href="/fire-calculator"
-        class="rounded-lg px-3 py-3 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
-        role="menuitem"
-      >
-        FIRE Calculator
-      </a>
-      <a
-        href="/tools"
-        class="rounded-lg px-3 py-3 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
-        role="menuitem"
-      >
-        Tools
-      </a>
-      <a
-        href="/learn/what-is-fire"
-        class="rounded-lg px-3 py-3 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
-        role="menuitem"
-      >
-        Learn
-      </a>
-      <a
-        href="/about"
-        class="rounded-lg px-3 py-3 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
-        role="menuitem"
-      >
-        About
-      </a>
-      <a
-        href="/contact"
-        class="rounded-lg px-3 py-3 text-sm font-medium text-body transition-colors hover:bg-canvas-soft-2 hover:text-ink"
-        role="menuitem"
-      >
-        Contact
-      </a>
+      {navLinks.map(({ href, label, match }) => (
+        <a
+          href={href}
+          class:list={[
+            'rounded-lg px-3 py-3 text-sm font-medium transition-colors',
+            isActive(href, match)
+              ? 'bg-canvas-soft-2 text-ink font-semibold'
+              : 'text-body hover:bg-canvas-soft-2 hover:text-ink',
+          ]}
+          role="menuitem"
+        >
+          {label}
+        </a>
+      ))}
     </nav>
   </div>
 </header>

@@ -10,6 +10,8 @@ export interface Props {
   showValue?: boolean;
   formatValue?: (value: number) => string;
   helpText?: string;
+  inputId?: string;
+  displayId?: string;
   class?: string;
 }
 
@@ -24,11 +26,13 @@ const {
   showValue = true,
   formatValue,
   helpText,
+  inputId,
+  displayId,
   class: className = '',
   ...rest
 } = Astro.props;
 
-const sliderId = `slider-${name}`;
+const sliderId = inputId || `slider-${name}`;
 const displayValue = formatValue ? formatValue(value) : value.toLocaleString();
 ---
 
@@ -38,7 +42,7 @@ const displayValue = formatValue ? formatValue(value) : value.toLocaleString();
       {label}
     </label>
     {showValue && (
-      <span class="font-mono text-sm font-medium text-ink tabular-nums">
+      <span id={displayId} class="font-mono text-sm font-medium text-ink tabular-nums">
         {displayValue}{suffix}
       </span>
     )}

@@ -1,5 +1,8 @@
 ---
 import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
 ---
 
 <div id="fire-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
@@ -40,182 +43,27 @@ import Card from '../ui/Card.astro';
 
         <form id="fire-form" class="space-y-4">
           <div class="grid gap-4 sm:grid-cols-2">
-            <div class="flex flex-col gap-1.5">
-              <label for="currentAge" class="text-sm font-medium text-ink">Current Age</label>
-              <input
-                id="currentAge"
-                name="currentAge"
-                type="number"
-                value="30"
-                min="18"
-                max="70"
-                required
-                class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors placeholder:text-mute focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20 sm:text-sm"
-              />
-            </div>
-
-            <div class="flex flex-col gap-1.5">
-              <label for="retirementAge" class="text-sm font-medium text-ink">Retirement Age</label>
-              <input
-                id="retirementAge"
-                name="retirementAge"
-                type="number"
-                value="50"
-                min="30"
-                max="70"
-                required
-                class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors placeholder:text-mute focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20 sm:text-sm"
-              />
-            </div>
+            <Input label="Current Age" name="currentAge" type="number" value={30} min={18} max={70} required />
+            <Input label="Retirement Age" name="retirementAge" type="number" value={50} min={30} max={70} required />
           </div>
 
-          <div class="flex flex-col gap-1.5">
-            <label for="currentSavings" class="text-sm font-medium text-ink">Current Savings & Investments ($)</label>
-            <input
-              id="currentSavings"
-              name="currentSavings"
-              type="number"
-              value="50000"
-              min="0"
-              step="1000"
-              required
-              class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors placeholder:text-mute focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20 sm:text-sm"
-            />
-          </div>
+          <Input label="Current Savings & Investments" name="currentSavings" type="number" value={50000} min={0} step={1000} suffix="$" required />
 
-          <div class="flex flex-col gap-1.5">
-            <label for="monthlyIncome" class="text-sm font-medium text-ink">Monthly Income ($)</label>
-            <input
-              id="monthlyIncome"
-              name="monthlyIncome"
-              type="number"
-              value="8000"
-              min="0"
-              step="100"
-              required
-              class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors placeholder:text-mute focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20 sm:text-sm"
-            />
-          </div>
+          <Input label="Monthly Income" name="monthlyIncome" type="number" value={8000} min={0} step={100} suffix="$" required />
 
-          <div class="flex flex-col gap-1.5">
-            <div class="flex items-center justify-between">
-              <label for="savingsRate" class="text-sm font-medium text-ink">Savings Rate</label>
-              <span id="savingsRateValue" class="font-mono text-sm font-medium text-ink tabular-nums">25%</span>
-            </div>
-            <input
-              id="savingsRate"
-              name="savingsRate"
-              type="range"
-              value="25"
-              min="5"
-              max="80"
-              step="1"
-              class="w-full accent-ink"
-            />
-            <div class="flex justify-between text-xs text-mute">
-              <span>5%</span>
-              <span>80%</span>
-            </div>
-          </div>
+          <Slider label="Savings Rate" name="savingsRate" value={25} min={5} max={80} suffix="%" inputId="savingsRate" displayId="savingsRateValue" />
 
-          <div class="flex flex-col gap-1.5">
-            <label for="monthlyExpenses" class="text-sm font-medium text-ink">Monthly Expenses ($)</label>
-            <input
-              id="monthlyExpenses"
-              name="monthlyExpenses"
-              type="number"
-              value="5000"
-              min="0"
-              step="100"
-              required
-              class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors placeholder:text-mute focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20 sm:text-sm"
-            />
-          </div>
+          <Input label="Monthly Expenses" name="monthlyExpenses" type="number" value={5000} min={0} step={100} suffix="$" required />
 
           <div class="grid gap-4 sm:grid-cols-2">
-            <div class="flex flex-col gap-1.5">
-              <div class="flex items-center justify-between">
-                <label for="annualReturn" class="text-sm font-medium text-ink">Annual Return</label>
-                <span id="annualReturnValue" class="font-mono text-sm font-medium text-ink tabular-nums">7%</span>
-              </div>
-              <input
-                id="annualReturn"
-                name="annualReturn"
-                type="range"
-                value="7"
-                min="1"
-                max="15"
-                step="0.5"
-                class="w-full accent-ink"
-              />
-              <div class="flex justify-between text-xs text-mute">
-                <span>1%</span>
-                <span>15%</span>
-              </div>
-            </div>
-
-            <div class="flex flex-col gap-1.5">
-              <div class="flex items-center justify-between">
-                <label for="inflation" class="text-sm font-medium text-ink">Inflation Rate</label>
-                <span id="inflationValue" class="font-mono text-sm font-medium text-ink tabular-nums">3%</span>
-              </div>
-              <input
-                id="inflation"
-                name="inflation"
-                type="range"
-                value="3"
-                min="1"
-                max="8"
-                step="0.5"
-                class="w-full accent-ink"
-              />
-              <div class="flex justify-between text-xs text-mute">
-                <span>1%</span>
-                <span>8%</span>
-              </div>
-            </div>
+            <Slider label="Annual Return" name="annualReturn" value={7} min={1} max={15} step={0.5} suffix="%" inputId="annualReturn" displayId="annualReturnValue" />
+            <Slider label="Inflation Rate" name="inflation" value={3} min={1} max={8} step={0.5} suffix="%" inputId="inflation" displayId="inflationValue" />
           </div>
 
-          <div class="flex flex-col gap-1.5">
-            <div class="flex items-center justify-between">
-              <label for="swr" class="text-sm font-medium text-ink">Safe Withdrawal Rate</label>
-              <span id="swrValue" class="font-mono text-sm font-medium text-ink tabular-nums">4%</span>
-            </div>
-            <input
-              id="swr"
-              name="swr"
-              type="range"
-              value="4"
-              min="2"
-              max="6"
-              step="0.5"
-              class="w-full accent-ink"
-            />
-            <div class="flex justify-between text-xs text-mute">
-              <span>2%</span>
-              <span>6%</span>
-            </div>
-          </div>
+          <Slider label="Safe Withdrawal Rate" name="swr" value={4} min={2} max={6} step={0.5} suffix="%" inputId="swr" displayId="swrValue" />
 
-          <div id="part-time-income-group" class="flex flex-col gap-1.5 hidden">
-            <div class="flex items-center justify-between">
-              <label for="partTimeIncome" class="text-sm font-medium text-ink">Part-Time Monthly Income</label>
-              <span id="partTimeIncomeValue" class="font-mono text-sm font-medium text-ink tabular-nums">$1,500</span>
-            </div>
-            <input
-              id="partTimeIncome"
-              name="partTimeIncome"
-              type="range"
-              value="1500"
-              min="0"
-              max="5000"
-              step="100"
-              class="w-full accent-ink"
-            />
-            <div class="flex justify-between text-xs text-mute">
-              <span>$0</span>
-              <span>$5,000</span>
-            </div>
+          <div id="part-time-income-group" class="hidden">
+            <Slider label="Part-Time Monthly Income" name="partTimeIncome" value={1500} min={0} max={5000} step={100} suffix="$" inputId="partTimeIncome" displayId="partTimeIncomeValue" formatValue={(v) => `$${v.toLocaleString()}`} />
           </div>
         </form>
       </Card>
@@ -223,23 +71,9 @@ import Card from '../ui/Card.astro';
 
     <div class="space-y-6 lg:col-span-7">
       <div id="results-summary" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
-          <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">FIRE Number</p>
-          <p id="fire-number" class="text-2xl font-semibold text-ink tabular-nums">$1,200,000</p>
-          <p class="mt-1 text-xs text-mute">Amount needed for retirement</p>
-        </div>
-
-        <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
-          <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Monthly Investment</p>
-          <p id="monthly-investment" class="text-2xl font-semibold text-link tabular-nums">$1,500</p>
-          <p class="mt-1 text-xs text-mute">To reach your goal</p>
-        </div>
-
-        <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm sm:col-span-2 lg:col-span-1">
-          <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Progress</p>
-          <p id="fire-progress" class="text-2xl font-semibold text-success-deep tabular-nums">4.2%</p>
-          <p class="mt-1 text-xs text-mute">Towards your FIRE number</p>
-        </div>
+        <ResultCard label="FIRE Number" valueId="fire-number" value="$1,200,000" description="Amount needed for retirement" />
+        <ResultCard label="Monthly Investment" valueId="monthly-investment" value="$1,500" valueClass="text-link" description="To reach your goal" />
+        <ResultCard label="Progress" valueId="fire-progress" value="4.2%" valueClass="text-success-deep" description="Towards your FIRE number" class="sm:col-span-2 lg:col-span-1" />
       </div>
 
       <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
