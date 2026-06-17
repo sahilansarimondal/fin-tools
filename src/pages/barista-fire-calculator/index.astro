@@ -1,0 +1,87 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import FIRECalculatorBase from '../../components/calculator/FIRECalculatorBase.astro';
+---
+
+<PageLayout
+  title="Barista FIRE Calculator — Plan Your Semi-Retirement with Part-Time Work"
+  description="Free Barista FIRE calculator for hybrid early retirement. Calculate your FIRE number based on part-time income and expenses. Work part-time, let investments cover the rest."
+  canonical="https://truefinancetools.com/barista-fire-calculator"
+  ogImage="https://truefinancetools.com/og-barista-fire-calculator.png"
+  ogImageAlt="Barista FIRE Calculator - Semi-Retirement with Part-Time Work"
+  pageType="article"
+  keywords="barista fire calculator, barista fire number, semi-retirement calculator, part-time retirement, fire calculator part-time, barista fire strategy"
+>
+    <FIRECalculatorBase fireType="barista" />
+
+    <section class="border-t border-hairline bg-canvas-soft py-16">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6">
+        <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+          What is Barista FIRE?
+        </h2>
+
+        <div class="prose prose-gray max-w-none text-body">
+          <p class="mb-4">
+            <strong>Barista FIRE</strong> is a hybrid approach to early retirement where you save enough to cover most expenses, then supplement your income with part-time work. The name comes from the idea of working as a barista — a low-stress job that often provides health insurance benefits.
+          </p>
+
+          <p class="mb-4">
+            Unlike traditional FIRE, where your investments must cover 100% of expenses, Barista FIRE acknowledges that many people enjoy some work but want freedom from the 9-5 grind. Your investments cover the gap between your expenses and your part-time income.
+          </p>
+
+          <h3 class="mb-3 text-lg font-semibold text-ink">The Barista FIRE Formula</h3>
+          <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+            FIRE Number = (Annual Expenses − Part-Time Annual Income) × 25
+          </div>
+
+          <p class="mb-4">
+            For example, if you spend $50,000 per year and earn $20,000 per year part-time: ($50,000 − $20,000) × 25 = $750,000. That's $500,000 less than traditional FIRE — a significant difference that can shave years off your savings timeline.
+          </p>
+
+          <h3 class="mb-3 text-lg font-semibold text-ink">Who Should Choose Barista FIRE?</h3>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="rounded-lg border border-hairline bg-canvas p-4">
+              <h4 class="mb-2 text-sm font-semibold text-ink">Health Insurance Seekers</h4>
+              <p class="text-sm text-body">Those who need employer-sponsored health insurance but want to escape full-time work.</p>
+            </div>
+            <div class="rounded-lg border border-hairline bg-canvas p-4">
+              <h4 class="mb-2 text-sm font-semibold text-ink">Social Connectors</h4>
+              <p class="text-sm text-body">People who enjoy social interaction and structure that part-time work provides.</p>
+            </div>
+            <div class="rounded-lg border border-hairline bg-canvas p-4">
+              <h4 class="mb-2 text-sm font-semibold text-ink">Passion Projectors</h4>
+              <p class="text-sm text-body">Those who want to pursue passion projects while maintaining some income.</p>
+            </div>
+            <div class="rounded-lg border border-hairline bg-canvas p-4">
+              <h4 class="mb-2 text-sm font-semibold text-ink">Bridge Builders</h4>
+              <p class="text-sm text-body">People using part-time work as a bridge between full-time work and full retirement.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-hairline bg-canvas py-16">
+      <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+        <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+          Explore Other FIRE Strategies
+        </h2>
+        <p class="mb-8 text-body">Compare different approaches to find the right one for your lifestyle.</p>
+
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <a href="/lean-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Lean FIRE Calculator</h3>
+            <p class="text-xs text-body">Minimalist approach with lower expenses.</p>
+          </a>
+          <a href="/fat-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Fat FIRE Calculator</h3>
+            <p class="text-xs text-body">For those who want a luxury retirement lifestyle.</p>
+          </a>
+          <a href="/coast-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Calculator</h3>
+            <p class="text-xs text-body">Let compound interest do the heavy lifting.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+</PageLayout>

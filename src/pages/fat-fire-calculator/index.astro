@@ -1,0 +1,87 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import FIRECalculatorBase from '../../components/calculator/FIRECalculatorBase.astro';
+---
+
+<PageLayout
+  title="Fat FIRE Calculator — Plan Your Luxury Early Retirement"
+  description="Free Fat FIRE calculator for high earners who want to maintain their lifestyle in early retirement. Calculate your FIRE number using the 30x multiplier. Interactive charts and instant results."
+  canonical="https://truefinancetools.com/fat-fire-calculator"
+  ogImage="https://truefinancetools.com/og-fat-fire-calculator.png"
+  ogImageAlt="Fat FIRE Calculator - Plan Your Luxury Early Retirement"
+  pageType="article"
+  keywords="fat fire calculator, fat fire number, luxury retirement, high income retirement, fire calculator 30x, fat fire strategy"
+>
+    <FIRECalculatorBase fireType="fat" />
+
+    <section class="border-t border-hairline bg-canvas-soft py-16">
+      <div class="mx-auto max-w-4xl px-4 sm:px-6">
+        <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+          What is Fat FIRE?
+        </h2>
+
+        <div class="prose prose-gray max-w-none text-body">
+          <p class="mb-4">
+            <strong>Fat FIRE</strong> is for high earners who want to maintain their current lifestyle in retirement. It requires <strong>30x your annual expenses</strong> saved — the most conservative multiplier among all FIRE strategies.
+          </p>
+
+          <p class="mb-4">
+            Unlike Lean FIRE or Regular FIRE, Fat FIRE doesn't require lifestyle sacrifices. If you earn $200,000+ per year and want to keep spending at that level in retirement, Fat FIRE gives you the financial cushion to do so.
+          </p>
+
+          <h3 class="mb-3 text-lg font-semibold text-ink">The Fat FIRE Formula</h3>
+          <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+            Fat FIRE Number = Annual Expenses × 30
+          </div>
+
+          <p class="mb-4">
+            For example, if you spend $80,000 per year, your Fat FIRE number is $2,400,000. That's $400,000 more than Regular FIRE ($2,000,000) for the same expenses — but it provides a larger safety margin.
+          </p>
+
+          <h3 class="mb-3 text-lg font-semibold text-ink">Who Should Choose Fat FIRE?</h3>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="rounded-lg border border-hairline bg-canvas p-4">
+              <h4 class="mb-2 text-sm font-semibold text-ink">High Earners</h4>
+              <p class="text-sm text-body">Professionals earning $150K+ who want to maintain their lifestyle without compromise.</p>
+            </div>
+            <div class="rounded-lg border border-hairline bg-canvas p-4">
+              <h4 class="mb-2 text-sm font-semibold text-ink">Families</h4>
+              <p class="text-sm text-body">Parents who need to cover children's education, healthcare, and family travel.</p>
+            </div>
+            <div class="rounded-lg border border-hairline bg-canvas p-4">
+              <h4 class="mb-2 text-sm font-semibold text-ink">Healthcare Focus</h4>
+              <p class="text-sm text-body">Those who want premium healthcare coverage and don't want to rely on ACA subsidies.</p>
+            </div>
+            <div class="rounded-lg border border-hairline bg-canvas p-4">
+              <h4 class="mb-2 text-sm font-semibold text-ink">Travel Enthusiasts</h4>
+              <p class="text-sm text-body">People who plan to travel extensively and need a larger budget for experiences.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-hairline bg-canvas py-16">
+      <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+        <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+          Explore Other FIRE Strategies
+        </h2>
+        <p class="mb-8 text-body">Compare different approaches to find the right one for your lifestyle.</p>
+
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <a href="/lean-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Lean FIRE Calculator</h3>
+            <p class="text-xs text-body">Minimalist approach with lower expenses.</p>
+          </a>
+          <a href="/coast-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Calculator</h3>
+            <p class="text-xs text-body">Let compound interest do the heavy lifting.</p>
+          </a>
+          <a href="/barista-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Calculator</h3>
+            <p class="text-xs text-body">Work part-time, let investments cover the rest.</p>
+          </a>
+        </div>
+      </div>
+    </section>
+</PageLayout>
