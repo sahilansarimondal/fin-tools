@@ -5,8 +5,7 @@ import Logo from '../ui/Logo.astro';
 const currentPath = Astro.url.pathname;
 
 const navLinks = [
-  { href: '/fire-calculator', label: 'FIRE Calculator', match: 'prefix' as const },
-  { href: '/tools', label: 'Tools', match: 'prefix' as const },
+  { href: '/tools', label: 'Calculators', match: 'prefix' as const, hasDropdown: true },
   { href: '/learn/what-is-fire', label: 'Learn', match: 'prefix-start' as const },
   { href: '/about', label: 'About', match: 'exact' as const },
   { href: '/contact', label: 'Contact', match: 'exact' as const },
@@ -35,25 +34,35 @@ function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boo
     </a>
 
     <nav class="hidden items-center gap-1 md:flex">
-      {navLinks.map(({ href, label, match }) => (
-        <div class="relative" data-nav-item={label === 'FIRE Calculator' ? 'fire-dropdown' : undefined}>
+      {navLinks.map(({ href, label, match, hasDropdown }) => (
+        <div class="relative" data-nav-item={hasDropdown ? 'calc-dropdown' : undefined}>
           <a
             href={href}
             class:list={[
               'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
               isActive(href, match) ? 'bg-ink text-canvas' : 'text-body hover:text-ink',
-              label === 'FIRE Calculator' && 'flex items-center gap-1',
+              hasDropdown && 'flex items-center gap-1',
             ]}
           >
             {label}
-            {label === 'FIRE Calculator' && (
+            {hasDropdown && (
               <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path d="M19 9l-7 7-7-7" />
               </svg>
             )}
           </a>
-          {label === 'FIRE Calculator' && (
-            <div class="fire-dropdown-menu invisible absolute left-0 top-full z-50 mt-1 w-48 rounded-lg border border-hairline bg-canvas py-1 shadow-lg opacity-0 transition-all duration-200">
+          {hasDropdown && (
+            <div class="calc-dropdown-menu invisible absolute left-0 top-full z-50 mt-1 w-48 rounded-lg border border-hairline bg-canvas py-1 shadow-lg opacity-0 transition-all duration-200">
+              <a
+                href="/tools"
+                class:list={[
+                  'block px-4 py-2 text-sm transition-colors',
+                  isActive('/tools', 'prefix') ? 'bg-canvas-soft-2 text-ink font-medium' : 'text-body hover:bg-canvas-soft hover:text-ink',
+                ]}
+              >
+                All Tools
+              </a>
+              <div class="my-1 border-t border-hairline"></div>
               {fireCalculators.map((calc) => (
                 <a
                   href={calc.href}
@@ -75,10 +84,10 @@ function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boo
       <ThemeToggle />
 
       <a
-        href="/fire-calculator"
+        href="/tools"
         class="hidden rounded-full bg-ink px-4 py-2 text-sm font-medium text-canvas transition-opacity hover:opacity-90 md:inline-flex"
       >
-        Start Planning
+        Start Calculating
       </a>
 
       <button
@@ -96,7 +105,7 @@ function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boo
 
   <div id="mobile-menu" class="hidden border-t border-hairline bg-canvas transition-all duration-200 ease-in-out md:hidden" role="menu" aria-hidden="true">
     <nav class="flex flex-col gap-1 p-4">
-      {navLinks.map(({ href, label, match }) => (
+      {navLinks.map(({ href, label, match, hasDropdown }) => (
         <>
           <a
             href={href}
@@ -110,8 +119,20 @@ function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boo
           >
             {label}
           </a>
-          {label === 'FIRE Calculator' && (
+          {hasDropdown && (
             <div class="ml-4 flex flex-col gap-1">
+              <a
+                href="/tools"
+                class:list={[
+                  'rounded-lg px-3 py-2 text-sm transition-colors',
+                  isActive('/tools', 'prefix')
+                    ? 'bg-canvas-soft-2 text-ink font-medium'
+                    : 'text-body hover:bg-canvas-soft-2 hover:text-ink',
+                ]}
+                role="menuitem"
+              >
+                All Tools
+              </a>
               {fireCalculators.map((calc) => (
                 <a
                   href={calc.href}
@@ -177,8 +198,8 @@ function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boo
     }
   });
 
-  const fireDropdown = document.querySelector('[data-nav-item="fire-dropdown"]');
-  const fireDropdownMenu = document.querySelector('.fire-dropdown-menu') as HTMLElement;
+  const fireDropdown = document.querySelector('[data-nav-item="calc-dropdown"]');
+  const fireDropdownMenu = document.querySelector('.calc-dropdown-menu') as HTMLElement;
 
   if (fireDropdown && fireDropdownMenu) {
     let timeout: ReturnType<typeof setTimeout>;
