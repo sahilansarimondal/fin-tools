@@ -20,19 +20,19 @@ import ResultCard from '../ui/ResultCard.astro';
     <div class="lg:col-span-5">
       <Card padding="lg" class="lg:sticky lg:top-24">
         <div id="fire-type-tabs" class="mb-6 flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
-          <button data-fire-type="lean" class="fire-type-tab flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
+          <button data-fire-type="lean" class="fire-type-tab shrink-0 cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
             Lean FIRE
           </button>
-          <button data-fire-type="regular" class="fire-type-tab flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-ink text-canvas" data-active="true">
+          <button data-fire-type="regular" class="fire-type-tab shrink-0 cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-ink text-canvas" data-active="true">
             Regular FIRE
           </button>
-          <button data-fire-type="fat" class="fire-type-tab flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
+          <button data-fire-type="fat" class="fire-type-tab shrink-0 cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
             Fat FIRE
           </button>
-          <button data-fire-type="coast" class="fire-type-tab flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
+          <button data-fire-type="coast" class="fire-type-tab shrink-0 cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
             Coast FIRE
           </button>
-          <button data-fire-type="barista" class="fire-type-tab flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
+          <button data-fire-type="barista" class="fire-type-tab shrink-0 cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
             Barista FIRE
           </button>
         </div>
@@ -47,13 +47,13 @@ import ResultCard from '../ui/ResultCard.astro';
             <Input label="Retirement Age" name="retirementAge" type="number" value={50} min={30} max={70} required />
           </div>
 
-          <Input label="Current Savings & Investments" name="currentSavings" type="number" value={50000} min={0} step={1000} suffix="$" required />
+          <Input label="Current Savings & Investments" name="currentSavings" type="number" value={50000} min={0} step={1000} suffix="$" hideArrows required />
 
-          <Input label="Monthly Income" name="monthlyIncome" type="number" value={8000} min={0} step={100} suffix="$" required />
+          <Input label="Monthly Income" name="monthlyIncome" type="number" value={8000} min={0} step={100} suffix="$" hideArrows required />
 
           <Slider label="Savings Rate" name="savingsRate" value={25} min={5} max={80} suffix="%" inputId="savingsRate" displayId="savingsRateValue" />
 
-          <Input label="Monthly Expenses" name="monthlyExpenses" type="number" value={5000} min={0} step={100} suffix="$" required />
+          <Input label="Monthly Expenses" name="monthlyExpenses" type="number" value={5000} min={0} step={100} suffix="$" hideArrows required />
 
           <div class="grid gap-4 sm:grid-cols-2">
             <Slider label="Annual Return" name="annualReturn" value={7} min={1} max={15} step={0.5} suffix="%" inputId="annualReturn" displayId="annualReturnValue" />
@@ -433,20 +433,20 @@ import ResultCard from '../ui/ResultCard.astro';
     lineBtn?.addEventListener('click', () => {
       lineBtn.dataset.active = 'true';
       lineBtn.classList.add('bg-ink', 'text-canvas');
-      lineBtn.classList.remove('bg-canvas-soft-2', 'text-body');
+      lineBtn.classList.remove('bg-canvas-soft-2', 'text-body', 'hover:text-ink');
       barBtn!.dataset.active = 'false';
       barBtn!.classList.remove('bg-ink', 'text-canvas');
-      barBtn!.classList.add('bg-canvas-soft-2', 'text-body');
+      barBtn!.classList.add('bg-canvas-soft-2', 'text-body', 'hover:text-ink');
       updateResults();
     });
 
     barBtn?.addEventListener('click', () => {
       barBtn.dataset.active = 'true';
       barBtn.classList.add('bg-ink', 'text-canvas');
-      barBtn.classList.remove('bg-canvas-soft-2', 'text-body');
+      barBtn.classList.remove('bg-canvas-soft-2', 'text-body', 'hover:text-ink');
       lineBtn!.dataset.active = 'false';
       lineBtn!.classList.remove('bg-ink', 'text-canvas');
-      lineBtn!.classList.add('bg-canvas-soft-2', 'text-body');
+      lineBtn!.classList.add('bg-canvas-soft-2', 'text-body', 'hover:text-ink');
       updateResults();
     });
   }
