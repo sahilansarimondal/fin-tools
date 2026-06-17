@@ -171,6 +171,52 @@ function calculateCoastFireAge(
   return Math.ceil(currentAge + yearsNeeded);
 }
 
+export type CoastFireNumberInput = {
+  currentAge: number;
+  retirementAge: number;
+  currentSavings: number;
+  annualReturnRate: number;
+  annualExpenses: number;
+};
+
+export type CoastFireNumberResult = {
+  fireNumber: number;
+  coastNumber: number;
+  gap: number;
+  hasCoasted: boolean;
+  progress: number;
+  projectedValue: number;
+  projection: { age: number; savings: number; target: number }[];
+};
+
+export function calculateCoastFireNumber(input: CoastFireNumberInput): CoastFireNumberResult {
+  const { currentAge, retirementAge, currentSavings, annualReturnRate, annualExpenses } = input;
+
+  const yearsToRetirement = Math.max(retirementAge - currentAge, 0);
+  const fireNumber = annualExpenses * 25;
+  const rate = annualReturnRate / 100;
+
+  const coastNumber = yearsToRetirement > 0
+    ? fireNumber / Math.pow(1 + rate, yearsToRetirement)
+    : fireNumber;
+
+  const hasCoasted = currentSavings >= coastNumber;
+  const gap = hasCoasted ? 0 : coastNumber - currentSavings;
+  const progress = Math.min((currentSavings / coastNumber) * 100, 100);
+  const projectedValue = currentSavings * Math.pow(1 + rate, yearsToRetirement);
+
+  const projection: { age: number; savings: number; target: number }[] = [];
+  for (let year = 0; year <= yearsToRetirement; year++) {
+    projection.push({
+      age: currentAge + year,
+      savings: currentSavings * Math.pow(1 + rate, year),
+      target: fireNumber,
+    });
+  }
+
+  return { fireNumber, coastNumber, gap, hasCoasted, progress, projectedValue, projection };
+}
+
 export function generateScenarios(input: FIREInput): Record<FIREType, FIREResult> {
   return {
     lean: calculateFIRE({ ...input, fireType: 'lean' }),

@@ -51,6 +51,16 @@ export const faqItems: FAQItem[] = [
     answerText: 'The 30/30/30/10 rule is a budgeting framework for FIRE savers: 30% to housing (mortgage, rent, taxes, insurance), 30% to living expenses (food, transport, utilities), 30% to savings and investments (your FIRE engine), and 10% to insurance, emergencies, and miscellaneous. Hitting a 30% savings rate puts you on track for early retirement in roughly 25 years.',
   },
   {
+    question: 'How much do I need to coast FIRE at 35?',
+    answerHtml: 'To coast FIRE at 35, you need enough saved so compound interest alone reaches your FIRE number by your target retirement age. <b>Example:</b> With $60,000/year expenses, your FIRE number is $1,500,000 (25×). If you plan to retire at 55 (20 years) and earn 7% annually, your Coast FIRE number is $1,500,000 / (1.07)<sup>20</sup> = <b>$389,000</b>. Once you save $389K by age 35, you can stop aggressive saving — compound interest grows it to $1.5M by 55.',
+    answerText: 'To coast FIRE at 35, calculate your FIRE number (annual expenses × 25), then discount it by your expected returns over the years until retirement. Example: $60K expenses → $1.5M FIRE number. At 7% returns with 20 years to retirement, you need $389,000 saved by 35.',
+  },
+  {
+    question: 'What is the Coast FIRE number formula?',
+    answerHtml: 'The Coast FIRE number formula is:<br /><b>Coast FIRE Number = FIRE Number / (1 + Return Rate)<sup>Years to Retirement</sup></b><br /><br />Where FIRE Number = Annual Expenses × 25 (for the 4% rule). <b>Example:</b> $80,000/year expenses → $2M FIRE number. 30 years to retirement at 7%: $2M / (1.07)<sup>30</sup> = <b>$263,000</b>. Save $263K and let compound interest do the rest.',
+    answerText: 'Coast FIRE Number = FIRE Number / (1 + Return Rate)^Years to Retirement. FIRE Number = Annual Expenses × 25. Example: $80K expenses → $2M FIRE number. At 7% with 30 years, you need $263K saved.',
+  },
+  {
     question: 'What is the 3-6-9 rule of money?',
     answerHtml: 'The 3-6-9 rule is a graduated emergency fund strategy:<ul><li><b>3 months</b> of expenses — minimum safety net</li><li><b>6 months</b> — stable financial foundation</li><li><b>9–12 months</b> — complete security before aggressive FIRE investing</li></ul>Build your emergency fund in stages. Start with 3 months, then redirect that saving power toward investments. A fully funded 9-month buffer protects against job loss, medical emergencies, or market downturns while you pursue early retirement.',
     answerText: 'The 3-6-9 rule is a graduated emergency fund strategy: build to 3 months of expenses first (minimum safety net), then 6 months (stable foundation), then 9–12 months (complete security before aggressive FIRE investing). Start with 3 months, then redirect that saving power toward investments. A fully funded 9-month buffer protects against job loss, medical emergencies, or market downturns.',
