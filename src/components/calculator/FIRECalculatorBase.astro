@@ -46,22 +46,30 @@ const fireTypeDescriptions: Record<FIREType, string> = {
     <div class="lg:col-span-5">
       <Card padding="lg" class="lg:sticky lg:top-24">
         {!isStandalone && (
-          <div id="fire-type-tabs" class="mb-6 flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
-            <button data-fire-type="lean" class="fire-type-tab flex-shrink-0 cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
-              Lean FIRE
-            </button>
-            <button data-fire-type="regular" class="fire-type-tab flex-shrink-0 cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-ink text-canvas" data-active="true">
-              Regular FIRE
-            </button>
-            <button data-fire-type="fat" class="fire-type-tab flex-shrink-0 cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
-              Fat FIRE
-            </button>
-            <button data-fire-type="coast" class="fire-type-tab flex-shrink-0 cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
-              Coast FIRE
-            </button>
-            <button data-fire-type="barista" class="fire-type-tab flex-shrink-0 cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors data-[active=true]:bg-ink data-[active=true]:text-canvas bg-canvas-soft-2 text-body hover:text-ink">
-              Barista FIRE
-            </button>
+          <div class="mb-6">
+            <div class="flex items-center justify-between">
+              <label for="lifestyleMultiplier" class="text-sm font-medium text-ink">
+                Lifestyle
+              </label>
+              <span id="lifestyleMultiplierValue" class="font-mono text-sm font-medium text-ink tabular-nums">
+                25x
+              </span>
+            </div>
+            <input
+              id="lifestyleMultiplier"
+              name="lifestyleMultiplier"
+              type="range"
+              value={25}
+              min={20}
+              max={30}
+              step={0.5}
+              class="w-full accent-ink"
+            />
+            <div class="flex justify-between text-xs text-mute">
+              <span>Lean (20x)</span>
+              <span>Regular (25x)</span>
+              <span>Fat (30x)</span>
+            </div>
           </div>
         )}
 
@@ -95,19 +103,16 @@ const fireTypeDescriptions: Record<FIREType, string> = {
           </div>
 
           <Slider label="Safe Withdrawal Rate" name="swr" value={4} min={2} max={6} step={0.5} suffix="%" inputId="swr" displayId="swrValue" />
-
-          <div id="part-time-income-group" class:list={[fireType !== 'barista' && 'hidden']}>
-            <Slider label="Part-Time Monthly Income" name="partTimeIncome" value={1500} min={0} max={5000} step={100} suffix="$" inputId="partTimeIncome" displayId="partTimeIncomeValue" formatValue={(v) => `$${v.toLocaleString()}`} />
-          </div>
         </form>
       </Card>
     </div>
 
     <div class="space-y-6 lg:col-span-7">
-      <div id="results-summary" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div id="results-summary" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <ResultCard label="FIRE Number" valueId="fire-number" value="$1,200,000" description="Amount needed for retirement" />
         <ResultCard label="Monthly Investment" valueId="monthly-investment" value="$1,500" valueClass="text-link" description="To reach your goal" />
-        <ResultCard label="Progress" valueId="fire-progress" value="4.2%" valueClass="text-success-deep" description="Towards your FIRE number" class="sm:col-span-2 lg:col-span-1" />
+        <ResultCard label="Years to FIRE" valueId="years-to-fire" value="12.4 yrs" description="When you'll reach FIRE" />
+        <ResultCard label="Progress" valueId="fire-progress" value="4.2%" valueClass="text-success-deep" description="Towards your FIRE number" />
       </div>
 
       <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
@@ -120,24 +125,6 @@ const fireTypeDescriptions: Record<FIREType, string> = {
         </div>
         <div class="relative h-64 sm:h-80">
           <canvas id="projection-chart"></canvas>
-        </div>
-      </div>
-
-      <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
-        <h2 class="mb-4 text-sm font-medium text-ink">Coast FIRE Analysis</h2>
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div>
-            <p class="mb-1 text-xs text-mute">Coast FIRE Number</p>
-            <p id="coast-fire-number" class="text-lg font-semibold text-ink tabular-nums">$180,000</p>
-            <p class="text-xs text-mute">Save this once, then let compounding work</p>
-          </div>
-          <div>
-            <p class="mb-1 text-xs text-mute">Coast FIRE Progress</p>
-            <div class="mt-2 h-2 w-full overflow-hidden rounded-full bg-canvas-soft-2">
-              <div id="coast-fire-bar" class="h-full rounded-full bg-success transition-all" style="width: 27%"></div>
-            </div>
-            <p id="coast-fire-progress-text" class="mt-1 text-xs text-mute">27.8% there</p>
-          </div>
         </div>
       </div>
 
@@ -208,7 +195,8 @@ const fireTypeDescriptions: Record<FIREType, string> = {
 
   const calculator = document.getElementById('fire-calculator');
   const standaloneType = calculator?.dataset.fireType as FIREType | '';
-  let currentFireType: FIREType = standaloneType || 'regular';
+  let currentFireType: FIREType = standaloneType || 'coast';
+  let lifestyleMultiplier = 25;
   let chart: any = null;
 
   const fireTypeDescriptions: Record<FIREType, string> = {
@@ -234,7 +222,8 @@ const fireTypeDescriptions: Record<FIREType, string> = {
       inflationRate: Number(formData.get('inflation')) || 3,
       safeWithdrawalRate: Number(formData.get('swr')) || 4,
       fireType: currentFireType,
-      partTimeIncome: Number(formData.get('partTimeIncome')) || 0,
+      partTimeIncome: 0,
+      lifestyleMultiplier,
     };
   }
 
@@ -247,17 +236,20 @@ const fireTypeDescriptions: Record<FIREType, string> = {
     document.getElementById('monthly-investment')!.textContent = formatCurrency(result.monthlyInvestmentNeeded);
     document.getElementById('fire-progress')!.textContent = `${result.fireProgress.toFixed(1)}%`;
 
-    document.getElementById('coast-fire-number')!.textContent = formatCurrency(result.coastFireNumber);
-    document.getElementById('coast-fire-bar')!.style.width = `${result.coastFireProgress}%`;
-    document.getElementById('coast-fire-progress-text')!.textContent = `${result.coastFireProgress.toFixed(1)}% there`;
+    const yearsToFIREEl = document.getElementById('years-to-fire')!;
+    if (result.yearsToFIRE !== null) {
+      yearsToFIREEl.textContent = `${result.yearsToFIRE.toFixed(1)} yrs`;
+    } else {
+      yearsToFIREEl.textContent = '—';
+    }
 
     const tbody = document.getElementById('scenario-table-body')!;
-    const types: FIREType[] = ['lean', 'regular', 'fat', 'barista'];
+    const types: FIREType[] = ['lean', 'regular', 'fat'];
     tbody.innerHTML = types.map((type) => {
       const s = scenarios[type];
-      const isActive = type === currentFireType;
+      const isActive = lifestyleMultiplier === ({ lean: 20, regular: 25, fat: 30 }[type]);
       return `
-        <tr class="${isActive ? 'bg-canvas-soft-2' : ''} ${type !== 'barista' ? 'border-b border-hairline/50' : ''}">
+        <tr class="${isActive ? 'bg-canvas-soft-2' : ''} ${type !== 'fat' ? 'border-b border-hairline/50' : ''}">
           <td class="py-2 pr-4 ${isActive ? 'font-medium text-ink' : 'text-body'}">${type.charAt(0).toUpperCase() + type.slice(1)} FIRE</td>
           <td class="py-2 pr-4 ${isActive ? 'font-medium text-ink' : 'text-ink'}">${formatCurrencyShort(s.fireNumber)}</td>
           <td class="py-2 pr-4 ${isActive ? 'font-medium text-link' : 'text-link'}">${formatCurrency(s.monthlyInvestmentNeeded)}</td>
@@ -411,57 +403,50 @@ const fireTypeDescriptions: Record<FIREType, string> = {
       { id: 'annualReturn', displayId: 'annualReturnValue', suffix: '%' },
       { id: 'inflation', displayId: 'inflationValue', suffix: '%' },
       { id: 'swr', displayId: 'swrValue', suffix: '%' },
-      { id: 'partTimeIncome', displayId: 'partTimeIncomeValue', prefix: '$' },
     ];
 
-    sliders.forEach(({ id, displayId, suffix, prefix }) => {
+    sliders.forEach(({ id, displayId, suffix }) => {
       const slider = document.getElementById(id) as HTMLInputElement;
       const display = document.getElementById(displayId);
 
       if (slider && display) {
         slider.addEventListener('input', () => {
-          if (prefix) {
-            display.textContent = `${prefix}${Number(slider.value).toLocaleString()}`;
-          } else {
-            display.textContent = `${slider.value}${suffix}`;
-          }
+          display.textContent = `${slider.value}${suffix}`;
           updateResults();
         });
       }
     });
-  }
 
-  function initFireTypeTabs() {
-    if (standaloneType) return;
-
-    const tabs = document.querySelectorAll('.fire-type-tab');
-    const description = document.getElementById('fire-type-description');
-    const partTimeGroup = document.getElementById('part-time-income-group');
-
-    tabs.forEach((tab) => {
-      tab.addEventListener('click', () => {
-        tabs.forEach((t) => {
-          t.setAttribute('data-active', 'false');
-          t.classList.remove('bg-ink', 'text-canvas');
-          t.classList.add('bg-canvas-soft-2', 'text-body');
-        });
-
-        tab.setAttribute('data-active', 'true');
-        tab.classList.add('bg-ink', 'text-canvas');
-        tab.classList.remove('bg-canvas-soft-2', 'text-body');
-
-        currentFireType = (tab as HTMLElement).dataset.fireType as FIREType;
-        if (description) {
-          description.innerHTML = fireTypeDescriptions[currentFireType];
-        }
-
-        if (partTimeGroup) {
-          partTimeGroup.classList.toggle('hidden', currentFireType !== 'barista');
-        }
-
+    const lifestyleSlider = document.getElementById('lifestyleMultiplier') as HTMLInputElement;
+    const lifestyleDisplay = document.getElementById('lifestyleMultiplierValue');
+    if (lifestyleSlider && lifestyleDisplay) {
+      lifestyleSlider.addEventListener('input', () => {
+        lifestyleMultiplier = Number(lifestyleSlider.value);
+        lifestyleDisplay.textContent = `${lifestyleMultiplier}x`;
+        updateDescription();
         updateResults();
       });
-    });
+    }
+  }
+
+  function updateDescription() {
+    const description = document.getElementById('fire-type-description');
+    if (!description || standaloneType) return;
+
+    let label: string;
+    let multiplier: number;
+    if (lifestyleMultiplier <= 22) {
+      label = 'Lean FIRE';
+      multiplier = 20;
+    } else if (lifestyleMultiplier >= 28) {
+      label = 'Fat FIRE';
+      multiplier = 30;
+    } else {
+      label = 'Regular FIRE';
+      multiplier = 25;
+    }
+
+    description.innerHTML = `<span class="font-medium text-ink">${label}:</span> ${lifestyleMultiplier}x annual expenses`;
   }
 
   function initChartTypeToggle() {
@@ -527,8 +512,7 @@ const fireTypeDescriptions: Record<FIREType, string> = {
         return: input.annualReturnRate.toString(),
         inflation: input.inflationRate.toString(),
         swr: input.safeWithdrawalRate.toString(),
-        type: input.fireType,
-        ptIncome: input.partTimeIncome.toString(),
+        lifestyle: input.lifestyleMultiplier?.toString() || '25',
       });
 
       const basePath = standaloneType ? `/${standaloneType}-fire-calculator` : '/fire-calculator';
@@ -566,7 +550,6 @@ const fireTypeDescriptions: Record<FIREType, string> = {
         annualReturn: 'return',
         inflation: 'inflation',
         swr: 'swr',
-        partTimeIncome: 'ptIncome',
       };
 
       Object.entries(fields).forEach(([fieldId, param]) => {
@@ -576,16 +559,14 @@ const fireTypeDescriptions: Record<FIREType, string> = {
         }
       });
 
-      if (!standaloneType && params.has('type')) {
-        const type = params.get('type') as FIREType;
-        const tab = document.querySelector(`[data-fire-type="${type}"]`) as HTMLElement;
-        if (tab) tab.click();
-      }
-
-      if (params.has('ptIncome')) {
-        const display = document.getElementById('partTimeIncomeValue');
-        if (display) {
-          display.textContent = `$${Number(params.get('ptIncome')).toLocaleString()}`;
+      if (!standaloneType && params.has('lifestyle')) {
+        const lifestyleValue = Number(params.get('lifestyle'));
+        if (!isNaN(lifestyleValue) && lifestyleValue >= 20 && lifestyleValue <= 30) {
+          lifestyleMultiplier = lifestyleValue;
+          const lifestyleSlider = document.getElementById('lifestyleMultiplier') as HTMLInputElement;
+          const lifestyleDisplay = document.getElementById('lifestyleMultiplierValue');
+          if (lifestyleSlider) lifestyleSlider.value = lifestyleValue.toString();
+          if (lifestyleDisplay) lifestyleDisplay.textContent = `${lifestyleValue}x`;
         }
       }
     }
@@ -594,7 +575,6 @@ const fireTypeDescriptions: Record<FIREType, string> = {
   document.addEventListener('DOMContentLoaded', () => {
     loadFromUrl();
     initSliders();
-    initFireTypeTabs();
     initChartTypeToggle();
     initFormListeners();
     initExport();

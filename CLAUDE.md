@@ -28,7 +28,7 @@ No lint/test/typecheck scripts exist.
 ```
 src/
 ├── components/
-│   ├── calculator/FIRECalculator.astro   # Main calculator (700+ lines, vanilla JS)
+│   ├── calculator/FIRECalculatorBase.astro   # Main calculator (vanilla JS)
 │   ├── layout/Header.astro               # Sticky nav, mobile menu, theme toggle
 │   ├── layout/Footer.astro               # 4-column footer
 │   ├── seo/StructuredData.astro          # JSON-LD + FAQ schema
@@ -84,7 +84,7 @@ src/
 5. Add to `src/components/seo/StructuredData.astro` if needed
 
 ### Modify the FIRE calculator
-- Edit `src/components/calculator/FIRECalculator.astro` (form, results, chart, export, share)
+- Edit `src/components/calculator/FIRECalculatorBase.astro` (form, results, chart, export, share)
 - Math logic in `src/utils/calculations.ts`
 - Formatting in `src/utils/formatters.ts`
 

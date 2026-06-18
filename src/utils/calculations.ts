@@ -22,6 +22,7 @@ export type FIREInput = {
   safeWithdrawalRate: number;
   fireType: FIREType;
   partTimeIncome: number;
+  lifestyleMultiplier?: number;
 };
 
 export type FIREProjection = {
@@ -49,6 +50,7 @@ export type FIREResult = {
   survivabilityYears: number;
   annualExpenses: number;
   monthlyExpensesInRetirement: number;
+  yearsToFIRE: number | null;
 };
 
 export function calculateFIRE(input: FIREInput): FIREResult {
@@ -67,7 +69,7 @@ export function calculateFIRE(input: FIREInput): FIREResult {
   } = input;
 
   const yearsToRetirement = Math.max(retirementAge - currentAge, 0);
-  const multiplier = FIRE_MULTIPLIERS[fireType];
+  const multiplier = input.lifestyleMultiplier ?? FIRE_MULTIPLIERS[fireType];
   const annualExpenses = monthlyExpenses * 12;
   const adjustedExpenses = annualExpenses * Math.pow(1 + inflationRate / 100, yearsToRetirement);
   const effectiveExpenses = fireType === 'barista'
@@ -139,6 +141,15 @@ export function calculateFIRE(input: FIREInput): FIREResult {
     ? fireNumber / (adjustedExpenses > 0 ? adjustedExpenses : 1)
     : 0;
 
+  const yearsToFIRE = calculateYearsToFIRE(
+    currentSavings,
+    fireNumber,
+    annualReturnRate,
+    monthlyIncome,
+    savingsRate,
+    currentAge
+  );
+
   return {
     fireNumber,
     yearsToRetirement,
@@ -154,6 +165,7 @@ export function calculateFIRE(input: FIREInput): FIREResult {
     survivabilityYears,
     annualExpenses: adjustedExpenses,
     monthlyExpensesInRetirement,
+    yearsToFIRE,
   };
 }
 
@@ -169,6 +181,35 @@ function calculateCoastFireAge(
   const rate = annualReturnRate / 100;
   const yearsNeeded = Math.log(target / currentSavings) / Math.log(1 + rate);
   return Math.ceil(currentAge + yearsNeeded);
+}
+
+function calculateYearsToFIRE(
+  currentSavings: number,
+  fireNumber: number,
+  annualReturnRate: number,
+  monthlyIncome: number,
+  savingsRate: number,
+  currentAge: number
+): number | null {
+  if (currentSavings >= fireNumber) return 0;
+
+  const annualReturnRateDecimal = annualReturnRate / 100;
+  const monthlySavings = monthlyIncome * (savingsRate / 100);
+  const yearlyContribution = monthlySavings * 12;
+
+  let balance = currentSavings;
+  const maxAge = 70;
+
+  for (let age = currentAge + 1; age <= maxAge; age++) {
+    const yearlyGrowth = balance * annualReturnRateDecimal;
+    balance = balance + yearlyGrowth + yearlyContribution;
+
+    if (balance >= fireNumber) {
+      return age - currentAge;
+    }
+  }
+
+  return null;
 }
 
 export type CoastFireNumberInput = {
@@ -218,11 +259,12 @@ export function calculateCoastFireNumber(input: CoastFireNumberInput): CoastFire
 }
 
 export function generateScenarios(input: FIREInput): Record<FIREType, FIREResult> {
+  const { lifestyleMultiplier, ...baseInput } = input;
   return {
-    lean: calculateFIRE({ ...input, fireType: 'lean' }),
-    regular: calculateFIRE({ ...input, fireType: 'regular' }),
-    fat: calculateFIRE({ ...input, fireType: 'fat' }),
-    coast: calculateFIRE({ ...input, fireType: 'coast' }),
-    barista: calculateFIRE({ ...input, fireType: 'barista' }),
+    lean: calculateFIRE({ ...baseInput, fireType: 'lean' }),
+    regular: calculateFIRE({ ...baseInput, fireType: 'regular' }),
+    fat: calculateFIRE({ ...baseInput, fireType: 'fat' }),
+    coast: calculateFIRE({ ...baseInput, fireType: 'coast' }),
+    barista: calculateFIRE({ ...baseInput, fireType: 'barista' }),
   };
 }

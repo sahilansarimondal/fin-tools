@@ -35,7 +35,7 @@ fin-tools/
 ├── src/
 │   ├── components/
 │   │   ├── calculator/
-│   │   │   └── FIRECalculator.astro    # Main calculator (702 lines, vanilla JS)
+│   │   │   └── FIRECalculatorBase.astro    # Main calculator (vanilla JS)
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -126,13 +126,13 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 - **PDF export** uses html2canvas + jsPDF (lazy-loaded)
 - **SEO** includes structured data, OG tags, Twitter cards, FAQ schema
 - **Analytics** — Google Analytics placeholder (`G-XXXXXXXXXX`)
-- **Interactivity** — all calculator logic is vanilla JS in `FIRECalculator.astro` `<script>` block
+- **Interactivity** — all calculator logic is vanilla JS in `FIRECalculatorBase.astro` `<script>` block
 
 ## Key Implementation Details
 
 ### FIRE Calculator
 
-- File: `src/components/calculator/FIRECalculator.astro` (~700 lines)
+- File: `src/components/calculator/FIRECalculatorBase.astro` (~700 lines)
 - Contains form, results, chart, scenario comparison, export, share
 - Uses `src/utils/calculations.ts` for math
 - URL-based state sharing via query params
