@@ -1,4 +1,6 @@
 ---
+import Tooltip from './Tooltip.astro';
+
 export interface Props {
   label: string;
   name: string;
@@ -10,6 +12,7 @@ export interface Props {
   showValue?: boolean;
   formatValue?: (value: number) => string;
   helpText?: string;
+  tooltip?: string;
   inputId?: string;
   displayId?: string;
   class?: string;
@@ -26,6 +29,7 @@ const {
   showValue = true,
   formatValue,
   helpText,
+  tooltip,
   inputId,
   displayId,
   class: className = '',
@@ -38,8 +42,9 @@ const displayValue = formatValue ? formatValue(value) : value.toLocaleString();
 
 <div class:list={['flex flex-col gap-2', className]}>
   <div class="flex items-center justify-between">
-    <label for={sliderId} class="text-sm font-medium text-ink">
+    <label for={sliderId} class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
       {label}
+      {tooltip && <Tooltip content={tooltip} />}
     </label>
     {showValue && (
       <span id={displayId} class="font-mono text-sm font-medium text-ink tabular-nums">

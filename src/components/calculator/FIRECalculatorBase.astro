@@ -98,11 +98,11 @@ const fireTypeDescriptions: Record<FIREType, string> = {
           <Input label="Monthly Expenses" name="monthlyExpenses" type="number" value={5000} min={0} step={100} suffix="$" hideArrows required />
 
           <div class="grid gap-4 sm:grid-cols-2">
-            <Slider label="Annual Return" name="annualReturn" value={7} min={1} max={15} step={0.5} suffix="%" inputId="annualReturn" displayId="annualReturnValue" />
-            <Slider label="Inflation Rate" name="inflation" value={3} min={1} max={8} step={0.5} suffix="%" inputId="inflation" displayId="inflationValue" />
+            <Slider label="Annual Return" name="annualReturn" value={7} min={1} max={15} step={0.5} suffix="%" inputId="annualReturn" displayId="annualReturnValue" tooltip="The average annual return of the S&P 500 has been ~10% historically. We recommend using 7% for conservative long-term planning." />
+            <Slider label="Inflation Rate" name="inflation" value={3} min={1} max={8} step={0.5} suffix="%" inputId="inflation" displayId="inflationValue" tooltip="The general rise in prices over time. Historical average is ~3%. Higher inflation means higher retirement expenses." />
           </div>
 
-          <Slider label="Safe Withdrawal Rate" name="swr" value={4} min={2} max={6} step={0.5} suffix="%" inputId="swr" displayId="swrValue" />
+          <Slider label="Safe Withdrawal Rate" name="swr" value={4} min={2} max={6} step={0.5} suffix="%" inputId="swr" displayId="swrValue" tooltip="The '4% rule' from the Trinity Study. This assumes you withdraw this percentage of your portfolio annually with a high probability of your money lasting 30+ years." />
         </form>
       </Card>
     </div>

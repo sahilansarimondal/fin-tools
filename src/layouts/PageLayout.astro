@@ -9,11 +9,13 @@ export interface Props {
   canonical: string;
   ogImage?: string;
   ogImageAlt?: string;
+  ogImageWidth?: number;
+  ogImageHeight?: number;
   pageType?: 'website' | 'article';
   keywords?: string;
 }
 
-const { title, description, canonical, ogImage, ogImageAlt, pageType, keywords } = Astro.props;
+const { title, description, canonical, ogImage, ogImageAlt, ogImageWidth, ogImageHeight, pageType, keywords } = Astro.props;
 ---
 
 <BaseLayout
@@ -22,6 +24,8 @@ const { title, description, canonical, ogImage, ogImageAlt, pageType, keywords }
   canonical={canonical}
   ogImage={ogImage}
   ogImageAlt={ogImageAlt}
+  ogImageWidth={ogImageWidth}
+  ogImageHeight={ogImageHeight}
   pageType={pageType}
   keywords={keywords}
 >
