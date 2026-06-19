@@ -51,6 +51,9 @@ export type FIREResult = {
   annualExpenses: number;
   monthlyExpensesInRetirement: number;
   yearsToFIRE: number | null;
+  traditionalFireNumber: number;
+  baristaSavings: number;
+  baristaGapPerMonth: number;
 };
 
 export function calculateFIRE(input: FIREInput): FIREResult {
@@ -72,10 +75,13 @@ export function calculateFIRE(input: FIREInput): FIREResult {
   const multiplier = input.lifestyleMultiplier ?? FIRE_MULTIPLIERS[fireType];
   const annualExpenses = monthlyExpenses * 12;
   const adjustedExpenses = annualExpenses * Math.pow(1 + inflationRate / 100, yearsToRetirement);
+  const traditionalFireNumber = adjustedExpenses * multiplier;
   const effectiveExpenses = fireType === 'barista'
     ? Math.max(adjustedExpenses - partTimeIncome * 12, 0)
     : adjustedExpenses;
   const fireNumber = effectiveExpenses * multiplier;
+  const baristaSavings = Math.max(traditionalFireNumber - fireNumber, 0);
+  const baristaGapPerMonth = fireType === 'barista' ? effectiveExpenses / 12 : 0;
 
   const monthlyReturnRate = annualReturnRate / 100 / 12;
   const monthlySavingsAmount = monthlyIncome * (savingsRate / 100);
@@ -166,6 +172,9 @@ export function calculateFIRE(input: FIREInput): FIREResult {
     annualExpenses: adjustedExpenses,
     monthlyExpensesInRetirement,
     yearsToFIRE,
+    traditionalFireNumber,
+    baristaSavings,
+    baristaGapPerMonth,
   };
 }
 

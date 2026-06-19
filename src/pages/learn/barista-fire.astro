@@ -2,14 +2,24 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/layout/Header.astro';
 import Footer from '../../components/layout/Footer.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
 ---
 
 <BaseLayout
   title="Barista FIRE — What It Is and How to Calculate It"
   description="Learn what Barista FIRE is, how it differs from traditional FIRE, and how to calculate your Barista FIRE number. A hybrid approach to early retirement with part-time work."
   canonical="https://truefinancetools.com/learn/barista-fire"
+  ogImage="https://truefinancetools.com/og-barista-fire.png"
+  ogImageAlt="Barista FIRE — What It Is, How to Calculate, and Best Jobs"
+  keywords="barista fire, what is barista fire, barista fire meaning, barista fire calculator, barista fire number, barista fire jobs, barista fire retirement, coast fire vs barista fire, semi retirement"
 >
   <Header />
+
+  <StructuredData
+    title="Barista FIRE — What It Is and How to Calculate It"
+    description="Learn what Barista FIRE is, how it differs from traditional FIRE, and how to calculate your Barista FIRE number. A hybrid approach to early retirement with part-time work."
+    url="https://truefinancetools.com/learn/barista-fire"
+  />
 
   <main>
     <section class="border-b border-hairline bg-canvas py-16 sm:py-20">
