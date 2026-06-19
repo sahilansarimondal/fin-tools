@@ -1,4 +1,6 @@
 ---
+import Tooltip from './Tooltip.astro';
+
 export interface Props {
   label: string;
   name: string;
@@ -10,6 +12,7 @@ export interface Props {
   step?: number;
   suffix?: string;
   helpText?: string;
+  tooltip?: string;
   error?: string;
   required?: boolean;
   disabled?: boolean;
@@ -28,6 +31,7 @@ const {
   step,
   suffix,
   helpText,
+  tooltip,
   error,
   required = false,
   disabled = false,
@@ -43,9 +47,10 @@ const describedBy = [errorId, helpId].filter(Boolean).join(' ') || undefined;
 ---
 
 <div class:list={['flex flex-col gap-1.5', className]}>
-  <label for={inputId} class="text-sm font-medium text-ink">
+  <label for={inputId} class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
     {label}
     {required && <span class="text-error">*</span>}
+    {tooltip && <Tooltip content={tooltip} />}
   </label>
 
   <div class="relative">
