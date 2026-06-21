@@ -74,9 +74,15 @@ const fireTypeDescriptions: Record<FIREType, string> = {
         )}
 
         {isStandalone ? (
-          <div class="mb-6 rounded-md bg-canvas-soft-2 p-3 text-xs text-body">
-            <span class="font-medium text-ink">{fireTypeLabels[fireType!]}:</span> {fireTypeDescriptions[fireType!]}
-          </div>
+          fireType === 'barista' ? (
+            <div id="fire-type-description" class="mb-6 rounded-md bg-success/10 p-3 text-xs text-body">
+              <span class="font-medium text-success-deep">Barista FIRE:</span> Your investments cover most expenses; part-time work funds the rest. <span class="text-success-deep">You need less than traditional FIRE.</span>
+            </div>
+          ) : (
+            <div class="mb-6 rounded-md bg-canvas-soft-2 p-3 text-xs text-body">
+              <span class="font-medium text-ink">{fireTypeLabels[fireType!]}:</span> {fireTypeDescriptions[fireType!]}
+            </div>
+          )
         ) : (
           <div id="fire-type-description" class="mb-6 rounded-md bg-canvas-soft-2 p-3 text-xs text-body">
             <span class="font-medium text-ink">Regular FIRE:</span> Comfortable middle-class lifestyle (25x annual expenses)
@@ -86,16 +92,45 @@ const fireTypeDescriptions: Record<FIREType, string> = {
         <form id="fire-form" class="space-y-4">
           <div class="grid gap-4 sm:grid-cols-2">
             <Input label="Current Age" name="currentAge" type="number" value={30} min={18} max={70} required />
-            <Input label="Retirement Age" name="retirementAge" type="number" value={50} min={30} max={70} required />
+            <Input label={isStandalone && fireType === 'barista' ? 'Barista FIRE Age' : 'Retirement Age'} name="retirementAge" type="number" value={50} min={30} max={70} tooltip={isStandalone && fireType === 'barista' ? 'The age you will switch from full-time work to part-time Barista FIRE.' : undefined} required />
           </div>
 
           <Input label="Current Savings & Investments" name="currentSavings" type="number" value={50000} min={0} step={1000} suffix="$" hideArrows required />
 
           <Input label="Monthly Income" name="monthlyIncome" type="number" value={8000} min={0} step={100} suffix="$" hideArrows required />
 
-          <Slider label="Savings Rate" name="savingsRate" value={25} min={5} max={80} suffix="%" inputId="savingsRate" displayId="savingsRateValue" />
+          <Slider label="Savings Rate" name="savingsRate" value={isStandalone && fireType === 'barista' ? 35 : 25} min={5} max={80} suffix="%" inputId="savingsRate" displayId="savingsRateValue" />
 
           <Input label="Monthly Expenses" name="monthlyExpenses" type="number" value={5000} min={0} step={100} suffix="$" hideArrows required />
+
+          {isStandalone && fireType === 'barista' && (
+            <div id="barista-income-wrapper" class="space-y-2">
+              <div class="flex items-center justify-between">
+                <label for="partTimeIncome" class="text-sm font-medium text-ink">
+                  Monthly Part-Time Income
+                </label>
+                <span id="partTimeIncomeValue" class="font-mono text-sm font-medium text-ink tabular-nums">
+                  $2,000
+                </span>
+              </div>
+              <input
+                id="partTimeIncome"
+                name="partTimeIncome"
+                type="range"
+                value={2000}
+                min={0}
+                max={10000}
+                step={100}
+                class="w-full accent-ink"
+              />
+              <div class="flex justify-between text-xs text-mute">
+                <span>$0</span>
+                <span>$5,000</span>
+                <span>$10,000</span>
+              </div>
+              <p class="text-xs text-body">How much you expect to earn monthly from your Barista FIRE job (after taxes). Common estimates: barista ($1,500–$2,500), retail ($2,000–$3,000), freelancing ($2,000–$5,000+).</p>
+            </div>
+          )}
 
           <div class="grid gap-4 sm:grid-cols-2">
             <Slider label="Annual Return" name="annualReturn" value={7} min={1} max={15} step={0.5} suffix="%" inputId="annualReturn" displayId="annualReturnValue" tooltip="The average annual return of the S&P 500 has been ~10% historically. We recommend using 7% for conservative long-term planning." />
@@ -115,6 +150,32 @@ const fireTypeDescriptions: Record<FIREType, string> = {
         <ResultCard label="Progress" valueId="fire-progress" value="4.2%" valueClass="text-success-deep" description="Towards your FIRE number" />
       </div>
 
+      <div id="barista-comparison" class="hidden rounded-lg border border-success/30 bg-success/5 p-5 shadow-sm">
+        <div class="mb-3 flex items-center gap-2">
+          <svg class="h-5 w-5 text-success-deep" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h2 class="text-sm font-semibold text-success-deep">Barista FIRE Savings</h2>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-3">
+          <div>
+            <p class="text-xs text-mute">Barista FIRE Number</p>
+            <p id="barista-fire-number" class="font-mono text-xl font-semibold text-ink tabular-nums">$750,000</p>
+            <p class="text-xs text-body">Reduced target with part-time income</p>
+          </div>
+          <div>
+            <p class="text-xs text-mute">vs Traditional FIRE</p>
+            <p id="barista-savings" class="font-mono text-xl font-semibold text-success-deep tabular-nums">$250,000 less</p>
+            <p class="text-xs text-body">Amount saved by working part-time</p>
+          </div>
+          <div>
+            <p class="text-xs text-mute">Gap Covered by Investments/mo</p>
+            <p id="barista-gap" class="font-mono text-xl font-semibold text-ink tabular-nums">$2,500/mo</p>
+            <p class="text-xs text-body">Monthly withdrawal needed from portfolio</p>
+          </div>
+        </div>
+      </div>
+
       <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
         <div class="mb-4 flex items-center justify-between">
           <h2 class="text-sm font-medium text-ink">Portfolio Growth Projection</h2>
@@ -124,7 +185,7 @@ const fireTypeDescriptions: Record<FIREType, string> = {
           </div>
         </div>
         <div class="relative h-64 sm:h-80">
-          <canvas id="projection-chart"></canvas>
+          <canvas id="projection-chart" role="img" aria-label="Portfolio projection chart showing retirement savings growth over time"></canvas>
         </div>
       </div>
 
@@ -285,7 +346,7 @@ const fireTypeDescriptions: Record<FIREType, string> = {
       inflationRate: Number(formData.get('inflation')) || 3,
       safeWithdrawalRate: Number(formData.get('swr')) || 4,
       fireType: currentFireType,
-      partTimeIncome: 0,
+      partTimeIncome: Number(formData.get('partTimeIncome')) || 0,
       lifestyleMultiplier,
     };
   }
@@ -307,10 +368,12 @@ const fireTypeDescriptions: Record<FIREType, string> = {
     }
 
     const tbody = document.getElementById('scenario-table-body')!;
-    const types: FIREType[] = ['lean', 'regular', 'fat'];
+    const types: FIREType[] = standaloneType === 'barista' ? ['lean', 'regular', 'barista', 'fat'] : ['lean', 'regular', 'fat'];
     tbody.innerHTML = types.map((type) => {
       const s = scenarios[type];
-      const isActive = lifestyleMultiplier === ({ lean: 20, regular: 25, fat: 30 }[type]);
+      const isActive = standaloneType === 'barista'
+        ? type === 'barista'
+        : lifestyleMultiplier === ({ lean: 20, regular: 25, fat: 30 }[type]);
       return `
         <tr class="${isActive ? 'bg-canvas-soft-2' : ''} ${type !== 'fat' ? 'border-b border-hairline/50' : ''}">
           <td class="py-2 pr-4 ${isActive ? 'font-medium text-ink' : 'text-body'}">${type.charAt(0).toUpperCase() + type.slice(1)} FIRE</td>
@@ -321,10 +384,23 @@ const fireTypeDescriptions: Record<FIREType, string> = {
       `;
     }).join('');
 
-    updateChart(result.projection, result.fireNumber);
+    const baristaComparison = document.getElementById('barista-comparison');
+    if (standaloneType === 'barista' && baristaComparison) {
+      baristaComparison.classList.remove('hidden');
+      document.getElementById('barista-fire-number')!.textContent = formatCurrency(result.fireNumber);
+      const savingsDiff = result.baristaSavings;
+      document.getElementById('barista-savings')!.textContent = savingsDiff > 0
+        ? `${formatCurrencyShort(savingsDiff)} less`
+        : 'Same as traditional';
+      document.getElementById('barista-gap')!.textContent = `${formatCurrency(result.baristaGapPerMonth)}/mo`;
+    } else if (baristaComparison) {
+      baristaComparison.classList.add('hidden');
+    }
+
+    updateChart(result.projection, result.fireNumber, result.traditionalFireNumber);
   }
 
-  function updateChart(projection: any[], fireNumber: number) {
+  function updateChart(projection: any[], fireNumber: number, traditionalFireNumber?: number) {
     const ctx = document.getElementById('projection-chart') as HTMLCanvasElement;
     if (!ctx) return;
 
@@ -343,35 +419,53 @@ const fireTypeDescriptions: Record<FIREType, string> = {
     const tooltipText = isDark ? '#171717' : '#ffffff';
     const linkColor = isDark ? '#3291ff' : '#0070f3';
     const errorColor = isDark ? '#ff4444' : '#ee0000';
+    const warningColor = isDark ? '#f5a623' : '#d97706';
+
+    const datasets: any[] = [
+      {
+        label: 'Portfolio Value',
+        data: savingsData,
+        borderColor: linkColor,
+        backgroundColor: isDark ? 'rgba(50, 145, 255, 0.1)' : 'rgba(0, 112, 243, 0.1)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 0,
+        pointHoverRadius: 4,
+        borderWidth: 2,
+      },
+      {
+        label: 'Barista FIRE Target',
+        data: targetData,
+        borderColor: errorColor,
+        backgroundColor: 'transparent',
+        borderDash: [5, 5],
+        tension: 0.4,
+        pointRadius: 0,
+        pointHoverRadius: 4,
+        borderWidth: 2,
+      },
+    ];
+
+    if (standaloneType === 'barista' && traditionalFireNumber) {
+      const traditionalTargetData = projection.filter((_, i) => i % 2 === 0 || i === projection.length - 1).map((p: any) => traditionalFireNumber);
+      datasets.push({
+        label: 'Traditional FIRE Target',
+        data: traditionalTargetData,
+        borderColor: warningColor,
+        backgroundColor: 'transparent',
+        borderDash: [3, 3],
+        borderWidth: 1.5,
+        tension: 0.4,
+        pointRadius: 0,
+        pointHoverRadius: 4,
+      });
+    }
 
     chart = new (window as any).Chart(ctx, {
       type: document.getElementById('chart-type-line')?.dataset.active === 'true' ? 'line' : 'bar',
       data: {
         labels,
-        datasets: [
-          {
-            label: 'Portfolio Value',
-            data: savingsData,
-            borderColor: linkColor,
-            backgroundColor: isDark ? 'rgba(50, 145, 255, 0.1)' : 'rgba(0, 112, 243, 0.1)',
-            fill: true,
-            tension: 0.4,
-            pointRadius: 0,
-            pointHoverRadius: 4,
-            borderWidth: 2,
-          },
-          {
-            label: 'FIRE Target',
-            data: targetData,
-            borderColor: errorColor,
-            backgroundColor: 'transparent',
-            borderDash: [5, 5],
-            tension: 0.4,
-            pointRadius: 0,
-            pointHoverRadius: 4,
-            borderWidth: 2,
-          },
-        ],
+        datasets,
       },
       options: {
         responsive: true,
@@ -487,6 +581,15 @@ const fireTypeDescriptions: Record<FIREType, string> = {
         lifestyleMultiplier = Number(lifestyleSlider.value);
         lifestyleDisplay.textContent = `${lifestyleMultiplier}x`;
         updateDescription();
+        updateResults();
+      });
+    }
+
+    const ptSlider = document.getElementById('partTimeIncome') as HTMLInputElement;
+    const ptDisplay = document.getElementById('partTimeIncomeValue');
+    if (ptSlider && ptDisplay) {
+      ptSlider.addEventListener('input', () => {
+        ptDisplay.textContent = `$${Number(ptSlider.value).toLocaleString()}`;
         updateResults();
       });
     }
@@ -648,6 +751,7 @@ const fireTypeDescriptions: Record<FIREType, string> = {
         inflation: input.inflationRate.toString(),
         swr: input.safeWithdrawalRate.toString(),
         lifestyle: input.lifestyleMultiplier?.toString() || '25',
+        ptIncome: input.partTimeIncome?.toString() || '0',
       });
       const basePath = standaloneType ? `/${standaloneType}-fire-calculator` : '/fire-calculator';
       return `${window.location.origin}${basePath}?${params.toString()}`;
@@ -741,6 +845,16 @@ const fireTypeDescriptions: Record<FIREType, string> = {
           input.value = params.get(param)!;
         }
       });
+
+      if (params.has('ptIncome')) {
+        const ptValue = Number(params.get('ptIncome'));
+        if (!isNaN(ptValue) && ptValue >= 0 && ptValue <= 10000) {
+          const ptSlider = document.getElementById('partTimeIncome') as HTMLInputElement;
+          const ptDisplay = document.getElementById('partTimeIncomeValue');
+          if (ptSlider) ptSlider.value = ptValue.toString();
+          if (ptDisplay) ptDisplay.textContent = `$${Number(ptValue).toLocaleString()}`;
+        }
+      }
 
       if (!standaloneType && params.has('lifestyle')) {
         const lifestyleValue = Number(params.get('lifestyle'));

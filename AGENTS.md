@@ -210,6 +210,112 @@ Do NOT over-abstract. The following do NOT need components:
 
 When working on any file, if you encounter an existing DRY violation (e.g., an inline button that should use `Button.astro`, or duplicate data that should be in a constants file), fix it as part of your change — but only if the fix is low-risk and doesn't scope-creep the task.
 
+### Calculator Page Template (based on barista fire page)
+
+Every standalone calculator page follows this exact section order and structure:
+
+```astro
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+// + import your calculator component
+---
+
+// 1. Page-specific FAQ items defined inline
+const toolFaqItems: FAQItem[] = [
+  { question: '...', answerHtml: '...', answerText: '...' },
+  // 6-8 questions covering: what it is, formula, vs alternatives, best use cases
+];
+---
+
+// 2. PageLayout with SEO props
+<PageLayout
+  title="{Tool Name} Calculator — {Value Prop}"  // e.g. "Barista FIRE Calculator — Plan Your Semi-Retirement with Part-Time Work"
+  description="Free {tool name} calculator for {use case}. {Primary action} based on {inputs}. {Secondary benefit}."
+  canonical="https://truefinancetools.com/{tool-name}"
+  ogImage="https://truefinancetools.com/og-{tool-name}.png"
+  ogImageAlt="{Tool Name} Calculator — {Short Description}"
+  pageType="website"
+  keywords="{tool name} calculator, {primary keywords comma separated}"
+>
+
+  // 3. StructuredData (WebApplication + FAQPage schema)
+  <StructuredData
+    title="{Tool Name} Calculator"
+    description="Free {tool name} calculator for {use case}."
+    url="https://truefinancetools.com/{tool-name}"
+  />
+
+  // 4. Calculator component
+  <YourCalculatorComponent {props} />
+
+  // 5. How It Works — 3 steps in <HowItWorks>
+  <HowItWorks title="How the {Tool Name} Calculator Works">
+    <div class="text-center">...step 1...</div>
+    <div class="text-center">...step 2...</div>
+    <div class="text-center">...step 3...</div>
+  </HowItWorks>
+
+  // 6. "What is {Tool}?" section (bg-canvas-soft)
+  //    - Definition paragraph
+  //    - Formula / explanation
+  //    - Comparison table (vs alternatives or vs traditional approach)
+  //    - "Who Should Choose" grid (2x2 cards)
+  //    - "Pros and Cons" grid (2 columns: advantages / trade-offs)
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2>What is {Tool Name}?</h2>
+      // ... content with prose prose-gray max-w-none text-body
+    </div>
+  </section>
+
+  // 7. FAQ section (bg-canvas)
+  <section class="border-t border-hairline bg-canvas py-16">
+    <h2>Frequently Asked Questions About {Tool Name}</h2>
+    <div class="space-y-4">
+      {toolFaqItems.map((item) => (
+        <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+          <summary>{item.question}</summary>
+          <p set:html={item.answerHtml} />
+        </details>
+      ))}
+    </div>
+  </section>
+
+  // 8. "Complete Guide" section (bg-canvas)
+  //    - Longer-form content, 3-4 paragraphs
+  //    - "Why Choose {Tool}" subheading
+  //    - "Key Features of This {Tool Name} Calculator" subheading
+  <section class="border-t border-hairline bg-canvas py-16">
+    <h2>Complete Guide to {Tool Name} Planning</h2>
+    // ... content with prose prose-gray max-w-none text-body
+  </section>
+
+  // 9. "Explore Other {Category}" cross-links section (bg-canvas-soft)
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <h2>Explore Other {Category}</h2>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <a href="/other-tool" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+        <h3>{Tool Name}</h3>
+        <p>{description}</p>
+      </a>
+      // ...
+    </div>
+  </section>
+</PageLayout>
+```
+
+**SEO rules for each section:**
+- **Title:** Format `"{Tool Name} Calculator — {Compelling Value Proposition}"`
+- **Description:** 140-160 chars, include primary keyword in first 60 chars, end with a benefit
+- **Keywords:** Include primary + 6-10 supporting keyword phrases, comma separated, max ~200 chars
+- **OG image URL:** `https://truefinancetools.com/og-{tool-name}.png` (match the actual filename)
+- **`pageType`:** Always `"website"` (not `"article"`) for tool/calculator pages
+- **`pageType`:** For learn/guide pages, use `"article"`
+- **FAQ items:** 6-8 questions covering what it is, formula, vs alternatives, use cases, edge cases
+
 ### Known existing components (always check these first)
 
 | Component | Location | Use for |

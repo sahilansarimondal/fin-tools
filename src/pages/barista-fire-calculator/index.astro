@@ -1,83 +1,326 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
 import FIRECalculatorBase from '../../components/calculator/FIRECalculatorBase.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const baristaFaqItems: FAQItem[] = [
+  {
+    question: 'What is Barista FIRE and how does it work?',
+    answerHtml: '<b>Barista FIRE</b> (Financial Independence, Retire Early) is a hybrid approach where you save enough investments to cover <b>most</b> of your living expenses, then work a part-time job to cover the rest. The name comes from the idea of working as a barista — a low-stress job that often provides health insurance benefits.<br /><br />The math is simple: instead of needing your portfolio to cover 100% of expenses, you only need it to cover the gap between your expenses and your part-time income. This dramatically reduces the savings required and lets you reach financial freedom years sooner.',
+    answerText: 'Barista FIRE is a hybrid approach where you save enough to cover most expenses, then work part-time to cover the rest. Your portfolio only needs to cover the gap between expenses and part-time income, dramatically reducing the savings required.',
+  },
+  {
+    question: 'How is the Barista FIRE number calculated?',
+    answerHtml: 'The Barista FIRE formula is:<br /><br /><b>Barista FIRE Number = (Annual Expenses − Part-Time Annual Income) × 25</b><br /><br />This uses the same 4% safe withdrawal rule as traditional FIRE, but applied only to the "gap" — the amount your investments need to cover after part-time income.<br /><br /><b>Example:</b> If you spend $50,000/year and earn $20,000/year part-time:<br />• Gap: $50,000 − $20,000 = <b>$30,000</b><br />• Barista FIRE Number: $30,000 × 25 = <b>$750,000</b><br />• Traditional FIRE Number: $50,000 × 25 = <b>$1,250,000</b><br />• <b>Savings:</b> $500,000 less needed!',
+    answerText: 'Barista FIRE Number = (Annual Expenses − Part-Time Annual Income) × 25. Example: $50K expenses − $20K part-time = $30K gap × 25 = $750K needed. That is $500K less than traditional FIRE at $1.25M.',
+  },
+  {
+    question: 'How much less do I need for Barista FIRE vs Regular FIRE?',
+    answerHtml: 'The amount you save depends entirely on your part-time income. Every dollar you earn part-time reduces your FIRE number by <b>$25</b> (the 25x multiplier).<br /><br /><b>Examples on $50,000 annual expenses:</b><br />• $0 part-time (Regular FIRE): $1,250,000 needed<br />• $10,000 part-time ($833/mo): $1,000,000 needed ($250K less)<br />• $20,000 part-time ($1,667/mo): $750,000 needed ($500K less)<br />• $30,000 part-time ($2,500/mo): $500,000 needed ($750K less)<br />• $40,000 part-time ($3,333/mo): $250,000 needed ($1M less)<br /><br />As you can see, even modest part-time income dramatically reduces the savings required. A $2,000/month barista job shaves $600,000 off your target.',
+    answerText: 'Every dollar in part-time income reduces your FIRE number by $25 (25x multiplier). On $50K expenses: $833/mo part-time saves $250K. $1,667/mo saves $500K. $2,500/mo saves $750K. Even a modest barista job dramatically reduces what you need to save.',
+  },
+  {
+    question: 'What are the best Barista FIRE jobs?',
+    answerHtml: 'The best Barista FIRE jobs share three qualities: they are <b>enjoyable</b>, <b>flexible</b>, and often provide <b>health insurance benefits</b>. Popular options include:<br /><br /><ul><li><b>Barista / Coffee shop</b> ($1,500–$2,500/mo) — The namesake job. Social, flexible, often with health benefits at chains like Starbucks.</li><li><b>Retail associate</b> ($2,000–$3,000/mo) — Part-time at stores like REI, Apple, or local shops. Employee discounts included.</li><li><b>Freelancing / Consulting</b> ($2,000–$8,000/mo) — Leverage your professional skills on your own terms.</li><li><b>Property management</b> ($1,500–$4,000/mo) — Manage a few rental units for reduced rent + income.</li><li><b>Teaching / Tutoring</b> ($1,500–$3,500/mo) — Teach what you love at community colleges or online.</li><li><b>Dog walking / Pet sitting</b> ($1,000–$3,000/mo) — Low stress, outdoors, and in high demand.</li><li><b>National Park / Ski resort work</b> ($1,500–$3,000/mo) — Combine work with your dream location.</li></ul>',
+    answerText: 'Best Barista FIRE jobs: barista/coffee shop ($1.5K–$2.5K/mo), retail ($2K–$3K/mo), freelancing ($2K–$8K/mo), property management, teaching/tutoring, dog walking, and national park or ski resort work. Look for jobs with health benefits.',
+  },
+  {
+    question: 'How does inflation affect my Barista FIRE plan?',
+    answerHtml: 'Inflation is built into this calculator. The calculation subtracts the inflation rate from your expected investment returns to give an <b>inflation-adjusted</b> projection. All numbers are shown in today\'s dollars.<br /><br />However, Barista FIRE has a unique inflation advantage: your part-time income will likely <b>increase with inflation</b> over time. Minimum wages rise, freelance rates adjust, and Social Security COLAs track inflation. This means your part-time income provides a natural inflation hedge that pure investment withdrawal strategies lack.<br /><br />For safety, we recommend using a <b>conservative 7% return</b> and <b>3% inflation</b> assumption, which gives a 4% real return — aligned with the Trinity Study\'s findings.',
+    answerText: 'Inflation is built into the calculator (returns minus inflation). Barista FIRE has an inflation advantage: your part-time income likely rises with inflation (minimum wage increases, rate adjustments), providing a natural hedge. Use conservative 7% return and 3% inflation assumptions.',
+  },
+  {
+    question: 'Can I switch from Barista FIRE to full retirement?',
+    answerHtml: 'Absolutely. Barista FIRE is often used as a <b>bridge strategy</b> to full FIRE. Here is how it works:<br /><br /><ol><li><b>Phase 1 — Accumulation:</b> Save aggressively while working full-time.</li><li><b>Phase 2 — Barista FIRE:</b> Switch to part-time work. Your portfolio continues growing (slower, since you are not adding much), while your part-time income covers some expenses.</li><li><b>Phase 3 — Full FIRE:</b> Once your portfolio reaches your traditional FIRE number (25× full expenses), you can stop working entirely.</li></ol><br />Many people find they enjoy their Barista FIRE lifestyle so much they never transition to full retirement. The flexibility is the point — you have options, which is what financial independence is all about.',
+    answerText: 'Yes. Barista FIRE is a bridge to full FIRE. Phase 1: accumulate aggressively. Phase 2: switch to part-time, portfolio still grows. Phase 3: once portfolio reaches 25× full expenses, stop working entirely. Many people enjoy the Barista phase so much they never fully retire.',
+  },
+];
 ---
 
 <PageLayout
   title="Barista FIRE Calculator — Plan Your Semi-Retirement with Part-Time Work"
-  description="Free Barista FIRE calculator for hybrid early retirement. Calculate your FIRE number based on part-time income and expenses. Work part-time, let investments cover the rest."
+  description="Free Barista FIRE calculator for hybrid early retirement. Calculate your Barista FIRE number based on part-time income and expenses. See how much less you need than traditional FIRE with instant, interactive charts."
   canonical="https://truefinancetools.com/barista-fire-calculator"
   ogImage="https://truefinancetools.com/og-barista-fire-calculator.png"
   ogImageAlt="Barista FIRE Calculator - Semi-Retirement with Part-Time Work"
-  pageType="article"
-  keywords="barista fire calculator, barista fire number, semi-retirement calculator, part-time retirement, fire calculator part-time, barista fire strategy"
+  pageType="website"
+  keywords="barista fire calculator, barista fire number, semi-retirement calculator, part-time retirement, fire calculator part-time, barista fire strategy, barista fire jobs, work part-time retire early"
 >
-    <FIRECalculatorBase fireType="barista" />
+  <StructuredData
+    title="Barista FIRE Calculator"
+    description="Free Barista FIRE calculator for hybrid early retirement. Calculate your FIRE number based on part-time income and expenses. See how much less you need than traditional FIRE."
+    url="https://truefinancetools.com/barista-fire-calculator"
+    toolName="Barista FIRE Calculator"
+    toolDescription="Calculate how much investments you need before transitioning to part-time Barista FIRE work to cover living expenses."
+    faqItems={baristaFaqItems}
+  />
 
-    <section class="border-t border-hairline bg-canvas-soft py-16">
-      <div class="mx-auto max-w-4xl px-4 sm:px-6">
-        <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
-          What is Barista FIRE?
-        </h2>
+  <FIRECalculatorBase fireType="barista" />
 
-        <div class="prose prose-gray max-w-none text-body">
-          <p class="mb-4">
-            <strong>Barista FIRE</strong> is a hybrid approach to early retirement where you save enough to cover most expenses, then supplement your income with part-time work. The name comes from the idea of working as a barista — a low-stress job that often provides health insurance benefits.
-          </p>
+  <HowItWorks title="How the Barista FIRE Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Details</h3>
+      <p class="text-sm text-body">Input your age, income, savings, and expenses like any FIRE calculator.</p>
+    </div>
 
-          <p class="mb-4">
-            Unlike traditional FIRE, where your investments must cover 100% of expenses, Barista FIRE acknowledges that many people enjoy some work but want freedom from the 9-5 grind. Your investments cover the gap between your expenses and your part-time income.
-          </p>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Set Your Part-Time Income</h3>
+      <p class="text-sm text-body">Use the exclusive slider to enter what you'll earn in your Barista FIRE job.</p>
+    </div>
 
-          <h3 class="mb-3 text-lg font-semibold text-ink">The Barista FIRE Formula</h3>
-          <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
-            FIRE Number = (Annual Expenses − Part-Time Annual Income) × 25
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See Your Savings</h3>
+      <p class="text-sm text-body">Instantly see how much less you need versus traditional FIRE with interactive charts.</p>
+    </div>
+  </HowItWorks>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is Barista FIRE?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Barista FIRE</strong> is a hybrid approach to early retirement where you save enough to cover most of your expenses, then supplement your income with part-time work. The name comes from the idea of working as a barista — a low-stress job that often provides health insurance benefits. Unlike traditional FIRE where your investments must cover 100% of expenses, Barista FIRE acknowledges that many people enjoy some work but want freedom from the 9-5 grind.
+        </p>
+
+        <p class="mb-4">
+          This <strong>Barista FIRE calculator</strong> helps you determine the exact amount you need to save based on your expected part-time income. The key insight is simple: by generating even modest income doing work you enjoy, you can dramatically reduce the savings required for early retirement.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Barista FIRE Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Barista FIRE Number = (Annual Expenses − Part-Time Annual Income) × 25
+        </div>
+
+        <p class="mb-4 mt-4">
+          For example, if you spend $50,000 per year and earn $20,000 per year part-time: ($50,000 − $20,000) × 25 = <strong>$750,000</strong>. That's <strong>$500,000 less</strong> than traditional FIRE — a significant difference that can shave years off your savings timeline.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Barista FIRE vs Traditional FIRE</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Metric</th>
+                <th class="p-3 font-medium text-ink">Traditional FIRE</th>
+                <th class="p-3 font-medium text-ink">Barista FIRE</th>
+                <th class="p-3 font-medium text-ink">Difference</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Annual expenses</td>
+                <td class="p-3 text-ink">$50,000</td>
+                <td class="p-3 text-ink">$50,000</td>
+                <td class="p-3 text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Part-time income</td>
+                <td class="p-3 text-ink">$0</td>
+                <td class="p-3 text-ink">$20,000</td>
+                <td class="p-3 text-success-deep">+$20,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Annual gap (from portfolio)</td>
+                <td class="p-3 text-ink">$50,000</td>
+                <td class="p-3 text-ink">$30,000</td>
+                <td class="p-3 text-success-deep">−$20,000</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">FIRE number needed</td>
+                <td class="p-3 text-ink">$1,250,000</td>
+                <td class="p-3 font-semibold text-success-deep">$750,000</td>
+                <td class="p-3 font-semibold text-success-deep">−$500,000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose Barista FIRE?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Health Insurance Seekers</h4>
+            <p class="text-sm text-body">Those who need employer-sponsored health insurance but want to escape full-time work. Starbucks, REI, and many retailers offer benefits to part-time employees.</p>
           </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Social Connectors</h4>
+            <p class="text-sm text-body">People who enjoy social interaction and structure that part-time work provides, and would miss the community of a workplace.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Passion Projectors</h4>
+            <p class="text-sm text-body">Those who want to pursue passion projects or turn hobbies into income while maintaining financial security.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Bridge Builders</h4>
+            <p class="text-sm text-body">People using part-time work as a bridge between full-time work and full retirement while their portfolio continues growing.</p>
+          </div>
+        </div>
 
-          <p class="mb-4">
-            For example, if you spend $50,000 per year and earn $20,000 per year part-time: ($50,000 − $20,000) × 25 = $750,000. That's $500,000 less than traditional FIRE — a significant difference that can shave years off your savings timeline.
-          </p>
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Popular Barista FIRE Jobs</h3>
+        <p class="mb-4">The best Barista FIRE jobs offer flexibility, enjoyment, and often health benefits. Here are top options with realistic income ranges:</p>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-1 text-sm font-semibold text-ink">☕ Barista / Coffee Shop</h4>
+            <p class="text-xs text-body"><strong>$1,500–$2,500/mo</strong> — The namesake job. Social, flexible hours, health benefits at Starbucks and other chains.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-1 text-sm font-semibold text-ink">🏪 Retail Associate</h4>
+            <p class="text-xs text-body"><strong>$2,000–$3,000/mo</strong> — Part-time at REI, Apple, Costco, or local shops. Employee discounts included.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-1 text-sm font-semibold text-ink">💻 Freelancing / Consulting</h4>
+            <p class="text-xs text-body"><strong>$2,000–$8,000/mo</strong> — Leverage your professional skills on your own terms. Highest earning potential.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-1 text-sm font-semibold text-ink">🏠 Property Management</h4>
+            <p class="text-xs text-body"><strong>$1,500–$4,000/mo</strong> — Manage a few rental units for reduced rent plus income.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-1 text-sm font-semibold text-ink">📚 Teaching / Tutoring</h4>
+            <p class="text-xs text-body"><strong>$1,500–$3,500/mo</strong> — Teach what you love at community colleges, online platforms, or private tutoring.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-1 text-sm font-semibold text-ink">🐕 Dog Walking / Pet Sitting</h4>
+            <p class="text-xs text-body"><strong>$1,000–$3,000/mo</strong> — Low stress, outdoors, and in high demand. Platforms like Rover make it easy.</p>
+          </div>
+        </div>
 
-          <h3 class="mb-3 text-lg font-semibold text-ink">Who Should Choose Barista FIRE?</h3>
-          <div class="grid gap-4 sm:grid-cols-2">
-            <div class="rounded-lg border border-hairline bg-canvas p-4">
-              <h4 class="mb-2 text-sm font-semibold text-ink">Health Insurance Seekers</h4>
-              <p class="text-sm text-body">Those who need employer-sponsored health insurance but want to escape full-time work.</p>
-            </div>
-            <div class="rounded-lg border border-hairline bg-canvas p-4">
-              <h4 class="mb-2 text-sm font-semibold text-ink">Social Connectors</h4>
-              <p class="text-sm text-body">People who enjoy social interaction and structure that part-time work provides.</p>
-            </div>
-            <div class="rounded-lg border border-hairline bg-canvas p-4">
-              <h4 class="mb-2 text-sm font-semibold text-ink">Passion Projectors</h4>
-              <p class="text-sm text-body">Those who want to pursue passion projects while maintaining some income.</p>
-            </div>
-            <div class="rounded-lg border border-hairline bg-canvas p-4">
-              <h4 class="mb-2 text-sm font-semibold text-ink">Bridge Builders</h4>
-              <p class="text-sm text-body">People using part-time work as a bridge between full-time work and full retirement.</p>
-            </div>
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Barista FIRE Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Reach financial independence years sooner</li>
+              <li>• Lower savings target (often $200K–$600K less)</li>
+              <li>• Maintain health insurance benefits</li>
+              <li>• Social connection and daily structure</li>
+              <li>• Part-time income hedges against inflation</li>
+              <li>• Easier to return to full-time work if needed</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Still need to work, just fewer hours</li>
+              <li>• Lower income means less portfolio growth</li>
+              <li>• May need to budget more carefully</li>
+              <li>• Part-time jobs often lack 401(k) matching</li>
+              <li>• Job availability varies by location</li>
+              <li>• Less free time than full retirement</li>
+            </ul>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="border-t border-hairline bg-canvas py-16">
-      <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
-        <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
-          Explore Other FIRE Strategies
-        </h2>
-        <p class="mb-8 text-body">Compare different approaches to find the right one for your lifestyle.</p>
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Barista FIRE
+      </h2>
 
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <a href="/lean-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
-            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Lean FIRE Calculator</h3>
-            <p class="text-xs text-body">Minimalist approach with lower expenses.</p>
-          </a>
-          <a href="/fat-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
-            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Fat FIRE Calculator</h3>
-            <p class="text-xs text-body">For those who want a luxury retirement lifestyle.</p>
-          </a>
-        </div>
+      <div class="space-y-4">
+        {baristaFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
       </div>
-    </section>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Barista FIRE Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>Barista FIRE calculator</strong> is the most comprehensive free tool available for planning a hybrid early retirement. Unlike generic FIRE calculators that assume 100% investment funding, this tool specifically models the impact of part-time income, giving you a realistic and achievable retirement target.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose Barista FIRE Over Traditional FIRE?</h3>
+
+        <p class="mb-4">
+          The biggest barrier to early retirement is the sheer size of the nest egg required. Traditional FIRE demands 25x your annual expenses — on $50,000/year that's $1,250,000. Barista FIRE recognizes that many people don't want to stop working entirely; they want to escape the 9-5 grind and do something they enjoy. By factoring in even a modest $2,000/month from a part-time job, your target drops to $650,000 — nearly half the traditional amount.
+        </p>
+
+        <p class="mb-4">
+          This <strong>semi-retirement calculator</strong> is designed for the millions of professionals who have marketable skills, enjoy working but on their own terms, and want to reach financial freedom years or even decades sooner. The interactive chart shows two targets: the Barista FIRE line (your new, lower goal) and the Traditional FIRE line (what you'd need without part-time income). Watch the gap shrink as you adjust your part-time income slider.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Barista FIRE Calculator</h3>
+
+        <p class="mb-4">
+          Unlike other <strong>Barista FIRE calculators</strong> that are just blog posts describing formulas, our calculator is fully interactive and real-time. All calculations happen in your browser — no data is stored on our servers. Adjust the part-time income slider and watch your target, timeline, and chart update instantly. Compare Barista FIRE against Lean, Regular, and Fat FIRE scenarios side by side to see which strategy fits your goals.
+        </p>
+
+        <p class="mb-4">
+          Export your personalized Barista FIRE plan as a PDF to review offline, share your projection with your partner via a unique link, or save your progress for future reference. The chart includes a Traditional FIRE target line so you can visually see exactly how much you're saving by working part-time. Whether you're exploring Barista FIRE for the first time or fine-tuning your numbers, this tool gives you the clarity you need.
+        </p>
+
+        <p class="mb-4">
+          Start planning your semi-retirement today — no signup required, completely free, and results in seconds. Adjust any input to see how it shifts your timeline. Even a small increase in part-time income dramatically reduces your target. The path to financial independence is closer than you think.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other FIRE Strategies
+      </h2>
+      <p class="mb-8 text-body">Compare different approaches to find the right one for your lifestyle.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/lean-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Lean FIRE Calculator</h3>
+          <p class="text-xs text-body">Minimalist approach with lower expenses using the 20x rule.</p>
+        </a>
+        <a href="/fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Regular FIRE Calculator</h3>
+          <p class="text-xs text-body">Comfortable middle-class retirement with the 25x rule.</p>
+        </a>
+        <a href="/fat-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Fat FIRE Calculator</h3>
+          <p class="text-xs text-body">For those who want a luxury retirement lifestyle.</p>
+        </a>
+        <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+          <p class="text-xs text-body">Find your exact Coast FIRE target.</p>
+        </a>
+        <a href="/learn/barista-fire" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Guide</h3>
+          <p class="text-xs text-body">Deep dive into the Barista FIRE strategy and math.</p>
+        </a>
+        <a href="/learn/fire-strategies" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">All FIRE Strategies</h3>
+          <p class="text-xs text-body">Compare every early retirement approach.</p>
+        </a>
+      </div>
+    </div>
+  </section>
 </PageLayout>

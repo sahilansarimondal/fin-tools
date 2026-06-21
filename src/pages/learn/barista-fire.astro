@@ -2,14 +2,24 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/layout/Header.astro';
 import Footer from '../../components/layout/Footer.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
 ---
 
 <BaseLayout
   title="Barista FIRE — What It Is and How to Calculate It"
   description="Learn what Barista FIRE is, how it differs from traditional FIRE, and how to calculate your Barista FIRE number. A hybrid approach to early retirement with part-time work."
   canonical="https://truefinancetools.com/learn/barista-fire"
+  ogImage="https://truefinancetools.com/og-barista-fire.png"
+  ogImageAlt="Barista FIRE — What It Is, How to Calculate, and Best Jobs"
+  keywords="barista fire, what is barista fire, barista fire meaning, barista fire calculator, barista fire number, barista fire jobs, barista fire retirement, coast fire vs barista fire, semi retirement"
 >
   <Header />
+
+  <StructuredData
+    title="Barista FIRE — What It Is and How to Calculate It"
+    description="Learn what Barista FIRE is, how it differs from traditional FIRE, and how to calculate your Barista FIRE number. A hybrid approach to early retirement with part-time work."
+    url="https://truefinancetools.com/learn/barista-fire"
+  />
 
   <main>
     <section class="border-b border-hairline bg-canvas py-16 sm:py-20">
@@ -144,7 +154,7 @@ import Footer from '../../components/layout/Footer.astro';
             <h2 class="mb-3 text-lg font-semibold text-ink">Calculate Your Barista FIRE Number</h2>
             <p class="mb-4 text-sm text-body">See how much less you need to save with our calculator. Select Barista FIRE and enter your expected part-time income.</p>
             <a
-              href="/fire-calculator?fireType=barista"
+              href="/barista-fire-calculator"
               class="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-medium text-canvas transition-opacity hover:opacity-90"
             >
               Open Calculator
