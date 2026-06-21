@@ -3,225 +3,309 @@ import PageLayout from '../../layouts/PageLayout.astro';
 import FIRECalculatorBase from '../../components/calculator/FIRECalculatorBase.astro';
 import HowItWorks from '../../components/ui/HowItWorks.astro';
 import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const leanFaqItems: FAQItem[] = [
+  {
+    question: 'What is Lean FIRE and how does it work?',
+    answerHtml: '<b>Lean FIRE</b> (Financial Independence, Retire Early) is a minimalist approach to early retirement that requires just <b>20x your annual expenses</b> saved. It is designed for people comfortable living on less — digital nomads, minimalists, or those in low cost-of-living areas.<br /><br />Unlike Regular FIRE (25x) or Fat FIRE (30x), Lean FIRE prioritizes time freedom over lifestyle spending. The trade-off is clear: you can retire years earlier, but you will need to maintain a leaner budget in retirement. The 20x multiplier corresponds to a 5% withdrawal rate, which works because lean retirees typically have lower fixed costs and more flexibility to cut discretionary spending.',
+    answerText: 'Lean FIRE is a minimalist approach that requires 20x your annual expenses saved. It prioritizes time freedom over lifestyle spending, letting you retire years earlier with a leaner budget. The 20x multiplier corresponds to a 5% withdrawal rate.',
+  },
+  {
+    question: 'How is the Lean FIRE number calculated?',
+    answerHtml: 'The Lean FIRE formula is:<br /><br /><b>Lean FIRE Number = Annual Expenses × 20</b><br /><br />This uses a 20x multiplier — more aggressive than the traditional 25x rule — based on a 5% withdrawal rate.<br /><br /><b>Example:</b> If you spend $40,000 per year:<br />• Lean FIRE Number: $40,000 × 20 = <b>$800,000</b><br />• Regular FIRE Number: $40,000 × 25 = <b>$1,000,000</b><br />• Fat FIRE Number: $40,000 × 30 = <b>$1,200,000</b><br />• <b>Savings vs Regular:</b> $200,000 less needed!',
+    answerText: 'Lean FIRE Number = Annual Expenses × 20. Example: $40K expenses × 20 = $800K for Lean FIRE, vs $1M for Regular FIRE (25x) and $1.2M for Fat FIRE (30x). That is $200K less than traditional FIRE.',
+  },
+  {
+    question: 'How much less do I need for Lean FIRE vs Regular FIRE?',
+    answerHtml: 'The difference between Lean FIRE and Regular FIRE is significant. Every $1,000 in annual expenses translates to:<br /><br /><b>Examples on $40,000 annual expenses:</b><br />• Regular FIRE (25x): <b>$1,000,000</b> needed<br />• Lean FIRE (20x): <b>$800,000</b> needed<br />• Difference: <b>$200,000 less</b><br /><br />On $60,000 annual expenses:<br />• Regular FIRE (25x): <b>$1,500,000</b> needed<br />• Lean FIRE (20x): <b>$1,200,000</b> needed<br />• Difference: <b>$300,000 less</b><br /><br />The gap grows with higher expenses. Lean FIRE consistently requires 20% less savings than the traditional approach, potentially shaving 5–10 years off your working career.',
+    answerText: 'Lean FIRE requires 20% less savings than Regular FIRE. On $40K expenses: $800K vs $1M ($200K less). On $60K expenses: $1.2M vs $1.5M ($300K less). This can shave 5–10 years off your working career.',
+  },
+  {
+    question: 'Who should choose Lean FIRE?',
+    answerHtml: 'Lean FIRE is ideal for people who are genuinely comfortable with a minimalist lifestyle. The best candidates include:<br /><br /><ul><li><b>Digital Nomads</b> — Location-independent workers who can live affordably in low-cost countries.</li><li><b>Minimalists</b> — People who find happiness in experiences rather than possessions.</li><li><b>Aggressive Savers</b> — Those with high savings rates (50%+) who want to retire as fast as possible.</li><li><b>Low Cost-of-Living Areas</b> — People living in regions with affordable housing and healthcare.</li></ul><br />Lean FIRE is also a great starting point even if you eventually upgrade to Regular FIRE — it gives you an earlier target while you continue building wealth.',
+    answerText: 'Lean FIRE is ideal for digital nomads, minimalists, aggressive savers (50%+ savings rate), and people in low cost-of-living areas. It is also a great starting point if you plan to eventually upgrade to Regular FIRE.',
+  },
+  {
+    question: 'Is Lean FIRE realistic for most people?',
+    answerHtml: 'Lean FIRE is realistic for people who are comfortable living on <b>$25,000–$50,000 per year</b> (depending on location and family size). It works best in low cost-of-living areas, for couples with shared expenses, or for individuals with no debt.<br /><br />The 20x multiplier provides a reasonable safety margin, and many lean retirees find they spend less in retirement than they did while working — no more commuting costs, work wardrobe expenses, or expensive lunches. However, it requires genuine comfort with frugality and may not suit those with expensive hobbies, large families, or high healthcare needs.',
+    answerText: 'Lean FIRE is realistic for people comfortable living on $25K–$50K/year. It works best in low cost-of-living areas, for couples with shared expenses, or debt-free individuals. The 20x multiplier provides a safety margin, but requires genuine comfort with frugality.',
+  },
+  {
+    question: 'Can I switch from Lean FIRE to Regular FIRE later?',
+    answerHtml: 'Absolutely. Many people use Lean FIRE as their initial target, then adjust upward as their income grows or their lifestyle preferences change.<br /><br /><ol><li><b>Phase 1 — Lean FIRE Target:</b> Save 20x expenses for a minimalist retirement.</li><li><b>Phase 2 — Continue Building:</b> Once you hit Lean FIRE, you can keep working while the portfolio grows.</li><li><b>Phase 3 — Regular FIRE:</b> At 25x expenses, you upgrade to a more comfortable lifestyle or simply enjoy the extra margin.</li></ol><br />The beauty of this lean FIRE calculator is that you can run multiple scenarios — see what your timeline looks like at 20x, 25x, and 30x — and choose the strategy that fits your goals.',
+    answerText: 'Yes. Many people start with Lean FIRE, then continue building to Regular FIRE. Phase 1: save 20x expenses. Phase 2: keep working, portfolio grows. Phase 3: at 25x expenses, upgrade to a more comfortable retirement.',
+  },
+  {
+    question: 'What is the difference between Lean FIRE and Coast FIRE?',
+    answerHtml: 'Lean FIRE and Coast FIRE serve different purposes:<br /><br /><b>Lean FIRE</b> means you have saved 20x expenses and can fully retire on a minimalist budget — no additional income required.<br /><br /><b>Coast FIRE</b> means you have saved enough that compound interest alone will grow your portfolio to your full FIRE number by a target age (typically 65), but you still need to cover current living expenses with work income.<br /><br />You can combine both strategies: reach Coast FIRE first (giving you permission to stop aggressive saving), then continue building toward your Lean FIRE number for true early retirement.',
+    answerText: 'Lean FIRE means you have saved 20x expenses and can fully retire on a minimalist budget. Coast FIRE means compound interest alone will reach your target by 65, but you still need to cover current expenses. You can combine both.',
+  },
+];
 ---
 
 <PageLayout
-  title="Lean FIRE Calculator — Calculate Your Lean FIRE Number & Minimum to Retire Early"
-  description="Free lean FIRE calculator to find your minimum retirement number. Calculate your lean fire number using the 20x rule, compare frugal FIRE strategies, and plan your early retirement with instant results."
+  title="Lean FIRE Calculator — Calculate Your Minimum Retirement Number with the 20x Rule"
+  description="Free lean FIRE calculator to find your minimum retirement number. Calculate your lean fire number using the 20x rule with interactive charts, scenario comparisons, and instant results."
   canonical="https://truefinancetools.com/lean-fire-calculator"
   ogImage="https://truefinancetools.com/og-lean-fire-calculator.png"
   ogImageAlt="Lean FIRE Calculator — Find Your Minimum Retirement Number for Early Retirement"
-  pageType="article"
+  pageType="website"
   keywords="lean fire calculator, lean fire number, minimum to retire early, frugal fire calculator, lean fire strategy, minimalist retirement calculator, fire calculator 20x, lean fire retirement"
 >
-    <StructuredData
-      title="Lean FIRE Calculator"
-      description="Free lean FIRE calculator to find your minimum retirement number using the 20x rule for minimalist early retirement."
-      url="https://truefinancetools.com/lean-fire-calculator"
-    />
+  <StructuredData
+    title="Lean FIRE Calculator"
+    description="Free lean FIRE calculator to find your minimum retirement number using the 20x rule for minimalist early retirement."
+    url="https://truefinancetools.com/lean-fire-calculator"
+    toolName="Lean FIRE Calculator"
+    toolDescription="Calculate the minimum savings needed using the 20x rule for a minimalist early retirement under Lean FIRE."
+  />
 
-    <FIRECalculatorBase fireType="lean" />
+  <FIRECalculatorBase fireType="lean" />
 
-    <HowItWorks title="How the Lean FIRE Calculator Works">
-      <div class="text-center">
-        <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
-          <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-            <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Expenses</h3>
-        <p class="text-sm text-body">Input your current annual spending to calculate the minimum you need to retire.</p>
+  <HowItWorks title="How the Lean FIRE Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
       </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Expenses</h3>
+      <p class="text-sm text-body">Input your current annual spending to calculate the minimum you need to retire.</p>
+    </div>
 
-      <div class="text-center">
-        <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
-          <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-            <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-          </svg>
-        </div>
-        <h3 class="mb-2 text-sm font-semibold text-ink">2. Apply the 20x Rule</h3>
-        <p class="text-sm text-body">Multiply your expenses by 20 — the conservative multiplier for lean retirement.</p>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
       </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Apply the 20x Rule</h3>
+      <p class="text-sm text-body">Multiply your expenses by 20 — the conservative multiplier for lean retirement.</p>
+    </div>
 
-      <div class="text-center">
-        <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
-          <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-            <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <h3 class="mb-2 text-sm font-semibold text-ink">3. Plan Your Timeline</h3>
-        <p class="text-sm text-body">See exactly when you can retire with interactive charts and scenario comparisons.</p>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
       </div>
-    </HowItWorks>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Plan Your Timeline</h3>
+      <p class="text-sm text-body">See exactly when you can retire with interactive charts and scenario comparisons.</p>
+    </div>
+  </HowItWorks>
 
-    <section class="border-t border-hairline bg-canvas-soft py-16">
-      <div class="mx-auto max-w-4xl px-4 sm:px-6">
-        <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
-          What is Lean FIRE?
-        </h2>
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is Lean FIRE?
+      </h2>
 
-        <div class="prose prose-gray max-w-none text-body">
-          <p class="mb-4">
-            <strong>Lean FIRE</strong> is a minimalist approach to early retirement that requires just <strong>20x your annual expenses</strong> saved. It is designed for people who are comfortable living on less — digital nomads, minimalists, or those in low cost-of-living areas. If you have ever wondered what the <strong>minimum to retire early</strong> actually is, this lean fire calculator gives you a concrete answer in seconds.
-          </p>
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Lean FIRE</strong> is a minimalist approach to early retirement that requires just <strong>20x your annual expenses</strong> saved. It is designed for people who are comfortable living on less — digital nomads, minimalists, or those in low cost-of-living areas. If you have ever wondered what the <strong>minimum to retire early</strong> actually is, this lean fire calculator gives you a concrete answer in seconds.
+        </p>
 
-          <p class="mb-4">
-            Unlike Regular FIRE (25x) or Fat FIRE (30x), Lean FIRE prioritizes time freedom over lifestyle spending. The trade-off is clear: you can retire years earlier, but you will need to maintain a leaner budget in retirement. This <strong>frugal fire calculator</strong> uses the 20x multiplier — a more conservative approach than the traditional 25x rule — to ensure your portfolio sustains you for 30+ years even with lower annual withdrawals.
-          </p>
+        <p class="mb-4">
+          Unlike Regular FIRE (25x) or Fat FIRE (30x), Lean FIRE prioritizes time freedom over lifestyle spending. The trade-off is clear: you can retire years earlier, but you will need to maintain a leaner budget in retirement. This <strong>frugal fire calculator</strong> uses the 20x multiplier — a more conservative approach than the traditional 25x rule — to ensure your portfolio sustains you for 30+ years even with lower annual withdrawals.
+        </p>
 
-          <h3 class="mb-3 text-lg font-semibold text-ink">The Lean FIRE Formula</h3>
-          <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
-            Lean FIRE Number = Annual Expenses × 20
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Lean FIRE Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Lean FIRE Number = Annual Expenses × 20
+        </div>
+
+        <p class="mb-4 mt-4">
+          For example, if you spend $40,000 per year, your lean fire number is $800,000. That is $200,000 less than Regular FIRE ($1,000,000) for the same expenses. The 20x multiplier corresponds to a 5% withdrawal rate, which works because lean retirees typically have lower fixed costs, more flexibility to cut discretionary spending, and often generate side income during early retirement years.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Lean FIRE vs Regular FIRE vs Fat FIRE</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Metric</th>
+                <th class="p-3 font-medium text-ink">Regular FIRE</th>
+                <th class="p-3 font-medium text-ink">Lean FIRE</th>
+                <th class="p-3 font-medium text-ink">Fat FIRE</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Annual expenses</td>
+                <td class="p-3 text-ink">$40,000</td>
+                <td class="p-3 text-ink">$40,000</td>
+                <td class="p-3 text-ink">$40,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Multiplier</td>
+                <td class="p-3 text-ink">25x</td>
+                <td class="p-3 text-ink">20x</td>
+                <td class="p-3 text-ink">30x</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Withdrawal rate</td>
+                <td class="p-3 text-ink">4%</td>
+                <td class="p-3 text-ink">5%</td>
+                <td class="p-3 text-ink">3.33%</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">FIRE number needed</td>
+                <td class="p-3 text-ink">$1,000,000</td>
+                <td class="p-3 font-semibold text-success-deep">$800,000</td>
+                <td class="p-3 text-ink">$1,200,000</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">Savings vs Regular</td>
+                <td class="p-3 text-ink">—</td>
+                <td class="p-3 font-semibold text-success-deep">−$200,000</td>
+                <td class="p-3 font-semibold text-error">+$200,000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="mb-4 mt-4">
+          Understanding where Lean FIRE sits in the spectrum of early retirement strategies helps you choose the right path. A <strong>lean fire calculator</strong> uses 20x your annual expenses as the target, while a regular FIRE calculator uses 25x and a fat FIRE calculator uses 30x. The difference is significant: on $50,000 of annual spending, Lean FIRE requires $1,000,000, Regular FIRE requires $1,250,000, and Fat FIRE requires $1,500,000. That $500,000 gap between Lean and Fat FIRE could represent a decade of additional work — which is exactly why so many people choose the lean path.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Who Should Choose Lean FIRE?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Digital Nomads</h4>
+            <p class="text-sm text-body">Location-independent workers who can live affordably in low-cost countries while traveling the world. Your lean fire number may be even lower than you think.</p>
           </div>
-
-          <p class="mb-4">
-            For example, if you spend $40,000 per year, your lean fire number is $800,000. That is $200,000 less than Regular FIRE ($1,000,000) for the same expenses. The 20x multiplier corresponds to a 5% withdrawal rate, which works because lean retirees typically have lower fixed costs, more flexibility to cut discretionary spending, and often generate side income during early retirement years.
-          </p>
-
-          <h3 class="mb-3 text-lg font-semibold text-ink">Who Should Use a Lean FIRE Calculator?</h3>
-          <p class="mb-4">
-            This <strong>lean fire calculator</strong> is built for anyone pursuing a minimalist path to financial independence. Whether you are a digital nomad earning $30,000 a year abroad, a minimalist couple living on one income, or a high-savings-rate professional who wants to reach FIRE as fast as possible, this tool shows you the exact minimum number you need. Unlike generic retirement calculators, it applies the specific 20x multiplier that lean FIRE requires, giving you a realistic and actionable target.
-          </p>
-
-          <div class="grid gap-4 sm:grid-cols-2">
-            <div class="rounded-lg border border-hairline bg-canvas p-4">
-              <h4 class="mb-2 text-sm font-semibold text-ink">Digital Nomads</h4>
-              <p class="text-sm text-body">Location-independent workers who can live affordably in low-cost countries while traveling the world. Your lean fire number may be even lower than you think.</p>
-            </div>
-            <div class="rounded-lg border border-hairline bg-canvas p-4">
-              <h4 class="mb-2 text-sm font-semibold text-ink">Minimalists</h4>
-              <p class="text-sm text-body">People who find happiness in experiences rather than possessions and naturally spend less. Lean FIRE aligns perfectly with a values-driven lifestyle.</p>
-            </div>
-            <div class="rounded-lg border border-hairline bg-canvas p-4">
-              <h4 class="mb-2 text-sm font-semibold text-ink">Aggressive Savers</h4>
-              <p class="text-sm text-body">Those with high savings rates (50%+) who want to retire as quickly as possible and are willing to make lifestyle trade-offs for years of freedom.</p>
-            </div>
-            <div class="rounded-lg border border-hairline bg-canvas p-4">
-              <h4 class="mb-2 text-sm font-semibold text-ink">Low Cost-of-Living Areas</h4>
-              <p class="text-sm text-body">People living in areas with affordable housing, healthcare, and daily expenses. A lower cost of living means a lower lean fire number.</p>
-            </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Minimalists</h4>
+            <p class="text-sm text-body">People who find happiness in experiences rather than possessions and naturally spend less. Lean FIRE aligns perfectly with a values-driven lifestyle.</p>
           </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Aggressive Savers</h4>
+            <p class="text-sm text-body">Those with high savings rates (50%+) who want to retire as quickly as possible and are willing to make lifestyle trade-offs for years of freedom.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Low Cost-of-Living Areas</h4>
+            <p class="text-sm text-body">People living in areas with affordable housing, healthcare, and daily expenses. A lower cost of living means a lower lean fire number.</p>
+          </div>
+        </div>
 
-          <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Lean FIRE vs Regular FIRE vs Fat FIRE</h3>
-          <p class="mb-4">
-            Understanding where Lean FIRE sits in the spectrum of early retirement strategies helps you choose the right path. A <strong>lean fire calculator</strong> uses 20x your annual expenses as the target, while a regular FIRE calculator uses 25x and a fat FIRE calculator uses 30x. The difference is significant: on $50,000 of annual spending, Lean FIRE requires $1,000,000, Regular FIRE requires $1,250,000, and Fat FIRE requires $1,500,000. That $500,000 gap between Lean and Fat FIRE could represent a decade of additional work — which is exactly why so many people choose the lean path.
-          </p>
-
-          <p class="mb-4">
-            The key advantage of Lean FIRE is speed. By requiring a smaller portfolio, you reach financial independence years or even decades sooner. The trade-off is a tighter budget in retirement, but many lean retirees find that their actual spending stays well below their FIRE number once they no longer have work-related costs like commuting, professional wardrobes, or expensive lunches. Our calculator helps you model these scenarios with precision.
-          </p>
-
-          <h3 class="mb-3 text-lg font-semibold text-ink">Tips to Reach Your Lean FIRE Number Faster</h3>
-          <p class="mb-4">
-            Finding your lean fire number is step one. Reaching it requires strategy. Here are proven approaches to accelerate your timeline: increase your savings rate by reducing your biggest expenses (housing, transportation, food), pursue side income or freelance work during your accumulation phase, invest in low-cost index funds for reliable long-term returns, consider geographic arbitrage by relocating to a lower cost-of-living area, and automate your contributions so you never miss a month of investing. Every percentage point increase in your savings rate shaves months off your path to lean FIRE.
-          </p>
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Lean FIRE Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Lowest FIRE target — retire years sooner</li>
+              <li>• Requires 20% less savings than Regular FIRE</li>
+              <li>• More flexibility to cut spending in downturns</li>
+              <li>• Geographic arbitrage amplifies your purchasing power</li>
+              <li>• Lower stress from a smaller portfolio to manage</li>
+              <li>• Easy to adjust upward as circumstances change</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Tighter retirement budget with less room for surprises</li>
+              <li>• Less margin for error during market downturns</li>
+              <li>• Limited budget for healthcare and travel</li>
+              <li>• May be difficult to sustain with a family</li>
+              <li>• Less room for lifestyle inflation or hobbies</li>
+              <li>• Requires genuine comfort with a minimalist lifestyle</li>
+            </ul>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="border-t border-hairline bg-canvas py-16">
-      <div class="mx-auto max-w-4xl px-4 sm:px-6">
-        <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
-          Frequently Asked Questions
-        </h2>
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Lean FIRE
+      </h2>
 
-        <div class="space-y-4">
+      <div class="space-y-4">
+        {leanFaqItems.map((item) => (
           <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
-            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">What is the minimum amount needed to retire early?</summary>
-            <p class="mt-3 text-sm text-body">The minimum to retire early depends on your annual expenses and the FIRE strategy you choose. For Lean FIRE, the minimum is <strong>20x your annual expenses</strong>. For example, if you spend $30,000/year, your minimum retirement number is $600,000. This lean fire calculator computes your exact number based on your personal spending and savings.</p>
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
           </details>
-
-          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
-            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">What is a lean fire number?</summary>
-            <p class="mt-3 text-sm text-body">Your lean fire number is the total portfolio value you need to retire early with a minimalist lifestyle. It is calculated by multiplying your annual expenses by 20 (the Lean FIRE multiplier). This is lower than the traditional 25x rule because lean retirees typically have more flexibility to reduce spending and may supplement with part-time income.</p>
-          </details>
-
-          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
-            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">How does a frugal FIRE calculator work?</summary>
-            <p class="mt-3 text-sm text-body">A frugal FIRE calculator (like this lean fire calculator) uses a conservative multiplier — typically 20x annual expenses — to determine your retirement target. It projects your portfolio growth based on your current savings, expected returns, and contribution timeline. The result shows you the exact year you can retire with a frugal, minimalist budget.</p>
-          </details>
-
-          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
-            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">Is Lean FIRE realistic?</summary>
-            <p class="mt-3 text-sm text-body">Lean FIRE is realistic for people who are comfortable living on $25,000–$50,000 per year (depending on location and family size). It works best in low cost-of-living areas, for couples with shared expenses, or for individuals with no debt. The 20x multiplier provides a safety margin, and many lean retirees find they spend less in retirement than they did while working.</p>
-          </details>
-
-          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
-            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">Can I switch from Lean FIRE to Regular FIRE later?</summary>
-            <p class="mt-3 text-sm text-body">Absolutely. Many people start with Lean FIRE as their initial target, then adjust upward as their income grows or their lifestyle preferences change. The beauty of this lean fire calculator is that you can run multiple scenarios — see what your timeline looks like at 20x, 25x, and 30x — and choose the strategy that fits your goals.</p>
-          </details>
-
-          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
-            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">What is the difference between Lean FIRE and Coast FIRE?</summary>
-            <p class="mt-3 text-sm text-body">Lean FIRE means you have saved enough (20x expenses) to cover all retirement costs without any additional income. Coast FIRE means you have saved enough that compound interest alone will grow your portfolio to your retirement number by age 65 — but you still need to cover current living expenses. You can combine both strategies: reach Coast FIRE first, then continue building toward your Lean FIRE number.</p>
-          </details>
-        </div>
+        ))}
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="border-t border-hairline bg-canvas py-16">
-      <div class="mx-auto max-w-4xl px-4 sm:px-6">
-        <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
-          Complete Guide to Lean FIRE Retirement Planning
-        </h2>
-        
-        <div class="prose prose-gray max-w-none text-body">
-          <p class="mb-4">
-            Our <strong>lean fire calculator</strong> is the most comprehensive free tool for planning a minimalist early retirement. It uses the proven 20x multiplier to calculate your exact lean fire number — the minimum portfolio value needed to sustain your lifestyle indefinitely. Enter your age, annual expenses, current savings, and expected contribution rate to see your personalized retirement timeline with instant results.
-          </p>
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Lean FIRE Retirement Planning
+      </h2>
 
-          <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose Lean FIRE?</h3>
-          
-          <p class="mb-4">
-            Lean FIRE is the fastest path to financial independence. While the standard FIRE movement recommends saving 25x your annual expenses, lean FIRE uses a more aggressive 20x target. This means you can reach retirement readiness with $200,000 less on a $40,000 annual budget — or retire 5–10 years earlier with the same savings rate. For people who value time over stuff, this lean fire calculator is the essential first step.
-          </p>
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>lean fire calculator</strong> is the most comprehensive free tool for planning a minimalist early retirement. It uses the proven 20x multiplier to calculate your exact lean fire number — the minimum portfolio value needed to sustain your lifestyle indefinitely. Enter your age, annual expenses, current savings, and expected contribution rate to see your personalized retirement timeline with instant results.
+        </p>
 
-          <p class="mb-4">
-            The approach works because lean retirees typically have lower fixed costs, more flexibility to reduce discretionary spending during market downturns, and often generate small amounts of side income during early retirement. These factors make the 20x multiplier sustainable over a 30+ year retirement horizon, even without the traditional 25x safety margin.
-          </p>
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose Lean FIRE?</h3>
 
-          <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Lean FIRE Calculator</h3>
-          
-          <p class="mb-4">
-            Unlike other <strong>frugal fire calculator</strong> tools that require signups or hide features behind paywalls, our calculator is 100% free and private. All calculations happen in your browser — no data is stored on our servers. Adjust your savings rate, expected returns, or retirement age and see results update instantly with beautiful interactive charts that visualize your path to lean FIRE.
-          </p>
+        <p class="mb-4">
+          Lean FIRE is the fastest path to financial independence. While the standard FIRE movement recommends saving 25x your annual expenses, lean FIRE uses a more aggressive 20x target. This means you can reach retirement readiness with $200,000 less on a $40,000 annual budget — or retire 5–10 years earlier with the same savings rate. For people who value time over stuff, this lean fire calculator is the essential first step.
+        </p>
 
-          <p class="mb-4">
-            Export your personalized lean FIRE plan as a PDF to review offline, share your projection with your partner via a unique link, or compare multiple scenarios side by side. Whether you are testing the impact of moving to a lower cost-of-living area, calculating how extra savings each month accelerates your timeline, or comparing lean FIRE to regular FIRE, this calculator gives you the data you need to make confident decisions about your financial future.
-          </p>
+        <p class="mb-4">
+          The approach works because lean retirees typically have lower fixed costs, more flexibility to reduce discretionary spending during market downturns, and often generate small amounts of side income during early retirement. These factors make the 20x multiplier sustainable over a 30+ year retirement horizon, even without the traditional 25x safety margin.
+        </p>
 
-          <p class="mb-4">
-            Whether you are just discovering the FIRE movement or are a seasoned optimizer fine-tuning your withdrawal strategy, our lean fire calculator provides the accurate, actionable projections you need. Start planning your minimalist path to financial independence today — no signup required, completely free, and results in seconds.
-          </p>
-        </div>
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Lean FIRE Calculator</h3>
+
+        <p class="mb-4">
+          Unlike other <strong>frugal fire calculator</strong> tools that require signups or hide features behind paywalls, our calculator is 100% free and private. All calculations happen in your browser — no data is stored on our servers. Adjust your savings rate, expected returns, or retirement age and see results update instantly with beautiful interactive charts that visualize your path to lean FIRE.
+        </p>
+
+        <p class="mb-4">
+          Export your personalized lean FIRE plan as a PDF to review offline, share your projection with your partner via a unique link, or compare multiple scenarios side by side. Whether you are testing the impact of moving to a lower cost-of-living area, calculating how extra savings each month accelerates your timeline, or comparing lean FIRE to regular FIRE, this calculator gives you the data you need to make confident decisions about your financial future.
+        </p>
+
+        <p class="mb-4">
+          Whether you are just discovering the FIRE movement or are a seasoned optimizer fine-tuning your withdrawal strategy, our lean fire calculator provides the accurate, actionable projections you need. Start planning your minimalist path to financial independence today — no signup required, completely free, and results in seconds.
+        </p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="border-t border-hairline bg-canvas-soft py-16">
-      <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
-        <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
-          Explore Other FIRE Strategies
-        </h2>
-        <p class="mb-8 text-body">Compare different approaches to find the right one for your lifestyle.</p>
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other FIRE Strategies
+      </h2>
+      <p class="mb-8 text-body">Compare different approaches to find the right one for your lifestyle.</p>
 
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <a href="/fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
-            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Regular FIRE Calculator</h3>
-            <p class="text-xs text-body">Comfortable middle-class retirement with the 25x rule.</p>
-          </a>
-          <a href="/fat-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
-            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Fat FIRE Calculator</h3>
-            <p class="text-xs text-body">For those who want a luxury retirement lifestyle.</p>
-          </a>
-          <a href="/barista-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
-            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Calculator</h3>
-            <p class="text-xs text-body">Work part-time, let investments cover the rest.</p>
-          </a>
-          <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
-            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
-            <p class="text-xs text-body">Find your exact Coast FIRE target.</p>
-          </a>
-        </div>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Regular FIRE Calculator</h3>
+          <p class="text-xs text-body">Comfortable middle-class retirement with the 25x rule.</p>
+        </a>
+        <a href="/fat-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Fat FIRE Calculator</h3>
+          <p class="text-xs text-body">For those who want a luxury retirement lifestyle.</p>
+        </a>
+        <a href="/barista-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Calculator</h3>
+          <p class="text-xs text-body">Work part-time, let investments cover the rest.</p>
+        </a>
+        <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+          <p class="text-xs text-body">Find your exact Coast FIRE target.</p>
+        </a>
+        <a href="/learn/barista-fire" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Guide</h3>
+          <p class="text-xs text-body">Deep dive into the Barista FIRE strategy and math.</p>
+        </a>
+        <a href="/learn/fire-strategies" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">All FIRE Strategies</h3>
+          <p class="text-xs text-body">Compare every early retirement approach.</p>
+        </a>
       </div>
-    </section>
+    </div>
+  </section>
 </PageLayout>

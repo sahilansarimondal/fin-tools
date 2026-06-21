@@ -2,6 +2,7 @@
 import PageLayout from '../../layouts/PageLayout.astro';
 import FIRECalculatorBase from '../../components/calculator/FIRECalculatorBase.astro';
 import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
 import { faqItems } from '../../utils/faq-data';
 ---
 
@@ -14,6 +15,26 @@ import { faqItems } from '../../utils/faq-data';
   pageType="article"
   keywords="FIRE calculator, barista fire calculator, fire calculator retirement, fat fire calculator, best fire calculator, lean fire calculator, retirement calculator"
 >
+    <StructuredData
+      title="FIRE Calculator — Best Free Retirement Calculator for Financial Independence"
+      description="Use our free FIRE calculator to plan early retirement. Calculate your FIRE number with coast, barista, lean, and fat fire strategies. Interactive charts and instant results."
+      url="https://truefinancetools.com/fire-calculator/"
+      toolName="FIRE Calculator"
+      toolDescription="Calculate your FIRE number with coast FIRE, barista FIRE, lean FIRE, and fat FIRE strategies to plan your financial independence and early retirement."
+    />
+
+    <script is:inline>
+      (function() {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('fireType') === 'barista') {
+          var link = document.createElement('link');
+          link.rel = 'canonical';
+          link.href = 'https://truefinancetools.com/barista-fire-calculator';
+          document.head.appendChild(link);
+        }
+      })();
+    </script>
+
     <FIRECalculatorBase />
 
     <HowItWorks title="How the FIRE Calculator Works">

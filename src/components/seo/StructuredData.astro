@@ -1,14 +1,18 @@
 ---
-import { faqItems } from '../../utils/faq-data';
+import { faqItems, type FAQItem } from '../../utils/faq-data';
 
 export interface Props {
   title: string;
   description: string;
   url: string;
   type?: string;
+  toolName?: string;
+  toolDescription?: string;
+  faqItems?: FAQItem[];
 }
 
-const { title, description, url, type = 'website' } = Astro.props;
+const { title, description, url, type = 'website', toolName, toolDescription, faqItems: pageFaqItems } = Astro.props;
+const items = pageFaqItems || faqItems;
 
 const structuredData = {
   '@context': 'https://schema.org',
@@ -40,10 +44,26 @@ const structuredData = {
   operatingSystem: 'Web Browser',
 };
 
+const softwareSchema = toolName
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: toolName,
+      operatingSystem: 'All',
+      applicationCategory: 'CalculatorApplication',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+      },
+      description: toolDescription || description,
+    }
+  : null;
+
 const faqData = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: faqItems.map((item) => ({
+  mainEntity: items.map((item) => ({
     '@type': 'Question',
     name: item.question,
     acceptedAnswer: {
@@ -55,4 +75,5 @@ const faqData = {
 ---
 
 <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+{softwareSchema && <script type="application/ld+json" set:html={JSON.stringify(softwareSchema)} />}
 <script type="application/ld+json" set:html={JSON.stringify(faqData)} />
