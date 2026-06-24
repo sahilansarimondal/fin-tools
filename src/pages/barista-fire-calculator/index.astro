@@ -41,7 +41,7 @@ const baristaFaqItems: FAQItem[] = [
 
 <PageLayout
   title="Barista FIRE Calculator — Plan Your Semi-Retirement with Part-Time Work"
-  description="Free Barista FIRE calculator for hybrid early retirement. Calculate your Barista FIRE number based on part-time income and expenses. See how much less you need than traditional FIRE with instant, interactive charts."
+  description="Free Barista FIRE calculator for semi-retirement. Calculate your FIRE number with part-time income and see your savings. Instant results, no signup."
   canonical="https://truefinancetools.com/barista-fire-calculator"
   ogImage="https://truefinancetools.com/og-barista-fire-calculator.png"
   ogImageAlt="Barista FIRE Calculator - Semi-Retirement with Part-Time Work"
@@ -55,7 +55,23 @@ const baristaFaqItems: FAQItem[] = [
     toolName="Barista FIRE Calculator"
     toolDescription="Calculate how much investments you need before transitioning to part-time Barista FIRE work to cover living expenses."
     faqItems={baristaFaqItems}
+    features={[
+      'Part-time income planning',
+      'Barista FIRE vs Traditional FIRE comparison',
+      'Interactive projection charts',
+      'PDF export and shareable links',
+      'Scenario comparison across FIRE types'
+    ]}
   />
+
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Barista FIRE Calculator
+      </h1>
+      <p class="text-lg text-body">Plan your semi-retirement with part-time work. See how much less you need than traditional FIRE.</p>
+    </div>
+  </section>
 
   <FIRECalculatorBase fireType="barista" />
 
