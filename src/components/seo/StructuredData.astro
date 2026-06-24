@@ -9,10 +9,21 @@ export interface Props {
   toolName?: string;
   toolDescription?: string;
   faqItems?: FAQItem[];
+  features?: string[];
 }
 
-const { title, description, url, type = 'website', toolName, toolDescription, faqItems: pageFaqItems } = Astro.props;
+const { title, description, url, type = 'website', toolName, toolDescription, faqItems: pageFaqItems, features } = Astro.props;
 const items = pageFaqItems || faqItems;
+
+const defaultFeatures = [
+  'FIRE Calculator',
+  'Coast FIRE Number Calculator',
+  'Barista FIRE Calculator',
+  'Lean FIRE Calculator',
+  'Fat FIRE Calculator',
+  'Retirement Planning',
+  'Financial Independence Calculator'
+];
 
 const structuredData = {
   '@context': 'https://schema.org',
@@ -31,15 +42,7 @@ const structuredData = {
     name: 'True Finance Tools',
     url: 'https://truefinancetools.com',
   },
-  featureList: [
-    'FIRE Calculator',
-    'Coast FIRE Number Calculator',
-    'Barista FIRE Calculator',
-    'Lean FIRE Calculator',
-    'Fat FIRE Calculator',
-    'Retirement Planning',
-    'Financial Independence Calculator'
-  ],
+  featureList: features || defaultFeatures,
   applicationSubCategory: 'Retirement Calculator',
   operatingSystem: 'Web Browser',
 };

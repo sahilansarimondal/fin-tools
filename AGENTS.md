@@ -146,7 +146,7 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 3. Add nav link in `Header.astro`
 4. Add footer link in `Footer.astro`
 5. Add to `StructuredData.astro` if needed
-6. Follow existing patterns for layout and styling
+6. Follow the [Calculator Page Template](#calculator-page-template-based-on-barista-fire-page) and run through the [Page Creation Checklist](#page-creation-checklist) before merging
 
 ### Adding Dark Mode to New Components
 
@@ -210,6 +210,8 @@ Do NOT over-abstract. The following do NOT need components:
 
 When working on any file, if you encounter an existing DRY violation (e.g., an inline button that should use `Button.astro`, or duplicate data that should be in a constants file), fix it as part of your change — but only if the fix is low-risk and doesn't scope-creep the task.
 
+When creating a new tool page, first verify it follows the [Calculator Page Template](#calculator-page-template-based-on-barista-fire-page) and its [Page Creation Checklist](#page-creation-checklist).
+
 ### Calculator Page Template (based on barista fire page)
 
 Every standalone calculator page follows this exact section order and structure:
@@ -223,16 +225,15 @@ import type { FAQItem } from '../../utils/faq-data';
 // + import your calculator component
 ---
 
-// 1. Page-specific FAQ items defined inline
+// 1. Page-specific FAQ items defined inline (6-8 questions)
 const toolFaqItems: FAQItem[] = [
   { question: '...', answerHtml: '...', answerText: '...' },
-  // 6-8 questions covering: what it is, formula, vs alternatives, best use cases
 ];
 ---
 
 // 2. PageLayout with SEO props
 <PageLayout
-  title="{Tool Name} Calculator — {Value Prop}"  // e.g. "Barista FIRE Calculator — Plan Your Semi-Retirement with Part-Time Work"
+  title="{Tool Name} Calculator — {Value Prop}"
   description="Free {tool name} calculator for {use case}. {Primary action} based on {inputs}. {Secondary benefit}."
   canonical="https://truefinancetools.com/{tool-name}"
   ogImage="https://truefinancetools.com/og-{tool-name}.png"
@@ -242,79 +243,262 @@ const toolFaqItems: FAQItem[] = [
 >
 
   // 3. StructuredData (WebApplication + FAQPage schema)
+  //    Include `features` array listing 4-6 tool capabilities
   <StructuredData
     title="{Tool Name} Calculator"
     description="Free {tool name} calculator for {use case}."
     url="https://truefinancetools.com/{tool-name}"
+    features={[
+      '{Feature 1}',
+      '{Feature 2}',
+      '{Feature 3}',
+      '{Feature 4}',
+    ]}
   />
 
-  // 4. Calculator component
-  <YourCalculatorComponent {props} />
+  // 4. Hero section — centered h1 + subtitle
+  //    bg-canvas, border-b, py-12 sm:py-16
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        {Tool Name} Calculator
+      </h1>
+      <p class="text-lg text-body">{One-line value proposition}</p>
+    </div>
+  </section>
 
-  // 5. How It Works — 3 steps in <HowItWorks>
+  // 5. Calculator component
+  <YourCalculatorComponent />
+
+  // 6. How It Works — 3 steps in <HowItWorks>
   <HowItWorks title="How the {Tool Name} Calculator Works">
-    <div class="text-center">...step 1...</div>
-    <div class="text-center">...step 2...</div>
-    <div class="text-center">...step 3...</div>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        {/* SVG icon */}
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. {Step title}</h3>
+      <p class="text-sm text-body">{Step description}</p>
+    </div>
+    <div class="text-center">{same structure for step 2}</div>
+    <div class="text-center">{same structure for step 3}</div>
   </HowItWorks>
 
-  // 6. "What is {Tool}?" section (bg-canvas-soft)
-  //    - Definition paragraph
-  //    - Formula / explanation
-  //    - Comparison table (vs alternatives or vs traditional approach)
-  //    - "Who Should Choose" grid (2x2 cards)
-  //    - "Pros and Cons" grid (2 columns: advantages / trade-offs)
+  // 7. "What is {Tool}?" section (bg-canvas-soft)
+  //    Internal order: definition → formula → comparison table → Who Should Choose → Pros/Cons
   <section class="border-t border-hairline bg-canvas-soft py-16">
     <div class="mx-auto max-w-4xl px-4 sm:px-6">
-      <h2>What is {Tool Name}?</h2>
-      // ... content with prose prose-gray max-w-none text-body
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink">What is {Tool Name}?</h2>
+      <div class="prose prose-gray max-w-none text-body">
+        // a. Definition paragraph with bolded term
+        <p><strong>{Tool}</strong> is...{definition}...</p>
+
+        // b. Formula block (bg-canvas-soft-2, font-mono)
+        <h3 class="mb-3 text-lg font-semibold text-ink">The {Tool Name} Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">{Formula expression}</div>
+
+        // c. Comparison table (border-hairline, bg-canvas-soft-2 header)
+        <h3 class="mb-3 text-lg font-semibold text-ink">{Tool} vs {Alternative}</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead><tr class="border-b border-hairline bg-canvas-soft-2"><th>...</th></tr></thead>
+            <tbody class="font-mono text-xs tabular-nums"><tr>...</tr></tbody>
+          </table>
+        </div>
+
+        // d. "Who Should Choose" 2x2 grid (border-hairline cards)
+        <h3 class="mb-3 text-lg font-semibold text-ink">Who Should Choose {Tool}?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">{Persona}</h4>
+            <p class="text-sm text-body">{Description}</p>
+          </div>
+          {...3 more cards}
+        </div>
+
+        // e. Pros and Cons grid (success/error borders)
+        <h3 class="mb-3 text-lg font-semibold text-ink">{Tool} Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• {Advantage 1}</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• {Trade-off 1}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  // 7. FAQ section (bg-canvas)
+  // 8. FAQ section (bg-canvas)
   <section class="border-t border-hairline bg-canvas py-16">
-    <h2>Frequently Asked Questions About {Tool Name}</h2>
-    <div class="space-y-4">
-      {toolFaqItems.map((item) => (
-        <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
-          <summary>{item.question}</summary>
-          <p set:html={item.answerHtml} />
-        </details>
-      ))}
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink">Frequently Asked Questions About {Tool Name}</h2>
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
     </div>
   </section>
 
-  // 8. "Complete Guide" section (bg-canvas)
-  //    - Longer-form content, 3-4 paragraphs
-  //    - "Why Choose {Tool}" subheading
-  //    - "Key Features of This {Tool Name} Calculator" subheading
+  // 9. "Complete Guide" section (bg-canvas)
+  //    "Why Choose {Tool}" + "Key Features" subheadings
   <section class="border-t border-hairline bg-canvas py-16">
-    <h2>Complete Guide to {Tool Name} Planning</h2>
-    // ... content with prose prose-gray max-w-none text-body
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink">Complete Guide to {Tool Name} Planning</h2>
+      <div class="prose prose-gray max-w-none text-body">
+        <p>Our <strong>{tool name} calculator</strong> is...{intro}...</p>
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose {Tool}?</h3>
+        <p>...{2-3 paragraphs}...</p>
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This {Tool Name} Calculator</h3>
+        <p>...{1-2 paragraphs}...</p>
+      </div>
+    </div>
   </section>
 
-  // 9. "Explore Other {Category}" cross-links section (bg-canvas-soft)
+  // 10. "Explore Other {Category}" cross-links section (bg-canvas-soft)
   <section class="border-t border-hairline bg-canvas-soft py-16">
-    <h2>Explore Other {Category}</h2>
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <a href="/other-tool" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
-        <h3>{Tool Name}</h3>
-        <p>{description}</p>
-      </a>
-      // ...
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink">Explore Other {Category}</h2>
+      <p class="mb-8 text-body">{Category description}</p>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/other-tool" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">{Tool Name}</h3>
+          <p class="text-xs text-body">{Short description}</p>
+        </a>
+        {...5 more links, one with border-2 border-ink for highlighted guide link}
+      </div>
     </div>
   </section>
 </PageLayout>
 ```
 
-**SEO rules for each section:**
+**SEO rules:**
 - **Title:** Format `"{Tool Name} Calculator — {Compelling Value Proposition}"`
 - **Description:** 140-160 chars, include primary keyword in first 60 chars, end with a benefit
 - **Keywords:** Include primary + 6-10 supporting keyword phrases, comma separated, max ~200 chars
-- **OG image URL:** `https://truefinancetools.com/og-{tool-name}.png` (match the actual filename)
-- **`pageType`:** Always `"website"` (not `"article"`) for tool/calculator pages
-- **`pageType`:** For learn/guide pages, use `"article"`
-- **FAQ items:** 6-8 questions covering what it is, formula, vs alternatives, use cases, edge cases
+- **OG image URL:** `https://truefinancetools.com/og-{tool-name}.png`
+- **`pageType`:** Always `"website"` for tool/calculator pages, `"article"` for learn/guide pages
+
+**FAQ item fields:**
+- `question` (string): Full question ending with `?`
+- `answerHtml` (string): Rich HTML with `<b>`, `<br />`, `<ul>`, `<li>` tags
+- `answerText` (string): Plain-text fallback (no HTML), shorter summary
+- **Count:** 6-8 questions covering what it is, formula, vs alternatives, use cases, edge cases
+
+**StructuredData `features` array:**
+Include a `features` prop with 4-6 tool capabilities:
+```astro
+features={[
+  'Part-time income planning',
+  'Interactive projection charts',
+  'PDF export and shareable links',
+  'Scenario comparison across FIRE types'
+]}
+```
+
+**Background alternation rule:**
+Sections must alternate backgrounds: `bg-canvas-soft` → `bg-canvas` → `bg-canvas-soft` → `bg-canvas` ... Each section gets `border-t border-hairline` for subtle dividers.
+
+**Page Creation Checklist**
+When creating a new tool page, verify every item:
+
+- [ ] Imports: PageLayout, HowItWorks, StructuredData, FAQItem type, calculator component
+- [ ] FAQ items: 6-8 inline questions with `question`, `answerHtml`, `answerText`
+- [ ] PageLayout: title, description, canonical, ogImage, ogImageAlt, pageType="website", keywords
+- [ ] StructuredData: title, description, url, `features` array, `faqItems={toolFaqItems}`
+- [ ] Hero section: bg-canvas border-b, centered h1 + subtitle
+- [ ] Calculator component: rendered after hero
+- [ ] HowItWorks: 3 steps with icon + title + description
+- [ ] "What is {Tool}?": formula block, comparison table, Who Should Choose 2×2, Pros/Cons grid
+- [ ] FAQ section: mapped from toolFaqItems via `details`/`summary`
+- [ ] Complete Guide: "Why Choose {Tool}" + "Key Features" subheadings
+- [ ] Explore Other: 6 cross-links in 3-column grid, highlight one with `border-2 border-ink`
+- [ ] Backgrounds alternate: soft → canvas → soft → canvas → soft ...
+
+### Learn/Guide Page Template
+
+Learn/guide pages (at `/learn/`) use BaseLayout for long-form content:
+
+```astro
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/layout/Header.astro';
+import Footer from '../../components/layout/Footer.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+---
+
+<BaseLayout
+  title="{Page Title} — {SEO Value Prop}"
+  description="..."
+  canonical="https://truefinancetools.com/learn/{page-slug}"
+  ogImage="https://truefinancetools.com/og-{page-slug}.png"
+  ogImageAlt="..."
+  keywords="..."
+>
+  <Header />
+
+  <StructuredData
+    title="{Page Title}"
+    description="..."
+    url="https://truefinancetools.com/learn/{page-slug}"
+  />
+
+  <main>
+    // Hero with "Learn" label + h1 + subtitle
+    <section class="border-b border-hairline bg-canvas py-16 sm:py-20">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6">
+        <p class="mb-4 font-mono text-xs uppercase tracking-wider text-mute">Learn</p>
+        <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">{Title}</h1>
+        <p class="text-lg text-body">{Subtitle}</p>
+      </div>
+    </section>
+
+    // Article with prose content
+    <article class="bg-canvas py-12 sm:py-16">
+      <div class="mx-auto max-w-3xl px-4 sm:px-6">
+        <div class="prose prose-sm max-w-none space-y-8 text-body">
+          <section><h2>What is...</h2><p>...</p></section>
+          <section><h2>How it Works</h2>
+            <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">{formula}</div>
+          </section>
+          <section><h2>Why Choose...</h2>
+            <div class="grid gap-4 sm:grid-cols-2">{cards}</div>
+          </section>
+          <section><h2>Comparison</h2>
+            <div class="overflow-x-auto"><table>...</table></div>
+          </section>
+          <section><h2>Things to Consider</h2>
+            <div class="space-y-4">{detail cards}</div>
+          </section>
+          // CTA linking to calculator
+          <section class="rounded-lg bg-canvas-soft-2 p-6">
+            <h2>Calculate Your {Tool} Number</h2>
+            <p>...</p>
+            <a href="/{tool}-calculator" class="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-medium text-canvas transition-opacity hover:opacity-90">
+              Open Calculator
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </a>
+          </section>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>
+```
 
 ### Known existing components (always check these first)
 

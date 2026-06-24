@@ -1,206 +1,335 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
 import FIRECalculatorBase from '../../components/calculator/FIRECalculatorBase.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const fatFaqItems: FAQItem[] = [
+  {
+    question: 'What is Fat FIRE and how does it work?',
+    answerHtml: '<b>Fat FIRE</b> (Financial Independence, Retire Early) is the most comfortable approach to early retirement, requiring <b>30x your annual expenses</b> saved. It is designed for high earners who want to maintain—not downgrade—their lifestyle in retirement.<br /><br />Unlike Lean FIRE (20x) or Regular FIRE (25x), Fat FIRE ensures your portfolio can sustain a higher spending level indefinitely. The 30x multiplier corresponds to a ~3.33% withdrawal rate, providing a generous safety margin against inflation, market downturns, and unexpected expenses.',
+    answerText: 'Fat FIRE is the most comfortable early retirement approach, requiring 30x your annual expenses saved. With a ~3.33% withdrawal rate, it provides a generous safety margin for high earners who want to maintain their lifestyle in retirement.',
+  },
+  {
+    question: 'How is the Fat FIRE number calculated?',
+    answerHtml: 'The Fat FIRE formula is:<br /><br /><b>Fat FIRE Number = Annual Expenses × 30</b><br /><br />This uses a 30x multiplier—the most conservative among FIRE strategies—based on a ~3.33% withdrawal rate.<br /><br /><b>Example:</b> If you spend $80,000 per year:<br />• Fat FIRE Number: $80,000 × 30 = <b>$2,400,000</b><br />• Regular FIRE Number: $80,000 × 25 = <b>$2,000,000</b><br />• Lean FIRE Number: $80,000 × 20 = <b>$1,600,000</b><br />• <b>Extra vs Regular:</b> $400,000 more for the luxury cushion',
+    answerText: 'Fat FIRE Number = Annual Expenses × 30. Example: $80K expenses × 30 = $2.4M for Fat FIRE, vs $2M for Regular FIRE (25x) and $1.6M for Lean FIRE (20x). The 30x multiplier provides the largest safety margin.',
+  },
+  {
+    question: 'How much more do I need for Fat FIRE vs Regular FIRE?',
+    answerHtml: 'The difference between Fat FIRE and Regular FIRE is significant but provides a substantial safety margin:<br /><br /><b>Examples on common expense levels:</b><br />• $50,000/year: Regular = $1,250,000 / Fat FIRE = <b>$1,500,000</b> (+$250K)<br />• $80,000/year: Regular = $2,000,000 / Fat FIRE = <b>$2,400,000</b> (+$400K)<br />• $120,000/year: Regular = $3,000,000 / Fat FIRE = <b>$3,600,000</b> (+$600K)<br />• $150,000/year: Regular = $3,750,000 / Fat FIRE = <b>$4,500,000</b> (+$750K)<br /><br />The extra 5x multiplier means Fat FIRE requires 20% more savings than Regular FIRE, but provides a 25% larger withdrawal buffer.',
+    answerText: 'Fat FIRE requires 20% more savings than Regular FIRE. On $80K expenses: $2.4M vs $2M ($400K more). On $120K expenses: $3.6M vs $3M ($600K more). The extra provides a 25% larger withdrawal buffer.',
+  },
+  {
+    question: 'Who should choose Fat FIRE?',
+    answerHtml: 'Fat FIRE is ideal for people who want to maintain their pre-retirement lifestyle without compromise. The best candidates include:<br /><br /><ul><li><b>High Earners ($150K+)</b> — Professionals who have built a lifestyle around their income and want it to continue in retirement.</li><li><b>Families</b> — Parents who need to cover children\'s education, family healthcare, and multi-person travel.</li><li><b>Healthcare-Conscious</b> — Those who want premium health insurance without relying on ACA subsidies.</li><li><b>Luxury Travelers</b> — People who plan to travel extensively, dine well, and enjoy experiences that require a larger budget.</li></ul>',
+    answerText: 'Fat FIRE is ideal for high earners ($150K+), families with children, those who want premium healthcare, and people who plan extensive travel or have expensive hobbies.',
+  },
+  {
+    question: 'What is the difference between Fat FIRE and Lean FIRE?',
+    answerHtml: 'Fat FIRE and Lean FIRE sit at opposite ends of the FIRE spectrum:<br /><br /><b>Fat FIRE</b> uses a 30x multiplier (~3.33% withdrawal rate) and is designed for people who want to maintain a comfortable, even luxurious, lifestyle in retirement. On $80,000 of annual spending, Fat FIRE requires $2,400,000.<br /><br /><b>Lean FIRE</b> uses a 20x multiplier (5% withdrawal rate) and is designed for minimalists comfortable living on less. On $80,000 of annual spending, Lean FIRE requires just $1,600,000—$800,000 less than Fat FIRE.<br /><br />The choice comes down to values: retire sooner with less, or work longer for more comfort. Many people target Lean or Regular FIRE first, then continue building toward Fat FIRE while enjoying their semi-retirement.',
+    answerText: 'Fat FIRE (30x, ~3.33% withdrawal) is for luxury lifestyles. Lean FIRE (20x, 5% withdrawal) is for minimalists. On $80K expenses: Fat FIRE needs $2.4M, Lean FIRE needs $1.6M. The $800K gap represents comfort vs speed.',
+  },
+  {
+    question: 'Can I switch from Regular FIRE to Fat FIRE?',
+    answerHtml: 'Absolutely. Many people use Regular FIRE as an intermediate milestone while continuing toward Fat FIRE:<br /><br /><ol><li><b>Phase 1 — Lean FIRE:</b> Save 20x expenses for the fastest possible financial independence.</li><li><b>Phase 2 — Regular FIRE:</b> At 25x expenses, you have the standard safety margin. Many choose to stop here.</li><li><b>Phase 3 — Fat FIRE:</b> At 30x expenses, you have a luxury-level portfolio with maximum security.</li></ol><br />The beauty of this fat FIRE calculator is that you can run all three scenarios. See your timeline at 20x, 25x, and 30x, and decide which target aligns with your goals. Each incremental 5x multiplier adds roughly 3-5 years of saving—but also adds substantial financial freedom.',
+    answerText: 'Yes. Many progress from Lean FIRE (20x) → Regular FIRE (25x) → Fat FIRE (30x). Each incremental 5x multiplier adds roughly 3-5 years of saving but provides substantially more financial cushion and lifestyle flexibility.',
+  },
+  {
+    question: 'What lifestyle can I expect with Fat FIRE?',
+    answerHtml: 'Fat FIRE supports a premium retirement lifestyle. Here is what a typical Fat FIRE budget looks like on $100,000/year of spending:<br /><br /><ul><li><b>Housing:</b> $30,000–$40,000 — Mortgage-free with room for property taxes, insurance, and maintenance on a nice home.</li><li><b>Healthcare:</b> $12,000–$18,000 — Premium health insurance, dental, vision, and out-of-pocket maximums covered.</li><li><b>Travel:</b> $15,000–$25,000 — Multiple international trips per year, business class occasionally, nice hotels.</li><li><b>Food & Dining:</b> $10,000–$15,000 — Regular restaurant meals, premium groceries, wine and entertaining.</li><li><b>Hobbies & Entertainment:</b> $10,000–$15,000 — Golf memberships, boat expenses, concert tickets, classes.</li><li><b>Miscellaneous:</b> $10,000–$15,000 — Gifts, clothing, automotive, home improvements.</li></ul>',
+    answerText: 'Fat FIRE supports a premium lifestyle: mortgage-free housing, premium healthcare, multiple international trips, regular dining out, and generous hobby/entertainment budget. A $100K/year spending plan is typical.',
+  },
+  {
+    question: 'Is Fat FIRE realistic for most people?',
+    answerHtml: 'Fat FIRE is the most difficult FIRE target to reach and is typically realistic only for <b>high earners ($150K+)</b> or those who start saving very early in their careers. The key challenges include:<br /><br /><ul><li><b>Higher savings target:</b> 30x expenses requires a portfolio 50% larger than Lean FIRE.</li><li><b>Longer timeline:</b> Fat FIRE typically adds 5–10 years of work compared to Regular FIRE.</li><li><b>Lifestyle inflation risk:</b> As your income grows, your expenses often grow too, raising the target.</li></ul><br />However, many people find a middle ground: target Regular FIRE (25x) for a comfortable standard retirement, and consider anything above that as a bonus that accelerates your timeline or adds margin. Our calculator lets you compare all three targets side by side.',
+    answerText: 'Fat FIRE is the most challenging FIRE target, typically realistic only for high earners ($150K+) or early savers. Most people target Regular FIRE (25x) and treat the extra as a bonus. Use the calculator to compare all three scenarios.',
+  },
+];
 ---
 
 <PageLayout
-  title="Fat FIRE Calculator — Plan Your Luxury Early Retirement"
-  description="Free Fat FIRE calculator for high earners who want to maintain their lifestyle in early retirement. Calculate your FIRE number using the 30x multiplier. Interactive charts and instant results."
+  title="Fat FIRE Calculator — Plan Your Luxury Early Retirement with the 30x Rule"
+  description="Free Fat FIRE calculator for luxury early retirement. Calculate your fat fire number using the 30x rule with interactive charts, scenario comparisons, and instant results."
   canonical="https://truefinancetools.com/fat-fire-calculator"
   ogImage="https://truefinancetools.com/og-fat-fire-calculator.png"
-  ogImageAlt="Fat FIRE Calculator - Plan Your Luxury Early Retirement"
-  pageType="article"
-  keywords="fat fire calculator, fat fire number, luxury retirement, high income retirement, fire calculator 30x, fat fire strategy"
+  ogImageAlt="Fat FIRE Calculator — Plan Your Luxury Early Retirement with the 30x Rule"
+  pageType="website"
+  keywords="fat fire calculator, fat fire number, luxury retirement, high income retirement, fire calculator 30x, fat fire strategy, early retirement for high earners, luxury fire calculator"
 >
-    <FIRECalculatorBase fireType="fat" />
+  <StructuredData
+    title="Fat FIRE Calculator"
+    description="Free Fat FIRE calculator for luxury early retirement. Calculate your FIRE number using the 30x rule for high earners who want to maintain their lifestyle."
+    url="https://truefinancetools.com/fat-fire-calculator"
+    toolName="Fat FIRE Calculator"
+    toolDescription="Calculate the savings needed using the 30x rule for a luxury early retirement under Fat FIRE."
+    faqItems={fatFaqItems}
+    features={[
+      'Luxury retirement planning with 30x rule',
+      'Compare Fat FIRE vs Lean vs Regular side by side',
+      'Interactive projection charts',
+      'PDF export and shareable links',
+      'Scenario comparison across all FIRE types'
+    ]}
+  />
 
-    <section class="border-t border-hairline bg-canvas-soft py-16">
-      <div class="mx-auto max-w-4xl px-4 sm:px-6">
-        <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
-          What is Fat FIRE?
-        </h2>
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Fat FIRE Calculator
+      </h1>
+      <p class="text-lg text-body">Calculate your luxury early retirement target. Maintain your lifestyle with the 30x rule.</p>
+    </div>
+  </section>
 
-        <div class="prose prose-gray max-w-none text-body">
-          <p class="mb-4">
-            <strong>Fat FIRE</strong> is for high earners who want to maintain their current lifestyle in retirement. It requires <strong>30x your annual expenses</strong> saved — the most conservative multiplier among all FIRE strategies.
-          </p>
+  <FIRECalculatorBase fireType="fat" />
 
-          <p class="mb-4">
-            Unlike Lean FIRE or Regular FIRE, Fat FIRE doesn't require lifestyle sacrifices. If you earn $200,000+ per year and want to keep spending at that level in retirement, Fat FIRE gives you the financial cushion to do so.
-          </p>
+  <HowItWorks title="How the Fat FIRE Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Details</h3>
+      <p class="text-sm text-body">Input your age, income, savings, and expenses to see where you stand.</p>
+    </div>
 
-          <h3 class="mb-3 text-lg font-semibold text-ink">The Fat FIRE Formula</h3>
-          <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
-            Fat FIRE Number = Annual Expenses × 30
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Apply the 30x Rule</h3>
+      <p class="text-sm text-body">The conservative 30x multiplier ensures your lifestyle never has to change.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See Your Luxury Target</h3>
+      <p class="text-sm text-body">Compare Fat FIRE against Lean, Regular, and Coast FIRE with interactive charts.</p>
+    </div>
+  </HowItWorks>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is Fat FIRE?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Fat FIRE</strong> is the most comfortable approach to early retirement, requiring <strong>30x your annual expenses</strong> saved. It is designed for high earners who want to maintain—not downgrade—their lifestyle in retirement. If you earn $150,000+ per year and want your retirement to feel the same as your working years, this fat fire calculator gives you a concrete, achievable target.
+        </p>
+
+        <p class="mb-4">
+          Unlike Lean FIRE (20x) or Regular FIRE (25x), Fat FIRE prioritizes lifestyle preservation over speed of retirement. The trade-off is clear: you will need more savings and a longer working career, but you will never have to compromise on travel, healthcare, dining, or hobbies. This <strong>luxury retirement calculator</strong> uses the 30x multiplier—the most conservative in the FIRE movement—to ensure your portfolio can sustain your spending through any market conditions.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Fat FIRE Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Fat FIRE Number = Annual Expenses × 30
+        </div>
+
+        <p class="mb-4 mt-4">
+          For example, if you spend $80,000 per year, your fat fire number is $2,400,000. That is $400,000 more than Regular FIRE ($2,000,000) for the same expenses—but it provides a substantially larger safety margin. The 30x multiplier corresponds to a ~3.33% withdrawal rate, which means your portfolio has significantly more buffer against inflation, market crashes, and unexpected healthcare costs.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Fat FIRE vs Regular FIRE vs Lean FIRE</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Metric</th>
+                <th class="p-3 font-medium text-ink">Lean FIRE</th>
+                <th class="p-3 font-medium text-ink">Regular FIRE</th>
+                <th class="p-3 font-medium text-ink">Fat FIRE</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Multiplier</td>
+                <td class="p-3 text-ink">20x</td>
+                <td class="p-3 text-ink">25x</td>
+                <td class="p-3 text-ink">30x</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Withdrawal rate</td>
+                <td class="p-3 text-ink">5%</td>
+                <td class="p-3 text-ink">4%</td>
+                <td class="p-3 text-ink">3.33%</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Target on $80K expenses</td>
+                <td class="p-3 text-ink">$1,600,000</td>
+                <td class="p-3 text-ink">$2,000,000</td>
+                <td class="p-3 font-semibold text-success-deep">$2,400,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Target on $120K expenses</td>
+                <td class="p-3 text-ink">$2,400,000</td>
+                <td class="p-3 text-ink">$3,000,000</td>
+                <td class="p-3 font-semibold text-success-deep">$3,600,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Lifestyle</td>
+                <td class="p-3 text-ink">Minimalist</td>
+                <td class="p-3 text-ink">Comfortable</td>
+                <td class="p-3 text-ink">Luxury</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">Safety margin</td>
+                <td class="p-3 text-ink">Moderate</td>
+                <td class="p-3 text-ink">Strong</td>
+                <td class="p-3 font-semibold text-success-deep">Maximum</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose Fat FIRE?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">High Earners</h4>
+            <p class="text-sm text-body">Professionals earning $150K+ who want to maintain their current lifestyle without compromise or downsizing in retirement.</p>
           </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Families</h4>
+            <p class="text-sm text-body">Parents who need to cover children's education, family healthcare, and multi-person travel without budget constraints.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Healthcare Focus</h4>
+            <p class="text-sm text-body">Those who want premium health insurance and medical care without relying on ACA subsidies or Medicaid.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Luxury Seekers</h4>
+            <p class="text-sm text-body">People who plan to travel extensively, enjoy fine dining, maintain hobbies, and want financial freedom without lifestyle changes.</p>
+          </div>
+        </div>
 
-          <p class="mb-4">
-            For example, if you spend $80,000 per year, your Fat FIRE number is $2,400,000. That's $400,000 more than Regular FIRE ($2,000,000) for the same expenses — but it provides a larger safety margin.
-          </p>
-
-          <h3 class="mb-3 text-lg font-semibold text-ink">Who Should Choose Fat FIRE?</h3>
-          <div class="grid gap-4 sm:grid-cols-2">
-            <div class="rounded-lg border border-hairline bg-canvas p-4">
-              <h4 class="mb-2 text-sm font-semibold text-ink">High Earners</h4>
-              <p class="text-sm text-body">Professionals earning $150K+ who want to maintain their lifestyle without compromise.</p>
-            </div>
-            <div class="rounded-lg border border-hairline bg-canvas p-4">
-              <h4 class="mb-2 text-sm font-semibold text-ink">Families</h4>
-              <p class="text-sm text-body">Parents who need to cover children's education, healthcare, and family travel.</p>
-            </div>
-            <div class="rounded-lg border border-hairline bg-canvas p-4">
-              <h4 class="mb-2 text-sm font-semibold text-ink">Healthcare Focus</h4>
-              <p class="text-sm text-body">Those who want premium healthcare coverage and don't want to rely on ACA subsidies.</p>
-            </div>
-            <div class="rounded-lg border border-hairline bg-canvas p-4">
-              <h4 class="mb-2 text-sm font-semibold text-ink">Travel Enthusiasts</h4>
-              <p class="text-sm text-body">People who plan to travel extensively and need a larger budget for experiences.</p>
-            </div>
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Fat FIRE Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Largest safety margin against market downturns</li>
+              <li>• No lifestyle compromise—maintain your spending</li>
+              <li>• Premium healthcare, travel, and dining</li>
+              <li>• More buffer for inflation and healthcare costs</li>
+              <li>• Easier to support family and dependents</li>
+              <li>• 3.33% withdrawal rate is extremely sustainable</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Requires 50% more savings than Lean FIRE</li>
+              <li>• 5–10 more years of work than Lean FIRE</li>
+              <li>• May feel unattainable for average earners</li>
+              <li>• Larger portfolio requires more management</li>
+              <li>• Lifestyle inflation can push targets higher</li>
+              <li>• Delayed freedom compared to other FIRE paths</li>
+            </ul>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="border-t border-hairline bg-canvas-soft py-16">
-      <div class="mx-auto max-w-4xl px-4 sm:px-6">
-        <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
-          Lean FIRE vs Fat FIRE: Which Strategy Is Right for You?
-        </h2>
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Fat FIRE
+      </h2>
 
-        <div class="prose prose-gray max-w-none text-body">
-          <p class="mb-4">
-            The debate between <strong>Lean FIRE vs Fat FIRE</strong> comes down to one question: how much lifestyle flexibility do you want in retirement? Lean FIRE requires just <strong>20x your annual expenses</strong> while Fat FIRE requires <strong>30x</strong> — a difference that can mean years of extra saving versus years of extra freedom. Understanding this gap is the first step to choosing the right FIRE strategy for your goals.
-          </p>
-
-          <h3 class="mb-3 text-lg font-semibold text-ink">Lean FIRE vs Fat FIRE: The Numbers</h3>
-
-          <div class="overflow-x-auto">
-            <table class="mb-6 w-full text-sm">
-              <thead>
-                <tr class="border-b border-hairline">
-                  <th class="pb-3 pr-4 text-left font-semibold text-ink">Factor</th>
-                  <th class="pb-3 pr-4 text-left font-semibold text-ink">Lean FIRE</th>
-                  <th class="pb-3 text-left font-semibold text-ink">Fat FIRE</th>
-                </tr>
-              </thead>
-              <tbody class="text-body">
-                <tr class="border-b border-hairline">
-                  <td class="py-3 pr-4 font-medium text-ink">Multiplier</td>
-                  <td class="py-3 pr-4">20x annual expenses</td>
-                  <td class="py-3">30x annual expenses</td>
-                </tr>
-                <tr class="border-b border-hairline">
-                  <td class="py-3 pr-4 font-medium text-ink">Target on $50K spending</td>
-                  <td class="py-3 pr-4">$1,000,000</td>
-                  <td class="py-3">$1,500,000</td>
-                </tr>
-                <tr class="border-b border-hairline">
-                  <td class="py-3 pr-4 font-medium text-ink">Target on $80K spending</td>
-                  <td class="py-3 pr-4">$1,600,000</td>
-                  <td class="py-3">$2,400,000</td>
-                </tr>
-                <tr class="border-b border-hairline">
-                  <td class="py-3 pr-4 font-medium text-ink">Target on $120K spending</td>
-                  <td class="py-3 pr-4">$2,400,000</td>
-                  <td class="py-3">$3,600,000</td>
-                </tr>
-                <tr class="border-b border-hairline">
-                  <td class="py-3 pr-4 font-medium text-ink">Withdrawal rate</td>
-                  <td class="py-3 pr-4">5%</td>
-                  <td class="py-3">3.33%</td>
-                </tr>
-                <tr class="border-b border-hairline">
-                  <td class="py-3 pr-4 font-medium text-ink">Lifestyle</td>
-                  <td class="py-3 pr-4">Minimalist, frugal</td>
-                  <td class="py-3">Comfortable, luxury</td>
-                </tr>
-                <tr>
-                  <td class="py-3 pr-4 font-medium text-ink">Time to reach</td>
-                  <td class="py-3 pr-4">Faster (5-10 years less)</td>
-                  <td class="py-3">Slower (more saving needed)</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <h3 class="mb-3 text-lg font-semibold text-ink">Key Differences Between Lean FIRE and Fat FIRE</h3>
-
-          <p class="mb-4">
-            <strong>Budget flexibility:</strong> Lean FIRE retirees typically live on $25,000–$50,000 per year, relying on lower fixed costs and the ability to cut discretionary spending during market downturns. Fat FIRE retirees spend $80,000–$200,000+ per year, maintaining their pre-retirement lifestyle without compromise.
-          </p>
-
-          <p class="mb-4">
-            <strong>Safety margin:</strong> Fat FIRE's 30x multiplier provides a larger cushion against unexpected expenses — medical emergencies, market crashes, or inflation spikes. Lean FIRE's 20x multiplier is still sustainable over 30+ years, but requires more flexibility to adjust spending when needed.
-          </p>
-
-          <p class="mb-4">
-            <strong>Time trade-off:</strong> On a $50,000 annual budget, the $500,000 gap between Lean FIRE ($1,000,000) and Fat FIRE ($1,500,000) could represent 5–10 additional years of work. That is the core trade-off: retire sooner with less, or work longer for more comfort.
-          </p>
-
-          <h3 class="mb-3 text-lg font-semibold text-ink">Lean FIRE vs Fat FIRE: Who Should Choose Which?</h3>
-
-          <p class="mb-4">
-            Choose <strong>Lean FIRE</strong> if you are a minimalist, digital nomad, or live in a low cost-of-living area. It is ideal for people who value time freedom over material comfort and are willing to maintain a leaner budget in exchange for retiring years earlier.
-          </p>
-
-          <p class="mb-4">
-            Choose <strong>Fat FIRE</strong> if you are a high earner ($150K+) who wants to maintain your current lifestyle, travel frequently, cover premium healthcare, or support a family. Fat FIRE eliminates the need to downsize your life — you retire when your portfolio is large enough to sustain your spending indefinitely.
-          </p>
-
-          <p class="mb-4">
-            Many people start with Lean FIRE as their initial target and adjust upward as their income grows. The beauty of this fat fire calculator is that you can run multiple scenarios — see what your timeline looks like at 20x, 25x, and 30x — and choose the strategy that fits your goals.
-          </p>
-        </div>
+      <div class="space-y-4">
+        {fatFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="border-t border-hairline bg-canvas py-16">
-      <div class="mx-auto max-w-4xl px-4 sm:px-6">
-        <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
-          Frequently Asked Questions
-        </h2>
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Fat FIRE Retirement Planning
+      </h2>
 
-        <div class="space-y-4">
-          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
-            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">What is the difference between Lean FIRE and Fat FIRE?</summary>
-            <p class="mt-3 text-sm text-body">Lean FIRE requires <strong>20x your annual expenses</strong> saved (using a 5% withdrawal rate), while Fat FIRE requires <strong>30x your annual expenses</strong> (using a 3.33% withdrawal rate). On $50,000 of annual spending, that is a $500,000 difference: $1,000,000 for Lean FIRE vs $1,500,000 for Fat FIRE. Lean FIRE means retiring sooner on a tighter budget; Fat FIRE means working longer for more comfort and a larger safety margin.</p>
-          </details>
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>fat fire calculator</strong> is the most comprehensive free tool for planning a luxury early retirement. It uses the proven 30x multiplier to calculate your exact fat fire number—the portfolio value needed to maintain your current lifestyle indefinitely. Enter your age, annual expenses, current savings, and expected contribution rate to see your personalized retirement timeline with instant results.
+        </p>
 
-          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
-            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">Which is better, Lean FIRE or Fat FIRE?</summary>
-            <p class="mt-3 text-sm text-body">Neither is inherently better — it depends on your values and goals. Lean FIRE is better if you prioritize retiring quickly and are comfortable living on less. Fat FIRE is better if you want to maintain your current lifestyle, need to cover healthcare or family expenses, and prefer a larger financial cushion. Use our fat fire calculator to test both scenarios and see which timeline works for you.</p>
-          </details>
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose Fat FIRE?</h3>
 
-          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
-            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">Can I start with Lean FIRE and switch to Fat FIRE later?</summary>
-            <p class="mt-3 text-sm text-body">Absolutely. Many people start with Lean FIRE as their initial target because it is faster to reach, then adjust upward as their income grows or lifestyle preferences change. Running scenarios at 20x, 25x, and 30x in our calculator helps you see exactly how each target affects your retirement timeline.</p>
-          </details>
+        <p class="mb-4">
+          Fat FIRE is the ultimate expression of financial independence: you retire when you want, on your terms, without compromising your lifestyle. While the standard FIRE movement recommends saving 25x your annual expenses, Fat FIRE uses a more conservative 30x target. This means you need $400,000 more on an $80,000 annual budget—but your portfolio becomes dramatically more resilient to market volatility, inflation spikes, and unexpected life events.
+        </p>
 
-          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
-            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">What is a Fat FIRE number?</summary>
-            <p class="mt-3 text-sm text-body">Your Fat FIRE number is the total portfolio value you need to retire while maintaining your current lifestyle. It is calculated by multiplying your annual expenses by 30. For example, if you spend $80,000 per year, your Fat FIRE number is $2,400,000. This larger portfolio provides a 3.33% withdrawal rate — more conservative than the standard 25x rule — giving you a bigger safety margin against inflation and market volatility.</p>
-          </details>
-        </div>
+        <p class="mb-4">
+          The approach works because Fat FIRE's ~3.33% withdrawal rate is among the most sustainable ever studied. Historical market data shows that a 3-4% withdrawal rate has never failed over a 30-year period, and a 3.33% rate virtually guarantees your portfolio will outlast you. For high earners accustomed to a certain lifestyle, this peace of mind is worth the extra years of saving.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Fat FIRE Calculator</h3>
+
+        <p class="mb-4">
+          Unlike other <strong>luxury retirement tools</strong> that require signups or hide features behind paywalls, our calculator is 100% free and private. All calculations happen in your browser—no data is stored on our servers. Adjust your savings rate, expected returns, or retirement age and see results update instantly with beautiful interactive charts that visualize your path to Fat FIRE.
+        </p>
+
+        <p class="mb-4">
+          Export your personalized Fat FIRE plan as a PDF to review offline, share your projection with your partner via a unique link, or compare multiple scenarios side by side. Whether you are testing the impact of increasing your savings rate, calculating how a promotion accelerates your timeline, or comparing Fat FIRE to Lean and Regular FIRE, this calculator gives you the data you need to make confident decisions about your financial future.
+        </p>
+
+        <p class="mb-4">
+          Whether you are a high earner approaching your number or just beginning to explore the FIRE movement, our fat fire calculator provides the accurate, actionable projections you need. Start planning your luxury path to financial independence today—no signup required, completely free, and results in seconds.
+        </p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="border-t border-hairline bg-canvas py-16">
-      <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
-        <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
-          Explore Other FIRE Strategies
-        </h2>
-        <p class="mb-8 text-body">Compare different approaches to find the right one for your lifestyle.</p>
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other FIRE Strategies
+      </h2>
+      <p class="mb-8 text-body">Compare different approaches to find the right one for your lifestyle.</p>
 
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <a href="/lean-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
-            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Lean FIRE Calculator</h3>
-            <p class="text-xs text-body">Minimalist approach with lower expenses.</p>
-          </a>
-          <a href="/barista-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
-            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Calculator</h3>
-            <p class="text-xs text-body">Work part-time, let investments cover the rest.</p>
-          </a>
-        </div>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/lean-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Lean FIRE Calculator</h3>
+          <p class="text-xs text-body">Minimalist approach with the 20x rule for early retirement.</p>
+        </a>
+        <a href="/fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Regular FIRE Calculator</h3>
+          <p class="text-xs text-body">Comfortable middle-class retirement with the 25x rule.</p>
+        </a>
+        <a href="/barista-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Calculator</h3>
+          <p class="text-xs text-body">Work part-time, let investments cover the rest.</p>
+        </a>
+        <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+          <p class="text-xs text-body">Find your exact Coast FIRE target.</p>
+        </a>
+        <a href="/learn/barista-fire" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Guide</h3>
+          <p class="text-xs text-body">Deep dive into the Barista FIRE strategy and math.</p>
+        </a>
+        <a href="/learn/fire-strategies" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">All FIRE Strategies</h3>
+          <p class="text-xs text-body">Compare every early retirement approach.</p>
+        </a>
       </div>
-    </section>
+    </div>
+  </section>
 </PageLayout>
