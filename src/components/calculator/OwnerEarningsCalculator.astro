@@ -1,0 +1,976 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="owner-earnings-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="mb-8 text-center">
+    <p class="mb-2 font-mono text-xs uppercase tracking-wider text-mute">Free Calculator</p>
+    <h1 class="mb-3 text-3xl font-semibold tracking-tight text-ink sm:text-4xl lg:text-5xl" style="letter-spacing: -0.02em;">
+      Owner Earnings Calculator
+    </h1>
+    <p class="mx-auto max-w-2xl text-body">
+      Calculate Warren Buffett's Owner Earnings and intrinsic value using 10-K financial data.
+      Estimate the true economic earnings power of a business.
+    </p>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- Inputs Column -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <!-- Mode Toggle -->
+        <div class="mb-6">
+          <p class="mb-2 text-sm font-medium text-ink">Maintenance CapEx Method</p>
+          <div class="flex gap-2">
+            <button
+              id="mode-basic"
+              class="mode-btn rounded-md bg-ink px-4 py-2.5 text-xs font-medium text-canvas"
+              data-active="true"
+            >
+              Basic (Direct Input)
+            </button>
+            <button
+              id="mode-advanced"
+              class="mode-btn rounded-md bg-canvas-soft-2 px-4 py-2.5 text-xs font-medium text-body hover:text-ink"
+              data-active="false"
+            >
+              Advanced (Greenwald)
+            </button>
+          </div>
+          <p id="mode-description" class="mt-2 text-xs text-body">
+            Directly enter your estimate of annual maintenance CapEx.
+          </p>
+        </div>
+
+        <form id="oe-form" class="space-y-4">
+          <!-- Company Info -->
+          <Input label="Ticker / Company Name" name="ticker" type="text" value="" placeholder="e.g., AAPL" />
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <Input
+              label="Stock Price"
+              name="stockPrice"
+              type="number"
+              value={50}
+              min={0}
+              step={0.01}
+              suffix="$"
+              hideArrows
+              tooltip="Current share price from the stock market."
+              required
+            />
+            <Input
+              label="Shares Outstanding"
+              name="sharesOutstanding"
+              type="number"
+              value={50000000}
+              min={0}
+              hideArrows
+              tooltip="Total shares outstanding from the 10-K cover page or basic EPS calculation."
+              required
+            />
+          </div>
+
+          <!-- 10-K Financial Inputs -->
+          <div class="border-t border-hairline pt-4">
+            <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-mute">10-K Financial Data</p>
+
+            <Input
+              label="Net Income"
+              name="netIncome"
+              type="number"
+              value={100000000}
+              min={0}
+              suffix="$"
+              hideArrows
+              tooltip="10-K Income Statement: Net income (or net earnings) attributable to common shareholders."
+              required
+            />
+
+            <Input
+              label="Depreciation & Amortization"
+              name="depreciationAmortization"
+              type="number"
+              value={15000000}
+              min={0}
+              suffix="$"
+              hideArrows
+              tooltip="10-K Cash Flow Statement: Depreciation and amortization expense, typically found in the Operating Activities section."
+              required
+            />
+
+            <Input
+              label="Other Non-Cash Charges"
+              name="nonCashCharges"
+              type="number"
+              value={5000000}
+              min={0}
+              suffix="$"
+              hideArrows
+              tooltip="10-K Cash Flow Statement: Stock-based compensation, impairment charges, deferred taxes, and other non-cash items."
+              required
+            />
+
+            <Input
+              label="Changes in Working Capital"
+              name="changeInWorkingCapital"
+              type="number"
+              value={-5000000}
+              suffix="$"
+              hideArrows
+              tooltip="10-K Cash Flow Statement: Changes in accounts receivable, inventory, accounts payable, and other current assets/liabilities. Enter a negative value if working capital increased (a use of cash)."
+              required
+            />
+
+            <Input
+              label="Total CapEx"
+              name="totalCapEx"
+              type="number"
+              value={20000000}
+              min={0}
+              suffix="$"
+              hideArrows
+              tooltip="10-K Cash Flow Statement: Capital expenditures (usually in Investing Activities section). Enter as a positive number (absolute value)."
+              required
+            />
+
+            <div class="grid gap-4 sm:grid-cols-2">
+              <Input
+                label="Cash & Equivalents"
+                name="cashAndEquivalents"
+                type="number"
+                value={30000000}
+                min={0}
+                suffix="$"
+                hideArrows
+                tooltip="10-K Balance Sheet: Cash, cash equivalents, and short-term marketable securities."
+                required
+              />
+              <Input
+                label="Total Debt"
+                name="totalDebt"
+                type="number"
+                value={50000000}
+                min={0}
+                suffix="$"
+                hideArrows
+                tooltip="10-K Balance Sheet: Total debt including short-term borrowings and long-term debt."
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Discount Rate -->
+          <Slider
+            label="Discount Rate"
+            name="discountRate"
+            value={10}
+            min={6}
+            max={15}
+            step={0.5}
+            suffix="%"
+            inputId="discountRate"
+            displayId="discountRateValue"
+            tooltip="Buffett typically uses a 10% discount rate (the 'Ten-Cap' pricing). Higher rates = lower intrinsic value. Warren Buffett uses 10%, while Professor Greenwald suggests 8-12%."
+          />
+
+          <!-- Basic Mode: Direct Maintenance CapEx -->
+          <div id="basic-mode-fields">
+            <Input
+              label="Maintenance CapEx (Direct)"
+              name="maintenanceCapExDirect"
+              type="number"
+              value={10000000}
+              min={0}
+              suffix="$"
+              hideArrows
+              tooltip="Your estimate of the annual capital expenditure required to maintain current operations (excluding growth CapEx). If uncertain, use Total CapEx as a conservative estimate."
+              required
+            />
+          </div>
+
+          <!-- Advanced Mode: Greenwald 5-Year Table -->
+          <div id="greenwald-fields" class="hidden space-y-4">
+            <p class="text-sm font-medium text-ink">
+              5-Year PP&E and Revenue <span class="text-xs font-normal text-mute">(from 10-K)</span>
+            </p>
+            <div class="overflow-x-auto rounded-lg border border-hairline">
+              <table class="w-full text-left text-sm">
+                <thead>
+                  <tr class="border-b border-hairline bg-canvas-soft-2">
+                    <th class="px-3 py-2 text-xs font-medium text-mute">Metric</th>
+                    <th class="px-3 py-2 text-xs font-medium text-mute" id="year-label-0">Y-4</th>
+                    <th class="px-3 py-2 text-xs font-medium text-mute" id="year-label-1">Y-3</th>
+                    <th class="px-3 py-2 text-xs font-medium text-mute" id="year-label-2">Y-2</th>
+                    <th class="px-3 py-2 text-xs font-medium text-mute" id="year-label-3">Y-1</th>
+                    <th class="px-3 py-2 text-xs font-medium text-mute" id="year-label-4">Current</th>
+                  </tr>
+                </thead>
+                <tbody class="font-mono text-xs tabular-nums">
+                  <tr class="border-b border-hairline/50">
+                    <td class="px-3 py-2 text-body">PP&E ($)</td>
+                    <td class="px-3 py-2"><input id="ppe-0" type="number" value={300000000} min={0} class="h-7 w-full rounded border border-hairline bg-canvas px-1.5 text-xs text-ink" /></td>
+                    <td class="px-3 py-2"><input id="ppe-1" type="number" value={320000000} min={0} class="h-7 w-full rounded border border-hairline bg-canvas px-1.5 text-xs text-ink" /></td>
+                    <td class="px-3 py-2"><input id="ppe-2" type="number" value={350000000} min={0} class="h-7 w-full rounded border border-hairline bg-canvas px-1.5 text-xs text-ink" /></td>
+                    <td class="px-3 py-2"><input id="ppe-3" type="number" value={380000000} min={0} class="h-7 w-full rounded border border-hairline bg-canvas px-1.5 text-xs text-ink" /></td>
+                    <td class="px-3 py-2"><input id="ppe-4" type="number" value={400000000} min={0} class="h-7 w-full rounded border border-hairline bg-canvas px-1.5 text-xs text-ink" /></td>
+                  </tr>
+                  <tr>
+                    <td class="px-3 py-2 text-body">Revenue ($)</td>
+                    <td class="px-3 py-2"><input id="revenue-0" type="number" value={600000000} min={0} class="h-7 w-full rounded border border-hairline bg-canvas px-1.5 text-xs text-ink" /></td>
+                    <td class="px-3 py-2"><input id="revenue-1" type="number" value={650000000} min={0} class="h-7 w-full rounded border border-hairline bg-canvas px-1.5 text-xs text-ink" /></td>
+                    <td class="px-3 py-2"><input id="revenue-2" type="number" value={700000000} min={0} class="h-7 w-full rounded border border-hairline bg-canvas px-1.5 text-xs text-ink" /></td>
+                    <td class="px-3 py-2"><input id="revenue-3" type="number" value={750000000} min={0} class="h-7 w-full rounded border border-hairline bg-canvas px-1.5 text-xs text-ink" /></td>
+                    <td class="px-3 py-2"><input id="revenue-4" type="number" value={800000000} min={0} class="h-7 w-full rounded border border-hairline bg-canvas px-1.5 text-xs text-ink" /></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p id="greenwald-status" class="text-xs text-body">
+              The Greenwald method estimates Maintenance CapEx by subtracting Growth CapEx (PP&E-to-Sales × Revenue Growth) from Total CapEx.
+            </p>
+          </div>
+        </form>
+      </Card>
+    </div>
+
+    <!-- Results Column -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Owner Earnings (custom card with badge) -->
+      <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">True Owner Earnings</p>
+            <p id="oe-owner-earnings" class="text-3xl font-semibold tabular-nums text-ink sm:text-4xl">$105,000,000</p>
+          </div>
+          <span id="oe-vs-ni-badge" class="inline-flex shrink-0 items-center rounded-full bg-success/10 px-3 py-1 text-xs font-medium text-success-deep">
+            +$5M (+5%)
+          </span>
+        </div>
+        <p class="mt-1 text-xs text-body">
+          Warren Buffett's Owner Earnings: What the business truly earns after maintaining its competitive position.
+        </p>
+      </div>
+
+      <!-- Results Grid -->
+      <div id="results-summary" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ResultCard label="Maintenance CapEx" valueId="oe-maintenance-capex" value="$10,000,000" valueClass="text-link" description="Basic method" />
+        <ResultCard label="Intrinsic Value" valueId="oe-intrinsic-value" value="$1,050,000,000" description="Owner Earnings ÷ Discount Rate" />
+        <ResultCard label="Intrinsic Value / Share" valueId="oe-iv-per-share" value="$20.60" description="(IV + Cash − Debt) ÷ Shares" />
+        <ResultCard label="Margin of Safety" valueId="oe-margin-of-safety" value="-31.3%" valueClass="text-error" description="Overvalued" />
+        <ResultCard label="Current Stock Price" valueId="oe-stock-price" value="$50.00" description="" />
+        <ResultCard label="GAAP Net Income" valueId="oe-net-income" value="$100,000,000" description="Reported net income" />
+      </div>
+
+      <!-- Greenwald Details (hidden by default) -->
+      <div id="greenwald-details" class="hidden rounded-lg border border-link/20 bg-link/5 p-4 shadow-sm">
+        <h3 class="mb-2 text-xs font-semibold uppercase tracking-wider text-link">Greenwald Method Details</h3>
+        <div class="grid gap-3 sm:grid-cols-3">
+          <div>
+            <p class="text-xs text-mute">Avg PP&E / Sales Ratio</p>
+            <p id="oe-g-ppe-sales" class="font-mono text-sm font-medium text-ink tabular-nums">0.50</p>
+          </div>
+          <div>
+            <p class="text-xs text-mute">Sales Growth (Current Year)</p>
+            <p id="oe-g-sales-growth" class="font-mono text-sm font-medium text-ink tabular-nums">$50,000,000</p>
+          </div>
+          <div>
+            <p class="text-xs text-mute">Growth CapEx</p>
+            <p id="oe-g-growth-capex" class="font-mono text-sm font-medium text-ink tabular-nums">$25,000,000</p>
+          </div>
+        </div>
+        <p id="oe-g-fallback" class="mt-2 hidden text-xs text-warning">
+          ⚠ Used Total CapEx as fallback (Growth CapEx exceeded Total CapEx or negative maintenance CapEx calculated).
+        </p>
+      </div>
+
+      <!-- Chart -->
+      <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
+        <h2 class="mb-4 text-sm font-medium text-ink">Key Metrics Comparison</h2>
+        <div class="relative h-64 sm:h-80">
+          <canvas id="oe-chart" role="img" aria-label="Bar chart comparing Net Income, Owner Earnings, Maintenance CapEx, Intrinsic Value Per Share vs Stock Price"></canvas>
+        </div>
+      </div>
+
+      <!-- Export & Share -->
+      <div class="flex flex-wrap items-center gap-3">
+        <button
+          id="export-pdf"
+          class="inline-flex items-center gap-2 rounded-full border border-hairline bg-canvas px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-canvas-soft-2"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Export PDF
+        </button>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="mr-1 text-sm font-medium text-ink/60">Share</span>
+          <button
+            data-share="x"
+            class="share-btn inline-flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-canvas text-ink transition-colors hover:bg-ink hover:text-canvas"
+            title="Share on X"
+          >
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </button>
+          <button
+            data-share="facebook"
+            class="share-btn inline-flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-canvas text-ink transition-colors hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2]"
+            title="Share on Facebook"
+          >
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </button>
+          <button
+            data-share="linkedin"
+            class="share-btn inline-flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-canvas text-ink transition-colors hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2]"
+            title="Share on LinkedIn"
+          >
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </button>
+          <button
+            data-share="whatsapp"
+            class="share-btn inline-flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-canvas text-ink transition-colors hover:bg-[#25D366] hover:text-white hover:border-[#25D366]"
+            title="Share on WhatsApp"
+          >
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </button>
+          <button
+            data-share="reddit"
+            class="share-btn inline-flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-canvas text-ink transition-colors hover:bg-[#FF4500] hover:text-white hover:border-[#FF4500]"
+            title="Share on Reddit"
+          >
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/></svg>
+          </button>
+          <button
+            id="copy-link"
+            class="share-btn inline-flex h-9 items-center gap-1.5 rounded-full border border-hairline bg-canvas px-3 text-sm font-medium text-ink transition-colors hover:bg-canvas-soft-2"
+            title="Copy link"
+          >
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+            Copy link
+          </button>
+          <button
+            id="native-share"
+            class="share-btn inline-flex h-9 items-center gap-1.5 rounded-full border border-hairline bg-canvas px-3 text-sm font-medium text-ink transition-colors hover:bg-canvas-soft-2"
+            title="More share options"
+            style="display: none;"
+          >
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+            Share
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  #copy-link.copied {
+    border-color: var(--color-green-500, #22c55e);
+    background-color: var(--color-green-50, #f0fdf4);
+    color: var(--color-green-700, #15803d);
+  }
+  :global(html.dark) #copy-link.copied {
+    border-color: var(--color-green-400, #4ade80);
+    background-color: rgb(20 83 45 / 0.3);
+    color: var(--color-green-400, #4ade80);
+  }
+</style>
+
+<script>
+  import { calculateOwnerEarnings, validateGreenwaldInput, getYearLabels } from '../../utils/owner-earnings';
+  import { formatCurrency, formatCurrencyShort } from '../../utils/formatters';
+
+  const calculator = document.getElementById('owner-earnings-calculator');
+  let chart = null;
+
+  function getFormData() {
+    const form = document.getElementById('oe-form');
+    const formData = new FormData(form);
+
+    const isAdvanced = document.getElementById('mode-advanced')?.dataset.active === 'true';
+
+    let maintenanceCapExMethod = 'basic';
+    let maintenanceCapExDirect = undefined;
+    let greenwaldInput = undefined;
+
+    if (isAdvanced) {
+      maintenanceCapExMethod = 'greenwald';
+      const ppe = [];
+      const revenue = [];
+      for (let i = 0; i < 5; i++) {
+        ppe.push(Number(document.getElementById(`ppe-${i}`)?.value) || 0);
+        revenue.push(Number(document.getElementById(`revenue-${i}`)?.value) || 0);
+      }
+      const totalCapEx = Number(formData.get('totalCapEx')) || 0;
+      greenwaldInput = {
+        ppe,
+        revenue,
+        currentYearCapEx: totalCapEx,
+      };
+    } else {
+      maintenanceCapExMethod = 'basic';
+      maintenanceCapExDirect = Number(formData.get('maintenanceCapExDirect')) || 0;
+    }
+
+    return {
+      ticker: formData.get('ticker')?.toString() || '',
+      companyName: formData.get('ticker')?.toString() || '',
+      currentStockPrice: Number(formData.get('stockPrice')) || 0,
+      sharesOutstanding: Number(formData.get('sharesOutstanding')) || 1,
+      netIncome: Number(formData.get('netIncome')) || 0,
+      depreciationAmortization: Number(formData.get('depreciationAmortization')) || 0,
+      nonCashCharges: Number(formData.get('nonCashCharges')) || 0,
+      changeInWorkingCapital: Number(formData.get('changeInWorkingCapital')) || 0,
+      totalCapEx: Number(formData.get('totalCapEx')) || 0,
+      cashAndEquivalents: Number(formData.get('cashAndEquivalents')) || 0,
+      totalDebt: Number(formData.get('totalDebt')) || 0,
+      discountRate: Number(formData.get('discountRate')) || 10,
+      maintenanceCapExMethod,
+      maintenanceCapExDirect,
+      greenwaldInput,
+    };
+  }
+
+  function updateResults() {
+    const input = getFormData();
+    const result = calculateOwnerEarnings(input);
+
+    const isAdvanced = document.getElementById('mode-advanced')?.dataset.active === 'true';
+
+    // Update Owner Earnings
+    document.getElementById('oe-owner-earnings').textContent = formatCurrency(result.ownerEarnings);
+
+    // Update badge: Owner Earnings vs GAAP Net Income
+    const badge = document.getElementById('oe-vs-ni-badge');
+    const diff = result.ownerEarningsVsNetIncome;
+    const diffPct = result.ownerEarningsVsNetIncomePercent;
+    const isPositive = diff >= 0;
+    badge.textContent = `${isPositive ? '+' : ''}${formatCurrencyShort(diff)} (${isPositive ? '+' : ''}${diffPct.toFixed(1)}%) vs GAAP`;
+    badge.className = `inline-flex shrink-0 items-center rounded-full px-3 py-1 text-xs font-medium ${
+      isPositive
+        ? 'bg-success/10 text-success-deep'
+        : 'bg-error/10 text-error'
+    }`;
+
+    // Update Maintenance CapEx
+    document.getElementById('oe-maintenance-capex').textContent = formatCurrency(result.maintenanceCapEx);
+    const capexMethodEl = document.getElementById('oe-maintenance-capex')?.closest('.rounded-lg')?.querySelector('.text-xs.text-mute');
+    const capexDesc = document.querySelector('#results-summary > div:first-child .text-mute');
+    const methodLabel = isAdvanced ? 'Greenwald method' : 'Basic method';
+    const capexDescription = capexMethodEl || document.querySelector('#results-summary > div:nth-child(1) p:last-child');
+    if (capexDescription) capexDescription.textContent = methodLabel;
+
+    // Update ResultCard descriptions
+    const descriptionEls = document.querySelectorAll('#results-summary .rounded-lg .text-xs.text-mute');
+    if (descriptionEls.length >= 6) {
+      // Intrinsic Value description
+      descriptionEls[1].textContent = 'Owner Earnings ÷ Discount Rate';
+      // IV Per Share description
+      descriptionEls[2].textContent = '(IV + Cash − Debt) ÷ Shares';
+    }
+
+    // Update Intrinsic Value
+    document.getElementById('oe-intrinsic-value').textContent = formatCurrency(result.intrinsicValue);
+
+    // Update IV Per Share
+    document.getElementById('oe-iv-per-share').textContent = `$${result.intrinsicValuePerShare.toFixed(2)}`;
+
+    // Update Margin of Safety
+    const mosEl = document.getElementById('oe-margin-of-safety');
+    const mosValue = result.marginOfSafety;
+    mosEl.textContent = `${mosValue >= 0 ? '+' : ''}${mosValue.toFixed(1)}%`;
+
+    // Color the margin of safety card
+    const mosCard = mosEl.closest('.rounded-lg');
+    if (mosCard) {
+      const mosTitle = mosCard.querySelector('.text-xs.font-medium');
+      const mosDesc = mosCard.querySelector('.text-xs.text-mute');
+      if (mosValue > 0) {
+        // Undervalued - green
+        mosEl.className = 'text-2xl font-semibold tabular-nums text-success-deep';
+        if (mosDesc) mosDesc.textContent = 'Undervalued';
+      } else if (mosValue < -20) {
+        // Overvalued - red
+        mosEl.className = 'text-2xl font-semibold tabular-nums text-error';
+        if (mosDesc) mosDesc.textContent = 'Overvalued';
+      } else {
+        // Fairly valued - amber
+        mosEl.className = 'text-2xl font-semibold tabular-nums text-warning';
+        if (mosDesc) mosDesc.textContent = 'Fairly valued';
+      }
+    }
+
+    // Update Stock Price
+    const priceEl = document.getElementById('oe-stock-price');
+    priceEl.textContent = `$${input.currentStockPrice.toFixed(2)}`;
+
+    // Update GAAP Net Income
+    document.getElementById('oe-net-income').textContent = formatCurrency(result.netIncome);
+
+    // Update Greenwald details
+    const greenwaldDetailsEl = document.getElementById('greenwald-details');
+    if (result.greenwaldDetails && isAdvanced) {
+      greenwaldDetailsEl.classList.remove('hidden');
+      document.getElementById('oe-g-ppe-sales').textContent = result.greenwaldDetails.averagePpeToSalesRatio.toFixed(4);
+      document.getElementById('oe-g-sales-growth').textContent = formatCurrency(result.greenwaldDetails.salesGrowth);
+      document.getElementById('oe-g-growth-capex').textContent = formatCurrency(result.greenwaldDetails.growthCapEx);
+      const fallbackEl = document.getElementById('oe-g-fallback');
+      if (result.greenwaldDetails.usedTotalCapExAsFallback) {
+        fallbackEl.classList.remove('hidden');
+      } else {
+        fallbackEl.classList.add('hidden');
+      }
+    } else {
+      greenwaldDetailsEl.classList.add('hidden');
+    }
+
+    updateChart(result);
+  }
+
+  function updateChart(result) {
+    const ctx = document.getElementById('oe-chart');
+    if (!ctx) return;
+
+    // Data for chart: Net Income, Owner Earnings, Maintenance CapEx, IV Per Share, Stock Price
+    // For the bar chart, all values are shown. The per-share values are scaled differently,
+    // so we show them both with clear labels.
+    const labels = ['Net Income', 'Owner Earnings', 'Maintenance CapEx', 'Intrinsic Value / Share', 'Stock Price'];
+
+    // First three use absolute values, last two use per-share values
+    const values = [
+      result.netIncome,
+      result.ownerEarnings,
+      result.maintenanceCapEx,
+      result.intrinsicValuePerShare,
+      0, // Will fill from input
+    ];
+
+    // Get stock price from form
+    const form = document.getElementById('oe-form');
+    const formData = new FormData(form);
+    values[4] = Number(formData.get('stockPrice')) || 0;
+
+    if (chart) {
+      chart.destroy();
+    }
+
+    const isDark = document.documentElement.classList.contains('dark');
+    const gridColor = isDark ? '#262626' : '#ebebeb';
+    const textColor = isDark ? '#737373' : '#888888';
+    const tooltipBg = isDark ? '#ededed' : '#171717';
+    const tooltipText = isDark ? '#171717' : '#ffffff';
+    const linkColor = isDark ? '#3291ff' : '#0070f3';
+    const successColor = isDark ? '#50e3c2' : '#29bc9b';
+    const warningColor = isDark ? '#f5a623' : '#d97706';
+    const errorColor = isDark ? '#ff4444' : '#ee0000';
+
+    chart = new (window).Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Amount ($)',
+            data: values,
+            backgroundColor: [
+              linkColor,
+              successColor,
+              warningColor,
+              errorColor,
+              isDark ? '#ededed' : '#171717',
+            ],
+            borderColor: [
+              linkColor,
+              successColor,
+              warningColor,
+              errorColor,
+              isDark ? '#ededed' : '#171717',
+            ],
+            borderWidth: 1,
+            borderRadius: 4,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: 500,
+            },
+            bodyFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+            },
+            callbacks: {
+              label: function (context) {
+                const value = context.parsed.y;
+                const idx = context.dataIndex;
+                if (idx >= 3) {
+                  return `$${value.toFixed(2)}`;
+                }
+                return formatCurrencyShort(value);
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              maxRotation: 45,
+            },
+            border: {
+              display: false,
+            },
+          },
+          y: {
+            grid: {
+              color: gridColor,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              callback: function (value) {
+                return formatCurrencyShort(value);
+              },
+            },
+            border: {
+              display: false,
+            },
+          },
+        },
+      },
+    });
+  }
+
+  function initModeToggle() {
+    const basicBtn = document.getElementById('mode-basic');
+    const advancedBtn = document.getElementById('mode-advanced');
+    const basicFields = document.getElementById('basic-mode-fields');
+    const greenwaldFields = document.getElementById('greenwald-fields');
+    const modeDescription = document.getElementById('mode-description');
+
+    function setMode(mode) {
+      const isBasic = mode === 'basic';
+
+      // Toggle button styles
+      [basicBtn, advancedBtn].forEach((btn) => {
+        btn.classList.remove('bg-ink', 'text-canvas', 'bg-canvas-soft-2', 'text-body', 'hover:text-ink');
+      });
+
+      if (isBasic) {
+        basicBtn.dataset.active = 'true';
+        basicBtn.classList.add('bg-ink', 'text-canvas');
+        advancedBtn.dataset.active = 'false';
+        advancedBtn.classList.add('bg-canvas-soft-2', 'text-body', 'hover:text-ink');
+        basicFields.classList.remove('hidden');
+        greenwaldFields.classList.add('hidden');
+        modeDescription.textContent = 'Directly enter your estimate of annual maintenance CapEx.';
+      } else {
+        advancedBtn.dataset.active = 'true';
+        advancedBtn.classList.add('bg-ink', 'text-canvas');
+        basicBtn.dataset.active = 'false';
+        basicBtn.classList.add('bg-canvas-soft-2', 'text-body', 'hover:text-ink');
+        basicFields.classList.add('hidden');
+        greenwaldFields.classList.remove('hidden');
+        modeDescription.textContent = 'The Greenwald method derives Maintenance CapEx from 5-year PP&E and Revenue trends.';
+      }
+
+      updateResults();
+    }
+
+    basicBtn?.addEventListener('click', () => setMode('basic'));
+    advancedBtn?.addEventListener('click', () => setMode('advanced'));
+  }
+
+  function initGreenwaldYearLabels() {
+    const years = getYearLabels();
+    for (let i = 0; i < 5; i++) {
+      const label = document.getElementById(`year-label-${i}`);
+      if (label) {
+        label.textContent = years[i];
+      }
+    }
+  }
+
+  function initFormListeners() {
+    const form = document.getElementById('oe-form');
+    form?.addEventListener('input', () => {
+      updateResults();
+    });
+  }
+
+  function inlineAllStyles(original, clone) {
+    const origComputed = getComputedStyle(original);
+    const importantProps = [];
+    for (let i = 0; i < origComputed.length; i++) {
+      importantProps.push(origComputed[i]);
+    }
+    for (const prop of importantProps) {
+      const val = origComputed.getPropertyValue(prop);
+      if (val && val !== 'initial' && val !== '' && !val.startsWith('var(')) {
+        try { clone.style.setProperty(prop, val); } catch {}
+      }
+    }
+    const origChildren = original.children;
+    const cloneChildren = clone.children;
+    for (let i = 0; i < origChildren.length && i < cloneChildren.length; i++) {
+      if (origChildren[i] instanceof HTMLElement && cloneChildren[i] instanceof HTMLElement) {
+        inlineAllStyles(origChildren[i], cloneChildren[i]);
+      }
+    }
+  }
+
+  function initExport() {
+    document.getElementById('export-pdf')?.addEventListener('click', async () => {
+      const btn = document.getElementById('export-pdf');
+      try {
+        btn.disabled = true;
+        btn.textContent = 'Generating PDF...';
+
+        const html2canvas = (await import('html2canvas')).default;
+        const { jsPDF } = await import('jspdf');
+
+        const element = document.getElementById('owner-earnings-calculator');
+        const clone = element.cloneNode(true);
+        inlineAllStyles(element, clone);
+
+        const origCanvas = element.querySelector('canvas');
+        const cloneCanvas = clone.querySelector('canvas');
+        if (origCanvas && cloneCanvas) {
+          const ctx = cloneCanvas.getContext('2d');
+          if (ctx) {
+            cloneCanvas.width = origCanvas.width;
+            cloneCanvas.height = origCanvas.height;
+            ctx.drawImage(origCanvas, 0, 0);
+          }
+        }
+
+        clone.style.position = 'fixed';
+        clone.style.left = '-9999px';
+        clone.style.top = '0';
+        clone.style.width = element.offsetWidth + 'px';
+        document.body.appendChild(clone);
+
+        const renderedCanvas = await html2canvas(clone, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          logging: false,
+        });
+
+        document.body.removeChild(clone);
+
+        const imgData = renderedCanvas.toDataURL('image/png');
+
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (renderedCanvas.height * pdfWidth) / renderedCanvas.width;
+
+        if (pdfHeight > pdf.internal.pageSize.getHeight()) {
+          const totalPages = Math.ceil(pdfHeight / pdf.internal.pageSize.getHeight());
+          for (let i = 0; i < totalPages; i++) {
+            if (i > 0) pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, -(i * pdf.internal.pageSize.getHeight()), pdfWidth, pdfHeight);
+          }
+        } else {
+          pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        }
+
+        pdf.save('owner-earnings-results.pdf');
+      } catch (err) {
+        console.error('PDF export failed:', err);
+        alert('Failed to generate PDF. Please try again.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Export PDF';
+      }
+    });
+  }
+
+  function initShare() {
+    const shareText = 'Check out my Owner Earnings & Intrinsic Value calculations!';
+
+    function getShareUrl() {
+      const input = getFormData();
+      const params = new URLSearchParams({
+        ticker: input.ticker,
+        price: input.currentStockPrice.toString(),
+        shares: input.sharesOutstanding.toString(),
+        ni: input.netIncome.toString(),
+        da: input.depreciationAmortization.toString(),
+        ncc: input.nonCashCharges.toString(),
+        wc: input.changeInWorkingCapital.toString(),
+        capex: input.totalCapEx.toString(),
+        cash: input.cashAndEquivalents.toString(),
+        debt: input.totalDebt.toString(),
+        dr: input.discountRate.toString(),
+        method: input.maintenanceCapExMethod,
+        mce: input.maintenanceCapExDirect?.toString() || '',
+      });
+      return `${window.location.origin}/owner-earnings-calculator?${params.toString()}`;
+    }
+
+    function openShareWindow(url) {
+      window.open(url, '_blank', 'noopener,noreferrer,width=600,height=500');
+    }
+
+    document.querySelectorAll('[data-share]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const url = getShareUrl();
+        const platform = btn.dataset.share;
+        const shareUrls = {
+          x: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`,
+          facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+          linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+          whatsapp: `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' ' + url)}`,
+          reddit: `https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(shareText)}`,
+        };
+        if (platform && shareUrls[platform]) {
+          openShareWindow(shareUrls[platform]);
+        }
+      });
+    });
+
+    document.getElementById('copy-link')?.addEventListener('click', async () => {
+      const url = getShareUrl();
+      try {
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(url);
+        } else {
+          const textarea = document.createElement('textarea');
+          textarea.value = url;
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+        }
+        const btn = document.getElementById('copy-link');
+        if (btn) {
+          btn.classList.add('copied');
+          setTimeout(() => btn.classList.remove('copied'), 2000);
+        }
+      } catch {
+        alert('Failed to copy link.');
+      }
+    });
+
+    const nativeShareBtn = document.getElementById('native-share');
+    if (navigator.share && nativeShareBtn) {
+      nativeShareBtn.style.display = '';
+      nativeShareBtn.addEventListener('click', async () => {
+        const url = getShareUrl();
+        try {
+          await navigator.share({
+            title: 'My Owner Earnings Calculator Results',
+            text: shareText,
+            url,
+          });
+        } catch (err) {
+          if (err instanceof Error && err.name !== 'AbortError') {
+            alert('Failed to share.');
+          }
+        }
+      });
+    }
+  }
+
+  function loadFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('price') && params.has('ni')) {
+      const form = document.getElementById('oe-form');
+
+      const fields = {
+        ticker: 'ticker',
+        stockPrice: 'price',
+        sharesOutstanding: 'shares',
+        netIncome: 'ni',
+        depreciationAmortization: 'da',
+        nonCashCharges: 'ncc',
+        changeInWorkingCapital: 'wc',
+        totalCapEx: 'capex',
+        cashAndEquivalents: 'cash',
+        totalDebt: 'debt',
+      };
+
+      Object.entries(fields).forEach(([fieldId, param]) => {
+        const input = document.getElementById(`input-${fieldId}`);
+        if (input && params.has(param)) {
+          input.value = params.get(param);
+        }
+      });
+
+      if (params.has('dr')) {
+        const drInput = document.getElementById('discountRate');
+        const drDisplay = document.getElementById('discountRateValue');
+        if (drInput) drInput.value = params.get('dr');
+        if (drDisplay) drDisplay.textContent = `${params.get('dr')}%`;
+      }
+
+      if (params.has('method') && params.get('method') === 'advanced') {
+        // Switch to advanced mode
+        const advancedBtn = document.getElementById('mode-advanced');
+        if (advancedBtn) advancedBtn.click();
+      }
+
+      if (params.has('mce') && params.get('mce')) {
+        const mceInput = document.getElementById('input-maintenanceCapExDirect');
+        if (mceInput) mceInput.value = params.get('mce');
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initGreenwaldYearLabels();
+    loadFromUrl();
+    initModeToggle();
+    initFormListeners();
+    initExport();
+    initShare();
+    updateResults();
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      updateResults();
+    });
+
+    const observer = new MutationObserver(() => {
+      updateResults();
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  });
+</script>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
