@@ -1,0 +1,924 @@
+---
+import Card from '../ui/Card.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="coast-fire-shift-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+  <div class="grid gap-8 lg:grid-cols-12">
+    <!-- Left: Form -->
+    <div class="lg:col-span-5">
+      <Card class="lg:sticky lg:top-24">
+        <form id="coast-fire-shift-form" class="space-y-5">
+          <Slider
+            label="Current Age"
+            name="currentAge"
+            value={30}
+            min={18}
+            max={65}
+            step={1}
+            inputId="currentAge"
+            displayId="currentAgeValue"
+            tooltip="Your current age. Used to calculate years until transition and retirement."
+          />
+
+          <Slider
+            label="Transition Age (Shift to Part-Time)"
+            name="transitionAge"
+            value={40}
+            min={20}
+            max={65}
+            step={1}
+            inputId="transitionAge"
+            displayId="transitionAgeValue"
+            tooltip="The age you plan to shift from full-time work to part-time work. Must be greater than your current age and less than your retirement age."
+          />
+
+          <Slider
+            label="Target Retirement Age"
+            name="retirementAge"
+            value={60}
+            min={30}
+            max={80}
+            step={1}
+            inputId="retirementAge"
+            displayId="retirementAgeValue"
+            tooltip="The age at which you plan to stop working entirely and begin drawing down your portfolio."
+          />
+
+          <Slider
+            label="Current Invested Net Worth"
+            name="currentNetWorth"
+            value={100000}
+            min={0}
+            max={5000000}
+            step={10000}
+            inputId="currentNetWorth"
+            displayId="currentNetWorthValue"
+            formatValue={(v) => `$${v.toLocaleString()}`}
+            tooltip="Your total invested assets today. This is the starting balance that will compound until your transition age."
+          />
+
+          <Slider
+            label="Annual Expenses in Full Retirement"
+            name="fullRetirementExpenses"
+            value={40000}
+            min={10000}
+            max={200000}
+            step={1000}
+            inputId="fullRetirementExpenses"
+            displayId="fullRetirementExpensesValue"
+            formatValue={(v) => `$${v.toLocaleString()}`}
+            tooltip="Your estimated annual expenses once you enter full retirement (in today's dollars). Used to calculate your nest egg target."
+          />
+
+          <Slider
+            label="Annual Part-Time Expenses"
+            name="partTimeExpenses"
+            value={40000}
+            min={10000}
+            max={200000}
+            step={1000}
+            inputId="partTimeExpenses"
+            displayId="partTimeExpensesValue"
+            formatValue={(v) => `$${v.toLocaleString()}`}
+            tooltip="Your estimated annual expenses during the part-time phase (in today's dollars). May differ from full retirement expenses."
+          />
+
+          <Slider
+            label="Annual Part-Time Income"
+            name="partTimeIncome"
+            value={40000}
+            min={0}
+            max={100000}
+            step={1000}
+            inputId="partTimeIncome"
+            displayId="partTimeIncomeValue"
+            formatValue={(v) => `$${v.toLocaleString()}`}
+            tooltip="Your projected annual income from part-time work. If this covers your part-time expenses, you have no annual gap."
+          />
+
+          <Slider
+            label="Expected Nominal Return"
+            name="annualReturn"
+            value={8}
+            min={1}
+            max={15}
+            step={0.5}
+            suffix="%"
+            inputId="annualReturn"
+            displayId="annualReturnValue"
+            tooltip="The average annual nominal return of your investment portfolio before inflation. The S&P 500 has historically returned ~10%."
+          />
+
+          <Slider
+            label="Inflation Rate"
+            name="inflationRate"
+            value={3}
+            min={0}
+            max={10}
+            step={0.5}
+            suffix="%"
+            inputId="inflationRate"
+            displayId="inflationRateValue"
+            tooltip="The expected long-term inflation rate. The historical average is ~3%. Used to calculate your real (inflation-adjusted) return."
+          />
+
+          <Slider
+            label="Safe Withdrawal Rate"
+            name="safeWithdrawalRate"
+            value={4}
+            min={1}
+            max={6}
+            step={0.25}
+            suffix="%"
+            inputId="safeWithdrawalRate"
+            displayId="safeWithdrawalRateValue"
+            tooltip="The percentage of your portfolio you plan to withdraw annually in retirement. The '4% rule' is a common starting point."
+          />
+        </form>
+      </Card>
+    </div>
+
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Coast Status Badge -->
+      <div id="coast-status-badge" class="text-center" aria-live="polite">
+        <span class="inline-block rounded-full border px-4 py-1.5 text-sm font-semibold opacity-0 transition-opacity duration-300" id="coast-status-text"></span>
+      </div>
+
+      <!-- Result Cards -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard label="Nest Egg Target" valueId="nest-egg-target" value="$—" description="Total portfolio required at full retirement" />
+        <ResultCard label="Required at Transition" valueId="transition-required" value="$—" description="Portfolio needed at transition to reach nest egg" />
+        <ResultCard label="Projected at Transition" valueId="transition-projected" value="$—" description="Projected portfolio value at transition age" />
+        <ResultCard label="Real Rate of Return" valueId="real-rate" value="—" description="Inflation-adjusted annual return" />
+      </div>
+
+      <!-- Surplus/Deficit & Progress -->
+      <div id="surplus-deficit-card" class="rounded-lg border p-5 shadow-sm" aria-live="polite">
+        <div class="flex items-center gap-3">
+          <div id="surplus-deficit-icon" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path id="surplus-deficit-svg-path" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <p id="surplus-deficit-label" class="text-sm font-semibold"></p>
+            <p id="surplus-deficit-value" class="font-mono text-lg font-semibold tabular-nums"></p>
+            <p id="surplus-deficit-subtext" class="text-xs text-body mt-0.5"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- "One More Year" Cost Index -->
+      <div id="one-more-year-card" class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
+        <div class="mb-2 flex items-center gap-2">
+          <svg class="h-4 w-4 text-ink" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h3 class="text-sm font-semibold text-ink">"One More Year" Cost Index</h3>
+        </div>
+        <p id="one-more-year-text" class="text-sm text-body leading-relaxed">
+          Working one more year at your primary job would change your timeline...
+        </p>
+      </div>
+
+      <!-- Chart -->
+      <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
+        <h2 class="mb-4 text-sm font-medium text-ink">Portfolio Projection</h2>
+        <div class="relative h-72 sm:h-80">
+          <canvas id="coast-shift-chart" role="img" aria-label="Portfolio projection chart showing savings growth across accumulation, part-time, and retirement phases"></canvas>
+        </div>
+      </div>
+
+      <!-- Share & Export -->
+      <div class="flex flex-wrap gap-3">
+        <button
+          id="export-pdf"
+          class="inline-flex items-center gap-2 rounded-full border border-hairline bg-canvas px-4 py-2 text-sm font-medium text-ink transition-colors hover:bg-canvas-soft-2"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          Export PDF
+        </button>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="mr-1 text-sm font-medium text-ink/60">Share</span>
+          <button
+            data-share="x"
+            class="share-btn inline-flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-canvas text-ink transition-colors hover:bg-ink hover:text-canvas"
+            title="Share on X"
+          >
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+          </button>
+          <button
+            data-share="facebook"
+            class="share-btn inline-flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-canvas text-ink transition-colors hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2]"
+            title="Share on Facebook"
+          >
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
+          </button>
+          <button
+            data-share="linkedin"
+            class="share-btn inline-flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-canvas text-ink transition-colors hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2]"
+            title="Share on LinkedIn"
+          >
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
+          </button>
+          <button
+            data-share="whatsapp"
+            class="share-btn inline-flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-canvas text-ink transition-colors hover:bg-[#25D366] hover:text-white hover:border-[#25D366]"
+            title="Share on WhatsApp"
+          >
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+          </button>
+          <button
+            data-share="reddit"
+            class="share-btn inline-flex h-9 w-9 items-center justify-center rounded-full border border-hairline bg-canvas text-ink transition-colors hover:bg-[#FF4500] hover:text-white hover:border-[#FF4500]"
+            title="Share on Reddit"
+          >
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z" /></svg>
+          </button>
+          <button
+            id="copy-link"
+            class="share-btn inline-flex h-9 items-center gap-1.5 rounded-full border border-hairline bg-canvas px-3 text-sm font-medium text-ink transition-colors hover:bg-canvas-soft-2"
+            title="Copy link"
+          >
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+            </svg>
+            Copy link
+          </button>
+          <button
+            id="native-share"
+            class="share-btn inline-flex h-9 items-center gap-1.5 rounded-full border border-hairline bg-canvas px-3 text-sm font-medium text-ink transition-colors hover:bg-canvas-soft-2"
+            title="More share options"
+            style="display: none;"
+          >
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+            </svg>
+            Share
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  #copy-link.copied {
+    border-color: var(--color-green-500, #22c55e);
+    background-color: var(--color-green-50, #f0fdf4);
+    color: var(--color-green-700, #15803d);
+  }
+  :global(html.dark) #copy-link.copied {
+    border-color: var(--color-green-400, #4ade80);
+    background-color: rgb(20 83 45 / 0.3);
+    color: var(--color-green-400, #4ade80);
+  }
+</style>
+
+<script>
+  import { calculateCoastFireShift } from '../../utils/coast-fire-shift-calculations';
+  import { formatCurrency, formatCurrencyShort } from '../../utils/formatters';
+
+  const calculator = document.getElementById('coast-fire-shift-calculator');
+  let chart = null;
+
+  // ─── Slider configuration ───────────────────────────────────────────────
+
+  const sliderConfigs = [
+    { id: 'currentAge', displayId: 'currentAgeValue', format: (v) => v.toString() },
+    { id: 'transitionAge', displayId: 'transitionAgeValue', format: (v) => v.toString() },
+    { id: 'retirementAge', displayId: 'retirementAgeValue', format: (v) => v.toString() },
+    { id: 'currentNetWorth', displayId: 'currentNetWorthValue', format: (v) => `$${Number(v).toLocaleString()}` },
+    { id: 'fullRetirementExpenses', displayId: 'fullRetirementExpensesValue', format: (v) => `$${Number(v).toLocaleString()}` },
+    { id: 'partTimeExpenses', displayId: 'partTimeExpensesValue', format: (v) => `$${Number(v).toLocaleString()}` },
+    { id: 'partTimeIncome', displayId: 'partTimeIncomeValue', format: (v) => `$${Number(v).toLocaleString()}` },
+    { id: 'annualReturn', displayId: 'annualReturnValue', format: (v) => `${v}%` },
+    { id: 'inflationRate', displayId: 'inflationRateValue', format: (v) => `${v}%` },
+    { id: 'safeWithdrawalRate', displayId: 'safeWithdrawalRateValue', format: (v) => `${v}%` },
+  ];
+
+  // ─── Form data ──────────────────────────────────────────────────────────
+
+  function getSliderValue(id) {
+    const el = document.getElementById(id);
+    return el ? Number(el.value) : 0;
+  }
+
+  function setSliderValue(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.value = value.toString();
+  }
+
+  function getFormData() {
+    const currentAge = getSliderValue('currentAge');
+    let transitionAge = getSliderValue('transitionAge');
+    const retirementAge = getSliderValue('retirementAge');
+    const currentNetWorth = getSliderValue('currentNetWorth');
+    const fullRetirementExpenses = getSliderValue('fullRetirementExpenses');
+    const partTimeExpenses = getSliderValue('partTimeExpenses');
+    const partTimeIncome = getSliderValue('partTimeIncome');
+    const annualReturnRate = getSliderValue('annualReturn');
+    const inflationRate = getSliderValue('inflationRate');
+    const safeWithdrawalRate = getSliderValue('safeWithdrawalRate');
+
+    // Clamp transition age
+    let clamped = false;
+    if (transitionAge <= currentAge) {
+      transitionAge = Math.min(currentAge + 1, retirementAge - 1);
+      clamped = true;
+    }
+    if (transitionAge >= retirementAge) {
+      transitionAge = Math.max(retirementAge - 1, currentAge + 1);
+      clamped = true;
+    }
+    transitionAge = Math.max(Math.min(transitionAge, 65), 20);
+    if (clamped) {
+      const transSlider = document.getElementById('transitionAge');
+      const transDisplay = document.getElementById('transitionAgeValue');
+      if (transSlider) transSlider.value = transitionAge.toString();
+      if (transDisplay) transDisplay.textContent = transitionAge.toString();
+    }
+
+    return {
+      currentAge,
+      transitionAge,
+      retirementAge,
+      currentNetWorth,
+      fullRetirementExpenses,
+      partTimeExpenses,
+      partTimeIncome,
+      annualReturnRate,
+      inflationRate,
+      safeWithdrawalRate,
+      useRealRate: false,
+    };
+  }
+
+  // ─── Results update ─────────────────────────────────────────────────────
+
+  function updateResults() {
+    const input = getFormData();
+    const result = calculateCoastFireShift(input);
+
+    // Coast Status Badge
+    const badgeEl = document.getElementById('coast-status-text');
+    if (result.hasAchievedCoast) {
+      badgeEl.className = 'inline-block rounded-full border border-success/30 bg-success/10 px-4 py-1.5 text-sm font-semibold text-success-deep opacity-100';
+      badgeEl.textContent = 'Coast FIRE Achieved for Transition Age!';
+    } else {
+      badgeEl.className = 'inline-block rounded-full border border-warning/30 bg-warning/10 px-4 py-1.5 text-sm font-semibold text-warning opacity-100';
+      badgeEl.textContent = `Gap to Coast: ${formatCurrency(result.gap)}`;
+    }
+
+    // Result Cards
+    document.getElementById('nest-egg-target').textContent = formatCurrency(result.nestEggTarget);
+    document.getElementById('transition-required').textContent = formatCurrency(result.transitionRequired);
+    document.getElementById('transition-projected').textContent = formatCurrency(result.transitionProjected);
+    document.getElementById('real-rate').textContent = `${result.realRate.toFixed(1)}%`;
+
+    // Surplus / Deficit Card
+    const surplusCard = document.getElementById('surplus-deficit-card');
+    const surplusIcon = document.getElementById('surplus-deficit-icon');
+    const surplusSvgPath = document.getElementById('surplus-deficit-svg-path');
+    const surplusLabel = document.getElementById('surplus-deficit-label');
+    const surplusValue = document.getElementById('surplus-deficit-value');
+    const surplusSubtext = document.getElementById('surplus-deficit-subtext');
+
+    if (result.surplus > 0) {
+      surplusCard.className = 'rounded-lg border border-success/30 bg-success/5 p-5 shadow-sm';
+      surplusIcon.className = 'flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-success/10 text-success-deep';
+      surplusSvgPath.setAttribute('d', 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z');
+      surplusLabel.textContent = 'Surplus';
+      surplusLabel.className = 'text-sm font-semibold text-success-deep';
+      surplusValue.textContent = formatCurrency(result.surplus);
+      surplusValue.className = 'font-mono text-lg font-semibold tabular-nums text-success-deep';
+      surplusSubtext.textContent = 'Your savings exceed the amount needed at transition age.';
+    } else {
+      surplusCard.className = 'rounded-lg border border-error/30 bg-error/5 p-5 shadow-sm';
+      surplusIcon.className = 'flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-error/10 text-error';
+      surplusSvgPath.setAttribute('d', 'M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z');
+      surplusLabel.textContent = 'Gap';
+      surplusLabel.className = 'text-sm font-semibold text-error';
+      surplusValue.textContent = formatCurrency(result.gap);
+      surplusValue.className = 'font-mono text-lg font-semibold tabular-nums text-error';
+      surplusSubtext.textContent = `You need ${formatCurrency(result.gap)} more to reach Coast FIRE at transition age.`;
+    }
+
+    // "One More Year" Card
+    const omyt = document.getElementById('one-more-year-text');
+    if (result.hasAchievedCoast) {
+      omyt.textContent = 'You have already achieved Coast FIRE — one more year adds surplus.';
+    } else if (result.oneMoreYearCost > 0) {
+      omyt.textContent = `Working one more year at your primary job would reduce your gap by ${formatCurrency(result.oneMoreYearCost)}.`;
+    } else {
+      omyt.textContent = 'Working one more year at your primary job would not change your timeline.';
+    }
+
+    // Progress update on transition-projected card subtext
+    const progressEl = document.querySelector('#transition-projected + p');
+    if (progressEl) {
+      progressEl.textContent = `${result.progress.toFixed(1)}% of required amount — Projected portfolio at transition age`;
+    }
+
+    // Chart
+    updateChart(result.projection, input.transitionAge, input.retirementAge);
+  }
+
+  // ─── Chart ──────────────────────────────────────────────────────────────
+
+  function updateChart(projection, transitionAge, retirementAge) {
+    const ctx = document.getElementById('coast-shift-chart');
+    if (!ctx) return;
+
+    if (chart) {
+      chart.destroy();
+    }
+
+    if (!projection || projection.length === 0) return;
+
+    const isDark = document.documentElement.classList.contains('dark');
+    const gridColor = isDark ? '#262626' : '#ebebeb';
+    const textColor = isDark ? '#737373' : '#888888';
+    const tooltipBg = isDark ? '#ededed' : '#171717';
+    const tooltipText = isDark ? '#171717' : '#ffffff';
+    const linkColor = isDark ? '#3291ff' : '#0070f3';
+    const successColor = isDark ? '#50e3c2' : '#29bc9b';
+    const warningColor = isDark ? '#f5a623' : '#d97706';
+    const muteColor = isDark ? '#525252' : '#a1a1a1';
+
+    // Build labels and phase-separated data
+    const labels = projection.map((p) => `Age ${p.age}`);
+    const accumulationData = projection.map((p) => (p.phase === 'accumulation' ? p.savings : null));
+    const partTimeData = projection.map((p) => (p.phase === 'part-time' ? p.savings : null));
+    const retirementData = projection.map((p) => (p.phase === 'retirement' ? p.savings : null));
+    const targetData = projection.map((p) => p.target);
+
+    // Custom vertical line plugin
+    const verticalLinePlugin = {
+      id: 'verticalTransitionLine',
+      afterDraw(chartInstance) {
+        const { ctx: c, chartArea, scales } = chartInstance;
+        const xScale = scales.x;
+        const tAge = Number(document.getElementById('transitionAge')?.value) || 40;
+
+        const xPixel = xScale.getPixelForValue(`Age ${tAge}`);
+        if (xPixel >= chartArea.left && xPixel <= chartArea.right) {
+          c.save();
+          c.beginPath();
+          c.setLineDash([6, 4]);
+          c.strokeStyle = warningColor;
+          c.lineWidth = 1.5;
+          c.moveTo(xPixel, chartArea.top);
+          c.lineTo(xPixel, chartArea.bottom);
+          c.stroke();
+          c.restore();
+
+          // Label above the chart
+          c.save();
+          c.font = '10px Inter, system-ui, sans-serif';
+          c.fillStyle = warningColor;
+          c.textAlign = 'center';
+          const labelY = chartArea.top - 6;
+          if (labelY > 0) {
+            c.fillText('Part-Time Start →', xPixel, labelY);
+          }
+          c.restore();
+        }
+      },
+    };
+
+    // Register plugin
+    if (!(window as any).CoastFireVerticalLineRegistered) {
+      (window as any).Chart.register(verticalLinePlugin);
+      (window as any).CoastFireVerticalLineRegistered = true;
+    }
+
+    chart = new (window as any).Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Accumulation Phase',
+            data: accumulationData,
+            borderColor: linkColor,
+            backgroundColor: isDark ? 'rgba(50, 145, 255, 0.08)' : 'rgba(0, 112, 243, 0.08)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+            spanGaps: false,
+          },
+          {
+            label: 'Part-Time Phase',
+            data: partTimeData,
+            borderColor: warningColor,
+            backgroundColor: isDark ? 'rgba(245, 166, 35, 0.08)' : 'rgba(217, 119, 6, 0.08)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+            borderDash: [6, 3],
+            spanGaps: false,
+          },
+          {
+            label: 'Retirement Phase',
+            data: retirementData,
+            borderColor: successColor,
+            backgroundColor: isDark ? 'rgba(80, 227, 194, 0.08)' : 'rgba(41, 188, 155, 0.08)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+            borderDash: [2, 3],
+            spanGaps: false,
+          },
+          {
+            label: 'Target',
+            data: targetData,
+            borderColor: muteColor,
+            backgroundColor: 'transparent',
+            borderDash: [4, 4],
+            borderWidth: 1.5,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 3,
+            spanGaps: true,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 2,
+              usePointStyle: false,
+              padding: 16,
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              filter: function (legendItem, chartData) {
+                // Hide datasets that have all null values
+                const dataset = chartData.datasets[legendItem.datasetIndex];
+                if (!dataset) return false;
+                const hasData = dataset.data.some((v) => v !== null && v !== undefined);
+                return hasData;
+              },
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: 500,
+            },
+            bodyFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+            },
+            callbacks: {
+              label: function (context) {
+                if (context.parsed.y === null) return null;
+                return `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`;
+              },
+              afterLabel: function (context) {
+                const idx = context.dataIndex;
+                const pt = projection[idx];
+                if (!pt) return '';
+                return `Phase: ${pt.phase.charAt(0).toUpperCase() + pt.phase.slice(1)}`;
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: {
+              font: { family: 'Inter, system-ui, sans-serif', size: 11 },
+              color: textColor,
+              maxTicksLimit: 10,
+              callback: function (value, index) {
+                const label = labels[index];
+                if (!label) return '';
+                return label;
+              },
+            },
+            border: { display: false },
+          },
+          y: {
+            grid: { color: gridColor },
+            ticks: {
+              font: { family: 'Inter, system-ui, sans-serif', size: 11 },
+              color: textColor,
+              callback: function (value) {
+                return formatCurrencyShort(value);
+              },
+            },
+            border: { display: false },
+          },
+        },
+        elements: {
+          point: {
+            hoverRadius: 4,
+          },
+        },
+      },
+      plugins: [verticalLinePlugin],
+    });
+  }
+
+  // ─── Slider initialization ──────────────────────────────────────────────
+
+  function initSliders() {
+    sliderConfigs.forEach(({ id, displayId, format }) => {
+      const slider = document.getElementById(id);
+      const display = document.getElementById(displayId);
+      if (slider && display) {
+        slider.addEventListener('input', () => {
+          display.textContent = format(slider.value);
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    const form = document.getElementById('coast-fire-shift-form');
+    form?.addEventListener('input', () => {
+      // Already handled by individual slider listeners, but add a catch-all
+      updateResults();
+    });
+  }
+
+  // ─── Share ──────────────────────────────────────────────────────────────
+
+  function initShare() {
+    const shareText = 'Check out my Coast FIRE Shift to Part-Time plan!';
+
+    function getShareUrl() {
+      const input = getFormData();
+      const params = new URLSearchParams({
+        currentAge: input.currentAge.toString(),
+        transitionAge: input.transitionAge.toString(),
+        retirementAge: input.retirementAge.toString(),
+        netWorth: input.currentNetWorth.toString(),
+        fullExpenses: input.fullRetirementExpenses.toString(),
+        ptExpenses: input.partTimeExpenses.toString(),
+        ptIncome: input.partTimeIncome.toString(),
+        returnRate: input.annualReturnRate.toString(),
+        inflation: input.inflationRate.toString(),
+        swr: input.safeWithdrawalRate.toString(),
+      });
+      return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+    }
+
+    function openShareWindow(url) {
+      window.open(url, '_blank', 'noopener,noreferrer,width=600,height=500');
+    }
+
+    document.querySelectorAll('[data-share]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const url = getShareUrl();
+        const platform = btn.dataset.share;
+        const shareUrls = {
+          x: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`,
+          facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+          linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+          whatsapp: `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' ' + url)}`,
+          reddit: `https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(shareText)}`,
+        };
+        if (platform && shareUrls[platform]) {
+          openShareWindow(shareUrls[platform]);
+        }
+      });
+    });
+
+    document.getElementById('copy-link')?.addEventListener('click', async () => {
+      const url = getShareUrl();
+      try {
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(url);
+        } else {
+          const textarea = document.createElement('textarea');
+          textarea.value = url;
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+        }
+        const btn = document.getElementById('copy-link');
+        if (btn) {
+          btn.classList.add('copied');
+          setTimeout(() => btn.classList.remove('copied'), 2000);
+        }
+      } catch {
+        alert('Failed to copy link.');
+      }
+    });
+
+    const nativeShareBtn = document.getElementById('native-share');
+    if (navigator.share && nativeShareBtn) {
+      nativeShareBtn.style.display = '';
+      nativeShareBtn.addEventListener('click', async () => {
+        const url = getShareUrl();
+        try {
+          await navigator.share({
+            title: 'Coast FIRE Shift Calculator Results',
+            text: shareText,
+            url,
+          });
+        } catch (err) {
+          if (err instanceof Error && err.name !== 'AbortError') {
+            alert('Failed to share.');
+          }
+        }
+      });
+    }
+  }
+
+  // ─── Export PDF ─────────────────────────────────────────────────────────
+
+  function inlineAllStyles(original, clone) {
+    const origComputed = getComputedStyle(original);
+    for (let i = 0; i < origComputed.length; i++) {
+      const prop = origComputed[i];
+      const val = origComputed.getPropertyValue(prop);
+      if (val && val !== 'initial' && val !== '' && !val.startsWith('var(')) {
+        try {
+          clone.style.setProperty(prop, val);
+        } catch {}
+      }
+    }
+    const origChildren = original.children;
+    const cloneChildren = clone.children;
+    for (let i = 0; i < origChildren.length && i < cloneChildren.length; i++) {
+      if (origChildren[i] instanceof HTMLElement && cloneChildren[i] instanceof HTMLElement) {
+        inlineAllStyles(origChildren[i], cloneChildren[i]);
+      }
+    }
+  }
+
+  function initExport() {
+    document.getElementById('export-pdf')?.addEventListener('click', async () => {
+      const btn = document.getElementById('export-pdf');
+      try {
+        btn.disabled = true;
+        btn.textContent = 'Generating PDF...';
+
+        const html2canvas = (await import('html2canvas')).default;
+        const { jsPDF } = await import('jspdf');
+
+        const element = document.getElementById('coast-fire-shift-calculator');
+        const clone = element.cloneNode(true);
+        inlineAllStyles(element, clone);
+
+        const origCanvas = element.querySelector('canvas');
+        const cloneCanvas = clone.querySelector('canvas');
+        if (origCanvas && cloneCanvas) {
+          const ctx = cloneCanvas.getContext('2d');
+          if (ctx) {
+            cloneCanvas.width = origCanvas.width;
+            cloneCanvas.height = origCanvas.height;
+            ctx.drawImage(origCanvas, 0, 0);
+          }
+        }
+
+        clone.style.position = 'fixed';
+        clone.style.left = '-9999px';
+        clone.style.top = '0';
+        clone.style.width = element.offsetWidth + 'px';
+        document.body.appendChild(clone);
+
+        const renderedCanvas = await html2canvas(clone, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          logging: false,
+        });
+
+        document.body.removeChild(clone);
+
+        const imgData = renderedCanvas.toDataURL('image/png');
+
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (renderedCanvas.height * pdfWidth) / renderedCanvas.width;
+
+        if (pdfHeight > pdf.internal.pageSize.getHeight()) {
+          const totalPages = Math.ceil(pdfHeight / pdf.internal.pageSize.getHeight());
+          for (let i = 0; i < totalPages; i++) {
+            if (i > 0) pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, -(i * pdf.internal.pageSize.getHeight()), pdfWidth, pdfHeight);
+          }
+        } else {
+          pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        }
+
+        pdf.save('coast-fire-shift-results.pdf');
+      } catch (err) {
+        console.error('PDF export failed:', err);
+        alert('Failed to generate PDF. Please try again.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Export PDF';
+      }
+    });
+  }
+
+  // ─── URL query param loading ────────────────────────────────────────────
+
+  function loadFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('currentAge') && !params.has('netWorth') && !params.has('transitionAge')) return;
+
+    const sliderParamMap = [
+      { id: 'currentAge', param: 'currentAge' },
+      { id: 'transitionAge', param: 'transitionAge' },
+      { id: 'retirementAge', param: 'retirementAge' },
+      { id: 'currentNetWorth', param: 'netWorth' },
+      { id: 'fullRetirementExpenses', param: 'fullExpenses' },
+      { id: 'partTimeExpenses', param: 'ptExpenses' },
+      { id: 'partTimeIncome', param: 'ptIncome' },
+      { id: 'annualReturn', param: 'returnRate' },
+      { id: 'inflationRate', param: 'inflation' },
+      { id: 'safeWithdrawalRate', param: 'swr' },
+    ];
+
+    sliderParamMap.forEach(({ id, param }) => {
+      if (params.has(param)) {
+        const val = Number(params.get(param));
+        if (!isNaN(val)) {
+          const slider = document.getElementById(id);
+          if (slider) {
+            // Check bounds
+            const min = Number(slider.min);
+            const max = Number(slider.max);
+            const step = Number(slider.step) || 1;
+            const clamped = Math.min(Math.max(val, min), max);
+            const stepped = Math.round(clamped / step) * step;
+            slider.value = stepped.toString();
+          }
+        }
+      }
+    });
+
+    // Update display values
+    sliderConfigs.forEach(({ id, displayId, format }) => {
+      const slider = document.getElementById(id);
+      const display = document.getElementById(displayId);
+      if (slider && display) {
+        display.textContent = format(slider.value);
+      }
+    });
+  }
+
+  // ─── Initialization ─────────────────────────────────────────────────────
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadFromUrl();
+    initSliders();
+    initFormListeners();
+    initExport();
+    initShare();
+    updateResults();
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      updateResults();
+    });
+
+    const observer = new MutationObserver(() => {
+      updateResults();
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  });
+</script>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>

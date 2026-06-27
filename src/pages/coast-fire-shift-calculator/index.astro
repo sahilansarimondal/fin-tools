@@ -1,0 +1,336 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import CoastFireShiftCalculator from '../../components/calculator/CoastFireShiftCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const coastShiftFaqItems: FAQItem[] = [
+  {
+    question: 'What is Coast FIRE and how does shifting to part-time work?',
+    answerHtml: '<b>Coast FIRE</b> (Financial Independence, Retire Early) is a strategy where you save enough early in your career that compound interest alone grows your portfolio to your full retirement number by your target retirement age. Once you reach your Coast FIRE number, you can "coast" — switching to part-time or lower-stress work — because your existing investments will do all the heavy lifting over time.<br /><br /><b>How shifting to part-time fits in:</b> Once you hit your Coast FIRE number, you no longer need to contribute to retirement savings. Your portfolio grows on autopilot. You only need to earn enough from part-time work to cover your current living expenses. This two-phase approach — full-time accumulation → part-time coast — is what makes Coast FIRE one of the most realistic paths to early financial freedom.',
+    answerText: 'Coast FIRE is a strategy where you save enough early in your career that compound interest alone grows your portfolio to full retirement. Once you hit Coast FIRE, you shift to part-time work, only earning enough to cover living expenses while your investments grow on autopilot.',
+  },
+  {
+    question: 'How is the Coast FIRE transition number calculated?',
+    answerHtml: 'The Coast FIRE transition number is calculated in two steps:<br /><br /><b>Step 1 — Find your Coast FIRE number:</b><br />Coast FIRE Number = (Annual Expenses × 25) / (1 + Real Return Rate)<sup>Years to Full Retirement</sup><br /><br /><b>Step 2 — Find your transition age:</b><br />The calculator projects your current savings forward at the expected return rate. The <b>transition age</b> is when your projected portfolio equals your Coast FIRE number — the point where you can safely shift to part-time work.<br /><br /><b>Example:</b> If you spend $50,000/year, your FIRE number is $1,250,000. You are 30, plan to fully retire at 60, and expect 7% returns with 3% inflation (4% real return). Your Coast FIRE number is $1,250,000 / (1.04)<sup>30</sup> = <b>$385,000</b>. If you are saving $20,000/year and have $100,000 saved, the calculator shows you will hit $385,000 around age 38 — that is your <b>transition age</b>.',
+    answerText: 'Step 1: Coast FIRE Number = (Annual Expenses × 25) / (1 + Real Return)^Years. Step 2: The calculator projects your savings forward to find when you cross that threshold. Example: $50K expenses, 30 years old, retire at 60, 4% real return → $385K Coast FIRE target reached at ~age 38.',
+  },
+  {
+    question: 'What is the difference between Coast FIRE and Barista FIRE?',
+    answerHtml: 'While both strategies involve part-time work, they work differently:<br /><br /><b>Coast FIRE</b> — You save enough early so compound interest alone reaches your full retirement number. You shift to part-time work to cover living expenses, but you stop all retirement contributions. Your portfolio grows untouched for decades until full retirement.<br /><br /><b>Barista FIRE</b> — You save enough to cover <b>most</b> of your expenses, then work part-time to cover the remaining gap. Your portfolio is already large enough to sustain withdrawals using the 4% rule (minus your part-time income). You are effectively semi-retired immediately.<br /><br /><b>Key difference:</b> Coast FIRE means your portfolio is still growing to its target (you cannot withdraw yet). Barista FIRE means your portfolio is already large enough to start withdrawing from (you just supplement with part-time income). Coast FIRE is a <b>bridge</b> to full FIRE; Barista FIRE is a <b>destination</b> that can last indefinitely.',
+    answerText: 'Coast FIRE requires enough savings so compound interest reaches full retirement — you cannot withdraw yet, just stop contributing. Barista FIRE requires enough savings to immediately withdraw using the 4% rule, supplemented by part-time income. Coast FIRE is a bridge to full FIRE; Barista FIRE can be a permanent semi-retirement.',
+  },
+  {
+    question: 'When should I shift to part-time work?',
+    answerHtml: 'The ideal time to shift to part-time work under Coast FIRE is when your current portfolio — projected forward at expected returns — reaches your Coast FIRE number. This is your <b>transition age</b>.<br /><br />Signs you are ready to make the shift:<br /><br /><ul><li><b>You have hit your Coast FIRE target:</b> Your projected portfolio at full retirement age equals or exceeds your FIRE number.</li><li><b>You have a realistic part-time income plan:</b> You know what you will earn and it covers your basic living expenses.</li><li><b>You have a health insurance strategy:</b> Whether through a spouse\'s plan, ACA subsidies, or a part-time job that offers benefits.</li><li><b>You have an emergency fund:</b> 6–12 months of expenses outside your investments to handle surprises.</li><li><b>You are mentally ready:</b> You have tested your lower spending level and are comfortable with the lifestyle change.</li></ul><br />Most people transition between ages 35–50, but the right age depends entirely on your savings rate, expenses, and goals.',
+    answerText: 'Shift to part-time work when your projected portfolio reaches your Coast FIRE number. Key readiness signs: you have hit the Coast FIRE target, a realistic part-time income plan, health insurance strategy, emergency fund, and are mentally ready. Most transition between ages 35–50.',
+  },
+  {
+    question: 'How does inflation affect my Coast FIRE plan?',
+    answerHtml: 'Inflation is built into this calculator. The calculation uses <b>inflation-adjusted (real) returns</b>, which means all results are shown in today\'s dollars. The default assumptions (7% nominal return, 3% inflation) give a 4% real return.<br /><br />Key inflation considerations for Coast FIRE:<br /><br /><ul><li><b>Expenses rise over time:</b> Your $50,000 in today\'s expenses will become roughly $90,000 in 20 years at 3% inflation. The calculator handles this through real return assumptions.</li><li><b>Part-time income should rise too:</b> Minimum wages, freelance rates, and Social Security all adjust with inflation. Factor in modest income growth when planning.</li><li><b>The Coast FIRE target stays in today\'s dollars:</b> Because the formula compounds using real returns, the target number remains directly comparable to your current savings.</li><li><b>Sequence of returns risk:</b> If high inflation hits early in your coast phase, your portfolio may take longer to reach the target. Using a conservative 4% real return provides a safety buffer.</li></ul>',
+    answerText: 'Inflation is built in via inflation-adjusted (real) returns. The calculator uses 7% nominal return minus 3% inflation = 4% real return. All results are in today\'s dollars. Part-time income should also rise with inflation. A conservative 4% real return buffers against sequence-of-returns risk.',
+  },
+  {
+    question: 'What if my part-time income doesn\'t cover my expenses?',
+    answerHtml: 'This is the most critical question for any Coast FIRE plan. There are two models for handling this gap:<br /><br /><b>Model 1 — Self-Sustaining Part-Time Phase (Recommended):</b> Your part-time income fully covers your living expenses. You make <b>no withdrawals</b> from your portfolio during the coast phase. Your portfolio grows untouched for 15–30 years. This is the purest Coast FIRE approach and the safest.<br /><br /><b>Model 2 — Partial Drawdown Part-Time Phase:</b> Your part-time income covers most but not all expenses. You make <b>small, strategic withdrawals</b> from your portfolio to bridge the gap. Your portfolio still grows overall, but more slowly. This works if the gap is small (under 25% of expenses) and your portfolio is well above the Coast FIRE threshold.<br /><br /><b>Our calculator supports both models.</b> Toggle between them to see how partial withdrawals affect your transition age and full retirement timeline. General rule: if your part-time income covers less than 80% of expenses, stick with Model 1 and find a higher-paying side gig before transitioning.',
+    answerText: 'Two models: Model 1 (self-sustaining) — part-time income fully covers expenses, no portfolio withdrawals. Model 2 (partial drawdown) — part-time covers most but not all, small strategic withdrawals bridge the gap. Recommended: aim for Model 1. If part-time income covers less than 80% of expenses, find higher-paying work first.',
+  },
+  {
+    question: 'What is the "One More Year" syndrome and how do I beat it?',
+    answerHtml: '<b>"One More Year" (OMY) syndrome</b> is the tendency to keep working full-time even after reaching your Coast FIRE number. It is driven by fear, perfectionism, and the addictive nature of watching your savings grow. Many people say "just one more year" to build a bigger buffer, then repeat it indefinitely.<br /><br /><b>The cost of OMY:</b> Every extra year you work full-time is a year of your life you cannot get back. While your portfolio does grow larger, the marginal benefit diminishes rapidly once you have crossed the Coast FIRE threshold.<br /><br /><b>How to beat OMY syndrome:</b><br /><br /><ul><li><b>Set a hard transition date:</b> Pick a specific date (e.g., "June 1, 2028") and plan backwards. Treat it as non-negotiable.</li><li><b>Use our "OMY Cost Index":</b> The chart in this calculator shows the true cost of each extra year — how much more you are sacrificing in time vs. how much additional safety you gain.</li><li><b>Test your plan:</b> Use the scenario comparison to see how your portfolio performs even with below-average returns. If it survives at 5% returns, you have enough buffer.</li><li><b>Start the transition in phases:</b> Go to 4 days/week first. Then 3. The gradual step-down makes the psychological shift easier.</li></ul>',
+    answerText: 'One More Year syndrome is the tendency to keep working full-time past your Coast FIRE number due to fear. Every extra year is a year of life you cannot get back. Beat it by setting a hard transition date, using the OMY Cost Index chart, testing your plan with conservative returns, and transitioning in phases (4 days → 3 days).',
+  },
+  {
+    question: 'Can I adjust my transition age after I start?',
+    answerHtml: 'Absolutely. Your Coast FIRE plan is not set in stone. Life happens — markets fluctuate, expenses change, and your goals evolve. The beauty of Coast FIRE is its flexibility:<br /><br /><b>Adjustments you can make:</b><br /><br /><ul><li><b>Market downturn:</b> If your portfolio drops 20%, your transition age may push back 2–4 years. The calculator updates in real time — just adjust your current savings downward to see the new timeline.</li><li><b>Higher expenses:</b> If your expenses increase (new baby, moving to a pricier area), your Coast FIRE number rises and your transition age moves later.</li><li><b>Lower expenses:</b> If you downsize or move to a lower-cost area, congratulations — your transition age moves earlier!</li><li><b>Changed part-time income:</b> If you find a higher-paying remote gig, you may need less portfolio growth and can transition sooner.</li><li><b>Partial return to full-time:</b> If you go back to full-time work for a few years, you supercharge your savings and can reach full FIRE much faster.</li></ul><br />The calculator is designed for ongoing use — revisit it annually or after any major life change. Coast FIRE is not a one-time calculation; it is a dynamic plan that evolves with you.',
+    answerText: 'Yes. Coast FIRE plans are flexible. Market downturns push transition age back 2–4 years. Higher expenses or lower income extend the timeline. Lower expenses or higher part-time income accelerate it. Revisit the calculator annually or after major life changes — it is a dynamic plan, not a one-time calculation.',
+  },
+];
+---
+
+<PageLayout
+  title="Coast FIRE Shift to Part-Time Calculator — Find When You Can Downshift"
+  description="Free Coast FIRE calculator to find the exact age you can shift to part-time work. See when your investments can coast to full retirement while you earn less."
+  canonical="https://truefinancetools.com/coast-fire-shift-calculator"
+  ogImage="https://truefinancetools.com/og-coast-fire-shift-calculator.png"
+  ogImageAlt="Coast FIRE Shift to Part-Time Calculator — Find When You Can Downshift"
+  pageType="website"
+  keywords="coast fire calculator, coast fire shift to part-time, part-time retirement calculator, barista fire calculator, one more year syndrome, when can i retire part-time, fire transition calculator"
+>
+  <StructuredData
+    title="Coast FIRE Shift to Part-Time Calculator"
+    description="Free Coast FIRE calculator to find the exact age you can shift to part-time work while your investments compound to full retirement."
+    url="https://truefinancetools.com/coast-fire-shift-calculator"
+    toolName="Coast FIRE Shift Calculator"
+    toolDescription="Calculate the exact age you can shift to part-time work while your investments compound in the background to fund your full retirement."
+    faqItems={coastShiftFaqItems}
+    features={[
+      'Coast FIRE transition age calculator',
+      'Part-time income vs expenses gap analysis',
+      'One More Year syndrome cost index',
+      'Interactive dual-phase projection chart',
+      'PDF export and shareable links',
+      'Compare self-sustaining vs drawdown part-time phases'
+    ]}
+  />
+
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Coast FIRE Shift to Part-Time Calculator
+      </h1>
+      <p class="text-lg text-body">Find the exact age you can downshift to part-time work while your investments compound to full retirement.</p>
+    </div>
+  </section>
+
+  <CoastFireShiftCalculator />
+
+  <HowItWorks title="How the Coast FIRE Shift Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Details</h3>
+      <p class="text-sm text-body">Input your age, income, savings, expenses, and expected returns — just like any FIRE calculator.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Set Your Transition Age</h3>
+      <p class="text-sm text-body">Choose your target part-time transition age and see how much you need to have saved by then to coast to full retirement.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See Your Coast FIRE Timeline</h3>
+      <p class="text-sm text-body">Instantly see your Coast FIRE transition age, the One More Year cost index, and an interactive dual-phase projection chart.</p>
+    </div>
+  </HowItWorks>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is Coast FIRE?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Coast FIRE</strong> is a two-phase approach to early retirement. In the first phase, you save aggressively while working full-time. Once you reach your Coast FIRE number — the amount where compound interest alone grows your portfolio to your full retirement target — you enter the second phase: shifting to part-time or lower-stress work. Your investments continue growing untouched while you earn just enough to cover your living expenses.
+        </p>
+
+        <p class="mb-4">
+          This <strong>Coast FIRE shift calculator</strong> helps you find the exact age when you can make this transition. Unlike traditional FIRE calculators that tell you when you can stop working entirely, this tool tells you when you can <strong>downshift</strong> — giving you years or decades of additional freedom while your portfolio does the heavy lifting in the background.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Coast FIRE Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Coast FIRE Number = (Annual Expenses × 25) / (1 + Real Return Rate)<sup>Years to Full Retirement</sup>
+        </div>
+
+        <p class="mb-4 mt-4">
+          The <b>real return rate</b> is your expected nominal return minus inflation. Using 7% nominal and 3% inflation gives a 4% real return. For example, if you spend $50,000/year, your FIRE number is $1,250,000. At age 30 with plans to fully retire at 60 and a 4% real return: $1,250,000 / (1.04)<sup>30</sup> = <strong>$385,000</strong>. Once you save $385,000, your portfolio will grow to $1.25M by age 60 without another dollar of contributions.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Coast FIRE vs Barista FIRE vs Traditional FIRE</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Factor</th>
+                <th class="p-3 font-medium text-ink">Coast FIRE</th>
+                <th class="p-3 font-medium text-ink">Barista FIRE</th>
+                <th class="p-3 font-medium text-ink">Traditional FIRE</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Savings needed</td>
+                <td class="p-3 text-ink">Discounted future target</td>
+                <td class="p-3 text-ink">Expenses gap × 25</td>
+                <td class="p-3 text-ink">Full expenses × 25</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Work required</td>
+                <td class="p-3 text-ink">Part-time (cover expenses)</td>
+                <td class="p-3 text-ink">Part-time (cover gap)</td>
+                <td class="p-3 text-ink">None</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Portfolio withdrawals</td>
+                <td class="p-3 text-ink">None (grows untouched)</td>
+                <td class="p-3 text-ink">4% rule on gap</td>
+                <td class="p-3 text-ink">4% rule on full expenses</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Retirement contributions</td>
+                <td class="p-3 text-ink">Stop entirely</td>
+                <td class="p-3 text-ink">Stop entirely</td>
+                <td class="p-3 text-ink">Stop entirely</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Best for</td>
+                <td class="p-3 text-ink">Young savers with time</td>
+                <td class="p-3 text-ink">Near-retirees with skills</td>
+                <td class="p-3 text-ink">Maximizers who want freedom</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">Key benefit</td>
+                <td class="p-3 font-semibold text-success-deep">Early downshift to coast</td>
+                <td class="p-3 font-semibold text-success-deep">Immediate semi-retirement</td>
+                <td class="p-3 font-semibold text-success-deep">Complete financial freedom</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose Coast FIRE?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Career Changers</h4>
+            <p class="text-sm text-body">You want to switch to a lower-paying but more fulfilling career without derailing your retirement. Coast FIRE shows you exactly when you can make that leap safely.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Burned-Out Professionals</h4>
+            <p class="text-sm text-body">The 9-5 grind is wearing you down, but you are not ready to fully retire. Coast FIRE gives you a clear transition date when you can downshift and reclaim your time.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Parents</h4>
+            <p class="text-sm text-body">You want to be more present during your children's formative years. Coast FIRE lets you step back from full-time work without sacrificing your retirement security.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Semi-Retirees</h4>
+            <p class="text-sm text-body">You enjoy working but want freedom from the 40-hour week. Coast FIRE provides the framework to find the perfect balance between earning and living.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Coast FIRE Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Reach semi-retirement years sooner than full FIRE</li>
+              <li>• Portfolio grows untouched for decades</li>
+              <li>• Compound interest does the heavy lifting</li>
+              <li>• Freedom to pursue passion projects part-time</li>
+              <li>• Lower stress and better work-life balance</li>
+              <li>• Easier psychological transition than cold-turkey retirement</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Still need part-time income to cover expenses</li>
+              <li>• Portfolio must grow untouched — no early withdrawals</li>
+              <li>• Sensitive to market returns and sequence risk</li>
+              <li>• Part-time income may lack benefits (health insurance)</li>
+              <li>• Less margin for error than traditional FIRE</li>
+              <li>• Full retirement is delayed compared to Barista FIRE</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Coast FIRE Shift
+      </h2>
+
+      <div class="space-y-4">
+        {coastShiftFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Coast FIRE Shift Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>Coast FIRE shift to part-time calculator</strong> is the most comprehensive free tool available for planning your transition from full-time work to a coasting lifestyle. Unlike generic FIRE calculators that only show your full retirement date, this tool specifically models the two-phase journey: aggressive accumulation followed by part-time coasting while compound interest bridges the gap to full retirement.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose Coast FIRE?</h3>
+
+        <p class="mb-4">
+          The biggest advantage of Coast FIRE is that it acknowledges a simple truth: many people do not want to stop working entirely. They want to escape the 40-hour grind, reduce stress, and reclaim time for family, hobbies, and passion projects. Coast FIRE gives you a concrete plan and timeline for exactly when you can make that downshift. Instead of waiting until your portfolio hits 25× your expenses (which can take 15–25 years of aggressive saving), Coast FIRE lets you transition years earlier — often in your 30s or 40s — while still ensuring your long-term retirement is fully funded.
+        </p>
+
+        <p class="mb-4">
+          The <strong>Coast FIRE transition calculator</strong> uses your current savings, expected returns, and expenses to project forward and find the exact age when your portfolio reaches the Coast FIRE threshold. At that point, you have permission to stop contributing to retirement accounts entirely. Your past savings do all the future work. You only need to earn enough from part-time work to cover your day-to-day living expenses. This is the point when time becomes your greatest asset.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Coast FIRE Shift Calculator</h3>
+
+        <p class="mb-4">
+          Unlike basic FIRE calculators that just show formulas, our tool is fully interactive and real-time. All calculations happen in your browser — no data is stored on our servers. Adjust your current age, savings rate, expenses, or expected returns and watch your Coast FIRE transition age update instantly. The interactive dual-phase projection chart shows your portfolio growing through the full-time accumulation phase, the coasting phase, and all the way to full retirement.
+        </p>
+
+        <p class="mb-4">
+          The calculator includes two part-time income models: <strong>self-sustaining</strong> (your part-time income fully covers expenses — no portfolio touch needed) and <strong>partial drawdown</strong> (small strategic withdrawals bridge the gap). Toggle between them to see the impact on your timeline. The unique "One More Year" cost index shows you exactly what each extra year of full-time work costs in terms of lost freedom, helping you make the psychological shift from saver to coaster.
+        </p>
+
+        <p class="mb-4">
+          Export your personalized Coast FIRE plan as a PDF to review offline, share your projection with your partner via a unique link, or save your progress for future reference. Whether you are exploring Coast FIRE for the first time or fine-tuning your numbers for the transition, this tool gives you the clarity and confidence to make the leap. Start planning your coasting lifestyle today — no signup required, completely free, and results in seconds.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other FIRE Strategies
+      </h2>
+      <p class="mb-8 text-body">Compare different approaches to find the right one for your lifestyle.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/lean-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Lean FIRE Calculator</h3>
+          <p class="text-xs text-body">Minimalist approach with the 20x rule for early retirement.</p>
+        </a>
+        <a href="/fat-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Fat FIRE Calculator</h3>
+          <p class="text-xs text-body">For those who want a luxury retirement lifestyle.</p>
+        </a>
+        <a href="/barista-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Calculator</h3>
+          <p class="text-xs text-body">Work part-time, let investments cover the rest.</p>
+        </a>
+        <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+          <p class="text-xs text-body">Find your exact Coast FIRE target by age.</p>
+        </a>
+        <a href="/coast-fire-shift-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Shift Calculator</h3>
+          <p class="text-xs text-body">Find when you can downshift to part-time work.</p>
+        </a>
+        <a href="/learn/fire-strategies" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">All FIRE Strategies</h3>
+          <p class="text-xs text-body">Compare every early retirement approach.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
