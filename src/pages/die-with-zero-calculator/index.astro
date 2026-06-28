@@ -1,0 +1,326 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import DieWithZeroCalculator from '../../components/calculator/DieWithZeroCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is the Die with Zero strategy?',
+    answerHtml: 'The <b>Die with Zero</b> strategy is a financial philosophy popularized by Bill Perkins in his book <i>Die with Zero: Getting All You Can from Your Money and Your Life</i>. The core idea is to <b>maximize life enjoyment</b> by spending your money on meaningful experiences while you are young enough to enjoy them, rather than accumulating wealth for an uncertain future or leaving a large inheritance.<br /><br />Unlike traditional FIRE (Financial Independence, Retire Early), which emphasizes building a portfolio that lasts forever (or at least 30+ years), Die with Zero aims to <b>spend down your portfolio to near zero</b> at the time of your death (or leave only a small buffer). Key principles include:<br /><br /><ul><li><b>Time-bucketing:</b> Allocate spending to different life stages based on what you can physically and mentally enjoy at each age.</li><li><b>Memory dividends:</b> Invest in experiences that pay "memory dividends" — positive memories you cherish for the rest of your life.</li><li><b>No inheritance obsession:</b> While leaving something to family is fine, Die with Zero challenges the assumption that leaving a large inheritance should be the default financial goal.</li><li><b>Safe drawdown:</b> Use compounding math to calculate exactly how much you can spend each year such that your portfolio reaches zero (or a small buffer) at your target death age.</li></ul><br />The strategy is not about being reckless with money — it is about being intentional. You still invest prudently and account for longevity risk through conservative assumptions and an end-of-life buffer.',
+    answerText: 'The Die with Zero strategy, popularized by Bill Perkins, is a philosophy of maximizing life enjoyment by spending your portfolio down to near zero by end of life. It uses time-bucketing, memory dividends, and safe drawdown math to calculate optimal annual spending, challenging the traditional FIRE assumption that you should preserve capital forever.',
+  },
+  {
+    question: 'How does the Die with Zero calculator work?',
+    answerHtml: 'The Die with Zero calculator uses the <b>Time Value of Money (TVM) annuity formula</b> — specifically the PMT (Payment) function — to calculate the optimal annual withdrawal that will drain your portfolio to your target end value by your specified death age.<br /><br />Here is how it works step by step:<br /><br /><ul><li><b>Input your details:</b> Current age, portfolio value, expected annual return, life expectancy, and any end-of-life buffer you want to leave.</li><li><b>Choose a spending curve:</b> A <b>linear</b> (even) curve spends the same amount every year. A <b>front-loaded</b> curve spends more in early retirement when you are healthier (Go-Go Years) and less later (Slow-Go Years and No-Go Years).</li><li><b>Calculate the payment:</b> The PMT formula solves for the annual withdrawal amount, discounting future values at your expected real return rate, such that the portfolio declines to your target buffer by death age.</li><li><b>Compare to the 4% rule:</b> The calculator shows how much money you would leave unspent if you followed the traditional 4% safe withdrawal rule instead — the "money left on the table."</li></ul><br />The resulting <b>optimal annual spend</b> is the maximum amount you can withdraw each year (adjusted for your chosen spending curve) while ensuring your portfolio lasts to your target age.',
+    answerText: 'The calculator uses the TVM annuity formula (PMT function) to determine the annual withdrawal that depletes your portfolio to a target buffer by your death age. You input your age, portfolio value, expected returns, life expectancy, and buffer. Choose linear or front-loaded spending. The calculator shows your optimal spend and compares it to the 4% rule, highlighting the money you would leave unspent.',
+  },
+  {
+    question: 'What is the Die with Zero formula?',
+    answerHtml: 'The Die with Zero calculator uses the <b>Present Value of an Annuity</b> formula, solved for the periodic payment (PMT). The formula is:<br /><br /><div class="rounded-lg bg-canvas-soft-2 p-3 font-mono text-xs text-ink">Annual Spend = (Portfolio Value − Buffer / (1 + r)<sup>n</sup>) × (r / (1 − (1 + r)<sup>−n</sup>))</div><br />Where:<br /><ul><li><b>Portfolio Value</b> — Your current retirement savings balance.</li><li><b>Buffer</b> — The amount you want left at your death age (default: $0 for pure die-with-zero).</li><li><b>r</b> — Expected real annual return (after inflation), e.g., 5% = 0.05.</li><li><b>n</b> — Number of years between now and your expected death age (Death Age − Current Age).</li></ul><br /><b>Example:</b> Current age 50, death age 85 (n = 35 years), portfolio $1,000,000, expected real return 5% (0.05), buffer $0:<br /><br /><b>Annual Spend</b> = ($1,000,000 − 0) × (0.05 / (1 − (1.05)<sup>−35</sup>))<br /><b>Annual Spend</b> = $1,000,000 × 0.06106 = <b>$61,060/year</b><br /><br />This means you can withdraw <b>$61,060 annually</b> for 35 years, and your portfolio will reach exactly $0 at age 85. Compare this to the 4% rule, which would only give you $40,000/year — leaving over <b>$734,000 unspent</b> by age 85 (assuming the portfolio lasts that long).',
+    answerText: 'Annual Spend = (Portfolio − Buffer/(1+r)^n) × (r / (1−(1+r)^−n)) where r = expected real return, n = years until death age. Example: $1M portfolio, 5% return, 35 years, $0 buffer → $61,060/year. The 4% rule would only give $40,000/year and leave ~$734K unspent.',
+  },
+  {
+    question: 'How is Die with Zero different from the 4% rule?',
+    answerHtml: 'The <b>4% rule</b> and the <b>Die with Zero</b> strategy have fundamentally different goals:<br /><br /><b>The 4% Rule (Trinity Study):</b><br /><ul><li><b>Goal:</b> Make your portfolio last at least 30 years without running out of money.</li><li><b>Approach:</b> Withdraw 4% of initial portfolio value (adjusted for inflation each year).</li><li><b>Outcome:</b> Historically, your portfolio has a 95%+ chance of surviving 30 years — and in most scenarios, you die with <b>significantly more money than you started with</b> (often 2-3x your original portfolio).</li><li><b>Safety margin:</b> Extremely conservative. Designed to survive the worst historical market sequences.</li></ul><br /><b>Die with Zero Strategy:</b><br /><ul><li><b>Goal:</b> Spend your portfolio down to near zero by your target death age.</li><li><b>Approach:</b> Calculate the exact withdrawal amount that depletes your portfolio over your expected lifespan using TVM math.</li><li><b>Outcome:</b> You optimize spending — typically 40-60% more than the 4% rule — and leave very little unspent.</li><li><b>Safety margin:</b> Moderate. Relies on accurate life expectancy estimates and conservative return assumptions.</li></ul><br />The Die with Zero calculator shows you the <b>money left on the table</b> with the 4% rule. With a $1,000,000 portfolio, 35-year time horizon, and 5% returns:<br /><ul><li><b>4% Rule:</b> $40,000/year → ~$734,000+ remaining at death</li><li><b>Die with Zero:</b> ~$61,060/year → ~$0 remaining at death</li><li><b>Extra spending with Die with Zero:</b> ~$21,060/year (53% more!)</li></ul><br />The 4% rule is better if you want to leave an inheritance, are extremely risk-averse, or expect to live much longer than average. Die with Zero is better if you want to maximize your lifestyle and experiences.',
+    answerText: 'The 4% rule is designed to make your portfolio last 30+ years (preserving capital, often leaving 2-3x your starting amount). Die with Zero is designed to spend your portfolio to zero by end of life. On a $1M portfolio over 35 years: 4% rule gives $40K/year, Die with Zero gives ~$61K/year — 53% more spending. The trade-off is less safety margin against longevity risk.',
+  },
+  {
+    question: 'What is a front-loaded spending curve?',
+    answerHtml: 'A <b>front-loaded spending curve</b> is a spending pattern where you allocate <b>more money to the early years of retirement</b> and less to later years. This is based on the observation that retirement has three distinct phases:<br /><br /><ul><li><b>Go-Go Years (Early Retirement, ~60s–70s):</b> You are healthy, energetic, and can enjoy physically demanding activities — travel, hiking, adventure sports, relocating abroad. This is when you want to spend the most on experiences.</li><li><b>Slow-Go Years (~70s–80s):</b> You are still active but may prefer less physically demanding travel, cultural activities, dining out, and spending time with family. Spending naturally decreases.</li><li><b>No-Go Years (Later Retirement, ~80s+):</b> Health limitations reduce travel and activity significantly. Spending focuses on healthcare, comfort, and family time. This is typically the lowest spending period.</li></ul><br />The Die with Zero calculator lets you choose between:<br /><ul><li><b>Linear (Even) Spending:</b> Same real spending every year. Simple and predictable.</li><li><b>Front-Loaded Spending:</b> More spending early (the Go-Go Years), less later. The calculator models a declining annual amount that still depletes your portfolio to your target buffer by death age.</li></ul><br />Front-loading reflects Bill Perkins\' philosophy: <b>spend your money while you have your health</b>. An extra $10,000 spent on a safari at 65 creates lasting memories (memory dividends). The same $10,000 spent at 85 on medical copays does not create the same value. The calculator adjusts the PMT calculation to produce a spending path that starts higher and gradually declines.',
+    answerText: 'A front-loaded spending curve allocates more money to early retirement (Go-Go Years, ~60s–70s) and less to later years (Slow-Go and No-Go Years). This reflects the reality that you can enjoy travel and experiences more when you are healthy. The calculator supports both linear (even) and front-loaded curves, with the front-loaded option giving higher early spending that declines over time.',
+  },
+  {
+    question: 'What is an end-of-life buffer?',
+    answerHtml: 'An <b>end-of-life buffer</b> is a small amount of money you choose to leave in your portfolio at your target death age. It acts as a <b>safety margin</b> for unexpected final expenses:<br /><br /><ul><li><b>Medical expenses</b> not covered by insurance</li><li><b>Long-term care</b> or assisted living costs</li><li><b>Funeral and burial expenses</b> ($8,000–$15,000 on average in the US)</li><li><b>Last-minute travel</b> for family to visit</li><li><b>Legal and estate settlement costs</b></li></ul><br />The calculator defaults to a buffer of <b>$0</b> for pure Die with Zero (leave nothing behind). However, you can set any buffer amount — common values are <b>$25,000 to $100,000</b> depending on your circumstances.<br /><br />How the buffer works in the formula: the buffer amount is <b>discounted back to the present</b> using your expected return rate and subtracted from your current portfolio before the PMT calculation. For example:<br /><br /><ul><li>Portfolio: $1,000,000</li><li>Buffer: $50,000</li><li>Years: 30</li><li>Return: 5%</li><li>Present value of buffer: $50,000 / (1.05)<sup>30</sup> = <b>$11,569</b></li><li>Adjusted portfolio for PMT: $1,000,000 − $11,569 = <b>$988,431</b></li></ul><br />This means the buffer reduces your annual spend by a relatively small amount (because the future $50,000 is worth only ~$11,569 today at 5% over 30 years). A buffer provides <b>inexpensive peace of mind</b> against worst-case end-of-life scenarios.',
+    answerText: 'An end-of-life buffer is money left at your target death age for final expenses (medical, funeral, legal). It defaults to $0 for pure Die with Zero but can be set to $25K–$100K for safety. Because it is discounted back to the present using your expected return, a $50K buffer 30 years out at 5% only reduces your annual spend by a small amount, making it an inexpensive hedge.',
+  },
+  {
+    question: 'Who should use the Die with Zero calculator?',
+    answerHtml: 'The Die with Zero calculator is designed for anyone who wants to <b>optimize their spending in retirement</b> rather than maximize the wealth they leave behind. It is particularly useful for:<br /><br /><ul><li><b>Early Retirees and FIRE Individuals:</b> If you have already reached financial independence but feel unsure about how much you can safely spend each year, this calculator gives you a data-driven answer. Many FIRE retirees underspend out of fear.</li><li><b>People with No Heirs:</b> If you do not have children or other heirs you want to leave an inheritance to, Die with Zero math helps you enjoy your full portfolio during your lifetime.</li><li><b>Experience Maximizers:</b> If you value travel, adventure, fine dining, hobbies, and creating memories more than leaving a financial legacy, this strategy helps you spend accordingly.</li><li><b>Retirees Approaching Their 60s and 70s:</b> Traditional retirement planning often assumes conservative spending. This calculator helps you decide whether you can "upgrade" your lifestyle in early retirement while you are still healthy.</li><li><b>Anyone Confused by Safe Withdrawal Rules:</b> The 4% rule, dynamic withdrawal strategies, and guardrails can be confusing. Die with Zero provides a single, intuitive number: <b>this is the maximum you can spend each year</b>.</li></ul><br />The calculator is <b>not</b> recommended for people who strongly prioritize leaving a large inheritance, have below-average life expectancy, or are extremely risk-averse about outliving their money.',
+    answerText: 'The Die with Zero calculator is ideal for early retirees and FIRE individuals who want to optimize spending, people with no heirs, experience maximizers who value memories over inheritance, retirees in their 60s–70s looking to upgrade their lifestyle, and anyone confused by safe withdrawal rules. Not recommended for those prioritizing large inheritances or extremely risk-averse individuals.',
+  },
+  {
+    question: 'Is it safe to plan to die with zero money?',
+    answerHtml: 'Planning to die with zero money is <b>safer than it sounds</b>, but it does come with real risks that must be acknowledged and managed:<br /><br /><b>Key Risks:</b><br /><ul><li><b>Longevity risk:</b> You may live longer than expected. If you plan to die at 85 but live to 95, your money runs out a decade early. Solution: Use a conservative life expectancy estimate (e.g., plan for 90–95 even if family history suggests 80). The calculator lets you adjust your death age assumption.</li><li><b>Medical emergencies:</b> An expensive medical event could drain your portfolio faster than planned. Solution: Set an end-of-life buffer of $50K–$100K and maintain adequate health insurance.</li><li><b>Market risk:</b> A severe bear market in early retirement (sequence of returns risk) can deplete your portfolio faster than TVM math predicts. Solution: Use conservative return assumptions (4–5% real instead of 7%) and consider dynamic withdrawal adjustments.</li><li><b>Inflation risk:</b> Higher-than-expected inflation erodes purchasing power. Solution: Use inflation-adjusted (real) return assumptions and maintain 5–10% of portfolio in inflation hedges.</li></ul><br /><b>Why it can still be safe:</b><br /><ul><li>The TVM formula assumes a <b>constant real return</b>. If you use a conservative estimate (4–5% real), you have built-in safety margin.</li><li>You will naturally spend <b>less in later years</b> (the No-Go phase), which the front-loaded curve accounts for. Even with a linear curve, real-world spending tends to decline.</li><li>Social Security, pensions, and annuities provide <b>income floors</b> not modeled in the calculator — these extend your portfolio further.</li><li>You can always <b>adjust</b> your spending year to year. The calculator gives an optimal starting point, not a rigid rule.</li></ul><br /><b>Best practice:</b> Use the calculator as a <b>planning tool</b>, not a guarantee. Revisit your assumptions every 2–3 years and adjust spending as markets and life circumstances change. The Die with Zero philosophy is about intentional spending, not reckless depletion.',
+    answerText: 'Planning to die with zero is safer than it sounds if you use conservative assumptions. Key risks: longevity (plan for 90–95), medical emergencies (set a $50K–$100K buffer), market risk (use 4–5% real returns), and inflation. Mitigants: conservative return assumptions build in safety, spending naturally declines with age, Social Security provides a floor, and you can always adjust. Use the calculator as a planning tool, not a guarantee.',
+  },
+];
+---
+
+<PageLayout
+  title="Die with Zero Calculator — Optimize Your Retirement Spending"
+  description="Free die with zero calculator. Calculate the optimal annual withdrawal rate to safely spend your entire portfolio by end of life. Compare to the 4% rule."
+  canonical="https://truefinancetools.com/die-with-zero-calculator"
+  ogImage="https://truefinancetools.com/og-die-with-zero-calculator.png"
+  ogImageAlt="Die with Zero Calculator — Optimize Your Retirement Spending"
+  pageType="website"
+  keywords="die with zero calculator, decumulation calculator, retirement withdrawal calculator, safe withdrawal rate, PMT formula, retirement drawdown, spend down portfolio, die with zero strategy"
+>
+  <StructuredData
+    title="Die with Zero Calculator"
+    description="Free die with zero calculator for optimizing retirement spending and portfolio decumulation"
+    url="https://truefinancetools.com/die-with-zero-calculator"
+    toolName="Die with Zero Calculator"
+    toolDescription="Calculate the optimal annual withdrawal to safely spend your entire retirement portfolio by end of life, using the TVM annuity formula."
+    faqItems={toolFaqItems}
+    features={[
+      'Optimal annual withdrawal calculation using TVM annuity formula',
+      'Linear and front-loaded spending curves',
+      '4% rule comparison showing money left on the table',
+      'Interactive portfolio projection chart',
+      'Customizable end-of-life buffer amount'
+    ]}
+  />
+
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Die with Zero Calculator
+      </h1>
+      <p class="text-lg text-body">Calculate the optimal annual withdrawal to safely spend your entire portfolio by end of life.</p>
+    </div>
+  </section>
+
+  <DieWithZeroCalculator />
+
+  <HowItWorks title="How the Die with Zero Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Details</h3>
+      <p class="text-sm text-body">Input your age, current portfolio value, expected annual return, and estimated death age.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Choose Your Spending Curve</h3>
+      <p class="text-sm text-body">Select linear (even spending) or front-loaded (spend more in early, healthier years).</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See Your Optimal Spend</h3>
+      <p class="text-sm text-body">View your annual withdrawal amount, total wealth consumed, and how it compares to the 4% rule.</p>
+    </div>
+  </HowItWorks>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is Die with Zero?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Die with Zero</strong> is a financial and life philosophy that challenges the conventional wisdom of saving as much as possible for retirement and leaving a large inheritance. Popularized by Bill Perkins in his book <i>Die with Zero: Getting All You Can from Your Money and Your Life</i>, the strategy uses mathematical optimization to determine how much you can safely spend each year so that your portfolio reaches near zero at your expected end of life.
+        </p>
+
+        <p class="mb-4">
+          The core insight is that <strong>money and life energy are interchangeable</strong>, and the goal should be to convert your savings into life experiences at the right time — not to hoard it for a future that may never come. By using the Time Value of Money (TVM) annuity formula, this <strong>Die with Zero calculator</strong> calculates the optimal annual withdrawal that lets you spend your entire portfolio while accounting for investment returns, inflation, and your target end-of-life buffer.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Die with Zero Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Annual Spend = (Portfolio Value &minus; Buffer / (1 + r)<sup>n</sup>) &times; (r / (1 &minus; (1 + r)<sup>&minus;n</sup>))
+        </div>
+        <div class="mt-2 rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Where: r = expected real return, n = years until death age
+        </div>
+
+        <p class="mb-4 mt-4">
+          For example, with a $1,000,000 portfolio, a 50-year-old planning to live to 85 (35 years), expecting 5% real returns, and a $0 buffer: the annual spend is ~$61,060/year — approximately 53% more than the 4% rule's $40,000/year. Over 35 years, that extra ~$21,000/year funds significantly more travel, experiences, and quality of life.
+        </p>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Die with Zero vs. the 4% Rule</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Metric</th>
+                <th class="p-3 font-medium text-ink">Die with Zero</th>
+                <th class="p-3 font-medium text-ink">4% Rule</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Annual Spend ($1M, 35 yrs, 5%)</td>
+                <td class="p-3 text-success-deep">~$61,060</td>
+                <td class="p-3 text-ink">$40,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Money Left at Death</td>
+                <td class="p-3 text-ink">$0 (target)</td>
+                <td class="p-3 text-ink">~$734,000+</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Portfolio Safety</td>
+                <td class="p-3 text-ink">Moderate — relies on life expectancy estimate</td>
+                <td class="p-3 text-success-deep">High — designed for 30+ years</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Philosophy</td>
+                <td class="p-3 text-ink">Spend it all, maximize experiences</td>
+                <td class="p-3 text-ink">Preserve capital, leave inheritance</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 text-body font-sans">Extra Annual Spending</td>
+                <td class="p-3 font-semibold text-success-deep">+53% vs 4% rule</td>
+                <td class="p-3 text-ink">Baseline</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose Die with Zero?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Early Retirees &amp; FIRE Individuals</h4>
+            <p class="text-sm text-body">If you have reached financial independence but worry about underspending, Die with Zero gives you a data-driven license to enjoy your full portfolio. Stop living frugally out of fear.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">People with No Heirs</h4>
+            <p class="text-sm text-body">If you do not have children or other heirs you want to leave an inheritance for, why accumulate wealth you will never use? Die with Zero ensures you enjoy every dollar you saved.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Experience Maximizers</h4>
+            <p class="text-sm text-body">Travelers, adventurers, and lifelong learners who value memories and experiences over a financial legacy. Die with Zero helps you time your spending to when you can enjoy it most.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">FIRE Enthusiasts Exploring Decumulation</h4>
+            <p class="text-sm text-body">After years of focusing on accumulation, FIRE enthusiasts often struggle with the decumulation phase. Die with Zero math provides a clear, actionable spending plan for retirement.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Die with Zero Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Maximizes lifetime spending — typically 40-60% more than the 4% rule</li>
+              <li>• Puts your money to work during your most active, healthy years</li>
+              <li>• Eliminates wasteful underspending driven by fear of running out</li>
+              <li>• Creates "memory dividends" — lasting happiness from experiences</li>
+              <li>• Simple, transparent formula anyone can understand</li>
+              <li>• Naturally aligns with declining spending in later retirement</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Relies on accurate life expectancy estimates — longevity risk is real</li>
+              <li>• Less safety margin than the 4% rule for worst-case market scenarios</li>
+              <li>• Leaves little to no inheritance for heirs or charities</li>
+              <li>• Sequence of returns risk can derail the plan in early retirement</li>
+              <li>• Requires annual re-evaluation and willingness to adjust spending</li>
+              <li>• Psychologically difficult for lifelong savers to spend aggressively</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Die with Zero
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Die with Zero Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>Die with Zero calculator</strong> is the most comprehensive free tool available for optimizing your retirement decumulation strategy. Whether you are a newly retired early retiree wondering how much you can safely spend, or a seasoned FIRE enthusiast looking to transition from accumulation to decumulation, this calculator provides accurate, instant projections tailored to your financial situation and life expectancy.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose Die with Zero?</h3>
+
+        <p class="mb-4">
+          The traditional retirement planning paradigm — save as much as possible, then spend conservatively using the 4% rule — leaves enormous amounts of money unspent. Research from the Employee Benefit Research Institute shows that <strong>retirees with $1M+ portfolios typically die with 80% of their pre-retirement wealth intact</strong>. The 4% rule was designed to survive the worst historical market periods, which means in average or good markets, you die with significantly more than you started with.
+        </p>
+
+        <p class="mb-4">
+          The Die with Zero philosophy asks a simple question: <strong>What if you could spend all of it?</strong> By using the Time Value of Money to calculate your optimal annual withdrawal, you can enjoy 40-60% more spending during the years when you are healthy, active, and can actually enjoy the experiences money buys. An extra $20,000 per year in your 60s and 70s funds trips with grandchildren, hobbies you have always wanted to pursue, or relocating to your dream location.
+        </p>
+
+        <p class="mb-4">
+          This approach is particularly powerful for <strong>FIRE retirees</strong> who optimized their savings rate for years but now find themselves unsure how to transition to spending mode. The psychological shift from aggressive saver to intentional spender is one of the hardest parts of early retirement. Die with Zero provides the mathematical framework — and permission — to enjoy your hard-earned portfolio.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Die with Zero Calculator</h3>
+
+        <p class="mb-4">
+          See your <strong>optimal annual spend</strong> instantly as you adjust inputs — the single most important number that tells you how much you can withdraw each year. The calculator supports both <strong>linear (even)</strong> and <strong>front-loaded</strong> spending curves, so you can model the reality that you will likely spend more in your active early retirement years and less later. The <strong>4% rule comparison</strong> feature shows exactly how much money the traditional approach leaves on the table — often a shocking six-figure difference.
+        </p>
+
+        <p class="mb-4">
+          The interactive <strong>portfolio projection chart</strong> visualizes your portfolio balance declining over time, reaching your target buffer at your chosen death age. Adjust your <strong>end-of-life buffer</strong> to see how even a modest reserve of $25K–$50K affects your annual spending (spoiler: very little, because it is deeply discounted by compounding). Whether you want to leave nothing behind, a small buffer, or a meaningful inheritance, the calculator gives you the exact numbers you need to plan with confidence — completely free, no signup required.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Financial Tools
+      </h2>
+      <p class="mb-8 text-body">Discover more calculators and guides to optimize your financial independence journey.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/fire-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Plan your path to financial independence with Lean, Regular, Fat, Barista, and Coast FIRE.</p>
+        </a>
+        <a href="/geographic-arbitrage-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Geographic Arbitrage Calculator</h3>
+          <p class="text-xs text-body">See how far your retirement portfolio stretches in a lower cost-of-living country.</p>
+        </a>
+        <a href="/lean-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Lean FIRE Calculator</h3>
+          <p class="text-xs text-body">Minimalist approach with the 20x rule for early retirement.</p>
+        </a>
+        <a href="/fat-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Fat FIRE Calculator</h3>
+          <p class="text-xs text-body">For those who want a luxury retirement lifestyle.</p>
+        </a>
+        <a href="/barista-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Calculator</h3>
+          <p class="text-xs text-body">Work part-time, let investments cover the rest.</p>
+        </a>
+        <a href="/learn/what-is-fire" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">What is FIRE?</h3>
+          <p class="text-xs text-body">Learn the fundamentals of financial independence.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

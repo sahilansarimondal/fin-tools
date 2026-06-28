@@ -1,0 +1,575 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="die-with-zero-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <!-- Spending curve selector (toggle buttons) -->
+        <div class="mb-6">
+          <label class="mb-2 block text-sm font-medium text-ink">Spending Curve</label>
+          <div class="flex gap-2">
+            <button type="button" data-curve="linear" class="curve-btn flex-1 rounded-md bg-ink px-3 py-2 text-xs font-medium text-canvas">Linear / Even</button>
+            <button type="button" data-curve="front-loaded" class="curve-btn flex-1 rounded-md border border-hairline bg-canvas px-3 py-2 text-xs font-medium text-ink">Front-loaded (Go-Go Years)</button>
+          </div>
+        </div>
+
+        <form id="decumulation-form" class="space-y-4">
+          <Slider
+            label="Current Age"
+            name="currentAge"
+            value={45}
+            min={18}
+            max={80}
+            step={1}
+            inputId="decumulation-currentAge"
+            displayId="decumulation-currentAgeValue"
+          />
+
+          <Slider
+            label="Estimated Death Age"
+            name="estimatedDeathAge"
+            value={85}
+            min={50}
+            max={100}
+            step={1}
+            inputId="decumulation-estimatedDeathAge"
+            displayId="decumulation-estimatedDeathAgeValue"
+          />
+
+          <Input
+            label="Current Portfolio"
+            name="currentPortfolio"
+            type="number"
+            value={1200000}
+            min={0}
+            step={10000}
+            suffix="$"
+            hideArrows
+            required
+          />
+
+          <Slider
+            label="Expected Real Return"
+            name="expectedRealReturn"
+            value={4}
+            min={0}
+            max={12}
+            step={0.5}
+            suffix="%"
+            inputId="decumulation-expectedRealReturn"
+            displayId="decumulation-expectedRealReturnValue"
+            tooltip="Annual return after inflation. Use 4% for conservative estimates."
+          />
+
+          <Input
+            label="End-of-Life Buffer"
+            name="endOfLifeBuffer"
+            type="number"
+            value={50000}
+            min={0}
+            step={5000}
+            suffix="$"
+            hideArrows
+            tooltip="Amount left for final expenses. Set to $0 to die with zero."
+            required
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- KPI cards row (3 cards) -->
+      <div class="grid gap-4 sm:grid-cols-3">
+        <ResultCard
+          label="Maximum Safe Annual Spend"
+          valueId="decumulation-annual-spend"
+          value="$0"
+          valueClass="text-link"
+          description="Optimized to reach your target"
+        />
+        <ResultCard
+          label="Total Lifetime Wealth Consumed"
+          valueId="decumulation-total-consumed"
+          value="$0"
+          description="Portfolio + growth over retirement"
+        />
+        <ResultCard
+          label="Left on Table (4% Rule)"
+          valueId="decumulation-left-on-table"
+          value="$0"
+          valueClass="text-error"
+          description="What you'd die with using standard FIRE math"
+        />
+      </div>
+
+      <!-- Chart -->
+      <Card padding="lg">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">Portfolio Decumulation Projection</h2>
+        </div>
+        <div class="relative h-64 sm:h-80">
+          <canvas
+            id="decumulation-chart"
+            role="img"
+            aria-label="Portfolio decumulation projection chart showing portfolio balance declining over time to the end-of-life buffer"
+          ></canvas>
+        </div>
+      </Card>
+    </div>
+  </div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+  import { formatCurrency, formatCurrencyShort } from '../../utils/formatters';
+
+  let chart = null;
+  let activeCurve = 'linear';
+
+  /**
+   * Inline decumulation calculation engine (PMT-based).
+   * Computes the maximum annual spend such that the portfolio is fully
+   * consumed by the estimated death age, leaving only the end-of-life buffer.
+   */
+  function calculateDecumulation(input) {
+    const {
+      currentAge,
+      estimatedDeathAge,
+      currentPortfolio,
+      expectedRealReturn,
+      endOfLifeBuffer,
+      spendingCurve,
+    } = input;
+
+    const n = estimatedDeathAge - currentAge;
+    const r = expectedRealReturn / 100;
+    const buffer = Math.max(endOfLifeBuffer, 0);
+
+    // Edge cases: no time horizon or no portfolio
+    if (n <= 0 || currentPortfolio <= 0) {
+      const emptyProjection = [];
+      if (n === 0 && currentPortfolio >= 0) {
+        emptyProjection.push({
+          age: currentAge,
+          year: 0,
+          startBalance: currentPortfolio,
+          growth: 0,
+          annualSpend: 0,
+          endBalance: Math.min(currentPortfolio, buffer),
+        });
+      }
+      return {
+        annualSpend: 0,
+        totalLifetimeWealthConsumed: 0,
+        moneyLeftWithFourPercentRule: 0,
+        fourPercentRuleAnnualSpend: currentPortfolio * 0.04,
+        yearsRemaining: Math.max(n, 0),
+        projection: emptyProjection,
+        fourPercentProjection: [],
+        isFrontLoaded: spendingCurve === 'front-loaded',
+      };
+    }
+
+    // Step A — Calculate the base flat annual spend (PMT formula)
+    let baseAnnualSpend;
+
+    if (r === 0) {
+      baseAnnualSpend = (currentPortfolio - buffer) / n;
+    } else {
+      const discountFactor = Math.pow(1 + r, n);
+      const pvLessBuffer = currentPortfolio - buffer / discountFactor;
+      const pmtFactor = r / (1 - 1 / discountFactor);
+      baseAnnualSpend = pvLessBuffer * pmtFactor;
+    }
+
+    baseAnnualSpend = Math.max(baseAnnualSpend, 0);
+
+    // Step B — Calculate the 4% rule comparison
+    const fourPercentRuleAnnualSpend = currentPortfolio * 0.04;
+    let fourPercentBalance = currentPortfolio;
+    const fourPercentProjection = [];
+
+    for (let i = 0; i < n; i++) {
+      const age = currentAge + i;
+      const startBal = fourPercentBalance;
+      const growth = fourPercentBalance * r;
+      fourPercentBalance = fourPercentBalance + growth - fourPercentRuleAnnualSpend;
+      if (fourPercentBalance < 0) fourPercentBalance = 0;
+
+      fourPercentProjection.push({
+        age,
+        year: i,
+        startBalance: startBal,
+        growth,
+        annualSpend: fourPercentRuleAnnualSpend,
+        endBalance: fourPercentBalance,
+      });
+
+      if (fourPercentBalance <= 0) break;
+    }
+
+    const moneyLeftWithFourPercentRule = Math.max(fourPercentBalance, 0);
+
+    // Step C — Generate year-by-year decumulation projection
+    const projection = [];
+    let prevEndBalance = currentPortfolio;
+    let totalLifetimeWealthConsumed = 0;
+
+    const phaseLength = n / 3;
+    const phase1End = Math.floor(phaseLength);
+    const phase2End = Math.floor(2 * phaseLength);
+
+    for (let i = 0; i < n; i++) {
+      const age = currentAge + i;
+      const startBalance = i === 0 ? currentPortfolio : prevEndBalance;
+      const growth = startBalance * r;
+
+      // Determine planned annual spend based on spending curve
+      let annualSpend;
+
+      if (spendingCurve === 'front-loaded') {
+        if (i < phase1End) {
+          annualSpend = baseAnnualSpend * 1.2;
+        } else if (i < phase2End) {
+          annualSpend = baseAnnualSpend;
+        } else {
+          annualSpend = baseAnnualSpend * 0.8;
+        }
+      } else {
+        annualSpend = baseAnnualSpend;
+      }
+
+      // On the final year, adjust spend to exactly hit the end-of-life buffer
+      if (i === n - 1) {
+        const requiredSpend = startBalance + growth - buffer;
+        if (requiredSpend > 0) {
+          annualSpend = requiredSpend;
+        } else {
+          annualSpend = 0;
+        }
+      }
+
+      let endBalance = startBalance + growth - annualSpend;
+      endBalance = Math.max(endBalance, 0);
+
+      projection.push({
+        age,
+        year: i,
+        startBalance,
+        growth,
+        annualSpend,
+        endBalance,
+      });
+
+      totalLifetimeWealthConsumed += annualSpend;
+      prevEndBalance = endBalance;
+    }
+
+    return {
+      annualSpend: baseAnnualSpend,
+      totalLifetimeWealthConsumed,
+      moneyLeftWithFourPercentRule,
+      fourPercentRuleAnnualSpend,
+      yearsRemaining: n,
+      projection,
+      fourPercentProjection,
+      isFrontLoaded: spendingCurve === 'front-loaded',
+    };
+  }
+
+  function getFormData() {
+    const form = document.getElementById('decumulation-form');
+    const formData = new FormData(form);
+
+    return {
+      currentAge: Number(formData.get('currentAge')) || 45,
+      estimatedDeathAge: Number(formData.get('estimatedDeathAge')) || 85,
+      currentPortfolio: Number(formData.get('currentPortfolio')) || 1200000,
+      expectedRealReturn: Number(formData.get('expectedRealReturn')) || 4,
+      endOfLifeBuffer: Number(formData.get('endOfLifeBuffer')) || 50000,
+      spendingCurve: activeCurve,
+    };
+  }
+
+  function updateResults() {
+    const input = getFormData();
+    const result = calculateDecumulation(input);
+
+    document.getElementById('decumulation-annual-spend').textContent =
+      formatCurrency(result.annualSpend);
+    document.getElementById('decumulation-total-consumed').textContent =
+      formatCurrency(result.totalLifetimeWealthConsumed);
+    document.getElementById('decumulation-left-on-table').textContent =
+      formatCurrency(result.moneyLeftWithFourPercentRule);
+
+    updateChart(result);
+  }
+
+  function updateChart(result) {
+    const ctx = document.getElementById('decumulation-chart');
+    if (!ctx) return;
+
+    if (chart) {
+      chart.destroy();
+    }
+
+    const isDark = document.documentElement.classList.contains('dark');
+    const gridColor = isDark ? '#262626' : '#ebebeb';
+    const textColor = isDark ? '#737373' : '#888888';
+    const tooltipBg = isDark ? '#ededed' : '#171717';
+    const tooltipText = isDark ? '#171717' : '#ffffff';
+    const linkColor = isDark ? '#3291ff' : '#0070f3';
+    const errorColor = isDark ? '#ff4444' : '#ee0000';
+    const warningColor = isDark ? '#f5a623' : '#d97706';
+
+    const labels = result.projection.map(function (p) {
+      return 'Age ' + p.age;
+    });
+    const portfolioData = result.projection.map(function (p) {
+      return p.endBalance;
+    });
+    const bufferAmount = getFormData().endOfLifeBuffer;
+
+    var datasets = [
+      {
+        label: 'Portfolio Balance',
+        data: portfolioData,
+        borderColor: linkColor,
+        backgroundColor: isDark
+          ? 'rgba(50, 145, 255, 0.1)'
+          : 'rgba(0, 112, 243, 0.1)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 0,
+        pointHoverRadius: 4,
+        borderWidth: 2,
+      },
+      {
+        label: 'End-of-Life Buffer',
+        data: result.projection.map(function () {
+          return bufferAmount;
+        }),
+        borderColor: errorColor,
+        backgroundColor: 'transparent',
+        borderDash: [5, 5],
+        tension: 0,
+        pointRadius: 0,
+        pointHoverRadius: 4,
+        borderWidth: 1.5,
+      },
+    ];
+
+    // Add 4% rule projection as a dashed comparison line
+    if (
+      result.fourPercentProjection &&
+      result.fourPercentProjection.length > 0
+    ) {
+      var fourPercentData = result.projection.map(function (p, i) {
+        if (i < result.fourPercentProjection.length) {
+          return result.fourPercentProjection[i].endBalance;
+        }
+        return 0;
+      });
+
+      datasets.push({
+        label: '4% Rule Projection',
+        data: fourPercentData,
+        borderColor: warningColor,
+        backgroundColor: 'transparent',
+        borderDash: [3, 3],
+        borderWidth: 1.5,
+        tension: 0.4,
+        pointRadius: 0,
+        pointHoverRadius: 4,
+      });
+    }
+
+    chart = new window.Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: datasets,
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 2,
+              usePointStyle: false,
+              padding: 16,
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: 500,
+            },
+            bodyFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+            },
+            callbacks: {
+              label: function (context) {
+                return (
+                  context.dataset.label +
+                  ': ' +
+                  formatCurrency(context.parsed.y)
+                );
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              maxTicksLimit: 8,
+            },
+            border: {
+              display: false,
+            },
+          },
+          y: {
+            grid: {
+              color: gridColor,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              callback: function (value) {
+                return formatCurrencyShort(value);
+              },
+            },
+            border: {
+              display: false,
+            },
+            min: 0,
+          },
+        },
+      },
+    });
+  }
+
+  function initCurveButtons() {
+    document.querySelectorAll('.curve-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.curve-btn').forEach(function (b) {
+          b.classList.remove('bg-ink', 'text-canvas');
+          b.classList.add('border', 'border-hairline', 'bg-canvas', 'text-ink');
+        });
+        btn.classList.remove(
+          'border',
+          'border-hairline',
+          'bg-canvas',
+          'text-ink',
+        );
+        btn.classList.add('bg-ink', 'text-canvas');
+
+        activeCurve = btn.dataset.curve;
+        updateResults();
+      });
+    });
+  }
+
+  function initSliders() {
+    const sliders = [
+      {
+        id: 'decumulation-currentAge',
+        displayId: 'decumulation-currentAgeValue',
+        suffix: '',
+      },
+      {
+        id: 'decumulation-estimatedDeathAge',
+        displayId: 'decumulation-estimatedDeathAgeValue',
+        suffix: '',
+      },
+      {
+        id: 'decumulation-expectedRealReturn',
+        displayId: 'decumulation-expectedRealReturnValue',
+        suffix: '%',
+      },
+    ];
+
+    sliders.forEach(function (slider) {
+      var el = document.getElementById(slider.id);
+      var display = document.getElementById(slider.displayId);
+
+      if (el && display) {
+        el.addEventListener('input', function () {
+          display.textContent = el.value + slider.suffix;
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('decumulation-form');
+    if (form) {
+      form.addEventListener('input', function () {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initCurveButtons();
+    initSliders();
+    initFormListeners();
+    updateResults();
+
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', function () {
+        updateResults();
+      });
+
+    var observer = new MutationObserver(function () {
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
