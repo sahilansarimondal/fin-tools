@@ -1,0 +1,329 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import VPWCalculator from '../../components/calculator/VPWCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const vpwFaqItems: FAQItem[] = [
+  {
+    question: 'What is Variable Percentage Withdrawal (VPW)?',
+    answerHtml: '<b>Variable Percentage Withdrawal (VPW)</b> is a Bogleheads withdrawal strategy that recalculates your withdrawal rate annually based on your current age and asset allocation. It uses actuarial annuity math to dynamically scale spending — spending more during booms, less during downturns. Crucially, it mathematically guarantees your portfolio never runs dry before your target age.',
+    answerText: 'VPW is a Bogleheads withdrawal strategy that recalculates your withdrawal rate annually based on your current age and asset allocation. It uses actuarial annuity math to dynamically scale spending, mathematically guaranteeing your portfolio never runs dry before your target age.',
+  },
+  {
+    question: 'How does VPW differ from the 4% rule?',
+    answerHtml: 'The <b>4% rule</b> withdraws a fixed dollar amount (4% of initial portfolio, adjusted for inflation) every year regardless of market conditions. <b>VPW</b> recalculates the percentage each year based on remaining life expectancy and expected returns. In bad markets, VPW reduces spending to preserve capital. In good markets, it increases spending. This eliminates sequence of returns risk.',
+    answerText: 'The 4% rule withdraws a fixed dollar amount every year. VPW recalculates the percentage each year based on remaining life expectancy and expected returns. This eliminates sequence of returns risk.',
+  },
+  {
+    question: 'What is the VPW formula?',
+    answerHtml: 'The VPW base percentage is:<br /><br /><b>p<sub>t</sub> = R<sub>real</sub> / ((1 + R<sub>real</sub>) × [1 - (1 + R<sub>real</sub>)<sup>(-N<sub>t</sub>)</sup>])</b><br /><br />Where <b>R<sub>real</sub></b> is the weighted portfolio return (equity allocation × equity return + bond allocation × bond return) and <b>N<sub>t</sub></b> is the remaining years until target age. If R<sub>real</sub> = 0, it simplifies to <b>1/N<sub>t</sub></b>.<br /><br />The calculator applies this percentage to your current portfolio balance each year, plus a pro-rata adjustment for any pension bridge income.',
+    answerText: 'The VPW formula is p_t = R_real / ((1 + R_real) × [1 - (1 + R_real)^(-N_t)]) where R_real is the weighted portfolio return and N_t is remaining years. If R_real = 0, it simplifies to 1/N_t.',
+  },
+  {
+    question: 'Does VPW guarantee I will not run out of money?',
+    answerHtml: 'Yes — <b>VPW mathematically guarantees portfolio depletion at exactly the target age</b>. At the final year, the withdrawal percentage reaches 100%, drawing the last dollar. This is built into the actuarial math, not dependent on market returns. However, it means your spending fluctuates with portfolio performance — a trade-off for the guarantee of never running dry.',
+    answerText: 'Yes, VPW mathematically guarantees portfolio depletion at exactly the target age. At the final year, the withdrawal percentage reaches 100%, drawing the last dollar. This guarantee is built into the actuarial math.',
+  },
+  {
+    question: 'How does the pension bridge work in VPW?',
+    answerHtml: 'If you have future pension or <b>Social Security income</b>, VPW calculates the present value of that future income stream and adds it to your portfolio for withdrawal calculations. This lets you spend more in early retirement before pension starts, because the tool knows future income is coming.<br /><br />The calculator discounts future pension payments back to the present using your expected portfolio return, then adds that present value to your current portfolio balance when computing the VPW withdrawal amount.',
+    answerText: 'VPW calculates the present value of future pension or Social Security income and adds it to your portfolio for withdrawal calculations. This lets you spend more in early retirement before pension starts.',
+  },
+  {
+    question: 'What are the risks of VPW?',
+    answerHtml: '<b>VPW\'s main trade-off is income volatility</b> — your spending power fluctuates with markets. In a severe downturn, you may need to cut spending significantly. However, this is a feature, not a bug — it protects your portfolio from depletion.<br /><br />The mathematical guarantee of never running dry comes at the cost of variable income. Retirees who need stable, predictable income may prefer a bond ladder or annuity strategy alongside VPW for essential expenses.',
+    answerText: 'VPW\'s main trade-off is income volatility — spending fluctuates with markets. In a downturn you may need to cut spending. This protects your portfolio from depletion but means variable income.',
+  },
+  {
+    question: 'Can I use VPW with any asset allocation?',
+    answerHtml: 'Yes. <b>VPW works with any equity/bond split.</b> The withdrawal percentage adjusts based on your blended expected return. Higher equity allocations produce higher expected returns and thus higher initial withdrawal rates, but with more volatility.<br /><br />A <b>60/40 portfolio</b> (60% equities, 40% bonds) is a common starting point that balances growth with stability. Our calculator lets you adjust the equity allocation from 0% to 100% and see the impact in real time.',
+    answerText: 'Yes, VPW works with any equity/bond split. Higher equity allocations produce higher expected returns and higher initial withdrawal rates but with more volatility. A 60/40 portfolio is a common starting point.',
+  },
+  {
+    question: 'How does VPW compare to other withdrawal strategies?',
+    answerHtml: '<b>VPW sits between the rigid 4% rule and constant percentage withdrawal.</b><br /><br /><ul><li><b>4% Rule:</b> Constant dollar adjusted for inflation. High sequence of returns risk. May leave a massive estate.</li><li><b>Constant Percentage:</b> Always withdraws fixed % of portfolio. Never depletes, leaves large estate, but provides low spending early on.</li><li><b>VPW:</b> Provides more spending than constant percentage early on, adapts to market conditions unlike the 4% rule, and guarantees full depletion at your target age.</li></ul><br />VPW is ideal for retirees who want to maximize lifetime spending while accepting variable income.',
+    answerText: 'VPW sits between the rigid 4% rule (constant dollar, high ruin risk) and constant percentage (never depletes, leaves large estate). VPW provides more spending, adapts to markets, and guarantees full depletion at target age.',
+  },
+];
+---
+
+<PageLayout
+  title="Variable Percentage Withdrawal (VPW) Calculator — Eliminate Sequence Risk"
+  description="Free VPW retirement calculator. Compare Variable Percentage Withdrawal vs the 4% rule across market scenarios. Mathematical guarantee your portfolio never runs dry."
+  canonical="https://truefinancetools.com/vpw-calculator"
+  ogImage="https://truefinancetools.com/og-vpw-calculator.png"
+  ogImageAlt="VPW Calculator - Variable Percentage Withdrawal vs 4% Rule"
+  pageType="website"
+  keywords="VPW calculator, variable percentage withdrawal, retirement withdrawal calculator, 4% rule alternative, sequence of returns risk, Bogleheads withdrawal, safe withdrawal rate calculator, retirement income planner"
+>
+  <StructuredData
+    title="Variable Percentage Withdrawal (VPW) Calculator"
+    description="Free VPW retirement calculator. Compare Variable Percentage Withdrawal vs the 4% rule across market scenarios."
+    url="https://truefinancetools.com/vpw-calculator"
+    toolName="VPW Retirement Withdrawal Calculator"
+    toolDescription="Calculate your retirement safe withdrawal rate using the Bogleheads Variable Percentage Withdrawal method. Compare VPW against the 4% rule across different market scenarios."
+    faqItems={vpwFaqItems}
+    features={[
+      'Variable Percentage Withdrawal (VPW) actuarial calculations',
+      'Comparison with 4% rule and constant percentage strategies',
+      'Four market scenarios: steady, sequence risk, GFC crash, bull run',
+      'Pension bridge present value discounting',
+      'Interactive SVG chart with hover tooltips',
+      'Dark mode support'
+    ]}
+  />
+
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Variable Percentage Withdrawal (VPW) Calculator
+      </h1>
+      <p class="text-lg text-body">Compare VPW against the 4% rule. See how each strategy performs across different market scenarios.</p>
+    </div>
+  </section>
+
+  <VPWCalculator />
+
+  <HowItWorks title="How the VPW Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Set Your Portfolio</h3>
+      <p class="text-sm text-body">Enter your age, portfolio balance, equity/bond allocation, and expected returns. Enable pension bridge for Social Security or pension income.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Choose a Scenario</h3>
+      <p class="text-sm text-body">Select from steady growth, sequence of returns risk, GFC-style crash, or bull run to test each strategy under different conditions.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3h8.75l-1-3M12 3v13.5" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Compare Strategies</h3>
+      <p class="text-sm text-body">See VPW, 4% rule, and constant percentage side by side. View annual withdrawals, remaining balance, and the depletion guarantee.</p>
+    </div>
+  </HowItWorks>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is Variable Percentage Withdrawal (VPW)?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Variable Percentage Withdrawal (VPW)</strong> is a Bogleheads retirement withdrawal strategy that recalculates your withdrawal rate each year based on your current age, remaining life expectancy, and portfolio return expectations. Unlike fixed withdrawal strategies such as the 4% rule, VPW adjusts spending dynamically — spending more when portfolios grow and less when they shrink. The strategy is rooted in actuarial annuity math and mathematically guarantees that your portfolio will last exactly to your target age.
+        </p>
+
+        <p class="mb-4">
+          This <strong>VPW calculator</strong> lets you compare the Variable Percentage Withdrawal method against the traditional 4% rule and a constant percentage strategy across four distinct market scenarios. You can adjust your equity allocation, expected returns, and even add a pension bridge to see how future Social Security or pension income affects your early retirement spending.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The VPW Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          p<sub>t</sub> = R<sub>real</sub> / ((1 + R<sub>real</sub>) × [1 - (1 + R<sub>real</sub>)<sup>(-N<sub>t</sub>)</sup>])
+        </div>
+
+        <p class="mb-4 mt-4">
+          Where <strong>R<sub>real</sub></strong> is the weighted portfolio real return (equity allocation × equity return + bond allocation × bond return) and <strong>N<sub>t</sub></strong> is the remaining years until your target age. If R<sub>real</sub> = 0, the formula simplifies to <strong>1/N<sub>t</sub></strong>. The calculator applies this percentage to your current portfolio balance each year, automatically adjusting for market performance and factoring in any pension bridge income.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">VPW vs 4% Rule</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Metric</th>
+                <th class="p-3 font-medium text-ink">Variable Percentage Withdrawal</th>
+                <th class="p-3 font-medium text-ink">4% Rule</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Withdrawal method</td>
+                <td class="p-3 text-ink">Dynamic % of current balance each year</td>
+                <td class="p-3 text-ink">Fixed dollar amount (4% of initial, inflation-adjusted)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Income stability</td>
+                <td class="p-3 text-ink">Variable — fluctuates with markets</td>
+                <td class="p-3 text-ink">Stable — predictable annual income</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Depletion risk</td>
+                <td class="p-3 text-success-deep">Zero — mathematically guaranteed to last to target age</td>
+                <td class="p-3 text-error">High — sequence of returns risk can cause early depletion</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Sequence of returns risk</td>
+                <td class="p-3 text-success-deep">Eliminated — withdrawals shrink in downturns</td>
+                <td class="p-3 text-error">Significant — fixed withdrawals compound losses</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Portfolio end state</td>
+                <td class="p-3 text-ink">Depleted at target age (last dollar)</td>
+                <td class="p-3 text-ink">Variable — may run out early or leave large estate</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">Best for</td>
+                <td class="p-3 text-ink">Maximizing lifetime spending with flexible lifestyle</td>
+                <td class="p-3 text-ink">Retirees who need predictable, stable income</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose VPW?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Flexibility Seekers</h4>
+            <p class="text-sm text-body">Retirees who can adjust their spending based on market conditions and want to maximize withdrawal amounts in good years without risking ruin in bad years.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Sequence Risk Averse</h4>
+            <p class="text-sm text-body">Those concerned about retiring into a bear market. VPW eliminates sequence of returns risk by automatically reducing withdrawals when portfolio values drop.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Bogleheads Followers</h4>
+            <p class="text-sm text-body">Investors who follow the Bogleheads philosophy of low-cost index investing and prefer mathematically grounded, actuarial-based withdrawal strategies.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Pension Complementers</h4>
+            <p class="text-sm text-body">Retirees with future Social Security, pension, or annuity income who want to spend more in early retirement and use VPW's pension bridge to account for it.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">VPW Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Mathematically guaranteed depletion at target age — never runs dry</li>
+              <li>• Eliminates sequence of returns risk</li>
+              <li>• Dynamically adjusts spending to market conditions</li>
+              <li>• Higher spending in good years vs constant percentage</li>
+              <li>• Supports pension bridge for future income streams</li>
+              <li>• Works with any asset allocation</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Income volatility — spending fluctuates with markets</li>
+              <li>• May require spending cuts during downturns</li>
+              <li>• Harder to budget with variable income</li>
+              <li>• Not ideal for retirees needing predictable cash flow</li>
+              <li>• Requires annual recalculations and monitoring</li>
+              <li>• Leaves minimal estate at target age</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Variable Percentage Withdrawal
+      </h2>
+
+      <div class="space-y-4">
+        {vpwFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to VPW Retirement Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>VPW calculator</strong> is the most comprehensive free tool available for comparing Variable Percentage Withdrawal against traditional retirement withdrawal strategies. Unlike generic retirement calculators, this tool lets you test VPW, the 4% rule, and constant percentage withdrawal across multiple market scenarios so you can see exactly how each strategy behaves under different economic conditions.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose VPW Over the 4% Rule?</h3>
+
+        <p class="mb-4">
+          The 4% rule has been the gold standard for retirement withdrawals since the Trinity Study, but it has a critical flaw: it assumes you will withdraw the same dollar amount every year regardless of market performance. If you retire into a bear market — a scenario known as sequence of returns risk — the 4% rule can deplete your portfolio decades earlier than expected. VPW solves this by adjusting your withdrawal rate annually based on your current portfolio balance and remaining life expectancy. In years when the market drops, VPW automatically reduces your spending, preserving capital for future years.
+        </p>
+
+        <p class="mb-4">
+          This <strong>variable percentage withdrawal calculator</strong> is designed for the millions of retirees and pre-retirees who want a more sophisticated approach to retirement income. The interactive chart shows three lines: VPW withdrawals (blue), 4% rule withdrawals (green), and constant percentage withdrawals (orange). Toggle between four market scenarios — steady growth, sequence of returns risk, GFC crash, and bull run — to stress-test each strategy. The VPW line always reaches exactly zero at your target age, while the 4% rule may fail early or leave a large unused balance.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This VPW Calculator</h3>
+
+        <p class="mb-4">
+          Unlike basic <strong>retirement withdrawal calculators</strong> that only show a single projection, our calculator is fully interactive with real-time scenario modeling. All calculations happen in your browser — no data is stored on our servers. Adjust the equity allocation slider and watch the VPW withdrawal rate update instantly. Enable the pension bridge to see how future Social Security income boosts your early retirement spending. Compare four market scenarios side by side to understand how each strategy performs under different economic conditions.
+        </p>
+
+        <p class="mb-4">
+          The chart uses an interactive SVG with hover tooltips showing exact values for each year, strategy, and scenario. The results panel shows your Year 1 withdrawal amount, the average withdrawal across your retirement, and the minimum and maximum spending under each strategy. Whether you are a Bogleheads enthusiast exploring VPW for the first time or a retiree fine-tuning your withdrawal plan, this tool gives you the data you need to make an informed decision.
+        </p>
+
+        <p class="mb-4">
+          Start comparing withdrawal strategies today — no signup required, completely free, and results in seconds. Adjust any input to see how it shifts your retirement income. Understand the trade-offs between income stability and depletion risk. The path to a confident retirement starts with knowing exactly how your withdrawal strategy will perform.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other FIRE Strategies
+      </h2>
+      <p class="mb-8 text-body">Compare different approaches to find the right retirement withdrawal strategy for your needs.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/lean-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Lean FIRE Calculator</h3>
+          <p class="text-xs text-body">Minimalist approach with lower expenses using the 20x rule.</p>
+        </a>
+        <a href="/fat-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Fat FIRE Calculator</h3>
+          <p class="text-xs text-body">For those who want a luxury retirement lifestyle.</p>
+        </a>
+        <a href="/barista-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Calculator</h3>
+          <p class="text-xs text-body">Semi-retirement with part-time work to cover expenses.</p>
+        </a>
+        <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+          <p class="text-xs text-body">Find the savings that let compound interest do the rest.</p>
+        </a>
+        <a href="/learn/vpw-calculator-guide" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">VPW Calculator Guide</h3>
+          <p class="text-xs text-body">Deep dive into the VPW strategy, formula, and retirement scenarios.</p>
+        </a>
+        <a href="/learn/fire-strategies" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">All FIRE Strategies</h3>
+          <p class="text-xs text-body">Compare every early retirement and withdrawal approach.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

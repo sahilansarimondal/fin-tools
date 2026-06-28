@@ -1,0 +1,844 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div
+  id="vpw-calculator"
+  class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12"
+  data-current-scenario="steady"
+>
+  <div class="mb-8 text-center">
+    <p class="mb-2 font-mono text-xs uppercase tracking-wider text-mute">Free Calculator</p>
+    <h1
+      class="mb-3 text-3xl font-semibold tracking-tight text-ink sm:text-4xl"
+      style="letter-spacing: -0.02em;"
+    >
+      VPW Retirement Withdrawal Calculator
+    </h1>
+    <p class="mx-auto max-w-2xl text-body">
+      Compare the Variable Percentage Withdrawal method against the traditional 4% rule.
+      See how each strategy performs across different market scenarios.
+    </p>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- ====== Sidebar – Inputs ====== -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <!-- Portfolio & Ages -->
+        <div class="mb-6">
+          <h3 class="mb-4 border-b border-hairline pb-2 text-sm font-semibold text-ink">
+            Portfolio &amp; Ages
+          </h3>
+          <div class="space-y-4">
+            <Slider
+              label="Current Age"
+              name="currentAge"
+              value={65}
+              min={40}
+              max={80}
+              inputId="currentAge"
+              displayId="currentAgeValue"
+            />
+            <Slider
+              label="Target Age"
+              name="targetAge"
+              value={100}
+              min={80}
+              max={100}
+              inputId="targetAge"
+              displayId="targetAgeValue"
+              helpText="The maximum age your portfolio must last until."
+            />
+            <Input
+              label="Starting Portfolio"
+              name="portfolio"
+              type="number"
+              value={1000000}
+              min={100000}
+              max={10000000}
+              step={10000}
+              suffix="$"
+              hideArrows
+              helpText="Total investable assets (retirement accounts, brokerage, etc.)"
+            />
+          </div>
+        </div>
+
+        <!-- Asset Allocation -->
+        <div class="mb-6">
+          <h3 class="mb-4 border-b border-hairline pb-2 text-sm font-semibold text-ink">
+            Asset Allocation
+          </h3>
+          <div class="space-y-4">
+            <Slider
+              label="Equity Allocation"
+              name="equityAllocation"
+              value={60}
+              min={0}
+              max={100}
+              step={1}
+              suffix="%"
+              inputId="equityAllocation"
+              displayId="equityAllocationValue"
+            />
+            <div class="flex items-center justify-between rounded-md bg-canvas-soft-2 px-3 py-2 text-sm">
+              <span class="text-body">Bond Allocation</span>
+              <span id="bondDisplay" class="font-mono font-semibold tabular-nums text-ink">40%</span>
+            </div>
+            <Input
+              label="Expected Equity Return"
+              name="equityReturn"
+              type="number"
+              value={5}
+              min={0}
+              max={15}
+              step={0.5}
+              suffix="%"
+              hideArrows
+              helpText="Expected annual real return on equities (inflation-adjusted). S&P 500 historical avg ~7% real."
+            />
+            <Input
+              label="Expected Bond Return"
+              name="bondReturn"
+              type="number"
+              value={1.9}
+              min={0}
+              max={10}
+              step={0.1}
+              suffix="%"
+              hideArrows
+              helpText="Expected annual real return on bonds (inflation-adjusted)."
+            />
+          </div>
+        </div>
+
+        <!-- Pension / Social Security -->
+        <div>
+          <h3 class="mb-4 border-b border-hairline pb-2 text-sm font-semibold text-ink">
+            Pension / Social Security
+          </h3>
+          <div class="space-y-4">
+            <label class="flex cursor-pointer items-center gap-3 text-sm text-ink">
+              <input
+                type="checkbox"
+                id="pensionToggle"
+                class="h-4 w-4 accent-ink"
+              />
+              <span class="select-none">Enable Pension Bridge</span>
+            </label>
+            <div id="pensionFields" class="hidden space-y-4">
+              <Input
+                label="Annual Pension Income"
+                name="pensionIncome"
+                type="number"
+                value={0}
+                min={0}
+                max={500000}
+                step={1000}
+                suffix="$"
+                hideArrows
+                helpText="Annual Social Security, pension, or annuity income (inflation-adjusted)."
+              />
+              <Input
+                label="Pension Start Age"
+                name="pensionStartAge"
+                type="number"
+                value={65}
+                min={50}
+                max={80}
+                helpText="Age when pension / Social Security payments begin."
+              />
+            </div>
+          </div>
+        </div>
+      </Card>
+    </div>
+
+    <!-- ====== Main Area – Results ====== -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Ruin Risk Badge -->
+      <div
+        id="ruinRiskBadge"
+        class="flex items-center gap-3 rounded-lg border border-success/30 bg-success/5 px-5 py-4"
+      >
+        <svg class="h-6 w-6 shrink-0 text-success-deep" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div>
+          <p id="vpwRuinText" class="text-sm font-semibold text-success-deep">
+            0% Probability of Ruin (Mathematical Guarantee)
+          </p>
+          <p id="cdRuinText" class="mt-0.5 text-xs text-body">
+            Constant-dollar (4% rule) comparison shown below.
+          </p>
+        </div>
+      </div>
+
+      <!-- Scenario Selector -->
+      <div>
+        <p class="mb-2 text-xs font-medium uppercase tracking-wider text-mute">Market Scenario</p>
+        <div class="flex flex-wrap gap-2" id="scenarioButtons">
+          <button
+            data-scenario="steady"
+            class="scenario-btn rounded-md bg-ink px-3 py-2 text-xs font-medium text-canvas"
+          >
+            Steady Returns
+          </button>
+          <button
+            data-scenario="sequence-risk"
+            class="scenario-btn rounded-md bg-canvas-soft-2 px-3 py-2 text-xs font-medium text-body transition-colors hover:text-ink"
+          >
+            Sequence Risk
+          </button>
+          <button
+            data-scenario="gfc-crash"
+            class="scenario-btn rounded-md bg-canvas-soft-2 px-3 py-2 text-xs font-medium text-body transition-colors hover:text-ink"
+          >
+            GFC Crash
+          </button>
+          <button
+            data-scenario="secular-bull"
+            class="scenario-btn rounded-md bg-canvas-soft-2 px-3 py-2 text-xs font-medium text-body transition-colors hover:text-ink"
+          >
+            Bull Run
+          </button>
+        </div>
+      </div>
+
+      <!-- SVG Chart -->
+      <Card padding="lg">
+        <div class="mb-3 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">Annual Retirement Income</h2>
+          <div class="flex items-center gap-4 text-xs" id="chartLegend">
+            <span class="flex items-center gap-1.5">
+              <span class="inline-block h-2.5 w-2.5 rounded-sm" style="background-color: #29bc9b;"></span>
+              <span class="text-body">VPW</span>
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="inline-block h-2.5 w-2.5 rounded-sm" style="background-color: #ee0000;"></span>
+              <span class="text-body">4% Rule</span>
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="inline-block h-2.5 w-2.5 rounded-sm" style="background-color: #0070f3;"></span>
+              <span class="text-body">Const. %</span>
+            </span>
+          </div>
+        </div>
+        <div id="vpwChartContainer" class="relative w-full">
+          <div id="vpwChartSvgWrap" class="w-full">
+            <!-- SVG rendered by JS -->
+          </div>
+          <div
+            id="vpwTooltip"
+            class="pointer-events-none absolute z-10 hidden rounded-lg border border-hairline bg-canvas px-3 py-2 shadow-md"
+          >
+            <p id="tooltipAge" class="mb-1 text-xs font-medium text-ink">Age: —</p>
+            <div class="space-y-0.5 text-xs">
+              <p class="text-body"><span class="font-medium text-[#29bc9b]">VPW:</span> <span id="tooltipVPW">—</span></p>
+              <p class="text-body"><span class="font-medium text-[#ee0000]">4% Rule:</span> <span id="tooltipCD">—</span></p>
+              <p class="text-body"><span class="font-medium text-[#0070f3]">Const. %:</span> <span id="tooltipCP">—</span></p>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      <!-- Summary Result Cards -->
+      <div id="resultsSummary" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <ResultCard
+          label="VPW Total Withdrawn"
+          valueId="vpwTotal"
+          value="$0"
+          description="Lifetime withdrawals under VPW"
+        />
+        <ResultCard
+          label="VPW Ruin Risk"
+          valueId="vpwRuinRisk"
+          value="—"
+          valueClass="text-success-deep"
+          description="Probability of depleting portfolio"
+        />
+        <ResultCard
+          label="4% Rule Ruin Age"
+          valueId="cdRuinAge"
+          value="—"
+          valueClass="text-ink"
+          description="Age when 4% rule runs out"
+        />
+        <ResultCard
+          label="Const. % Final Estate"
+          valueId="cpFinalEstate"
+          value="$0"
+          description="Portfolio remaining at target age"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .scenario-btn {
+    transition: background-color 0.15s, color 0.15s;
+  }
+  .scenario-btn[data-active="true"] {
+    background-color: var(--color-ink) !important;
+    color: var(--color-canvas) !important;
+  }
+  #vpwChartContainer svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  #vpwChartContainer svg text {
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  #vpwChartContainer svg line.grid-line {
+    stroke: var(--color-hairline);
+    stroke-width: 1;
+    stroke-dasharray: 3, 3;
+  }
+  html.dark #vpwChartContainer svg line.grid-line {
+    stroke: var(--color-hairline);
+    stroke-dasharray: 3, 3;
+  }
+  #vpwChartContainer svg line.hover-line {
+    stroke: var(--color-hairline-strong);
+    stroke-width: 1;
+    stroke-dasharray: 4, 3;
+  }
+  #vpwTooltip {
+    min-width: 140px;
+  }
+</style>
+
+<script>
+  import {
+    runVPWSimulation,
+    createDefaultVPWInput,
+  } from '../../utils/vpw-calculations';
+  import type {
+    VPWInput,
+    VPWResult,
+    YearlyState,
+    MarketScenario,
+  } from '../../utils/vpw-calculations';
+
+  // -------------------------------------------------------------------------
+  // Constants
+  // -------------------------------------------------------------------------
+  const SCENARIO_LABELS: Record<MarketScenario, string> = {
+    steady: 'Steady Returns',
+    'sequence-risk': 'Sequence Risk',
+    'gfc-crash': 'GFC Crash',
+    'secular-bull': 'Bull Run',
+  };
+
+  const CHART_MARGIN = { top: 20, right: 90, bottom: 40, left: 65 };
+  const CHART_WIDTH = 800;
+  const CHART_HEIGHT = 400;
+  const INNER_W = CHART_WIDTH - CHART_MARGIN.left - CHART_MARGIN.right;
+  const INNER_H = CHART_HEIGHT - CHART_MARGIN.top - CHART_MARGIN.bottom;
+
+  // -------------------------------------------------------------------------
+  // State
+  // -------------------------------------------------------------------------
+  let currentScenario: MarketScenario = 'steady';
+  let simulationResult: VPWResult | null = null;
+
+  // -------------------------------------------------------------------------
+  // DOM refs
+  // -------------------------------------------------------------------------
+  const $ = (id: string) => document.getElementById(id)!;
+
+  // -------------------------------------------------------------------------
+  // Helpers
+  // -------------------------------------------------------------------------
+  function formatCurrency(value: number): string {
+    if (value < 0) return '-$' + Math.abs(value).toLocaleString(undefined, { maximumFractionDigits: 0 });
+    return '$' + value.toLocaleString(undefined, { maximumFractionDigits: 0 });
+  }
+
+  function formatCurrencyShort(value: number): string {
+    if (value >= 1_000_000) return '$' + (value / 1_000_000).toFixed(1) + 'M';
+    if (value >= 1_000) return '$' + Math.round(value / 1_000) + 'k';
+    return '$' + Math.round(value);
+  }
+
+  function getInputValues(): VPWInput {
+    const currentAge = parseInt(($('currentAge') as HTMLInputElement).value, 10);
+    const targetAge = parseInt(($('targetAge') as HTMLInputElement).value, 10);
+    const portfolio = parseFloat(($('input-portfolio') as HTMLInputElement).value) || 0;
+    const equityPct = parseInt(($('equityAllocation') as HTMLInputElement).value, 10);
+    const equityReturn = (parseFloat(($('input-equityReturn') as HTMLInputElement).value) || 0) / 100;
+    const bondReturn = (parseFloat(($('input-bondReturn') as HTMLInputElement).value) || 0) / 100;
+    const pensionToggle = ($('pensionToggle') as HTMLInputElement).checked;
+    const pensionIncome = pensionToggle
+      ? (parseFloat(($('input-pensionIncome') as HTMLInputElement).value) || 0)
+      : 0;
+    const pensionStartAge = pensionToggle && pensionIncome > 0
+      ? (parseInt(($('input-pensionStartAge') as HTMLInputElement).value, 10) || 65)
+      : targetAge + 1;
+
+    return {
+      currentAge: isNaN(currentAge) ? 65 : currentAge,
+      targetAge: isNaN(targetAge) ? 100 : targetAge,
+      portfolio: isNaN(portfolio) ? 1_000_000 : portfolio,
+      equityAllocation: (isNaN(equityPct) ? 60 : equityPct) / 100,
+      bondAllocation: (100 - (isNaN(equityPct) ? 60 : equityPct)) / 100,
+      equityReturn: isNaN(equityReturn) ? 0.05 : equityReturn,
+      bondReturn: isNaN(bondReturn) ? 0.019 : bondReturn,
+      pensionIncome: isNaN(pensionIncome) ? 0 : pensionIncome,
+      pensionStartAge: isNaN(pensionStartAge) ? targetAge + 1 : pensionStartAge,
+    };
+  }
+
+  function getChartColors() {
+    const isDark = document.documentElement.classList.contains('dark');
+    return {
+      textColor: isDark ? '#a3a3a3' : '#4d4d4d',
+      gridColor: isDark ? '#262626' : '#ebebeb',
+      axisColor: isDark ? '#737373' : '#888888',
+      vpwColor: isDark ? '#50e3c2' : '#29bc9b',
+      cdColor: isDark ? '#ff4444' : '#ee0000',
+      cpColor: isDark ? '#3291ff' : '#0070f3',
+    };
+  }
+
+  // -------------------------------------------------------------------------
+  // Chart Drawing
+  // -------------------------------------------------------------------------
+  function drawChart(result: VPWResult) {
+    const wrap = $('vpwChartSvgWrap');
+    const tooltip = $('vpwTooltip');
+    const colors = getChartColors();
+    const data = result.yearlyData;
+    const totalYears = data.length;
+    const lastYear = totalYears - 1;
+
+    // Find max value across all series for Y-axis scaling
+    let maxVal = 0;
+    for (const d of data) {
+      const m = Math.max(d.vpwWithdrawal, d.constantDollarWithdrawal, d.constantPercentWithdrawal);
+      if (m > maxVal) maxVal = m;
+    }
+    // Add a 10% headroom
+    maxVal = maxVal * 1.1;
+    if (maxVal <= 0) maxVal = 1000;
+
+    // Compute nice Y-axis ticks
+    const yTickCount = 5;
+    const rawInterval = maxVal / yTickCount;
+    const magnitude = Math.pow(10, Math.floor(Math.log10(rawInterval)));
+    const residual = rawInterval / magnitude;
+    let niceInterval: number;
+    if (residual <= 1.5) niceInterval = 1 * magnitude;
+    else if (residual <= 3.5) niceInterval = 2 * magnitude;
+    else if (residual <= 7.5) niceInterval = 5 * magnitude;
+    else niceInterval = 10 * magnitude;
+
+    const yMax = Math.ceil(maxVal / niceInterval) * niceInterval;
+    const yTicks: number[] = [];
+    for (let v = 0; v <= yMax + niceInterval / 2; v += niceInterval) {
+      yTicks.push(v);
+    }
+    const yMaxDisplay = yTicks[yTicks.length - 1];
+
+    // X-axis ticks every 5 years
+    const xTickStep = 5;
+    const xTicks: number[] = [];
+    for (let i = 0; i < totalYears; i += xTickStep) {
+      xTicks.push(i);
+    }
+    // Always include the last year
+    if (xTicks[xTicks.length - 1] !== lastYear) {
+      xTicks.push(lastYear);
+    }
+
+    // Scaling functions
+    const xScale = (yearIdx: number) =>
+      CHART_MARGIN.left + (yearIdx / lastYear) * INNER_W;
+    const yScale = (value: number) =>
+      CHART_MARGIN.top + INNER_H - (value / yMaxDisplay) * INNER_H;
+
+    // Build path data for each series
+    function buildPoints(series: (d: YearlyState) => number): string {
+      return data
+        .map((d, i) => {
+          const x = xScale(i);
+          const y = yScale(series(d));
+          return `${x.toFixed(1)},${y.toFixed(1)}`;
+        })
+        .join(' ');
+    }
+
+    const vpwPoints = buildPoints((d) => d.vpwWithdrawal);
+    const cdPoints = buildPoints((d) => d.constantDollarWithdrawal);
+    const cpPoints = buildPoints((d) => d.constantPercentWithdrawal);
+
+    // Build SVG — use innerHTML for speed (no event listeners needed on chart parts)
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('viewBox', `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`);
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', 'Retirement income chart comparing VPW, 4% Rule, and Constant Percentage strategies');
+
+    // ---- Clip path ----
+    const defs = document.createElementNS(svgNS, 'defs');
+    const clipPath = document.createElementNS(svgNS, 'clipPath');
+    clipPath.setAttribute('id', 'chartClip');
+    const clipRect = document.createElementNS(svgNS, 'rect');
+    clipRect.setAttribute('x', String(CHART_MARGIN.left));
+    clipRect.setAttribute('y', String(CHART_MARGIN.top));
+    clipRect.setAttribute('width', String(INNER_W));
+    clipRect.setAttribute('height', String(INNER_H));
+    clipPath.appendChild(clipRect);
+    defs.appendChild(clipPath);
+    svg.appendChild(defs);
+
+    // ---- Grid / Y-axis lines & labels ----
+    for (const val of yTicks) {
+      const y = yScale(val);
+      // Grid line
+      const line = document.createElementNS(svgNS, 'line');
+      line.setAttribute('x1', String(CHART_MARGIN.left));
+      line.setAttribute('y1', String(y));
+      line.setAttribute('x2', String(CHART_MARGIN.left + INNER_W));
+      line.setAttribute('y2', String(y));
+      line.classList.add('grid-line');
+      svg.appendChild(line);
+
+      // Label
+      const text = document.createElementNS(svgNS, 'text');
+      text.setAttribute('x', String(CHART_MARGIN.left - 8));
+      text.setAttribute('y', String(y + 4));
+      text.setAttribute('text-anchor', 'end');
+      text.setAttribute('fill', colors.textColor);
+      text.textContent = formatCurrencyShort(val);
+      svg.appendChild(text);
+    }
+
+    // ---- X-axis labels ----
+    for (const idx of xTicks) {
+      const x = xScale(idx);
+      const age = data[idx].age;
+      const text = document.createElementNS(svgNS, 'text');
+      text.setAttribute('x', String(x));
+      text.setAttribute('y', String(CHART_HEIGHT - 8));
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('fill', colors.textColor);
+      text.textContent = String(age);
+      svg.appendChild(text);
+    }
+
+    // ---- Axis titles ----
+    const yAxisTitle = document.createElementNS(svgNS, 'text');
+    yAxisTitle.setAttribute('x', '14');
+    yAxisTitle.setAttribute('y', String(CHART_MARGIN.top + INNER_H / 2));
+    yAxisTitle.setAttribute('text-anchor', 'middle');
+    yAxisTitle.setAttribute('transform', `rotate(-90, 14, ${CHART_MARGIN.top + INNER_H / 2})`);
+    yAxisTitle.setAttribute('fill', colors.textColor);
+    yAxisTitle.setAttribute('font-size', '11');
+    yAxisTitle.textContent = 'Income';
+    svg.appendChild(yAxisTitle);
+
+    const xAxisTitle = document.createElementNS(svgNS, 'text');
+    xAxisTitle.setAttribute('x', String(CHART_MARGIN.left + INNER_W / 2));
+    xAxisTitle.setAttribute('y', String(CHART_HEIGHT - 22));
+    xAxisTitle.setAttribute('text-anchor', 'middle');
+    xAxisTitle.setAttribute('fill', colors.textColor);
+    xAxisTitle.setAttribute('font-size', '11');
+    xAxisTitle.textContent = 'Age';
+    svg.appendChild(xAxisTitle);
+
+    // ---- Data lines group (clipped) ----
+    const clipGroup = document.createElementNS(svgNS, 'g');
+    clipGroup.setAttribute('clip-path', 'url(#chartClip)');
+
+    // VPW line
+    const vpwPoly = document.createElementNS(svgNS, 'polyline');
+    vpwPoly.setAttribute('points', vpwPoints);
+    vpwPoly.setAttribute('fill', 'none');
+    vpwPoly.setAttribute('stroke', colors.vpwColor);
+    vpwPoly.setAttribute('stroke-width', '2.5');
+    vpwPoly.setAttribute('stroke-linejoin', 'round');
+    clipGroup.appendChild(vpwPoly);
+
+    // Constant Dollar line
+    const cdPoly = document.createElementNS(svgNS, 'polyline');
+    cdPoly.setAttribute('points', cdPoints);
+    cdPoly.setAttribute('fill', 'none');
+    cdPoly.setAttribute('stroke', colors.cdColor);
+    cdPoly.setAttribute('stroke-width', '2.5');
+    cdPoly.setAttribute('stroke-linejoin', 'round');
+    cdPoly.setAttribute('stroke-dasharray', '6, 3');
+    clipGroup.appendChild(cdPoly);
+
+    // Constant Percent line
+    const cpPoly = document.createElementNS(svgNS, 'polyline');
+    cpPoly.setAttribute('points', cpPoints);
+    cpPoly.setAttribute('fill', 'none');
+    cpPoly.setAttribute('stroke', colors.cpColor);
+    cpPoly.setAttribute('stroke-width', '2');
+    cpPoly.setAttribute('stroke-linejoin', 'round');
+    cpPoly.setAttribute('stroke-dasharray', '2, 3');
+    clipGroup.appendChild(cpPoly);
+
+    // ---- Hover line (initially hidden) ----
+    const hoverLine = document.createElementNS(svgNS, 'line');
+    hoverLine.setAttribute('id', 'chartHoverLine');
+    hoverLine.setAttribute('y1', String(CHART_MARGIN.top));
+    hoverLine.setAttribute('y2', String(CHART_MARGIN.top + INNER_H));
+    hoverLine.setAttribute('x1', '0');
+    hoverLine.setAttribute('x2', '0');
+    hoverLine.setAttribute('stroke', colors.axisColor);
+    hoverLine.setAttribute('stroke-width', '1');
+    hoverLine.setAttribute('stroke-dasharray', '4, 3');
+    hoverLine.style.display = 'none';
+    clipGroup.appendChild(hoverLine);
+
+    svg.appendChild(clipGroup);
+
+    // ---- Legend (simple dots + labels in top-right) ----
+    const legendItems = [
+      { label: 'VPW', color: colors.vpwColor },
+      { label: '4% Rule', color: colors.cdColor, dashed: true },
+      { label: 'Const. %', color: colors.cpColor, dotted: true },
+    ];
+    const legendX = CHART_MARGIN.left + INNER_W - 10;
+    const legendY = CHART_MARGIN.top + 14;
+
+    const legendGroup = document.createElementNS(svgNS, 'g');
+    legendItems.forEach((item, i) => {
+      const ly = legendY + i * 18;
+
+      const dot = document.createElementNS(svgNS, 'line');
+      dot.setAttribute('x1', String(legendX - 70));
+      dot.setAttribute('y1', String(ly));
+      dot.setAttribute('x2', String(legendX - 20));
+      dot.setAttribute('y2', String(ly));
+      dot.setAttribute('stroke', item.color);
+      dot.setAttribute('stroke-width', '2.5');
+      if (item.dashed) dot.setAttribute('stroke-dasharray', '6, 3');
+      if (item.dotted) dot.setAttribute('stroke-dasharray', '2, 3');
+      legendGroup.appendChild(dot);
+
+      const lbl = document.createElementNS(svgNS, 'text');
+      lbl.setAttribute('x', String(legendX - 16));
+      lbl.setAttribute('y', String(ly + 4));
+      lbl.setAttribute('text-anchor', 'start');
+      lbl.setAttribute('fill', colors.textColor);
+      lbl.setAttribute('font-size', '11');
+      lbl.textContent = item.label;
+      legendGroup.appendChild(lbl);
+    });
+    svg.appendChild(legendGroup);
+
+    // Replace contents
+    wrap.innerHTML = '';
+    wrap.appendChild(svg);
+
+    // ---- Hover / Tooltip logic ----
+    svg.addEventListener('mousemove', (e: MouseEvent) => {
+      const rect = svg.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const svgWidth = rect.width;
+      const scaleX = svgWidth / CHART_WIDTH;
+
+      const chartX = (mouseX / scaleX) - CHART_MARGIN.left;
+      if (chartX < 0 || chartX > INNER_W) {
+        tooltip.classList.add('hidden');
+        hoverLine.style.display = 'none';
+        return;
+      }
+
+      const yearIdx = Math.round((chartX / INNER_W) * lastYear);
+      const clampedIdx = Math.max(0, Math.min(yearIdx, lastYear));
+      const d = data[clampedIdx];
+
+      // Update hover line
+      const hx = xScale(clampedIdx);
+      hoverLine.setAttribute('x1', String(hx));
+      hoverLine.setAttribute('x2', String(hx));
+      hoverLine.style.display = '';
+
+      // Update tooltip
+      ($('tooltipAge') as HTMLElement).textContent = `Age: ${d.age}`;
+      ($('tooltipVPW') as HTMLElement).textContent = formatCurrency(d.vpwWithdrawal);
+      ($('tooltipCD') as HTMLElement).textContent = formatCurrency(d.constantDollarWithdrawal);
+      ($('tooltipCP') as HTMLElement).textContent = formatCurrency(d.constantPercentWithdrawal);
+
+      // Position tooltip
+      const tooltipX = mouseX + 12;
+      const tooltipY = e.clientY - rect.top - 10;
+      const maxTooltipX = rect.width - 160;
+      tooltip.style.left = Math.min(tooltipX, maxTooltipX) + 'px';
+      tooltip.style.top = Math.max(10, Math.min(tooltipY, rect.height - 100)) + 'px';
+      tooltip.classList.remove('hidden');
+    });
+
+    svg.addEventListener('mouseleave', () => {
+      tooltip.classList.add('hidden');
+      hoverLine.style.display = 'none';
+    });
+  }
+
+  // -------------------------------------------------------------------------
+  // Results Update
+  // -------------------------------------------------------------------------
+  function updateResults() {
+    const input = getInputValues();
+    const result = runVPWSimulation(input, currentScenario);
+    simulationResult = result;
+
+    const colors = getChartColors();
+
+    // ---- Update legend colors to match current theme ----
+    const legendSpans = ($('chartLegend') as HTMLElement).querySelectorAll('span.inline-block');
+    if (legendSpans.length >= 3) {
+      (legendSpans[0] as HTMLElement).style.backgroundColor = colors.vpwColor;
+      (legendSpans[1] as HTMLElement).style.backgroundColor = colors.cdColor;
+      (legendSpans[2] as HTMLElement).style.backgroundColor = colors.cpColor;
+    }
+
+    // ---- Ruin Risk Badge ----
+    const badge = $('ruinRiskBadge');
+    const ruinText = $('vpwRuinText');
+    const cdText = $('cdRuinText');
+
+    if (result.vpwNeverRuin) {
+      ruinText.textContent = '0% Probability of Ruin (Mathematical Guarantee)';
+      ruinText.className = 'text-sm font-semibold text-success-deep';
+      badge.className =
+        'flex items-center gap-3 rounded-lg border border-success/30 bg-success/5 px-5 py-4';
+    } else {
+      ruinText.textContent = '⚠ VPW Ruin Risk Detected';
+      ruinText.className = 'text-sm font-semibold text-warning';
+      badge.className =
+        'flex items-center gap-3 rounded-lg border border-warning/30 bg-warning/5 px-5 py-4';
+    }
+
+    if (result.constantDollarRuinAge !== null) {
+      cdText.textContent = `4% Rule fails at age ${result.constantDollarRuinAge} under ${SCENARIO_LABELS[currentScenario]} scenario.`;
+    } else if (result.vpwNeverRuin) {
+      cdText.textContent = `4% Rule survives to age ${input.targetAge} under ${SCENARIO_LABELS[currentScenario]} scenario.`;
+    } else {
+      cdText.textContent = `Constant-dollar (4% rule) comparison shown below.`;
+    }
+
+    // ---- Summary Cards ----
+    ($('vpwTotal') as HTMLElement).textContent = formatCurrency(result.vpwTotalWithdrawn);
+    ($('vpwRuinRisk') as HTMLElement).textContent = result.vpwNeverRuin ? '0% (Guaranteed)' : '⚠ Detected';
+    ($('cdRuinAge') as HTMLElement).textContent =
+      result.constantDollarRuinAge !== null
+        ? `Age ${result.constantDollarRuinAge}`
+        : 'Never';
+    ($('cpFinalEstate') as HTMLElement).textContent = formatCurrency(result.constantPercentFinalEstate);
+
+    // ---- Chart ----
+    drawChart(result);
+  }
+
+  // -------------------------------------------------------------------------
+  // Initialisation
+  // -------------------------------------------------------------------------
+  function initSliders() {
+    const sliderDefs: { id: string; displayId: string; suffix: string; format?: (v: number) => string }[] = [
+      { id: 'currentAge', displayId: 'currentAgeValue', suffix: '' },
+      { id: 'targetAge', displayId: 'targetAgeValue', suffix: '' },
+      { id: 'equityAllocation', displayId: 'equityAllocationValue', suffix: '%' },
+    ];
+
+    sliderDefs.forEach(({ id, displayId, suffix }) => {
+      const slider = document.getElementById(id) as HTMLInputElement;
+      const display = document.getElementById(displayId);
+      if (slider && display) {
+        slider.addEventListener('input', () => {
+          display.textContent = `${slider.value}${suffix}`;
+          if (id === 'equityAllocation') {
+            const bondPct = 100 - parseInt(slider.value, 10);
+            const bondDisplay = document.getElementById('bondDisplay');
+            if (bondDisplay) bondDisplay.textContent = `${bondPct}%`;
+          }
+          updateResults();
+        });
+      }
+    });
+
+    // Text inputs that trigger update
+    const textInputs = [
+      'input-portfolio',
+      'input-equityReturn',
+      'input-bondReturn',
+      'input-pensionIncome',
+      'input-pensionStartAge',
+    ];
+    textInputs.forEach((id) => {
+      const el = document.getElementById(id) as HTMLInputElement;
+      if (el) {
+        el.addEventListener('input', () => updateResults());
+        el.addEventListener('change', () => updateResults());
+      }
+    });
+  }
+
+  function initScenarioButtons() {
+    const buttons = document.querySelectorAll<HTMLButtonElement>('#scenarioButtons .scenario-btn');
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        // Update active state
+        buttons.forEach((b) => {
+          b.dataset.active = 'false';
+          b.classList.remove('bg-ink', 'text-canvas');
+          b.classList.add('bg-canvas-soft-2', 'text-body', 'hover:text-ink');
+        });
+        btn.dataset.active = 'true';
+        btn.classList.remove('bg-canvas-soft-2', 'text-body', 'hover:text-ink');
+        btn.classList.add('bg-ink', 'text-canvas');
+
+        currentScenario = (btn.dataset.scenario as MarketScenario) || 'steady';
+        updateResults();
+      });
+    });
+  }
+
+  function initPensionToggle() {
+    const toggle = document.getElementById('pensionToggle') as HTMLInputElement;
+    const fields = document.getElementById('pensionFields');
+    if (toggle && fields) {
+      toggle.addEventListener('change', () => {
+        fields.classList.toggle('hidden', !toggle.checked);
+        updateResults();
+      });
+    }
+  }
+
+  function init() {
+    initSliders();
+    initScenarioButtons();
+    initPensionToggle();
+
+    // Initial update
+    updateResults();
+
+    // Dark mode observer
+    const observer = new MutationObserver(() => {
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    // Also listen for OS-level theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      updateResults();
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+</script>
