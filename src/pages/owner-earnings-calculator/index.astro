@@ -1,0 +1,328 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import OwnerEarningsCalculator from '../../components/calculator/OwnerEarningsCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What are Owner Earnings and how does Warren Buffett define them?',
+    answerHtml: '<b>Owner Earnings</b> is a metric coined by <b>Warren Buffett</b> in his 1986 Berkshire Hathaway shareholder letter. He defined it as the true economic earnings power of a business — the cash generated that owners can take out without impairing the company\'s competitive position.<br /><br />The formula is:<br /><b>Owner Earnings = Net Income + Depreciation & Amortization + Other Non-Cash Charges − Maintenance CapEx</b><br /><br />Buffett argued that GAAP earnings often distort economic reality because they include non-cash charges but ignore the real cash cost of maintaining a business. Owner Earnings strips away accounting noise to reveal what the business truly earns.',
+    answerText: 'Owner Earnings is a metric coined by Warren Buffett representing the true economic earnings power of a business. Formula: Net Income + Depreciation & Amortization + Other Non-Cash Charges − Maintenance CapEx. It reveals what the business truly earns after maintaining its competitive position.',
+  },
+  {
+    question: 'How do Owner Earnings differ from GAAP Net Income?',
+    answerHtml: 'GAAP Net Income and Owner Earnings differ in several critical ways:<br /><br /><ul><li><b>Non-cash charges:</b> GAAP Net Income deducts depreciation, amortization, stock-based compensation, and impairment charges. Owner Earnings adds these back because they are non-cash expenses that do not reduce the cash available to owners.</li><li><b>Working capital:</b> GAAP Net Income ignores changes in working capital. Owner Earnings accounts for the fact that growing receivables or inventory consume cash.</li><li><b>Maintenance CapEx:</b> This is the biggest difference. GAAP treats all capital expenditures as a single line item. Owner Earnings separates <b>maintenance CapEx</b> (required to sustain operations) from <b>growth CapEx</b> (discretionary spending for expansion). Only maintenance CapEx is subtracted.</li></ul><br />A company with high GAAP Net Income but heavy maintenance CapEx (like an aging factory) may have much lower Owner Earnings — and therefore less intrinsic value.',
+    answerText: 'GAAP Net Income and Owner Earnings differ in three key ways: (1) Owner Earnings adds back non-cash charges like depreciation, (2) it accounts for changes in working capital, and (3) it subtracts only maintenance CapEx (not all CapEx). A company with high Net Income but heavy maintenance CapEx may have much lower Owner Earnings.',
+  },
+  {
+    question: 'What is the Bruce Greenwald Maintenance CapEx method?',
+    answerHtml: 'Professor <b>Bruce Greenwald</b> of Columbia Business School developed a rigorous method for estimating Maintenance CapEx when you have at least 5 years of financial data. His approach separates Total CapEx into two components:<br /><br /><b>Growth CapEx = (Average PP&E / Average Revenue) × Change in Revenue</b><br /><br /><ul><li><b>PP&E-to-Sales Ratio:</b> Calculated as the average ratio of Property, Plant & Equipment to Revenue over 5 years. This represents how much capital is required to generate each dollar of revenue.</li><li><b>Growth CapEx:</b> The portion of Total CapEx attributable to revenue growth. If revenue increases, some CapEx is required just to support that growth.</li><li><b>Maintenance CapEx:</b> Total CapEx minus Growth CapEx. This is the portion required just to maintain the current business.</li></ul><br />If Growth CapEx exceeds Total CapEx (common in declining businesses), the calculator falls back to using Total CapEx as the maintenance estimate — a conservative approach.',
+    answerText: 'Bruce Greenwald\'s method estimates Maintenance CapEx by separating Total CapEx into growth and maintenance components. Growth CapEx = (Average PP&E / Average Revenue) × Change in Revenue. Maintenance CapEx = Total CapEx − Growth CapEx. If Growth CapEx exceeds Total CapEx, the calculator falls back to Total CapEx as a conservative estimate.',
+  },
+  {
+    question: 'What is Ten-Cap Pricing and how does it work?',
+    answerHtml: '<b>Ten-Cap Pricing</b> is Warren Buffett\'s preferred valuation framework. It values a business by dividing its Owner Earnings by 10% (a 10x capitalization rate). This is equivalent to asking: "How much capital would I need to generate this income at a 10% return?"<br /><br />The formula is simple:<br /><br /><b>Intrinsic Value = Owner Earnings ÷ 0.10</b><br /><br />Buffett uses 10% as his minimum required rate of return (his "opportunity cost" of capital). This implies:<br /><ul><li>A business earning <b>$100M</b> in Owner Earnings is worth <b>$1B</b> at Ten-Cap</li><li>Higher discount rates (e.g., 12-15%) produce lower valuations — suitable for riskier businesses</li><li>Lower discount rates (e.g., 8%) produce higher valuations — suitable for high-moat businesses</li></ul><br />Our calculator lets you adjust the discount rate from 6% to 15% to match your required return threshold.',
+    answerText: 'Ten-Cap Pricing values a business by dividing Owner Earnings by 10% (a 10x cap rate). Intrinsic Value = Owner Earnings ÷ 0.10. Buffett uses 10% as his minimum required return. A business earning $100M in Owner Earnings is worth $1B at Ten-Cap. Our calculator lets you adjust the discount rate from 6% to 15%.',
+  },
+  {
+    question: 'How do I interpret the Margin of Safety?',
+    answerHtml: 'The <b>Margin of Safety</b> is the difference between a stock\'s intrinsic value per share and its current market price, expressed as a percentage. It is the central concept in <b>Ben Graham\'s value investing framework</b>.<br /><br /><b>Margin of Safety = (Intrinsic Value Per Share − Stock Price) ÷ Intrinsic Value Per Share × 100</b><br /><br /><ul><li><b>Positive Margin of Safety (>0%):</b> The stock trades below its intrinsic value. The higher the percentage, the greater the "buffer" against errors in your assumptions. 20-30%+ is typically considered attractive.</li><li><b>Near Zero (0% to -20%):</b> The stock is fairly valued. Price reflects intrinsic value. Wait for a better entry point.</li><li><b>Negative Margin of Safety (< -20%):</b> The stock is overvalued. Market price exceeds intrinsic value significantly.</li></ul><br />Our calculator color-codes the result: <b class="text-success-deep">green for undervalued</b>, <b class="text-warning">amber for fairly valued</b>, and <b class="text-error">red for overvalued</b>.',
+    answerText: 'The Margin of Safety measures the gap between intrinsic value per share and market price. Positive = undervalued (good), near zero = fairly valued, negative = overvalued. 20-30%+ is typically considered an attractive margin of safety. The calculator color-codes results green (undervalued), amber (fair), and red (overvalued).',
+  },
+  {
+    question: 'Where do I find the inputs on a company\'s 10-K?',
+    answerHtml: 'All the inputs for our Owner Earnings calculator can be found in a company\'s annual <b>10-K filing</b> (or 20-F for foreign companies). Here is a section-by-section guide:<br /><br /><ul><li><b>Stock Price:</b> From any stock market data source (Yahoo Finance, Bloomberg, etc.)</li><li><b>Shares Outstanding:</b> 10-K cover page or Item 5 — basic weighted-average shares outstanding</li><li><b>Net Income:</b> <i>Income Statement</i> — "Net income attributable to common shareholders"</li><li><b>Depreciation & Amortization:</b> <i>Cash Flow Statement</i> — Operating Activities section</li><li><b>Other Non-Cash Charges:</b> <i>Cash Flow Statement</i> — Stock-based compensation, deferred taxes, impairment charges</li><li><b>Changes in Working Capital:</b> <i>Cash Flow Statement</i> — Operating Activities (near the bottom)</li><li><b>Total CapEx:</b> <i>Cash Flow Statement</i> — Investing Activities (shown as a positive number)</li><li><b>Cash & Equivalents:</b> <i>Balance Sheet</i> — Current Assets section</li><li><b>Total Debt:</b> <i>Balance Sheet</i> — Short-term + Long-term debt</li><li><b>PP&E & Revenue (Greenwald method):</b> <i>Balance Sheet</i> (PP&E) and <i>Income Statement</i> (Revenue) for 5 years</li></ul>',
+    answerText: 'All inputs come from the 10-K: Stock Price (market data), Shares Outstanding (cover), Net Income (Income Statement), Depreciation (Cash Flow - Operating), Non-Cash Charges (Cash Flow), Working Capital changes (Cash Flow), CapEx (Cash Flow - Investing), Cash & Debt (Balance Sheet). For Greenwald method you need 5 years of PP&E (Balance Sheet) and Revenue (Income Statement).',
+  },
+  {
+    question: 'Why does Warren Buffett prefer Owner Earnings over Net Income?',
+    answerHtml: 'Warren Buffett prefers Owner Earnings because <b>GAAP Net Income can be misleading</b> in several ways that distort economic reality:<br /><br /><ul><li><b>Depreciation is real wear-and-tear, but not a cash expense.</b> A company with massive depreciation (e.g., a railroad or factory) reports lower net income, yet the cash is still in the bank. Buffett wants to know the actual cash generation.</li><li><b>Stock-based compensation is invisible to shareholders.</b> When a company pays employees with stock options, it is a real cost to existing shareholders (dilution), but GAAP may not fully capture it as an expense in older accounting. Owner Earnings adjusts for this.</li><li><b>Growth CapEx vs Maintenance CapEx:</b> GAAP lumps all CapEx together. Buffett separates them because growth CapEx is optional — shareholders could choose not to grow. Only maintenance CapEx is truly required to sustain earnings.</li></ul><br />As Buffett wrote: "The shorthand approach is to take net income, add back depreciation, and subtract maintenance capital expenditures. That gives you the true earnings power of the business."',
+    answerText: 'Buffett prefers Owner Earnings because GAAP Net Income can be misleading: (1) depreciation reduces net income but is not a cash expense, (2) stock-based compensation is a real cost to shareholders but may not be fully captured in GAAP, and (3) separating maintenance CapEx from growth CapEx reveals the true cost of sustaining operations.',
+  },
+  {
+    question: 'How should I handle edge cases like negative working capital or negative growth?',
+    answerHtml: 'The Owner Earnings calculator handles several edge cases automatically:<br /><br /><ul><li><b>Negative Changes in Working Capital:</b> If working capital <i>decreased</i> (e.g., payables increased or receivables decreased), the change is a source of cash. Enter it as a negative value. For example, if accounts receivable dropped by $5M, enter <b>−$5,000,000</b>. The calculator adds this back to Owner Earnings because it represents cash freed up.</li><li><b>Negative Revenue Growth (Greenwald method):</b> If revenue declined (negative growth), the Greenwald formula produces a negative Growth CapEx. This means Total CapEx is entirely maintenance-related (and possibly insufficient to sustain operations). The calculator falls back to Total CapEx as the maintenance estimate.</li><li><b>Growth CapEx > Total CapEx:</b> This occurs when the PP&E-to-Sales ratio implies more investment is needed than was actually spent. Again, Total CapEx is used as a fallback.</li><li><b>Very Low Maintenance CapEx:</b> Some software or asset-light businesses have minimal maintenance CapEx. The calculator handles this normally — their Owner Earnings will be very close to Net Income plus non-cash charges.</li></ul>',
+    answerText: 'Edge cases handled automatically: (1) Negative working capital change means cash was freed up and is added back, (2) negative revenue growth in Greenwald method triggers a fallback to Total CapEx, (3) when Growth CapEx exceeds Total CapEx, Total CapEx is used as a conservative estimate, (4) asset-light businesses with low maintenance CapEx show Owner Earnings close to Net Income plus non-cash charges.',
+  },
+];
+---
+
+<PageLayout
+  title="Owner Earnings Calculator — Warren Buffett's Intrinsic Value Tool"
+  description="Free owner earnings calculator using Warren Buffett's formula. Calculate intrinsic value from 10-K data. Maintenance capex, Greenwald method, instant results."
+  canonical="https://truefinancetools.com/owner-earnings-calculator"
+  ogImage="https://truefinancetools.com/og-owner-earnings-calculator.png"
+  ogImageAlt="Owner Earnings Calculator — Buffett's Intrinsic Value Tool"
+  pageType="website"
+  keywords="owner earnings calculator, warren buffett valuation, intrinsic value calculator, maintenance capex calculator, greenwald method, ten cap pricing, value investing tools"
+>
+  <StructuredData
+    title="Owner Earnings Calculator — Warren Buffett's Intrinsic Value Tool"
+    description="Free owner earnings calculator using Warren Buffett's formula. Calculate intrinsic value from 10-K data. Maintenance capex, Greenwald method, instant results."
+    url="https://truefinancetools.com/owner-earnings-calculator"
+    toolName="Owner Earnings Calculator"
+    toolDescription="Calculate Warren Buffett's Owner Earnings and intrinsic value using 10-K financial data. Estimate the true economic earnings power of a business with maintenance Capex analysis."
+    faqItems={toolFaqItems}
+    features={[
+      'Direct Maintenance CapEx input and Greenwald 5-year method',
+      'Interactive key metrics comparison chart',
+      'Intrinsic value calculation using Ten-Cap pricing',
+      'Margin of Safety analysis with undervalued/fair/overvalued indicators',
+      'PDF export and shareable results via URL',
+      'Theme-aware dark mode support',
+    ]}
+  />
+
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Owner Earnings Calculator
+      </h1>
+      <p class="text-lg text-body">Calculate Warren Buffett's Owner Earnings and intrinsic value using 10-K financial data. Estimate the true economic earnings power of a business.</p>
+    </div>
+  </section>
+
+  <OwnerEarningsCalculator />
+
+  <HowItWorks title="How the Owner Earnings Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter 10-K Data</h3>
+      <p class="text-sm text-body">Input financial data from the company's 10-K: net income, depreciation, CapEx, working capital, and balance sheet items.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. See Owner Earnings</h3>
+      <p class="text-sm text-body">Get instant Owner Earnings, intrinsic value, intrinsic value per share, and margin of safety — all calculated automatically.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Analyze & Export</h3>
+      <p class="text-sm text-body">Compare key metrics with the interactive chart, export results as PDF, or share your analysis with a shareable link.</p>
+    </div>
+  </HowItWorks>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is Owner Earnings?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Owner Earnings</strong> is a valuation metric coined by <strong>Warren Buffett</strong> in his 1986 Berkshire Hathaway shareholder letter. It represents the true economic earnings power of a business — the cash a company generates that can be distributed to owners without impairing its competitive position. Unlike GAAP Net Income, which includes accounting distortions like depreciation and stock-based compensation, Owner Earnings focuses on the real cash flow available to shareholders.
+        </p>
+
+        <p class="mb-4">
+          The core insight is that <strong>GAAP accounting</strong> treats all capital expenditures identically, but Buffett argues that some CapEx is required just to maintain operations (maintenance CapEx) while other CapEx is optional (growth CapEx). Only the maintenance portion should be subtracted when calculating true earnings. Our <strong>Owner Earnings calculator</strong> applies this framework to help you value any publicly traded company using its 10-K data.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Owner Earnings Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Owner Earnings = Net Income + Depreciation & Amortization + Other Non-Cash Charges − Maintenance CapEx
+        </div>
+
+        <p class="mb-4 mt-4">
+          From Owner Earnings, we calculate intrinsic value using <strong>Ten-Cap Pricing</strong> (Buffett's preferred method):
+        </p>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Intrinsic Value = Owner Earnings ÷ Discount Rate<br />
+          Intrinsic Value Per Share = (Intrinsic Value + Cash & Equivalents − Total Debt) ÷ Shares Outstanding
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Owner Earnings vs GAAP Net Income</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Aspect</th>
+                <th class="p-3 font-medium text-ink">Owner Earnings</th>
+                <th class="p-3 font-medium text-ink">GAAP Net Income</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Non-Cash Charges</td>
+                <td class="p-3 text-ink">Added back (depreciation, amortization, SBC)</td>
+                <td class="p-3 text-ink">Deducted as expenses</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Working Capital Changes</td>
+                <td class="p-3 text-ink">Accounted for (cash impact reflected)</td>
+                <td class="p-3 text-ink">Ignored entirely</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Capital Expenditures</td>
+                <td class="p-3 text-ink">Only maintenance CapEx subtracted</td>
+                <td class="p-3 text-ink">All CapEx already expensed via depreciation</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Growth CapEx</td>
+                <td class="p-3 text-ink">Not subtracted (optional investment)</td>
+                <td class="p-3 text-ink">Indirectly reflected in future depreciation</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 text-body font-sans">Reflects True Cash Generation</td>
+                <td class="p-3 font-semibold text-success-deep">✓ Yes</td>
+                <td class="p-3 text-ink">✗ No (accounting distortions)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Use Owner Earnings?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Value Investors</h4>
+            <p class="text-sm text-body">Anyone following the Buffett-Graham value investing philosophy needs Owner Earnings to estimate intrinsic value and identify undervalued stocks with a margin of safety.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Fundamental Analysts</h4>
+            <p class="text-sm text-body">Analysts who want a more accurate picture of a company's cash-generating ability than GAAP earnings provide. Owner Earnings strips away accounting noise.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Business Owners</h4>
+            <p class="text-sm text-body">Private business owners evaluating their own company's true earnings power. The same principles apply to any business, public or private.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Self-Directed Investors</h4>
+            <p class="text-sm text-body">Individual investors who want to conduct their own 10-K analysis without relying on sell-side research or analyst reports that may use distorted earnings metrics.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Owner Earnings Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Reveals true economic earnings power of a business</li>
+              <li>• Strips away accounting distortions and non-cash charges</li>
+              <li>• Separates maintenance CapEx from growth CapEx</li>
+              <li>• Directly maps to intrinsic value via Ten-Cap pricing</li>
+              <li>• Used and endorsed by Warren Buffett himself</li>
+              <li>• Works for any publicly traded company with 10-K data</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Requires estimating maintenance CapEx (not directly disclosed)</li>
+              <li>• Greenwald method needs 5 years of historical data</li>
+              <li>• Less useful for asset-light or software businesses</li>
+              <li>• Non-standard metric — not directly comparable to analyst reports</li>
+              <li>• Requires judgment calls on non-recurring charges</li>
+              <li>• May undervalue high-growth companies with significant growth CapEx</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Owner Earnings
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Owner Earnings Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>Owner Earnings calculator</strong> is the most comprehensive free tool available for calculating Warren Buffett's Owner Earnings and intrinsic value. Whether you are a seasoned value investor analyzing 10-Ks or a beginner learning Buffett's valuation framework, this calculator gives you accurate, instant results based on real financial data.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose Owner Earnings?</h3>
+
+        <p class="mb-4">
+          Owner Earnings is the gold standard for value investors because it answers the question that matters most: <strong>"How much cash does this business truly generate?"</strong> GAAP Net Income can be distorted by non-cash charges, aggressive accounting, and the arbitrary classification of capital expenditures. By focusing on the cash flow available to owners after maintaining the business, Owner Earnings provides a clearer picture of economic reality.
+        </p>
+
+        <p class="mb-4">
+          The framework is particularly powerful for capital-intensive businesses like railroads, utilities, manufacturers, and energy companies — where depreciation and maintenance CapEx can significantly distort reported earnings. But it is equally valuable for analyzing any business where you want to understand the owner's true return on investment.
+        </p>
+
+        <p class="mb-4">
+          Buffett himself has used Owner Earnings since the 1980s to evaluate acquisition targets at Berkshire Hathaway. When he bought companies like See's Candies, GEICO, and BNSF Railway, he was looking at Owner Earnings — not GAAP Net Income — to determine what he was willing to pay. This same framework is now available to every investor through our free calculator.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Owner Earnings Calculator</h3>
+
+        <p class="mb-4">
+          Choose between two methods for estimating maintenance CapEx: the <strong>Basic method</strong> lets you enter your own estimate directly, while the <strong>Advanced Greenwald method</strong> derives it automatically from 5-year PP&E and revenue trends. The Greenwald approach — developed by Columbia Business School professor Bruce Greenwald — provides a rigorous, data-driven estimate that removes subjective judgment.
+        </p>
+
+        <p class="mb-4">
+          The calculator instantly computes Owner Earnings, intrinsic value using Buffett's Ten-Cap (10% discount rate), intrinsic value per share (adjusted for cash and debt), and margin of safety. The interactive comparison chart visualizes Net Income vs Owner Earnings, maintenance CapEx, and the per-share valuation. Export your results as PDF or share your analysis via a unique URL — all completely free, with no signup required.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Financial Tools
+      </h2>
+      <p class="mb-8 text-body">Discover more calculators and guides for your financial journey.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Plan your financial independence with Lean, Regular, Fat, Barista, and Coast FIRE.</p>
+        </a>
+        <a href="/learn/what-is-fire" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">What is FIRE?</h3>
+          <p class="text-xs text-body">Learn the fundamentals of Financial Independence, Retire Early.</p>
+        </a>
+        <a href="/learn/fire-number" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Your FIRE Number</h3>
+          <p class="text-xs text-body">Learn how to calculate your personal FIRE number step by step.</p>
+        </a>
+        <a href="/learn/fire-strategies" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Strategies</h3>
+          <p class="text-xs text-body">Compare every early retirement approach to find your fit.</p>
+        </a>
+        <a href="/break-even-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Break-Even Calculator</h3>
+          <p class="text-xs text-body">Find out how many units you need to sell to break even.</p>
+        </a>
+        <a href="/mortgage-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mortgage Calculator</h3>
+          <p class="text-xs text-body">Estimate your monthly mortgage payments and total interest.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
