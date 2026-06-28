@@ -1,0 +1,460 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="geo-arbitrage-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="mb-8 text-center">
+    <p class="mb-2 font-mono text-xs uppercase tracking-wider text-mute">Free Calculator</p>
+    <h2
+      class="mb-3 text-3xl font-semibold tracking-tight text-ink sm:text-4xl"
+      style="letter-spacing: -0.02em;"
+    >
+      Geographic Arbitrage Simulator
+    </h2>
+    <p class="mx-auto max-w-2xl text-body">
+      Compare your retirement runway staying at home vs. relocating to a
+      lower-cost country. Factor in cost of living, exchange rates, and local
+      inflation.
+    </p>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-12">
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <div class="mb-6 flex flex-wrap gap-2">
+          <button
+            class="preset-btn rounded-full bg-ink px-4 py-2 text-xs font-medium text-canvas transition-opacity hover:opacity-90"
+            data-preset="us-to-india"
+          >
+            US → India
+          </button>
+        </div>
+
+        <form id="geo-arbitrage-form" class="space-y-4">
+          <Input
+            label="Portfolio Value"
+            name="portfolioValue"
+            type="number"
+            value={1000000}
+            min={0}
+            step={10000}
+            suffix="$"
+            hideArrows
+            required
+          />
+
+          <Input
+            label="Annual Home Spend"
+            name="homeAnnualSpend"
+            type="number"
+            value={40000}
+            min={0}
+            step={1000}
+            suffix="$"
+            hideArrows
+            required
+          />
+
+          <Input
+            label="Exchange Rate"
+            name="exchangeRate"
+            type="number"
+            value={83}
+            min={0.01}
+            step={0.5}
+            tooltip="1 unit of home currency = N units of target currency"
+            required
+          />
+
+          <Slider
+            label="CoL Multiplier"
+            name="colMultiplier"
+            value={40}
+            min={10}
+            max={100}
+            suffix="%"
+            inputId="colMultiplier"
+            displayId="colMultiplierValue"
+            tooltip="How expensive the target country is relative to home. 40% means 60% cheaper."
+          />
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <Slider
+              label="Market Return"
+              name="marketReturn"
+              value={7}
+              min={1}
+              max={15}
+              step={0.5}
+              suffix="%"
+              inputId="marketReturn"
+              displayId="marketReturnValue"
+            />
+
+            <Slider
+              label="Home Inflation"
+              name="homeInflation"
+              value={3}
+              min={0}
+              max={10}
+              step={0.5}
+              suffix="%"
+              inputId="homeInflation"
+              displayId="homeInflationValue"
+            />
+          </div>
+
+          <Slider
+            label="Target Inflation"
+            name="targetInflation"
+            value={6}
+            min={0}
+            max={15}
+            step={0.5}
+            suffix="%"
+            inputId="targetInflation"
+            displayId="targetInflationValue"
+          />
+        </form>
+      </Card>
+    </div>
+
+    <div class="space-y-6 lg:col-span-7">
+      <div class="grid gap-4 sm:grid-cols-3">
+        <ResultCard
+          label="Target Annual Spend"
+          valueId="target-annual-spend"
+          value="₹0"
+          description="Equivalent annual spending in target currency"
+        />
+        <ResultCard
+          label="Revised Withdrawal Rate"
+          valueId="revised-swr"
+          value="0%"
+          valueClass="text-link"
+          description="New safe withdrawal rate after relocation"
+        />
+        <ResultCard
+          label="Portfolio Runway"
+          valueId="portfolio-runway"
+          value="30+ years"
+          valueClass="text-success-deep"
+          description="Years until portfolio depletion"
+        />
+      </div>
+
+      <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">30-Year Portfolio Projection</h2>
+        </div>
+        <div class="relative h-64 sm:h-80">
+          <canvas
+            id="geo-arbitrage-chart"
+            role="img"
+            aria-label="Portfolio projection chart comparing staying in home country vs relocating to target country"
+          ></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+  import { calculateGeoArbitrage } from '../../utils/geo-arbitrage-calculations';
+  import { formatCurrency, formatCurrencyShort } from '../../utils/formatters';
+  import Chart from 'chart.js/auto';
+
+  let chart = null;
+
+  function getFormData() {
+    const form = document.getElementById('geo-arbitrage-form');
+    const formData = new FormData(form);
+
+    return {
+      portfolioValue: Number(formData.get('portfolioValue')) || 1000000,
+      homeAnnualSpend: Number(formData.get('homeAnnualSpend')) || 40000,
+      costOfLivingMultiplier: (Number(formData.get('colMultiplier')) || 40) / 100,
+      exchangeRate: Number(formData.get('exchangeRate')) || 83,
+      expectedMarketReturn: Number(formData.get('marketReturn')) || 7,
+      homeInflationRate: Number(formData.get('homeInflation')) || 3,
+      targetInflationRate: Number(formData.get('targetInflation')) || 6,
+    };
+  }
+
+  function formatTargetCurrency(value) {
+    return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(
+      Math.round(value),
+    );
+  }
+
+  function formatRunway(homeDepletionYear, targetDepletionYear) {
+    if (homeDepletionYear === null && targetDepletionYear === null) {
+      return '30+ years';
+    }
+    const minYear = Math.min(
+      homeDepletionYear ?? 31,
+      targetDepletionYear ?? 31,
+    );
+    return `${minYear} years`;
+  }
+
+  function updateResults() {
+    const input = getFormData();
+    const result = calculateGeoArbitrage(input);
+
+    document.getElementById('target-annual-spend').textContent =
+      `₹${formatTargetCurrency(result.targetAnnualSpendTargetCurrency)}`;
+    document.getElementById('revised-swr').textContent =
+      `${result.revisedSWR.toFixed(1)}%`;
+    document.getElementById('portfolio-runway').textContent = formatRunway(
+      result.homeDepletionYear,
+      result.targetDepletionYear,
+    );
+
+    updateChart(result.projections);
+  }
+
+  function updateChart(projections) {
+    const ctx = document.getElementById('geo-arbitrage-chart');
+    if (!ctx) return;
+
+    const labels = projections.map((p) => `Year ${p.year}`);
+    const homeData = projections.map((p) => p.homePortfolio);
+    const targetData = projections.map((p) => p.targetPortfolio);
+
+    if (chart) {
+      chart.destroy();
+    }
+
+    const isDark = document.documentElement.classList.contains('dark');
+    const gridColor = isDark ? '#262626' : '#ebebeb';
+    const textColor = isDark ? '#737373' : '#888888';
+    const tooltipBg = isDark ? '#ededed' : '#171717';
+    const tooltipText = isDark ? '#171717' : '#ffffff';
+    const linkColor = isDark ? '#3291ff' : '#0070f3';
+    const linkBg = isDark
+      ? 'rgba(50, 145, 255, 0.1)'
+      : 'rgba(0, 112, 243, 0.1)';
+    const cyanColor = isDark ? '#22d3ee' : '#06b6d4';
+    const cyanBg = isDark
+      ? 'rgba(34, 211, 238, 0.1)'
+      : 'rgba(6, 182, 212, 0.1)';
+
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Staying in Home Country',
+            data: homeData,
+            borderColor: linkColor,
+            backgroundColor: linkBg,
+            fill: false,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+          },
+          {
+            label: 'Moving to Target Country',
+            data: targetData,
+            borderColor: cyanColor,
+            backgroundColor: cyanBg,
+            fill: false,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 2,
+              usePointStyle: false,
+              padding: 16,
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: 500,
+            },
+            bodyFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+            },
+            callbacks: {
+              label: function (context) {
+                return `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`;
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              maxTicksLimit: 8,
+              callback: function (value, index) {
+                const p = projections[index];
+                if (p && (p.year % 5 === 0 || index === projections.length - 1)) {
+                  return `Year ${p.year}`;
+                }
+                return '';
+              },
+            },
+            border: {
+              display: false,
+            },
+          },
+          y: {
+            grid: {
+              color: gridColor,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              callback: function (value) {
+                return formatCurrencyShort(value);
+              },
+            },
+            border: {
+              display: false,
+            },
+          },
+        },
+      },
+    });
+  }
+
+  function initSliders() {
+    const sliders = [
+      { id: 'colMultiplier', displayId: 'colMultiplierValue', suffix: '%' },
+      { id: 'marketReturn', displayId: 'marketReturnValue', suffix: '%' },
+      { id: 'homeInflation', displayId: 'homeInflationValue', suffix: '%' },
+      { id: 'targetInflation', displayId: 'targetInflationValue', suffix: '%' },
+    ];
+
+    sliders.forEach(({ id, displayId, suffix }) => {
+      const slider = document.getElementById(id);
+      const display = document.getElementById(displayId);
+      if (slider && display) {
+        slider.addEventListener('input', () => {
+          display.textContent = `${slider.value}${suffix}`;
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initPresets() {
+    document.querySelectorAll('.preset-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const preset = btn.dataset.preset;
+        if (preset === 'us-to-india') {
+          const defaults = {
+            portfolioValue: '1000000',
+            homeAnnualSpend: '40000',
+            exchangeRate: '83',
+            colMultiplier: '40',
+            marketReturn: '7',
+            homeInflation: '3',
+            targetInflation: '6',
+          };
+
+          const form = document.getElementById('geo-arbitrage-form');
+          if (!form) return;
+
+          Object.entries(defaults).forEach(([name, value]) => {
+            const input = form.querySelector(`[name="${name}"]`);
+            if (input) {
+              input.value = value;
+            }
+          });
+
+          const sliderDisplays = [
+            { id: 'colMultiplierValue', text: '40%' },
+            { id: 'marketReturnValue', text: '7%' },
+            { id: 'homeInflationValue', text: '3%' },
+            { id: 'targetInflationValue', text: '6%' },
+          ];
+          sliderDisplays.forEach(({ id, text }) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = text;
+          });
+
+          updateResults();
+        }
+      });
+    });
+  }
+
+  function initFormListeners() {
+    const form = document.getElementById('geo-arbitrage-form');
+    if (form) {
+      form.addEventListener('input', () => {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initSliders();
+    initPresets();
+    initFormListeners();
+    updateResults();
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      updateResults();
+    });
+
+    const observer = new MutationObserver(() => {
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>

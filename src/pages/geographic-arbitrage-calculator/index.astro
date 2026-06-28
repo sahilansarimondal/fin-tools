@@ -1,0 +1,332 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import GeoArbitrageCalculator from '../../components/calculator/GeoArbitrageCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is geographic arbitrage and how does it work?',
+    answerHtml: '<b>Geographic arbitrage</b> (also called geo-arbitrage) is the strategy of earning income in a high-cost-of-living country while living in a lower-cost country, thereby stretching your money much further. It is a cornerstone strategy in the <b>FIRE (Financial Independence, Retire Early)</b> community because it dramatically reduces the portfolio size needed to retire.<br /><br />Here is how it works:<br /><br /><ul><li><b>Earn in strong currency:</b> You earn income (or have investments) in a strong currency like USD, EUR, or GBP.</li><li><b>Spend in weak currency:</b> You relocate to a country where your dollars buy significantly more — typically 2x to 5x more than at home.</li><li><b>Leverage purchasing power parity (PPP):</b> The same dollar buys more goods and services in lower-cost countries, effectively multiplying your spending power.</li><li><b>Extend your portfolio runway:</b> By spending less each year, your safe withdrawal rate (e.g., 4%) covers a higher quality of life, or your portfolio lasts much longer.</li></ul><br />Our geographic arbitrage calculator models all of these factors — cost of living differences, exchange rates, inflation in both countries, and portfolio projections — so you can see exactly how geo-arbitrage impacts your retirement timeline.',
+    answerText: 'Geographic arbitrage (geo-arbitrage) is the strategy of earning in a high-cost country while living in a lower-cost country, stretching your money further. It reduces the portfolio size needed for retirement by leveraging cost of living differences, exchange rates, and purchasing power parity. The calculator models all these factors to show the impact on your retirement timeline.',
+  },
+  {
+    question: 'How is the cost of living multiplier calculated?',
+    answerHtml: 'The <b>cost of living (CoL) multiplier</b> is the ratio of expenses in your target country compared to your home country. It is the central input in the geographic arbitrage calculation.<br /><br /><b>CoL Multiplier = Cost of Living in Target Country ÷ Cost of Living in Home Country</b><br /><br />For example:<br /><ul><li>A CoL multiplier of <b>0.40</b> means your target country is 60% cheaper than home — your $50,000 home spending becomes $20,000.</li><li>A CoL multiplier of <b>0.25</b> means your target country is 75% cheaper — your $50,000 home spending becomes $12,500.</li><li>A CoL multiplier of <b>1.00</b> means costs are the same in both countries.</li><li>A CoL multiplier of <b>1.50</b> means the target country is 50% more expensive.</li></ul><br />Common CoL multipliers for popular geo-arbitrage destinations (relative to the United States):<br /><ul><li><b>Thailand (Chiang Mai):</b> 0.30 – 0.40 (60–70% cheaper)</li><li><b>Mexico (Mexico City):</b> 0.35 – 0.50 (50–65% cheaper)</li><li><b>India (Goa/Kerala):</b> 0.25 – 0.40 (60–75% cheaper)</li><li><b>Portugal (Lisbon):</b> 0.55 – 0.70 (30–45% cheaper)</li><li><b>Colombia (Medellín):</b> 0.35 – 0.45 (55–65% cheaper)</li><li><b>Vietnam (Da Nang):</b> 0.30 – 0.40 (60–70% cheaper)</li><li><b>Bali, Indonesia:</b> 0.35 – 0.50 (50–65% cheaper)</li></ul><br />You can find current CoL data on Numbeo, Expatistan, or our built-in presets.',
+    answerText: 'The CoL multiplier = Cost of Living in Target ÷ Cost of Living in Home. A 0.40 multiplier means 60% cheaper (your $50K becomes $20K). Common values: Thailand 0.30-0.40, Mexico 0.35-0.50, India 0.25-0.40, Portugal 0.55-0.70. Find data on Numbeo, Expatistan, or use the calculator presets.',
+  },
+  {
+    question: 'What is the geographic arbitrage formula?',
+    answerHtml: 'The geographic arbitrage calculation involves several linked formulas that the calculator handles automatically:<br /><br /><b>1. Target Annual Spend (in Home Currency)</b><br /><div class="rounded-lg bg-canvas-soft-2 p-3 font-mono text-xs text-ink">Target Spend (Home CCY) = Home Annual Spend × CoL Multiplier</div><br /><b>2. Target Annual Spend (in Target Currency)</b><br /><div class="rounded-lg bg-canvas-soft-2 p-3 font-mono text-xs text-ink">Target Spend (Target CCY) = Target Spend (Home CCY) × Exchange Rate</div><br /><b>3. Revised Safe Withdrawal Rate (SWR)</b><br /><div class="rounded-lg bg-canvas-soft-2 p-3 font-mono text-xs text-ink">Revised SWR = Target Annual Spend ÷ Portfolio Value × 100%</div><br /><b>4. Real Return (Inflation-Adjusted)</b><br /><div class="rounded-lg bg-canvas-soft-2 p-3 font-mono text-xs text-ink">Real Return = Market Return − Target Inflation Rate</div><br /><b>5. Portfolio Runway (years until depletion)</b><br /><div class="rounded-lg bg-canvas-soft-2 p-3 font-mono text-xs text-ink">Years = NPER(Real Return, −Target Spend, Portfolio Value, 0)</div><br /><b>Example:</b><br />Home spend: $50,000/year | CoL multiplier: 0.40 | Exchange rate: 1 USD = 35 THB<br />• Target spend: $50,000 × 0.40 = <b>$20,000/year</b><br />• Target spend in THB: $20,000 × 35 = <b>฿700,000/year</b><br />• With $1,000,000 portfolio: Revised SWR = $20,000 / $1,000,000 = <b>2.0%</b> (vs 5% at home)<br /><br />A 2% withdrawal rate is extremely safe — your portfolio would likely last indefinitely. This is the power of geographic arbitrage.',
+    answerText: 'Key formulas: (1) Target Spend = Home Spend × CoL Multiplier, (2) Target in Local Currency = Target Spend × Exchange Rate, (3) Revised SWR = Target Spend ÷ Portfolio × 100%, (4) Real Return = Market Return − Target Inflation, (5) Runway = NPER function. Example: $50K spend × 0.40 CoL = $20K target, on $1M portfolio = 2% SWR — extremely safe.',
+  },
+  {
+    question: 'How does inflation affect retirement abroad?',
+    answerHtml: 'Inflation is a critical factor when retiring abroad because you must consider <b>both</b> your home country inflation (which affects your investments) and your target country inflation (which affects your spending).<br /><br />Key considerations:<br /><br /><ul><li><b>Dual inflation exposure:</b> Your portfolio returns are typically in your home currency and affected by home-country inflation. But your spending is in the target country, subject to local inflation rates. These can diverge significantly — some developing countries have historically had higher inflation than developed countries.</li><li><b>Exchange rate correlation:</b> High inflation in the target country often leads to currency depreciation against major currencies like the USD. This can actually work in your favor because your USD-denominated portfolio buys more local currency over time.</li><li><b>Real return calculation:</b> The calculator uses <b>Real Return = Market Return − Target Inflation</b> for projections. If your target country has 5% inflation vs your home country\'s 3%, your real return is reduced by an additional 2%, which shortens your portfolio runway.</li><li><b>Hedging strategies:</b> Consider keeping some assets in the target country\'s currency (real estate, local stocks) as a natural inflation hedge. Our calculator lets you adjust both inflation rates independently to model different scenarios.</li></ul><br />For conservative planning, we recommend using your target country\'s historical inflation rate + a 1-2% buffer. Most developing countries have inflation in the 3-6% range, compared to 2-3% in developed countries.',
+    answerText: 'Inflation affects both sides of geo-arbitrage: home-country inflation impacts your portfolio returns, while target-country inflation impacts your local spending. These can diverge significantly. The calculator uses separate inflation rates for both countries. High target inflation may also cause currency depreciation, which can benefit USD-based portfolios. For conservative planning, use target country inflation + 1-2% buffer.',
+  },
+  {
+    question: 'Which countries are best for geographic arbitrage?',
+    answerHtml: 'The best countries for geographic arbitrage offer a combination of <b>low cost of living</b>, <b>good healthcare</b>, <b>stable internet</b>, <b>friendly visa policies</b>, and <b>safe environments</b>. Here are the most popular destinations ranked by common criteria:<br /><br /><b>Top picks for FIRE / early retirement:</b><br /><ul><li><b>Southeast Asia:</b> Thailand (Chiang Mai, Bangkok), Vietnam (Da Nang, Hoi An), Malaysia (Penang, Kuala Lumpur), Philippines (Cebu), Bali/Canggu. CoL: 0.30–0.45. Excellent value, world-class food, strong expat communities.</li><li><b>Latin America:</b> Mexico (Mexico City, Mérida, San Miguel de Allende), Colombia (Medellín), Ecuador (Cuenca), Panama, Costa Rica. CoL: 0.35–0.55. Close to the US, good infrastructure, diverse climates.</li><li><b>Southern Europe:</b> Portugal (Lisbon, Algarve), Spain (Valencia, Andalusia), Greece, Italy (south). CoL: 0.55–0.75. High quality of life, excellent healthcare, EU access. More expensive than Asia but still significantly cheaper than the US.</li><li><b>Eastern Europe:</b> Romania (Cluj, Bucharest), Bulgaria, Poland, Czech Republic, Georgia (Tbilisi). CoL: 0.40–0.60. Growing expat scenes, good internet, EU integration (except Georgia).</li></ul><br /><b>Visa considerations:</b><br />Many countries now offer dedicated digital nomad or retirement visas: Portugal D7, Spain Non-Lucrative Visa, Thailand Elite Visa, Mexico Temporary Resident Visa, Colombia Digital Nomad Visa, and Malaysia MM2H Program. Always check current visa requirements as policies change frequently.',
+    answerText: 'Best geo-arbitrage countries: Southeast Asia (Thailand, Vietnam, Malaysia — CoL 0.30-0.45), Latin America (Mexico, Colombia, Ecuador — CoL 0.35-0.55), Southern Europe (Portugal, Spain — CoL 0.55-0.75), and Eastern Europe (Romania, Bulgaria — CoL 0.40-0.60). Many offer digital nomad or retirement visas. Consider healthcare quality, internet reliability, safety, and visa policies when choosing.',
+  },
+  {
+    question: 'What is purchasing power parity (PPP)?',
+    answerHtml: '<b>Purchasing Power Parity (PPP)</b> is an economic theory that compares different countries\' currencies through a "basket of goods" approach. The idea is that exchange rates should eventually adjust so that identical goods cost the same in different countries when measured in a common currency.<br /><br /><b>How PPP relates to geographic arbitrage:</b><br /><br /><ul><li><b>The Big Mac Index:</b> The Economist\'s famous PPP indicator. If a Big Mac costs $5.69 in the US and ฿129 in Thailand (≈$3.69 at current exchange rates), the Thai baht is "undervalued" by about 35% — meaning your USD goes 35% further in Thailand for this particular good.</li><li><b>Non-tradable goods:</b> The biggest PPP wins come from services that cannot be traded — rent, labor, dining, haircuts, massages. A haircut that costs $40 in New York might cost $5 in Vietnam. These differences are where geographic arbitrage generates the most leverage.</li><li><b>PPP vs actual CoL:</b> Our calculator uses the actual cost of living multiplier rather than PPP exchange rates. PPP helps explain WHY costs are lower, but the CoL multiplier is the practical input you use for planning.</li></ul><br />PPP explains why retiring in a lower-income country gives you more purchasing power than the exchange rate alone would suggest. The gap between official exchange rates and PPP-adjusted rates represents the arbitrage opportunity.',
+    answerText: 'Purchasing Power Parity (PPP) is an economic theory comparing currency values through a basket of goods. The Big Mac Index is a famous PPP indicator — if a Big Mac costs $5.69 in the US and the equivalent of $3.69 in Thailand, your USD goes 35% further there. The biggest PPP advantages come from non-tradable services like rent, dining, and labor. Our calculator uses the practical CoL multiplier rather than PPP exchange rates.',
+  },
+  {
+    question: 'How does the exchange rate impact my retirement budget?',
+    answerHtml: 'Exchange rates can significantly impact your retirement budget abroad because your income is in one currency but your spending is in another. Here is what to watch for:<br /><br /><b>1. Starting exchange rate matters enormously</b><br />If USD/THB moves from 35 to 40, your spending power increases by ~14%. From 35 to 30, it decreases by ~14%. A 10-15% swing in exchange rates is common within a single year.<br /><br /><b>2. Currency risk is real</b><br /><ul><li><b>Strong home currency = good for you.</b> When the USD strengthens, your dollar-denominated portfolio buys more local currency. This has been the trend for much of the last decade.</li><li><b>Weak home currency = budget squeeze.</b> If the USD weakens, you may need to cut spending or return home. This risk is higher for retirees in countries with pegged currencies.</li></ul><br /><b>3. Mitigation strategies</b><br /><ul><li><b>Diversify currency exposure:</b> Keep 6-12 months of local expenses in the target currency as a buffer against short-term fluctuations.</li><li><b>Use multi-currency accounts:</b> Services like Wise, Revolut, or Charles Schwab allow you to hold multiple currencies and transfer at mid-market rates.</li><li><b>Add a safety margin:</b> Use a conservative exchange rate in your planning — assume the home currency is 10-15% weaker than today\'s rate. Our calculator lets you test different exchange rate scenarios.</li></ul><br /><b>4. Long-term trends</b><br />Over long periods, exchange rates tend to move toward PPP equilibrium. If a currency is significantly undervalued by PPP measures, it may appreciate over time — which could reduce your purchasing power. Our 30-year projection accounts for this uncertainty through scenario comparison.',
+    answerText: 'Exchange rates directly impact your spending power abroad. A 10-15% swing in exchange rates is common within a year. Mitigation strategies: keep 6-12 months of local expenses in the target currency, use multi-currency accounts (Wise, Revolut), and add a 10-15% safety margin to your exchange rate assumption. Over long periods, currencies tend toward PPP equilibrium.',
+  },
+  {
+    question: 'Can I use this calculator for digital nomad planning?',
+    answerHtml: 'Absolutely! This calculator is ideal for <b>digital nomads</b> who want to understand how working remotely from different countries affects their financial runway. However, digital nomads have some unique considerations compared to traditional retirees:<br /><br /><b>What works for both:</b><br /><ul><li><b>Cost of living comparison:</b> See exactly how much your current spending translates to different countries. A digital nomad earning $80,000/year in US dollars can live like a king in Chiang Mai (CoL 0.35) where the same lifestyle costs just $28,000.</li><li><b>Portfolio projection:</b> If you are saving and investing while nomading, the 30-year projection shows how your portfolio grows based on your chosen location\'s cost structure.</li><li><b>Exchange rate analysis:</b> Test how currency fluctuations affect your real income. If you get paid in USD but spend in THB, a strong dollar means more baht — effectively a raise.</li></ul><br /><b>Digital nomad-specific considerations:</b><br /><ul><li><b>Active income changes:</b> Your income may change when you move (e.g., client rate adjustments, time zone effects). The calculator focuses on spending, not income — you can adjust the "Portfolio Value" input to reflect different savings rates.</li><li><b>Short-term vs long-term:</b> If you move countries every 3-6 months, use an average CoL multiplier across your target destinations. Adjust the inflation rate to match your most common destination.</li><li><b>Tax implications:</b> Digital nomads should research tax treaties, the Foreign Earned Income Exclusion (FEIE), and local tax obligations — these are not modeled by the calculator but significantly impact your net income.</li></ul><br />Tip: Use the <b>presets</b> in the calculator (US → Thailand, US → Mexico, US → Portugal, etc.) to instantly see how popular digital nomad hubs compare. Then fine-tune the inputs to match your specific situation.',
+    answerText: 'Yes! Use it to compare cost of living across digital nomad destinations, test how exchange rates affect your real income, and project portfolio growth. If you move countries frequently, use an average CoL multiplier. The calculator presets (US→Thailand, US→Mexico, US→Portugal) give instant comparisons. Note: tax implications (FEIE, local taxes) are not modeled and should be researched separately.',
+  },
+];
+---
+
+<PageLayout
+  title="Geographic Arbitrage Calculator — See How Far Your Money Goes Abroad"
+  description="Free geographic arbitrage calculator. Compare retirement costs between countries, factor in exchange rates and inflation, and see your 30-year portfolio projection. US to India, Thailand, Mexico, and more."
+  canonical="https://truefinancetools.com/geographic-arbitrage-calculator"
+  ogImage="https://truefinancetools.com/og-geographic-arbitrage-calculator.png"
+  ogImageAlt="Geographic Arbitrage Calculator — Compare Retirement Costs Between Countries"
+  pageType="website"
+  keywords="geographic arbitrage calculator, cost of living calculator, PPP calculator, retirement abroad calculator, purchasing power parity, international retirement, live abroad calculator, geo arbitrage FIRE"
+>
+  <StructuredData
+    title="Geographic Arbitrage Calculator"
+    description="Free geographic arbitrage calculator for comparing retirement costs between countries"
+    url="https://truefinancetools.com/geographic-arbitrage-calculator"
+    toolName="Geographic Arbitrage Calculator"
+    toolDescription="Calculate how your retirement portfolio translates to different countries using purchasing power parity, exchange rates, and inflation adjustments."
+    faqItems={toolFaqItems}
+    features={[
+      'Cost of living comparison between countries',
+      'Exchange rate and inflation adjustments',
+      '30-year portfolio projection chart',
+      'Real return calculations for both countries',
+      'Safe withdrawal rate recalculation'
+    ]}
+  />
+
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Geographic Arbitrage Calculator
+      </h1>
+      <p class="text-lg text-body">See how far your retirement portfolio stretches in a lower cost-of-living country.</p>
+    </div>
+  </section>
+
+  <GeoArbitrageCalculator />
+
+  <HowItWorks title="How the Geographic Arbitrage Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Portfolio</h3>
+      <p class="text-sm text-body">Input your portfolio value, annual spending, and home country details to get started.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72C4.153 4.656 5.51 4.5 6 4.5c.284 0 .555.028.82.08m7.36 0c.265-.052.536-.08.82-.08 1.493 0 2.808 1.211 3.17 2.768a3.001 3.001 0 01-.621 4.72" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Choose Your Target</h3>
+      <p class="text-sm text-body">Set the cost of living multiplier, exchange rate, and inflation rates for your target country.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Compare & Plan</h3>
+      <p class="text-sm text-body">See your revised withdrawal rate, 30-year projection, and how geographic arbitrage extends your portfolio.</p>
+    </div>
+  </HowItWorks>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is Geographic Arbitrage?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Geographic arbitrage</strong> (also known as <strong>geo-arbitrage</strong>) is the strategy of earning or saving money in a high-cost-of-living country while spending it in a lower-cost country, thereby multiplying your purchasing power. It is one of the most powerful strategies in the <strong>FIRE (Financial Independence, Retire Early)</strong> community because it can cut your retirement number in half — or more — without reducing your quality of life.
+        </p>
+
+        <p class="mb-4">
+          The core insight is that <strong>purchasing power parity (PPP)</strong> differences between countries create exploitable opportunities. A retiree with a $1,000,000 portfolio spending $50,000/year in the US has a 5% withdrawal rate (above the safe 4% threshold). But if they move to Thailand where the same lifestyle costs $20,000/year, their withdrawal rate drops to 2% — incredibly safe and sustainable indefinitely. Our <strong>geographic arbitrage calculator</strong> models this transition, accounting for exchange rates, inflation differences, and portfolio projections.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Geographic Arbitrage Formulas</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Target Spend (Home Currency) = Home Annual Spend × CoL Multiplier
+        </div>
+        <div class="mt-2 rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Target Spend (Target Currency) = Target Spend (Home) × Exchange Rate
+        </div>
+        <div class="mt-2 rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Revised SWR = Target Annual Spend / Portfolio Value × 100
+        </div>
+        <div class="mt-2 rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Real Return = Market Return − Target Inflation Rate
+        </div>
+
+        <p class="mb-4 mt-4">
+          For example, with $50,000 annual spending, a 0.40 CoL multiplier (Thailand), and a $1,000,000 portfolio: your target spend becomes $20,000/year, your revised withdrawal rate drops to 2.0%, and your portfolio is projected to last indefinitely — versus being at risk of depletion within 25 years if you stayed home.
+        </p>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Staying Home vs. Moving Abroad</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Metric</th>
+                <th class="p-3 font-medium text-ink">Staying Home</th>
+                <th class="p-3 font-medium text-ink">Moving Abroad</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Annual Spend</td>
+                <td class="p-3 text-ink">$50,000</td>
+                <td class="p-3 text-success-deep">$20,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Portfolio Required (25×)</td>
+                <td class="p-3 text-ink">$1,250,000</td>
+                <td class="p-3 text-success-deep">$500,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Withdrawal Rate (on $1M)</td>
+                <td class="p-3 text-ink">5.0%</td>
+                <td class="p-3 text-success-deep">2.0%</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Portfolio Runway (30 yr)</td>
+                <td class="p-3 text-error">At risk of depletion</td>
+                <td class="p-3 text-success-deep">Indefinite</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 text-body font-sans">Quality of Life</td>
+                <td class="p-3 text-ink">Standard middle-class</td>
+                <td class="p-3 font-semibold text-success-deep">Premium lifestyle</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Use This Calculator?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Early Retirees Considering LCOL Countries</h4>
+            <p class="text-sm text-body">If you have reached FIRE but your withdrawal rate is above 4%, or you want to maximize your lifestyle on a modest portfolio, geographic arbitrage can stretch your savings dramatically.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Digital Nomads Planning Extended Stays</h4>
+            <p class="text-sm text-body">Remote workers who want to compare how their USD income translates across different countries. See how location choice affects your savings rate and path to FIRE.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Expats Comparing Retirement Destinations</h4>
+            <p class="text-sm text-body">Already living abroad or planning to move? Compare multiple destinations side by side using their CoL multipliers, exchange rates, and inflation profiles.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">FIRE Enthusiasts Optimizing Withdrawal Rates</h4>
+            <p class="text-sm text-body">Advanced FIRE planners who want to model how geo-arbitrage changes their safe withdrawal rate, portfolio sustainability, and long-term projections.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Geographic Arbitrage Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Dramatically reduces required portfolio size (often by 50-75%)</li>
+              <li>• Lowers withdrawal rate for greater portfolio safety</li>
+              <li>• Higher quality of life on the same budget</li>
+              <li>• Exposure to new cultures, cuisines, and experiences</li>
+              <li>• Lower healthcare costs in many destinations</li>
+              <li>• Opportunity for adventure and personal growth</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Distance from family and friends back home</li>
+              <li>• Currency risk — exchange rate fluctuations affect your budget</li>
+              <li>• Visa restrictions and residency requirements</li>
+              <li>• Language barriers and cultural adjustment</li>
+              <li>• Healthcare quality varies significantly by country</li>
+              <li>• Tax complexity — may owe taxes in both countries</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Geographic Arbitrage
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Geographic Arbitrage Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>geographic arbitrage calculator</strong> is the most comprehensive free tool available for comparing retirement costs between countries. Whether you are considering a permanent move to Thailand, planning a few years in Mexico, or exploring multiple destinations as a digital nomad, this calculator provides accurate, instant projections tailored to your financial situation.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Use Our Geographic Arbitrage Calculator?</h3>
+
+        <p class="mb-4">
+          Unlike other <strong>cost of living calculators</strong> that only show static comparisons, our tool models the full financial impact of geographic arbitrage over 30 years. It factors in <strong>exchange rates</strong>, <strong>dual inflation rates</strong> (home and target country), <strong>cost of living multipliers</strong>, and your <strong>portfolio value</strong> to project how long your money will last — and what your quality of life will look like — in each scenario.
+        </p>
+
+        <p class="mb-4">
+          The built-in presets (US → India, US → Thailand, US → Mexico, US → Portugal, and more) give you instant comparisons, while the customizable inputs let you fine-tune every parameter for your specific situation. Adjust the cost of living multiplier based on your actual research, set the exchange rate to current or conservative values, and choose inflation rates that match your target country's economic reality.
+        </p>
+
+        <p class="mb-4">
+          Geographic arbitrage is particularly powerful for early retirees who have accumulated a meaningful portfolio but are above the 4% safe withdrawal threshold. Even a modest cost of living reduction — say, moving somewhere 30-40% cheaper — can transform an at-risk withdrawal rate into a highly safe one. For those still in the accumulation phase, modeling geo-arbitrage can dramatically reduce your FIRE number and accelerate your retirement timeline by years.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Geographic Arbitrage Calculator</h3>
+
+        <p class="mb-4">
+          See your <strong>revised safe withdrawal rate</strong> instantly as you adjust inputs — a critical metric that tells you whether your portfolio is sustainable in your target country. The <strong>30-year projection chart</strong> shows portfolio growth under your chosen parameters, with and without geographic arbitrage, so you can compare scenarios side by side. The <strong>real return calculation</strong> automatically adjusts for your target country's inflation rate, giving you a realistic picture of long-term purchasing power.
+        </p>
+
+        <p class="mb-4">
+          Export your personalized plan as PDF, share your projection via a unique link, or save your presets for future reference. The interactive chart automatically adapts to dark mode. Whether you are a seasoned expat optimizing your retirement budget or a digital nomad comparing your next destination, this calculator gives you the data you need to make informed decisions — completely free, no signup required.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Financial Tools
+      </h2>
+      <p class="mb-8 text-body">Discover more calculators and guides to optimize your financial independence journey.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/fire-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Plan your path to financial independence with Lean, Regular, Fat, Barista, and Coast FIRE.</p>
+        </a>
+        <a href="/lean-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Lean FIRE Calculator</h3>
+          <p class="text-xs text-body">Minimalist approach with the 20x rule for early retirement.</p>
+        </a>
+        <a href="/fat-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Fat FIRE Calculator</h3>
+          <p class="text-xs text-body">For those who want a luxury retirement lifestyle.</p>
+        </a>
+        <a href="/barista-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Calculator</h3>
+          <p class="text-xs text-body">Work part-time, let investments cover the rest.</p>
+        </a>
+        <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+          <p class="text-xs text-body">Find your exact Coast FIRE target.</p>
+        </a>
+        <a href="/learn/what-is-fire" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">What is FIRE?</h3>
+          <p class="text-xs text-body">Learn the fundamentals of financial independence.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

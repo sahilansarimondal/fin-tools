@@ -36,6 +36,7 @@ fin-tools/
 │   ├── components/
 │   │   ├── calculator/
 │   │   │   └── FIRECalculatorBase.astro    # Main calculator (vanilla JS)
+│   │   │   └── GeoArbitrageCalculator.astro # Geographic arbitrage calculator (vanilla JS)
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -61,6 +62,7 @@ fin-tools/
 │   │   └── global.css                  # Tailwind v4 @theme tokens + dark mode
 │   └── utils/
 │       ├── calculations.ts             # FIRE calculation engine
+│       ├── geo-arbitrage-calculations.ts # Geographic arbitrage calculation engine
 │       └── formatters.ts               # Currency/number formatting utilities
 ├── astro.config.mjs                    # Astro config (site URL, Tailwind vite plugin)
 ├── package.json
@@ -82,6 +84,7 @@ fin-tools/
 | `/learn/what-is-fire` | `src/pages/learn/what-is-fire.astro` | What is FIRE? |
 | `/learn/fire-strategies` | `src/pages/learn/fire-strategies.astro` | FIRE Strategies |
 | `/learn/fire-number` | `src/pages/learn/fire-number.astro` | Your FIRE Number |
+| `/geographic-arbitrage-calculator` | `src/pages/geographic-arbitrage-calculator/index.astro` | Geographic Arbitrage PPP Calculator |
 
 **URL convention:** New tools go at `/{tool-name}` (e.g., `/mortgage-calculator`).
 
@@ -138,6 +141,14 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 - URL-based state sharing via query params
 - Chart.js rendered on `<canvas id="projection-chart">`
 - Theme-aware chart colors via MutationObserver on `html` class
+
+### Geographic Arbitrage Calculator
+
+- File: `src/components/calculator/GeoArbitrageCalculator.astro`
+- Uses `src/utils/geo-arbitrage-calculations.ts` for math
+- Chart.js line chart comparing home vs. target country portfolio projections
+- 30-year runway projection with inflation-adjusted spending
+- Preset buttons for common scenarios (US → India)
 
 ### Adding a New Tool
 
