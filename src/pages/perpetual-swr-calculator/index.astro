@@ -1,0 +1,344 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import PerpetualSWRCalculator from '../../components/calculator/PerpetualSWRCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is a perpetual safe withdrawal rate?',
+    answerHtml: 'A <b>Perpetual Safe Withdrawal Rate (PSWR)</b> is the maximum percentage of your portfolio that you can withdraw each year — adjusted for inflation — without ever depleting the principal. Unlike the traditional 4% rule, which assumes a 30-year retirement horizon and allows the portfolio to decline toward zero, a perpetual SWR is designed to preserve the portfolio&#8217;s purchasing power indefinitely.<br /><br />The key difference: the 4% rule gives you a higher spend today but your heirs inherit significantly less. A perpetual SWR gives you a lower spend today, but your heirs inherit the same purchasing power you started with. For generational wealth planning, the perpetual approach is the gold standard.<br /><br />The math is based on the <b>Fisher Equation</b>, which converts nominal returns into real (inflation-adjusted) returns. You withdraw only the real return minus investment fees, ensuring the portfolio grows at exactly the inflation rate and maintains its purchasing power forever.',
+    answerText: 'A Perpetual Safe Withdrawal Rate (PSWR) is the maximum inflation-adjusted withdrawal percentage that preserves your portfolio\'s purchasing power forever. Unlike the 4% rule (30-year horizon, depletes principal), PSWR ensures your heirs inherit the same purchasing power. It uses the Fisher Equation to calculate the real return, then you withdraw only that real return minus fees.',
+  },
+  {
+    question: 'How is the perpetual SWR different from the 4% rule?',
+    answerHtml: 'The <b>4% rule</b> and the <b>perpetual SWR</b> serve different goals:<br /><br /><div class="overflow-x-auto rounded-lg border border-hairline mt-2 mb-2"><table class="w-full text-left text-sm"><thead><tr class="border-b border-hairline bg-canvas-soft-2"><th class="p-2 font-medium text-ink">Factor</th><th class="p-2 font-medium text-ink">Perpetual SWR</th><th class="p-2 font-medium text-ink">Traditional 4% Rule</th></tr></thead><tbody class="font-mono text-xs tabular-nums"><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Time Horizon</td><td class="p-2 text-ink">Infinite</td><td class="p-2 text-ink">30 years</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Principal Preserved</td><td class="p-2 text-success-deep">Yes</td><td class="p-2 text-ink">No</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Annual Withdrawal ($2M)</td><td class="p-2 text-ink">~3.87% ($77,400)</td><td class="p-2 text-ink">4% ($80,000)</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Portfolio at Year 30</td><td class="p-2 text-success-deep">$2M + inflation</td><td class="p-2 text-ink">~60% remaining</td></tr><tr class="bg-success/5"><td class="p-2 text-body font-sans">Best For</td><td class="p-2 font-semibold text-success-deep">Generational wealth</td><td class="p-2 text-ink">Personal retirement</td></tr></tbody></table></div><br />The trade-off is clear: the 4% rule lets you spend $2,600 more per year on every $2M of portfolio, but your portfolio gradually depletes. Perpetual SWR sacrifices a small amount of current spending (about 13 basis points) to ensure your wealth lasts forever.',
+    answerText: 'The 4% rule assumes a 30-year horizon and depletes principal. Perpetual SWR preserves principal forever. On $2M: PSWR gives ~$77,400/yr (3.87%) vs 4% rule\'s $80,000/yr. The $2,600/yr difference buys infinite portfolio longevity. At year 30, 4% rule has ~60% remaining; PSWR has $2M adjusted for inflation.',
+  },
+  {
+    question: 'What is the Fisher Equation and why does it matter?',
+    answerHtml: 'The <b>Fisher Equation</b> is the mathematically correct way to calculate the real (inflation-adjusted) rate of return. Most people use the simplified formula:<br /><br /><div class="rounded-lg bg-canvas-soft-2 p-3 font-mono text-xs text-ink">Real Return ≈ Nominal Return − Inflation</div><br />But this approximation becomes inaccurate at higher inflation rates. The correct formula is:<br /><br /><div class="rounded-lg bg-canvas-soft-2 p-3 font-mono text-xs text-ink">Real Return = ((1 + Nominal Return) / (1 + Inflation)) − 1</div><br /><b>Why it matters for your perpetual SWR:</b><br /><ul><li><b>Simplified gives wrong numbers:</b> With 7% nominal return and 3% inflation, the simplified formula says your real return is 4%. The Fisher Equation says it is 3.88% — a difference of 12 basis points.</li><li><b>Example with higher inflation:</b> At 8% nominal and 5% inflation, simplified gives 3% real. Fisher gives 2.86% — the gap widens to 14 basis points.</li><li><b>Compounds over time:</b> That 12–14 bp difference compounds over 100 years, meaning the simplified formula significantly overstates how much you can safely withdraw.</li><li><b>Fees make it worse:</b> Subtract investment fees from the real return and the error compounds even further.</li></ul><br />The perpetual SWR calculator uses the <b>exact Fisher Equation</b>, not the approximation, ensuring your withdrawal rate is mathematically correct.',
+    answerText: 'The Fisher Equation correctly calculates real return as ((1 + nominal) / (1 + inflation)) − 1, not the simplified nominal − inflation. At 7% nominal and 3% inflation, simplified gives 4% real; Fisher gives 3.88%. The 0.12% difference compounds significantly over 100 years. The calculator uses the exact Fisher Equation, not the approximation.',
+  },
+  {
+    question: 'How do investment fees affect my perpetual withdrawal rate?',
+    answerHtml: 'Investment fees directly reduce your perpetual safe withdrawal rate because they eat into the real return that supports your spending. Here is how it works:<br /><br /><b>Fee impact on PSWR ($2M portfolio, 7.5% nominal, 3% inflation):</b><br /><ul><li><b>0% fees:</b> PSWR = 4.37%, annual spend = <b>$87,400</b></li><li><b>0.5% fees (index funds):</b> PSWR = 3.87%, annual spend = <b>$77,400</b></li><li><b>1% fees (active management):</b> PSWR = 3.37%, annual spend = <b>$67,400</b></li><li><b>1.5% fees (advisor + funds):</b> PSWR = 2.87%, annual spend = <b>$57,400</b></li><li><b>2% fees (high-cost):</b> PSWR = 2.37%, annual spend = <b>$47,400</b></li></ul><br /><b>The bottom line:</b> Every 0.5% in fees reduces your annual spending by <b>$10,000</b> on a $2M portfolio. Over 30 years, that is $300,000 less in cumulative withdrawals — and that is before counting the compound effect of the lost growth on those dollars.<br /><br />This is why <b>low-cost index funds</b> (0.03–0.10% ER) are so critical for perpetual wealth planning. The difference between a 0.03% VTI and a 1.5% actively managed fund is <b>$24,000 per year</b> in safe spend on a $2M portfolio.',
+    answerText: 'Fees directly reduce PSWR. On a $2M portfolio: 0% fees = $87,400/yr, 0.5% fees = $77,400/yr, 1% fees = $67,400/yr, 1.5% fees = $57,400/yr, 2% fees = $47,400/yr. Each 0.5% in fees costs $10,000/year. Low-cost index funds (0.03–0.10% ER) vs active management can mean a $24,000/year difference.',
+  },
+  {
+    question: 'What is the "Inflation Illusion"?',
+    answerHtml: 'The <b>Inflation Illusion</b> is the surprising reality that while your portfolio&#8217;s nominal balance grows exponentially over time, its real purchasing power stays completely flat when you are following a perpetual withdrawal strategy. This is not a bug — it is exactly how perpetual withdrawals work.<br /><br /><b>Here is what happens over 100 years with a $2M portfolio at 3% inflation:</b><br /><ul><li><b>Year 1:</b> Nominal balance = $2,000,000. Real value = $2,000,000.</li><li><b>Year 30:</b> Nominal balance ≈ <b>$4.85M</b>. Real value = $2,000,000.</li><li><b>Year 50:</b> Nominal balance ≈ <b>$8.77M</b>. Real value = $2,000,000.</li><li><b>Year 100:</b> Nominal balance ≈ <b>$38.4M</b>. Real value = $2,000,000.</li></ul><br />Your $2M portfolio needs to be <b>$38M in nominal dollars</b> in 100 years to maintain the same purchasing power. This is why the chart in this calculator shows two lines: the <b>flat real value line</b> (your true purchasing power) and the <b>exponentially growing nominal line</b> (the inflation illusion).<br /><br />The Inflation Illusion explains why wealthy families often appear to get wealthier over generations even though they are spending the maximum sustainable amount. The nominal numbers look enormous, but the real purchasing power is unchanged.',
+    answerText: 'The Inflation Illusion is the fact that a perpetual withdrawal portfolio grows exponentially in nominal terms while staying flat in real terms. A $2M portfolio at 3% inflation needs to be $38M in 100 years just to maintain purchasing power. The chart shows both the real value (flat) and nominal value (exponential) so you can see the illusion clearly.',
+  },
+  {
+    question: 'Who should use a perpetual withdrawal rate calculator?',
+    answerHtml: 'A perpetual withdrawal rate calculator is designed for anyone who cares about <b>preserving portfolio principal indefinitely</b>. Here are the people who benefit most:<br /><br /><ul><li><b>FatFIRE individuals:</b> If you have accumulated significantly more than you need for retirement, a perpetual SWR ensures your wealth supports multiple generations rather than being spent down in one lifetime.</li><li><b>Estate planners:</b> Professionals and individuals planning intergenerational wealth transfers need to know the maximum sustainable spend that still leaves the same purchasing power for heirs.</li><li><b>Generational wealth builders:</b> Families who have built wealth and want it to last for children, grandchildren, and beyond. The perpetual model ensures each generation inherits the same real value.</li><li><b>University endowment managers:</b> Harvard, Yale, and Stanford endowments use perpetual withdrawal rates to fund operations forever. The same math applies to any foundation or trust.</li><li><b>Charitable foundations:</b> Nonprofits with an endowment need to know how much they can spend annually without eroding the corpus. A perpetual SWR guarantees the foundation exists forever.</li><li><b>Anyone with a larger portfolio:</b> If your portfolio exceeds your personal retirement needs, the perpetual approach converts excess wealth into a lasting legacy.</li></ul><br />Even if you plan to spend your portfolio down (Die with Zero), understanding your perpetual SWR gives you the <b>upper bound</b> on safe spending — it is the most conservative withdrawal rate possible.',
+    answerText: 'Use a perpetual withdrawal rate calculator if you are a FatFIRE retiree wanting intergenerational wealth, an estate planner, a generational wealth builder, a university endowment manager, a charitable foundation, or anyone with a portfolio larger than personal retirement needs. It gives the most conservative upper bound on safe spending.',
+  },
+  {
+    question: 'How do university endowments use perpetual withdrawal rates?',
+    answerHtml: 'Major university endowments — including <b>Harvard</b>, <b>Yale</b>, and <b>Stanford</b> — are the most well-known practitioners of perpetual withdrawal rate planning. Here is how they use the same math this calculator implements:<br /><br /><ul><li><b>The endowment model:</b> Universities invest their endowment in a diversified portfolio (stocks, bonds, real estate, private equity, hedge funds) and withdraw a percentage each year to fund operations — faculty salaries, scholarships, research, and facilities.</li><li><b>Typical spending rule:</b> Most large endowments target a spending rate of <b>4–5% of the trailing 12-quarter average</b> endowment value. This smoothing mechanism prevents year-to-year volatility in operating budgets.</li><li><b>Inflation protection:</b> The endowment&#8217;s investment returns are expected to outpace inflation by the spending rate. If the endowment earns 7.5% nominally with 3% inflation, it generates 4.37% real return — enough to support a ~4% spending rate with a small cushion for fees.</li><li><b>Perpetual mandate:</b> Unlike individual retirement portfolios that can be spent down, university endowments have a <b>perpetual mandate</b> — they must last forever. This is exactly the math this calculator solves.</li><li><b>Yale&#8217;s historical returns:</b> Yale&#8217;s endowment has averaged ~10.7% annual returns over the last 30 years, allowing them to spend ~4.5–5.5% annually while still growing the endowment in real terms.</li></ul><br />The perpetual SWR calculator applies the <b>same endowment-style math</b> to your personal portfolio, giving you institutional-grade withdrawal planning for your family wealth.',
+    answerText: 'Harvard, Yale, and Stanford endowments use perpetual withdrawal rates to fund operations forever. They target 4–5% spending rates from diversified portfolios earning 7.5%+ nominal returns. The perpetual mandate requires that withdrawals never exceed the real return net of fees. This calculator applies the same endowment-style math to your personal portfolio.',
+  },
+  {
+    question: 'Can I really withdraw money forever without running out?',
+    answerHtml: 'Yes — if you follow the <b>perpetual withdrawal rule</b>: withdraw only the real return earned by your portfolio, net of fees. Here is why it works:<br /><br /><b>The math:</b><br /><ol><li>Your portfolio earns a <b>nominal return</b> (e.g., 7.5%)</li><li>Inflation erodes purchasing power (e.g., 3%)</li><li>The <b>Fisher Equation</b> gives your real return: ((1 + 0.075) / (1 + 0.03)) − 1 = <b>4.37%</b></li><li>Subtract fees (e.g., 0.5%): net real return = <b>3.87%</b></li><li>Withdraw <b>3.87%</b> of the initial portfolio value each year, adjusted for inflation</li><li>Your portfolio grows at exactly the inflation rate, maintaining purchasing power</li></ol><br /><b>How the portfolio behaves:</b><br /><ul><li>The <b>real value</b> stays perfectly flat — you have the same purchasing power in year 100 as year 1</li><li>The <b>nominal value</b> grows exponentially — in 100 years at 3% inflation, a $2M portfolio becomes ~$38M</li><li>Your withdrawals increase with inflation — you spend $77,400 in year 1 and ~$1.5M in year 100 (nominal), but the purchasing power is identical</li></ul><br /><b>Important caveats:</b><br /><ul><li>This assumes <b>constant real returns</b> — actual returns vary year to year. In practice, you would smooth withdrawals using a rolling average (like endowments do).</li><li><b>Sequence risk still applies</b> — a crash early in retirement can still damage a perpetual portfolio. A cash cushion or bond tent is recommended alongside this strategy.</li><li>The perpetual SWR is the <b>most conservative</b> safe withdrawal rate. You can almost certainly spend more if you are willing to accept some principal depletion.</li></ul>',
+    answerText: 'Yes, by withdrawing only the real return minus fees. If your portfolio earns 7.5% nominal with 3% inflation and 0.5% fees, the Fisher Equation gives 3.87% real return. You withdraw exactly that — the portfolio grows at the inflation rate forever. Caveats: assumes constant real returns (use smoothing in practice), sequence risk still applies, and this is the most conservative withdrawal rate.',
+  },
+];
+---
+
+<PageLayout
+  title="Perpetual Safe Withdrawal Rate Calculator — Can You Withdraw Money Forever?"
+  description="Free perpetual SWR calculator. Calculate the exact safe withdrawal rate that lasts forever using the Fisher Equation. Generational wealth and endowment planning tool."
+  canonical="https://truefinancetools.com/perpetual-swr-calculator"
+  ogImage="https://truefinancetools.com/og-perpetual-swr-calculator.png"
+  ogImageAlt="Perpetual Safe Withdrawal Rate Calculator — Withdraw Money Forever"
+  pageType="website"
+  keywords="perpetual safe withdrawal rate, perpetual SWR calculator, endowment withdrawal rate, forever withdrawal rate, generational wealth calculator, Fisher equation calculator, SWR calculator, safe withdrawal rate forever"
+>
+  <StructuredData
+    title="Perpetual Safe Withdrawal Rate Calculator"
+    description="Free perpetual SWR calculator using the Fisher Equation to find your exact safe withdrawal rate that lasts forever."
+    url="https://truefinancetools.com/perpetual-swr-calculator"
+    toolName="Perpetual SWR Calculator"
+    toolDescription="Calculate the exact perpetual safe withdrawal rate that preserves your portfolio's purchasing power indefinitely using the Fisher Equation."
+    faqItems={toolFaqItems}
+    features={[
+      'Exact Fisher Equation for real return calculation',
+      'Perpetual safe withdrawal rate computation',
+      '100-year real vs. nominal projection chart',
+      'Investment fee impact analysis',
+      'Inflation illusion visualization',
+      'Generational wealth planning tool'
+    ]}
+  />
+
+  <!-- Hero Section -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Perpetual Safe Withdrawal Rate Calculator
+      </h1>
+      <p class="text-lg text-body">Calculate the exact withdrawal rate that lasts forever. Your principal never depletes — your heirs inherit the same purchasing power.</p>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <PerpetualSWRCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Perpetual SWR Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Portfolio Details</h3>
+      <p class="text-sm text-body">Input your portfolio value, expected nominal return, inflation rate, investment fees, and time horizon.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. See Your Perpetual Rate</h3>
+      <p class="text-sm text-body">Get your exact perpetual safe withdrawal rate, annual safe spend, and nominal legacy value at the horizon.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+          <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Visualize the Inflation Illusion</h3>
+      <p class="text-sm text-body">See the 100-year projection chart showing real purchasing power (flat) vs. nominal balance (exponential).</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is a Perpetual Safe Withdrawal Rate? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is a Perpetual Safe Withdrawal Rate?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Perpetual Safe Withdrawal Rate (PSWR)</strong> is the maximum percentage of your portfolio that you can withdraw each year, adjusted for inflation, without ever reducing the portfolio&#8217;s purchasing power. Unlike traditional safe withdrawal rates that allow principal depletion over a fixed time horizon (e.g., 30 years), a perpetual SWR is designed to sustain spending — and preserve wealth — forever.
+        </p>
+
+        <p class="mb-4">
+          The math is grounded in the <strong>Fisher Equation</strong>, which converts nominal investment returns into real (inflation-adjusted) returns. By withdrawing only the real return net of investment fees, the portfolio grows at exactly the rate of inflation. In real terms, the portfolio value stays perfectly flat. In nominal terms, it grows exponentially — a phenomenon we call the <strong>Inflation Illusion</strong>.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Fisher Equation Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Real Return = ((1 + Nominal Return) / (1 + Inflation)) &minus; 1
+        </div>
+
+        <h3 class="mb-3 mt-6 text-lg font-semibold text-ink">The Perpetual SWR Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          PSWR = Real Return &minus; Investment Fees
+        </div>
+        <div class="mt-2 rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Annual Safe Spend = Portfolio Value × PSWR
+        </div>
+
+        <p class="mb-4 mt-4">
+          <b>Example:</b> With a $2,000,000 portfolio, 7.5% nominal return, 3% inflation, and 0.5% investment fees:<br />
+          • Real Return = ((1 + 0.075) / (1 + 0.03)) &minus; 1 = <b>4.37%</b><br />
+          • PSWR = 4.37% &minus; 0.50% = <b>3.87%</b><br />
+          • Annual Safe Spend = $2,000,000 × 3.87% = <b>$77,400</b><br />
+          • In 100 years: portfolio is ~$38M nominal, but still $2M in today&#8217;s purchasing power
+        </p>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Perpetual SWR vs. Traditional 4% Rule</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Factor</th>
+                <th class="p-3 font-medium text-ink">Perpetual SWR</th>
+                <th class="p-3 font-medium text-ink">Traditional 4% Rule</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Time Horizon</td>
+                <td class="p-3 text-ink">Infinite</td>
+                <td class="p-3 text-ink">30 years</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Principal Preserved</td>
+                <td class="p-3 text-success-deep">Yes (inflation-adjusted)</td>
+                <td class="p-3 text-ink">No (depletes to ~60%)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Annual Withdrawal ($2M)</td>
+                <td class="p-3 text-ink">~3.87% ($77,400)</td>
+                <td class="p-3 text-ink">4% ($80,000)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Portfolio at Year 30</td>
+                <td class="p-3 text-success-deep">Same purchasing power</td>
+                <td class="p-3 text-ink">~60% remaining</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 text-body font-sans">Best For</td>
+                <td class="p-3 font-semibold text-success-deep">Generational wealth</td>
+                <td class="p-3 text-ink">Personal retirement</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose Perpetual SWR?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Generational Wealth Builders</h4>
+            <p class="text-sm text-body">Families who have accumulated significant assets and want to ensure their grandchildren and great-grandchildren inherit the same purchasing power. The perpetual SWR is the ideal planning tool.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Estate Planners</h4>
+            <p class="text-sm text-body">Professionals and individuals designing trusts, foundations, or intergenerational wealth transfer plans. The perpetual model provides the spending limit that preserves the corpus forever.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">FatFIRE Retirees</h4>
+            <p class="text-sm text-body">Those who have accumulated 33x–50x their annual expenses and want to spend generously without ever worrying about depleting their portfolio. The perpetual SWR gives you a forever spending floor.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Foundation &amp; Endowment Managers</h4>
+            <p class="text-sm text-body">Nonprofits, university endowments, and charitable foundations with a perpetual mandate. The same math used by Harvard and Yale is available for your institution.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Perpetual SWR Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Inflation protection — purchasing power never declines</li>
+              <li>• Generational wealth transfer — heirs inherit the same real value</li>
+              <li>• Endowment model — institutional-grade withdrawal planning</li>
+              <li>• No depletion risk — portfolio lasts forever by design</li>
+              <li>• Fisher Equation precision — mathematically correct real return calculation</li>
+              <li>• Fee transparency — see exactly how costs reduce your safe spend</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Lower annual withdrawal than the 4% rule (~13bp less on average)</li>
+              <li>• Requires larger portfolio to achieve the same lifestyle spend</li>
+              <li>• Assumes constant real returns over very long time horizons</li>
+              <li>• Sequence of returns risk still applies in early years</li>
+              <li>• Requires discipline to not overspend in good years</li>
+              <li>• May be overly conservative for those with shorter life expectancies</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Perpetual Withdrawal Rates
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Perpetual Withdrawal Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>perpetual safe withdrawal rate calculator</strong> is the most precise free tool for determining how much you can spend forever while preserving your portfolio&#8217;s purchasing power. Whether you are a <strong>FatFIRE retiree</strong> wanting to ensure generational wealth, an <strong>estate planner</strong> designing a multi-generational trust, or a <strong>foundation manager</strong> with a perpetual spending mandate, this calculator gives you the mathematically correct answer using the Fisher Equation rather than simplified approximations.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose a Perpetual Safe Withdrawal Rate?</h3>
+
+        <p class="mb-4">
+          The traditional retirement planning question is "how much can I spend without running out before I die?" The perpetual wealth question is different: <strong>"how much can I spend and still leave my heirs the same purchasing power I started with?"</strong> The difference is profound. The 4% rule was designed for a 30-year retirement and explicitly assumes principal depletion. A perpetual SWR is designed for infinite time horizons — it is the withdrawal rate that would keep the Harvard endowment operating forever.
+        </p>
+
+        <p class="mb-4">
+          The <strong>opportunity cost of using the wrong withdrawal rate</strong> cuts both ways. If you use the 4% rule for a perpetual portfolio, you slowly deplete wealth meant to span generations. If you use a perpetual SWR for a personal retirement, you leave a large unspent balance that you could have enjoyed. The key is matching the withdrawal strategy to your actual goal. This calculator is specifically designed for the <strong>perpetual goal</strong> — wealth that lasts forever.
+        </p>
+
+        <p class="mb-4">
+          For <strong>high-net-worth individuals</strong> and <strong>generational wealth planners</strong>, the perpetual SWR provides a clear upper bound on safe spending. Even if you ultimately choose a higher withdrawal rate, understanding your perpetual SWR gives you the baseline from which all less-conservative strategies deviate. It is the foundation of any responsible withdrawal plan with a multi-generational time horizon.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Perpetual SWR Calculator</h3>
+
+        <p class="mb-4">
+          The calculator uses the <strong>exact Fisher Equation</strong> rather than the simplified (and inaccurate) "nominal minus inflation" approximation. This matters — at higher inflation rates, the Fisher Equation gives significantly different results than the approximation. The <strong>real vs. nominal projection chart</strong> visualizes the Inflation Illusion over 50–100 years, showing the flat red line (real purchasing power) alongside the exponentially growing blue line (nominal balance) so you can truly understand how perpetual withdrawals work.
+        </p>
+
+        <p class="mb-4">
+          Adjust the <strong>investment fee slider</strong> from 0% to 3% to see the dramatic impact of costs on your safe spend — every 0.5% in fees reduces your annual withdrawal by $10,000 on a $2M portfolio. The <strong>time horizon slider</strong> lets you project from 50 to 100 years, and the <strong>unsustainable warning</strong> alerts you when the combination of returns, inflation, and fees makes perpetual withdrawals impossible. All calculations are performed client-side — no data is sent to any server, and nothing is stored. The chart automatically updates when you switch between dark and light mode.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Calculators -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Financial Calculators
+      </h2>
+      <p class="mb-8 text-body">Tools for every stage of your financial journey.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/learn/what-is-fire" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">What is FIRE?</h3>
+          <p class="text-xs text-body">Learn the fundamentals of financial independence and early retirement.</p>
+        </a>
+        <a href="/die-with-zero-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Die with Zero Calculator</h3>
+          <p class="text-xs text-body">Optimize your retirement spending to drain your portfolio by end of life.</p>
+        </a>
+        <a href="/sequence-of-returns-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">SRR Stress Tester</h3>
+          <p class="text-xs text-body">Test how sequence of returns risk affects your retirement portfolio.</p>
+        </a>
+        <a href="/cash-cushion-optimizer" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Cash Cushion Optimizer</h3>
+          <p class="text-xs text-body">Find the exact cash reserve needed to survive a bear market.</p>
+        </a>
+        <a href="/fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Plan your path to financial independence with Lean, Regular, Fat, Barista, and Coast FIRE.</p>
+        </a>
+        <a href="/geographic-arbitrage-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Geo Arbitrage Calculator</h3>
+          <p class="text-xs text-body">See how far your retirement portfolio stretches in a lower cost-of-living country.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

@@ -1,0 +1,359 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="pswr-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="pswr-form" class="space-y-4">
+          <Input
+            label="Portfolio Value"
+            name="initialPortfolio"
+            type="number"
+            value={2000000}
+            min={0}
+            step={100000}
+            suffix="$"
+            hideArrows
+            required
+          />
+
+          <Slider
+            label="Nominal Market Return"
+            name="nominalMarketReturn"
+            value={7.5}
+            min={0}
+            max={15}
+            step={0.1}
+            suffix="%"
+            inputId="pswr-nominalReturn"
+            displayId="pswr-nominalReturnValue"
+            tooltip="Expected annual return before inflation (e.g., 7.5% for a balanced portfolio)"
+          />
+
+          <Slider
+            label="Inflation Rate"
+            name="inflationRate"
+            value={3.0}
+            min={0}
+            max={8}
+            step={0.1}
+            suffix="%"
+            inputId="pswr-inflation"
+            displayId="pswr-inflationValue"
+            tooltip="Expected annual inflation rate (historical average is ~3%)"
+          />
+
+          <Slider
+            label="Investment Fees"
+            name="investmentFees"
+            value={0.5}
+            min={0}
+            max={3}
+            step={0.05}
+            suffix="%"
+            inputId="pswr-fees"
+            displayId="pswr-feesValue"
+            tooltip="Total Expense Ratio — index fund fees + advisor fees combined"
+          />
+
+          <Slider
+            label="Time Horizon"
+            name="timeHorizon"
+            value={100}
+            min={50}
+            max={100}
+            step={1}
+            suffix=" years"
+            inputId="pswr-horizon"
+            displayId="pswr-horizonValue"
+            tooltip="How many years to project (50–100 years for perpetual planning)"
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- KPI cards row (3 cards) -->
+      <div class="grid gap-4 sm:grid-cols-3">
+        <ResultCard
+          label="Perpetual SWR"
+          valueId="pswr-rate"
+          value="—"
+          valueClass="text-success-deep"
+          description="Your safe withdrawal rate forever"
+        />
+        <ResultCard
+          label="Annual Safe Spend"
+          valueId="pswr-annualSpend"
+          value="—"
+          valueClass="text-ink"
+          description="Maximum you can withdraw in Year 1"
+        />
+        <ResultCard
+          label="Nominal Legacy"
+          valueId="pswr-nominalLegacy"
+          value="—"
+          valueClass="text-link"
+          description="Portfolio value at horizon (inflation illusion)"
+        />
+      </div>
+
+      <!-- Unsustainable warning -->
+      <div id="pswr-warning" class="hidden rounded-lg border border-error/30 bg-error/5 p-4">
+        <p class="text-sm font-medium text-error">⚠ Portfolio Cannot Sustain Perpetual Withdrawals</p>
+        <p class="mt-1 text-xs text-body">Your real return after fees is zero or negative. Increase returns, reduce fees, or reduce inflation assumptions.</p>
+      </div>
+
+      <!-- Chart -->
+      <Card padding="lg">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">Real vs. Nominal Value Over Time</h2>
+        </div>
+        <div class="relative h-64 sm:h-80">
+          <canvas
+            id="pswr-chart"
+            role="img"
+            aria-label="Line chart comparing real purchasing power (flat) versus nominal account balance (exponential growth) over the projection period"
+          ></canvas>
+        </div>
+      </Card>
+    </div>
+  </div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+  import { calculatePSWR } from '../../utils/pswr-calculations';
+  import { formatCurrency, formatCurrencyShort } from '../../utils/formatters';
+
+  let chart = null;
+
+  function getFormData() {
+    var form = document.getElementById('pswr-form');
+    var formData = new FormData(form);
+
+    return {
+      initialPortfolio: Number(formData.get('initialPortfolio')) || 2000000,
+      nominalMarketReturn: Number(formData.get('nominalMarketReturn')) || 7.5,
+      inflationRate: Number(formData.get('inflationRate')) || 3.0,
+      investmentFees: Number(formData.get('investmentFees')) || 0.5,
+      timeHorizon: Number(formData.get('timeHorizon')) || 100,
+    };
+  }
+
+  function updateResults() {
+    var input = getFormData();
+    var result = calculatePSWR(input);
+
+    // Update KPI cards
+    var rateEl = document.getElementById('pswr-rate');
+    var spendEl = document.getElementById('pswr-annualSpend');
+    var legacyEl = document.getElementById('pswr-nominalLegacy');
+    var warningEl = document.getElementById('pswr-warning');
+
+    if (result.isSustainable) {
+      rateEl.textContent = result.pswrPercentage.toFixed(2) + '%';
+      spendEl.textContent = formatCurrency(result.annualSafeSpend);
+      legacyEl.textContent = formatCurrency(result.nominalLegacyAtHorizon);
+      warningEl.classList.add('hidden');
+    } else {
+      rateEl.textContent = '—';
+      spendEl.textContent = '—';
+      legacyEl.textContent = '—';
+      warningEl.classList.remove('hidden');
+    }
+
+    updateChart(result);
+  }
+
+  function updateChart(result) {
+    var ctx = document.getElementById('pswr-chart');
+    if (!ctx) return;
+    if (chart) chart.destroy();
+
+    var isDark = document.documentElement.classList.contains('dark');
+    var gridColor = isDark ? '#262626' : '#ebebeb';
+    var textColor = isDark ? '#737373' : '#888888';
+    var tooltipBg = isDark ? '#ededed' : '#171717';
+    var tooltipText = isDark ? '#171717' : '#ffffff';
+    var linkColor = isDark ? '#3291ff' : '#0070f3';
+    var violetColor = isDark ? '#a855f7' : '#7c3aed';
+
+    var labels = result.projection.map(function (d) {
+      return 'Year ' + d.year;
+    });
+    var realData = result.projection.map(function (d) {
+      return d.realPortfolioValue;
+    });
+    var nominalData = result.projection.map(function (d) {
+      return d.nominalPortfolioValue;
+    });
+
+    chart = new window.Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Real Purchasing Power',
+            data: realData,
+            borderColor: linkColor,
+            backgroundColor: 'transparent',
+            borderDash: [5, 5],
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0,
+          },
+          {
+            label: 'Nominal Account Balance',
+            data: nominalData,
+            borderColor: violetColor,
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0.3,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 12,
+              usePointStyle: false,
+              padding: 16,
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: 500,
+            },
+            bodyFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+            },
+            callbacks: {
+              label: function (context) {
+                return context.dataset.label + ': ' + formatCurrency(context.parsed.y);
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              maxTicksLimit: 20,
+            },
+            border: {
+              display: false,
+            },
+          },
+          y: {
+            grid: {
+              color: gridColor,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              callback: function (value) {
+                return formatCurrencyShort(value);
+              },
+            },
+            border: {
+              display: false,
+            },
+            min: 0,
+          },
+        },
+      },
+    });
+  }
+
+  function initSliders() {
+    var sliders = [
+      { id: 'pswr-nominalReturn', displayId: 'pswr-nominalReturnValue', suffix: '%' },
+      { id: 'pswr-inflation', displayId: 'pswr-inflationValue', suffix: '%' },
+      { id: 'pswr-fees', displayId: 'pswr-feesValue', suffix: '%' },
+      { id: 'pswr-horizon', displayId: 'pswr-horizonValue', suffix: ' years' },
+    ];
+
+    sliders.forEach(function (slider) {
+      var el = document.getElementById(slider.id);
+      var display = document.getElementById(slider.displayId);
+
+      if (el && display) {
+        el.addEventListener('input', function () {
+          display.textContent = el.value + slider.suffix;
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('pswr-form');
+    if (form) {
+      form.addEventListener('input', function () {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initSliders();
+    initFormListeners();
+    updateResults();
+
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', function () {
+        updateResults();
+      });
+
+    var observer = new MutationObserver(function () {
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
