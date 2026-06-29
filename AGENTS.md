@@ -38,6 +38,7 @@ fin-tools/
 │   │   │   └── FIRECalculatorBase.astro    # Main calculator (vanilla JS)
 │   │   │   └── GeoArbitrageCalculator.astro # Geographic arbitrage calculator (vanilla JS)
 │   │   │   └── DieWithZeroCalculator.astro # Die with Zero decumulation calculator (vanilla JS)
+│   │   │   └── SequenceOfReturnsCalculator.astro # SRR stress tester (vanilla JS)
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -61,12 +62,15 @@ fin-tools/
 │   │   │   └── fire-number.astro       # Learn: Your FIRE Number
 │   │   └── die-with-zero-calculator/
 │   │       └── index.astro             # Die with Zero calculator
+│   │       └── sequence-of-returns-calculator/
+│   │           └── index.astro             # SRR Stress Tester page
 │   ├── styles/
 │   │   └── global.css                  # Tailwind v4 @theme tokens + dark mode
 │   └── utils/
 │       ├── calculations.ts             # FIRE calculation engine
 │       ├── geo-arbitrage-calculations.ts # Geographic arbitrage calculation engine
 │       ├── decumulation-calculations.ts    # Die with Zero calculation engine
+│       ├── srr-calculations.ts              # SRR stress test calculation engine
 │       └── formatters.ts               # Currency/number formatting utilities
 ├── astro.config.mjs                    # Astro config (site URL, Tailwind vite plugin)
 ├── package.json
@@ -90,6 +94,7 @@ fin-tools/
 | `/learn/fire-number` | `src/pages/learn/fire-number.astro` | Your FIRE Number |
 | `/geographic-arbitrage-calculator` | `src/pages/geographic-arbitrage-calculator/index.astro` | Geographic Arbitrage PPP Calculator |
 | `/die-with-zero-calculator` | `src/pages/die-with-zero-calculator/index.astro` | Die with Zero Decumulation Calculator |
+| `/sequence-of-returns-calculator` | `src/pages/sequence-of-returns-calculator/index.astro` | Sequence of Returns Risk Stress Tester |
 
 **URL convention:** New tools go at `/{tool-name}` (e.g., `/mortgage-calculator`).
 
@@ -165,6 +170,16 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 - 4% rule comparison showing money left on the table
 - Theme-aware chart colors via MutationObserver on `html` class
 
+### Sequence of Returns Risk (SRR) Stress Tester
+
+- File: `src/components/calculator/SequenceOfReturnsCalculator.astro`
+- Uses `src/utils/srr-calculations.ts` for math
+- Chart.js dual-line chart comparing steady vs. crashed portfolio projections
+- 30-year retirement simulation with inflation-adjusted withdrawals
+- 3 preset historical crash scenarios (Dot-Com, GFC, Stagflation) + custom
+- Zero-floor rule: portfolio stays at $0 once depleted
+- Theme-aware chart colors via MutationObserver on `html` class
+
 ### Adding a New Tool
 
 1. Create `src/pages/{tool-name}/index.astro`
@@ -183,9 +198,23 @@ Most components auto-switch via CSS variables. For anything with hardcoded color
 
 ### Git Branching Rules
 
-All implementations MUST be done on dedicated branches — never directly on `main`.
+#### Mandatory Workflow — Every Task
 
-**Agent must NEVER merge any branch into `main`.** The agent works exclusively on its assigned feature, bug, or fix branch. Merging to `main` is a manual action that requires explicit user instruction.
+1. **ALWAYS start with a fresh branch.** Before writing any code, create a new branch from `main`. Never skip this step.
+2. **NEVER work on `main` directly.** All development happens on dedicated branches only. `main` is sacred — it must always be in a deployable state.
+3. **Push the branch to GitHub after completion.** Once the work is done and the build passes, push the branch to origin so the user can preview it (e.g., via Vercel/Netlify preview deploy or `git diff main`).
+4. **Agent must NEVER merge any branch into `main`.** Merging to `main` is a manual action that requires explicit user instruction.
+
+#### Branch Creation Checklist
+
+Before starting ANY task, the Builder agent must run:
+```bash
+git checkout main
+git pull origin main
+git checkout -b {branch-name}
+```
+
+#### Branch Naming Conventions
 
 | Fix Size | Branch Naming | Description |
 |----------|---------------|-------------|
@@ -197,6 +226,17 @@ All implementations MUST be done on dedicated branches — never directly on `ma
 - `quick-fix/remove-dead-code`
 - `refactor/consolidate-ui-components`
 - `feat/add-mortgage-calculator`
+
+#### After Completion — Push to GitHub
+
+Once the build passes and the task is complete, the Builder must push the branch:
+```bash
+git add -A
+git commit -m "{descriptive commit message}"
+git push origin {branch-name}
+```
+
+This allows the user to preview the changes via GitHub's preview deployment or create a PR for review.
 
 ## DRY Policy — Don't Repeat Yourself
 

@@ -1,0 +1,342 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import SequenceOfReturnsCalculator from '../../components/calculator/SequenceOfReturnsCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is sequence of returns risk?',
+    answerHtml: '<b>Sequence of returns risk (SRR)</b> is the danger that the <b>order</b> of investment returns — not just the average — determines whether your retirement portfolio survives. Two portfolios with the <b>exact same average annual return</b> can have dramatically different outcomes depending on when the negative years occur.<br /><br />Here is a simple example with two portfolios over 10 years, both averaging 5% per year:<br /><br /><ul><li><b>Portfolio A (Lucky):</b> Gains early (+10%, +12%, +8%), then losses later (-10%, -5%). Final value: <b>$1.4M</b></li><li><b>Portfolio B (Unlucky):</b> Losses early (-10%, -5%), then gains later (+10%, +12%, +8%). Final value: <b>$1.1M</b></li></ul><br />Same average return, but a <b>$300,000 difference</b> — and that is without any withdrawals! When you are <b>withdrawing money every year</b> during retirement, the effect is magnified because you sell investments at a loss during down years, permanently reducing the number of shares that would have recovered when the market rebounds. This is why sequence of returns risk is considered one of the most dangerous threats to retirement security.',
+    answerText: 'Sequence of returns risk (SRR) is the danger that the order of investment returns — not just the average — determines whether your retirement portfolio survives. When you withdraw money during a market downturn, you sell investments at a loss, permanently reducing the shares that would have recovered. Two portfolios with the same average return can differ by hundreds of thousands of dollars depending on when the bad years hit.',
+  },
+  {
+    question: 'How does the sequence of returns risk calculator work?',
+    answerHtml: 'The sequence of returns risk calculator works by running a <b>side-by-side comparison</b> of two 30-year retirement scenarios:<br /><br /><ul><li><b>Steady Returns Scenario:</b> Your portfolio earns the same constant annual return every year (e.g., 7%). This is the "everything goes according to plan" baseline.</li><li><b>Crash Scenario:</b> Your portfolio experiences a historical market crash early in retirement (years 1-3 or 1-5), then recovers with positive returns for the remaining years. The average return over 30 years matches the steady scenario.</li></ul><br />Each year, the calculator:<br /><br /><ol><li>Subtracts your <b>inflation-adjusted withdrawal</b> (which grows each year with inflation)</li><li>Applies the year\'s <b>investment return</b> (positive or negative)</li><li>Ensures the portfolio never goes below <b>$0</b> (portfolio floor)</li></ol><br />The result is a year-by-year projection showing exactly when — and if — each portfolio runs out of money. The <b>interactive chart</b> plots both scenarios so you can visually compare the outcomes. If the crash scenario depletes your portfolio before year 30, the calculator flags the risk and shows how many years your money actually lasts.<br /><br />You can test against three historical crashes (Dot-Com, 2008 Financial Crisis, 1970s Stagflation) or create a <b>custom stress test</b> with your own annual return sequence.',
+    answerText: 'The calculator runs a year-by-year side-by-side comparison of steady returns vs. an early market crash scenario. Each year, it subtracts inflation-adjusted withdrawals, applies the year\'s return, and caps the portfolio at $0 floor. It tests three historical crashes (Dot-Com, 2008 GFC, 1970s Stagflation) or a custom stress test. The interactive chart plots both scenarios to show exactly when — and if — each portfolio runs out of money.',
+  },
+  {
+    question: 'What is the sequence of returns risk formula?',
+    answerHtml: 'The sequence of returns risk formula is a <b>year-by-year iterative calculation</b>, not a single equation. For each year of retirement:<br /><br /><div class="rounded-lg bg-canvas-soft-2 p-3 font-mono text-xs text-ink">Portfolio<sub>year</sub> = max(0, (Portfolio<sub>year-1</sub> &minus; Withdrawal<sub>year</sub>) &times; (1 + Return<sub>year</sub>))</div><br />Where:<br /><ul><li><b>Portfolio<sub>year-1</sub></b> — Portfolio balance at the start of the year.</li><li><b>Withdrawal<sub>year</sub></b> — Annual withdrawal amount, adjusted for inflation: Withdrawal<sub>year</sub> = Initial Withdrawal &times; (1 + Inflation)<sup>year-1</sup>.</li><li><b>Return<sub>year</sub></b> — Investment return for that specific year (from the crash scenario or steady assumption).</li><li><b>max(0, ...)</b> — The portfolio floor; it cannot go below $0.</li></ul><br /><b>Example year 1:</b> Start: $1,000,000. Withdraw: $40,000. Return: -10%.<br /><br />Portfolio = ($1,000,000 − $40,000) × (1 − 0.10) = $960,000 × 0.90 = <b>$864,000</b><br /><br /><b>Example year 2:</b> Start: $864,000. Withdraw: $41,200 (3% inflation). Return: +15%.<br /><br />Portfolio = ($864,000 − $41,200) × 1.15 = $822,800 × 1.15 = <b>$946,220</b><br /><br />The critical insight: in year 1, the -10% return <b>compounds the loss</b> on top of the $40,000 withdrawal. In the steady scenario (7% return every year), year 1 would be ($1,000,000 − $40,000) × 1.07 = $1,027,200. The <b>$163,200 gap</b> after just one year is extremely hard to recover from because the portfolio is permanently smaller.',
+    answerText: 'The SRR formula is an iterative calculation: Portfolioₓ = max(0, (Portfolioₓ₋₁ − Withdrawalₓ) × (1 + Returnₓ)). Each year, the withdrawal is subtracted first, then the return is applied. The max(0, ...) prevents negative portfolio values. Example: $1M starting, $40K withdrawal, -10% return → ($960K × 0.90) = $864K. Under steady 7% returns, the same year gives $1,027,200 — a $163K gap from just one bad year.',
+  },
+  {
+    question: 'Why is sequence of returns risk worse for early retirees?',
+    answerHtml: 'Sequence of returns risk is <b>significantly worse for early retirees</b> (like those pursuing FIRE) for several reasons:<br /><br /><ul><li><b>Longer withdrawal period:</b> A traditional retiree at 65 needs their portfolio to last 25–30 years. A FIRE retiree at 40 needs it to last <b>50+ years</b>. A crash in year 1 has 49 more years to compound the damage compared to a crash in year 1 for a 65-year-old.</li><li><b>More withdrawal cycles:</b> Every extra year of retirement adds another withdrawal cycle. A 40-year-old making $40,000/year withdrawals will take 50 withdrawals. A 65-year-old takes 30. Each withdrawal during a down market permanently destroys compounding capacity.</li><li><b>No Social Security buffer early on:</b> Traditional retirees can rely on Social Security as an income floor starting at age 62–70. Early retirees have <b>no such income floor</b> for 20–30 years. Their entire retirement hinges on portfolio withdrawals.</li><li><b>Higher withdrawal rates:</b> FIRE retirees often use the 4% rule, but with 50-year horizons, the safe withdrawal rate drops to <b>~3.5% or lower</b> (per the Trinity Study updates and subsequent research). A higher withdrawal rate leaves less margin for error against SRR.</li><li><b>The "401(k) layoff" trap:</b> Early retirees who lose their job during a recession (which often correlates with market crashes) may be forced to withdraw from their portfolio at the worst possible time — exactly when they should be doing the opposite.</li></ul><br />The <b>good news:</b> understanding SRR is the first step to protecting against it. A cash buffer of 2–3 years of expenses, a dynamic withdrawal strategy, and a bond tent can all dramatically reduce the impact of an early crash.',
+    answerText: 'SRR is worse for early retirees because: (1) longer withdrawal periods (50+ years vs. 25–30), (2) more withdrawal cycles compounding the damage, (3) no Social Security income floor for 20–30 years, (4) higher withdrawal rates with less margin for error, and (5) the risk of forced withdrawals during job loss correlated with market crashes. Mitigations include a cash buffer, dynamic withdrawals, and a bond tent.',
+  },
+  {
+    question: 'How does inflation affect sequence of returns risk?',
+    answerHtml: 'Inflation <b>amplifies sequence of returns risk</b> because your withdrawal amount grows each year, even as your portfolio is struggling to recover from a crash.<br /><br />Here is the problem in detail:<br /><br /><ul><li><b>Inflation-adjusted withdrawals increase over time:</b> A 3% inflation rate means your $40,000 withdrawal becomes $53,757 after 10 years and $72,244 after 20 years. You need to withdraw more money each year just to maintain the same purchasing power.</li><li><b>Crash + inflation = double hit:</b> If a crash hits in years 1–3, your portfolio drops by 30–50%. Meanwhile, inflation is increasing your withdrawal by 3% per year. In year 4 when the market recovers, you are withdrawing a much larger amount from a much smaller portfolio.</li><li><b>Stagflation is the worst case:</b> The 1970s Stagflation scenario combines high inflation (6–12%) with flat/negative stock returns. In this scenario, your withdrawal amount skyrockets while your portfolio treads water — the perfect SRR storm.</li><li><b>Sequence of inflation risk:</b> There is even a related concept called "sequence of inflation risk" — the danger that high inflation occurs in early retirement when your portfolio is largest and most vulnerable to withdrawal pressure.</li></ul><br />The calculator models this by <b>inflation-adjusting your withdrawal each year</b> using your specified inflation rate. This means a 3% inflation assumption will show a more realistic (and more conservative) projection than a 0% assumption. We recommend using 2–3% inflation for realistic projections.<br /><br /><b>Mitigation:</b> Consider holding a portion of your portfolio in inflation-hedged assets like TIPS (Treasury Inflation-Protected Securities), I Bonds, or real estate. A <b>rising withdrawal floor</b> strategy can also help — if inflation surges unexpectedly, you may need to temporarily reduce real spending.',
+    answerText: 'Inflation amplifies SRR because your withdrawal grows each year (e.g., $40K becomes $54K after 10 years at 3% inflation), even as your portfolio struggles after a crash. The worst case is stagflation (1970s) — high inflation + flat returns = rapidly increasing withdrawals from a stagnant portfolio. The calculator models this by inflation-adjusting withdrawals annually. Mitigations include holding TIPS, I Bonds, or real estate as inflation hedges.',
+  },
+  {
+    question: 'What historical crashes are modeled in the calculator?',
+    answerHtml: 'The calculator includes <b>three historical crash scenarios</b>, each representing a different kind of market crisis. You can also create a <b>custom stress test</b> with your own return sequence.<br /><br /><b>1. Dot-Com Bubble Burst (2000–2002)</b><br /><ul><li>Return sequence: -10%, -13%, -23% (three consecutive down years losing ~40% peak-to-trough)</li><li>Followed by recovery years averaging ~10% annually</li><li><b>Key feature:</b> A slow, grinding bear market over three years. Tests whether your portfolio survives a prolonged downturn with no quick recovery.</li></ul><br /><b>2. Global Financial Crisis / 2008 Crash</b><br /><ul><li>Return sequence: -37% in year 1, +26% in year 2 (sharp drop, sharp recovery)</li><li>Followed by moderate positive returns</li><li><b>Key feature:</b> The most severe single-year crash since the Great Depression. Tests whether your portfolio survives a 37% loss in the first year of retirement.</li></ul><br /><b>3. 1970s Stagflation</b><br /><ul><li>Return sequence: Several years of 0–5% mixed with negative years, high inflation (6–12%)</li><li>Flat nominal returns with deeply negative <b>real</b> (inflation-adjusted) returns</li><li><b>Key feature:</b> The worst-case scenario for retirees — high inflation erodes purchasing power while stocks go nowhere. Tests whether your portfolio can survive the "inflationary bear."</li></ul><br />Each scenario also has a corresponding set of <b>recovery years</b> that bring the long-term average return in line with the steady scenario, ensuring an apples-to-apples comparison. The exact return arrays are visible in the calculator\'s source code and can be customized.',
+    answerText: 'Three historical crashes are modeled: (1) Dot-Com Bubble (2000–2002): -10%, -13%, -23% — a slow grinding bear over 3 years. (2) 2008 Global Financial Crisis: -37% year 1, then +26% recovery — sharp crash and recovery. (3) 1970s Stagflation: several years of flat/negative returns with 6–12% inflation — the worst case for retirees. You can also create a custom stress test with your own annual return sequence.',
+  },
+  {
+    question: 'How can I protect against sequence of returns risk?',
+    answerHtml: 'There are several <b>proven strategies</b> to protect your portfolio against sequence of returns risk:<br /><br /><ul><li><b>Cash Buffer (2–3 years of expenses):</b> Keep 2–3 years of living expenses in cash or cash equivalents (high-yield savings, money market, short-term Treasuries). During a market downturn, withdraw from this cash buffer instead of selling stocks. This gives your portfolio 2–3 years to recover without selling at a loss. This is the single most effective and simple protection against SRR.</li><li><b>Bond Tent (Glide Path):</b> Shift 30–50% of your portfolio into bonds and fixed income in the 5 years before and 5 years after retirement. This reduces portfolio volatility during the critical early retirement years. After 5–10 years of successful retirement, you gradually shift back to a higher equity allocation. The "tent" shape refers to the temporary increase in bonds.</li><li><b>Dynamic Withdrawal Strategy (Guardrails):</b> Instead of a fixed inflation-adjusted withdrawal, use a dynamic rule: if your portfolio drops more than 20%, reduce your withdrawal by 10–20%. If your portfolio grows more than 20%, increase your withdrawal by 10%. The Guyton-Klinger guardrails are a well-researched implementation of this approach.</li><li><b>Variable Percentage Withdrawal (VPW):</b> Withdraw a fixed percentage of your current portfolio each year (e.g., 5%). This ensures you never deplete your portfolio, but your spending fluctuates with the market. Best for retirees with flexible spending.</li><li><b>Part-Time Work (Barista FIRE):</b> Having even a small part-time income during the first 5–10 years of retirement dramatically reduces the withdrawal pressure on your portfolio, giving it time to grow through the recovery years.</li><li><b>Delay Social Security:</b> If you delay taking Social Security to age 70, your guaranteed income is 76% higher than if you started at 62. This larger income floor in later years reduces the amount you need to withdraw from your portfolio, especially in your 80s and 90s when sequence risk has already passed.</li></ul><br />The most common recommendation from retirement researchers is to <b>combine a cash buffer with a dynamic withdrawal strategy</b>. This gives you both the emotional comfort of cash on hand and the mathematical safety of spending adjustments.',
+    answerText: 'Key protections against SRR: (1) Cash buffer of 2–3 years of expenses — withdraw from cash during downturns instead of selling stocks. (2) Bond tent — increase bond allocation 5 years before and after retirement, then shift back to stocks. (3) Dynamic withdrawal guardrails — reduce spending when portfolio drops. (4) Variable Percentage Withdrawal — spend a fixed % of current portfolio. (5) Part-time work in early retirement. (6) Delay Social Security to age 70 for a larger income floor.',
+  },
+  {
+    question: 'What is a safe withdrawal rate with sequence of returns risk?',
+    answerHtml: 'The <b>safe withdrawal rate (SWR)</b> is the maximum initial withdrawal percentage that ensures your portfolio survives 30 years in the <b>worst historical sequence</b> of returns. When SRR is high (early retirement, high equity allocation, low bond yields), the SWR is lower.<br /><br /><b>Conventional SWR Benchmarks:</b><br /><br /><ul><li><b>4% Rule (Trinity Study):</b> 95% success rate for 30-year retirements with a 60/40 portfolio. This is the baseline, but it was calculated for <b>65-year-old retirees</b> with 30-year horizons, not early retirees.</li><li><b>3.5% Rule (40-year horizon):</b> For a 50-year-old retiring early, the safe withdrawal rate drops to ~3.5%. This accounts for the additional decade of withdrawals and SRR exposure.</li><li><b>3.25% Rule (50+ year horizon):</b> For FIRE retirees retiring in their 30s or 40s, research suggests a SWR of <b>3.0–3.5%</b> for 95%+ success rates. Some studies (Ernst & Young, 2023) suggest even 3.25% carries risk with certain historical sequences.</li><li><b>2.7% Rule (perpetual withdrawal rate):</b> If you want your portfolio to last <b>forever</b> (never deplete, even in the worst sequence), the SWR drops to ~2.7% (roughly the dividend yield of a balanced portfolio).</li></ul><br /><b>How SRR affects SWR:</b><br /><br /><ul><li>A retiree in 1966 (the worst year to retire for US stocks) who used 4% withdrawals would have run out of money in <b>~25 years</b> — a 4% SWR failure.</li><li>A retiree in 1966 using <b>3.5%</b> withdrawals would have barely survived 30 years.</li><li>The 2000 retiree (Dot-Com peak) using 4% withdrawals with a 60/40 portfolio would have a <b>~50% portfolio remaining</b> after 25 years — but only because of the 2000s bond bull market. With a 100% stock portfolio, the results would be far worse.</li></ul><br />The calculator lets you test <b>your withdrawal rate</b> against your chosen crash scenario. If your withdrawal rate is 4% and the crash scenario depletes your portfolio in 22 years, you know you need to either reduce your withdrawal rate or build more protective strategies into your plan.',
+    answerText: 'The safe withdrawal rate (SWR) depends on your retirement horizon: 4% for 30 years (traditional), 3.5% for 40 years (early retirement), 3.0–3.5% for 50+ years (FIRE), and ~2.7% for perpetual (never deplete). SRR makes SWR lower because the worst historical sequences (1966 retiree, 2000 retiree) create early crashes that permanently impair portfolio recovery. The calculator lets you test your specific withdrawal rate against crash scenarios.',
+  },
+];
+---
+
+<PageLayout
+  title="Sequence of Returns Risk Calculator — Stress Test Your Retirement"
+  description="Free sequence of returns risk calculator. Compare steady returns vs. early market crashes to see if your portfolio survives 30 years of retirement withdrawals."
+  canonical="https://truefinancetools.com/sequence-of-returns-calculator"
+  ogImage="https://truefinancetools.com/og-sequence-of-returns-calculator.png"
+  ogImageAlt="Sequence of Returns Risk Calculator — Stress Test Your Retirement"
+  pageType="website"
+  keywords="sequence of returns risk calculator, SRR calculator, retirement stress test, early retirement crash, bear market retirement, portfolio depletion calculator, FIRE risk calculator, withdrawal rate risk"
+>
+  <StructuredData
+    title="Sequence of Returns Risk Calculator"
+    description="Free sequence of returns risk calculator for stress-testing retirement portfolios against historical market crashes"
+    url="https://truefinancetools.com/sequence-of-returns-calculator"
+    toolName="Sequence of Returns Risk Calculator"
+    toolDescription="Stress-test your retirement portfolio against historical market crashes like the Dot-Com bubble, 2008 Financial Crisis, and 1970s Stagflation."
+    faqItems={toolFaqItems}
+    features={[
+      'Historical crash scenario modeling (Dot-Com, GFC, Stagflation)',
+      'Side-by-side steady vs. crash comparison',
+      'Inflation-adjusted withdrawal projections',
+      'Custom stress test with user-defined returns',
+      'Interactive 30-year portfolio projection chart',
+      'Safe Withdrawal Rate (SWR) calculation'
+    ]}
+  />
+
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Sequence of Returns Risk Calculator
+      </h1>
+      <p class="text-lg text-body">See how an early market crash can destroy your retirement — even with positive long-term average returns.</p>
+    </div>
+  </section>
+
+  <SequenceOfReturnsCalculator />
+
+  <HowItWorks title="How the Sequence of Returns Risk Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Set Your Portfolio Details</h3>
+      <p class="text-sm text-body">Enter your initial portfolio, annual withdrawal, and inflation rate.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Choose a Crash Scenario</h3>
+      <p class="text-sm text-body">Select a historical crash or define your own custom stress test.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Compare the Outcomes</h3>
+      <p class="text-sm text-body">See whether your portfolio survives 30 years under steady vs. crash conditions.</p>
+    </div>
+  </HowItWorks>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is Sequence of Returns Risk?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Sequence of returns risk (SRR)</strong> is the danger that the <strong>order</strong> in which your investment returns occur — not just the average return over time — determines whether your retirement portfolio survives. Two portfolios with identical average annual returns can end up with dramatically different ending balances depending on when the negative years fall relative to your withdrawal schedule.
+        </p>
+
+        <p class="mb-4">
+          In the accumulation phase, a market crash early in your career is actually beneficial: you buy shares at a discount. But in the <strong>decumulation (retirement) phase</strong>, a crash in the first few years is devastating because you are selling shares at a loss to fund your lifestyle. This <strong>sequence of returns risk calculator</strong> helps you stress-test your retirement plan against this exact scenario — showing whether your portfolio can survive 30 years of withdrawals when the worst happens right at the start.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Sequence of Returns Risk Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Portfolio<sub>year</sub> = max(0, (Portfolio<sub>year&minus;1</sub> &minus; Withdrawal<sub>year</sub>) &times; (1 + Return<sub>year</sub>))
+        </div>
+        <div class="mt-2 rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Withdrawal<sub>year</sub> = Initial Withdrawal &times; (1 + Inflation)<sup>year&minus;1</sup>
+        </div>
+
+        <p class="mb-4 mt-4">
+          The formula is deceptively simple but its implications are profound. Each year, you subtract your inflation-adjusted withdrawal <strong>before</strong> applying the year's return. This means a negative return after a withdrawal creates a double loss: you permanently lose the shares you sold at the bottom, and those shares never participate in the subsequent recovery. The calculator iterates this formula for 30 years under both a steady return scenario and a crash scenario, using exactly the same average return.
+        </p>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Steady Returns vs. Early Crash</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Year</th>
+                <th class="p-3 font-medium text-ink">Steady ($1M, 7%, $40K + 3% inflation)</th>
+                <th class="p-3 font-medium text-ink">Crash ($1M, -37% Yr 1, $40K + 3% inflation)</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Start</td>
+                <td class="p-3 text-ink">$1,000,000</td>
+                <td class="p-3 text-ink">$1,000,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Year 1</td>
+                <td class="p-3 text-success-deep">$1,027,200</td>
+                <td class="p-3 text-error">$604,800</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Year 2</td>
+                <td class="p-3 text-success-deep">$1,055,804</td>
+                <td class="p-3 text-ink">$738,800</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Year 3</td>
+                <td class="p-3 text-success-deep">$1,085,866</td>
+                <td class="p-3 text-ink">$851,870</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Year 5</td>
+                <td class="p-3 text-success-deep">$1,150,474</td>
+                <td class="p-3 text-ink">$945,700</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Year 10</td>
+                <td class="p-3 text-ink">$1,344,628</td>
+                <td class="p-3 text-ink">$932,100</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Year 20</td>
+                <td class="p-3 text-ink">$1,696,411</td>
+                <td class="p-3 text-ink">$438,500</td>
+              </tr>
+              <tr class="bg-error/5">
+                <td class="p-3 text-body font-sans">Year 25</td>
+                <td class="p-3 text-ink">$1,842,973</td>
+                <td class="p-3 font-semibold text-error">$0 (depleted)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Worry About Sequence of Returns Risk?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Early Retirees &amp; FIRE Enthusiasts</h4>
+            <p class="text-sm text-body">With 50+ year retirement horizons, FIRE retirees face the highest SRR exposure. A crash in year 1 has decades to compound its damage through missed recovery.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Retirees with High Withdrawal Rates</h4>
+            <p class="text-sm text-body">If your withdrawal rate is above 4%, any early market downturn dramatically increases your probability of portfolio depletion within 30 years.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Anyone Approaching Retirement</h4>
+            <p class="text-sm text-body">The 5 years before and 5 years after retirement are the most critical. A market crash at the wrong time can permanently derail even a well-funded retirement plan.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Investors with Concentrated Equity Portfolios</h4>
+            <p class="text-sm text-body">High equity allocations (80%+ stocks) amplify SRR because stocks are more volatile. A 50%+ stock market crash can devastate a portfolio that has no bond cushion.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Sequence of Returns Risk Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages of Understanding SRR</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• You can build a cash buffer to weather early downturns without selling stocks</li>
+              <li>• A bond tent strategy dramatically reduces early-retirement portfolio volatility</li>
+              <li>• Dynamic withdrawal rules let you cut spending temporarily during crashes</li>
+              <li>• Knowing your portfolio's breaking point helps you plan with realistic expectations</li>
+              <li>• Part-time income (Barista FIRE) can cover withdrawals during the danger years</li>
+              <li>• You can retire with confidence knowing you have stress-tested your plan</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs of Stress Testing</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Stress-testing may lead to excessively conservative withdrawal rates</li>
+              <li>• Building a cash buffer means holding 2–3 years of expenses out of the market</li>
+              <li>• A bond tent reduces growth potential during the early retirement years</li>
+              <li>• Dynamic withdrawals require spending flexibility not everyone has</li>
+              <li>• Historical crashes may not repeat — future downturns could be different</li>
+              <li>• Over-optimizing for worst-case scenarios can lead to unnecessary underspending</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Sequence of Returns Risk
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Sequence of Returns Risk Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>sequence of returns risk calculator</strong> is the most comprehensive free tool available for stress-testing your retirement plan against historical market crashes. Whether you are a newly retired early retiree worried about a 2008-style crash repeating, or a FIRE planner in your accumulation phase who wants to understand the risks ahead, this calculator provides year-by-year projections that show exactly how your portfolio would have fared under the worst market conditions.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Understand Sequence of Returns Risk?</h3>
+
+        <p class="mb-4">
+          Most retirement calculators assume a <strong>constant average return</strong> every year — 7% annual returns, every year, like clockwork. This is dangerously misleading. The reality is that markets are volatile, and the <strong>order</strong> of returns matters enormously. A portfolio that earns 7% average over 30 years can end up with vastly different outcomes depending on whether the bad years come at the beginning or the end of retirement.
+        </p>
+
+        <p class="mb-4">
+          The concept of sequence of returns risk was brought to prominence by the <strong>Trinity Study</strong> (1998), which analyzed historical stock and bond returns from 1926 to 1995. The study found that a 4% withdrawal rate had a 95%+ success rate over 30 years — but only because the worst historical sequences (like retiring in 1966) were included in the analysis. Retirees who were lucky enough to retire in bull markets (like 1982) ended their 30-year retirement with <strong>more money than they started with</strong>, while those unlucky enough to retire in 1966 saw their portfolios depleted in 25 years.
+        </p>
+
+        <p class="mb-4">
+          For <strong>FIRE retirees</strong> with 50-year horizons or more, the risk is amplified because the safe withdrawal rate drops from 4% to ~3.25%. Understanding SRR is not about being scared into inaction — it is about building a resilient plan that survives whatever the market throws at you. A <strong>cash buffer</strong>, <strong>bond tent</strong>, and <strong>dynamic withdrawal strategy</strong> are three evidence-based tools that can dramatically reduce your SRR exposure while still allowing you to enjoy your retirement.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Sequence of Returns Risk Calculator</h3>
+
+        <p class="mb-4">
+          See your portfolio's fate under <strong>three historical crash scenarios</strong> — the Dot-Com Bubble (2000–2002), the Global Financial Crisis (2008), and 1970s Stagflation — each with different crash dynamics and recovery patterns. The <strong>side-by-side comparison chart</strong> plots the steady outcome and crash outcome on the same axes, making the gap instantly visible. The calculator flags the <strong>exact year</strong> your portfolio would be depleted under each scenario, so you know your margin of safety.
+        </p>
+
+        <p class="mb-4">
+          For advanced users, the <strong>custom stress test</strong> mode lets you define your own annual return sequence, simulating any market scenario you can imagine. Adjust your <strong>initial portfolio</strong>, <strong>annual withdrawal</strong>, and <strong>inflation rate</strong> to see how changes affect your survival odds. Whether you are planning a conservative 3% withdrawal or a more aggressive 5%, the calculator gives you instant feedback on whether your plan is robust enough to survive the next market crash — completely free, no signup required.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Financial Tools
+      </h2>
+      <p class="mb-8 text-body">Discover more calculators and guides to optimize your financial independence journey.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/sequence-of-returns-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Sequence of Returns Risk</h3>
+          <p class="text-xs text-body">Stress-test your retirement against historical market crashes.</p>
+        </a>
+        <a href="/fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Plan your path to financial independence with Lean, Regular, Fat, Barista, and Coast FIRE.</p>
+        </a>
+        <a href="/die-with-zero-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Die with Zero Calculator</h3>
+          <p class="text-xs text-body">Optimize your retirement spending by calculating optimal portfolio decumulation.</p>
+        </a>
+        <a href="/geographic-arbitrage-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Geographic Arbitrage Calculator</h3>
+          <p class="text-xs text-body">See how far your retirement portfolio stretches in a lower cost-of-living country.</p>
+        </a>
+        <a href="/lean-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Lean FIRE Calculator</h3>
+          <p class="text-xs text-body">Minimalist approach with the 20x rule for early retirement.</p>
+        </a>
+        <a href="/learn/what-is-fire" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">What is FIRE?</h3>
+          <p class="text-xs text-body">Learn the fundamentals of financial independence.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
