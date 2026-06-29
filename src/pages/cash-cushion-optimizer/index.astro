@@ -1,0 +1,337 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import CashCushionOptimizer from '../../components/calculator/CashCushionOptimizer.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is a cash cushion optimizer?',
+    answerHtml: 'A <b>cash cushion optimizer</b> is a financial tool that calculates the mathematically optimal cash reserve needed to survive a bear market without selling stocks at a loss. Unlike the naive approach of simply holding 2-3 years of expenses in cash, the optimizer factors in <b>equity dividend yields</b> (what your stocks pay even during a crash) and <b>cash interest rates</b> to determine the exact minimum cash reserve required.<br /><br />The key insight: during a market crash, your stock portfolio still pays dividends (typically 1.5&ndash;2% annually). This dividend income reduces the amount you need to withdraw from your cash cushion each year, meaning you can survive longer with less cash set aside. The freed-up capital stays invested in the market, continuing to compound for your long-term benefit.<br /><br />A cash cushion optimizer answers the question: <b>"How much cash do I actually need to hold, given that my dividends and cash interest are working for me during the crash?"</b> rather than defaulting to the rule-of-thumb "3 years of expenses in cash."',
+    answerText: 'A cash cushion optimizer calculates the mathematically optimal cash reserve for surviving a bear market by factoring in equity dividend yields and cash interest rates. Rather than naively holding 3 years of expenses in cash, it uses annuity factor math to determine the minimum cash needed while dividends and interest reduce your withdrawal burden. The freed-up capital stays invested and compounding.',
+  },
+  {
+    question: 'How does the cash cushion optimizer work?',
+    answerHtml: 'The cash cushion optimizer uses an <b>annuity factor approach</b> to solve for the exact cash amount needed. Here is how it works step by step:<br /><br /><ol><li><b>Calculate annual dividend income:</b> Your portfolio value is multiplied by the equity dividend yield to determine how much dividend income your stocks generate each year even during the crash.</li><li><b>Determine the annual shortfall:</b> Subtract the dividend income from your annual expenses. This is the amount you need to withdraw from your cash reserve each year.</li><li><b>Calculate the annuity factor:</b> Using the cash yield and the number of safety years, the annuity factor determines how much principal is needed today to fund a stream of future withdrawals.</li><li><b>Adjust for dividend timing:</b> Because dividends are collected before cash is withdrawn, the formula accounts for the fact that dividends reduce the withdrawal burden, which in turn reduces the required cash reserve.</li></ol><br />The result is a cash cushion that is <b>mathematically sufficient</b> to cover your expenses over the safety period, taking full credit for the income your portfolio generates naturally — without requiring you to sell any stocks at depressed prices.',
+    answerText: 'The optimizer uses annuity factor math: (1) Calculate annual dividend income from your portfolio. (2) Subtract it from expenses to find the annual shortfall. (3) Use the cash yield to compute an annuity factor that converts the shortfall stream into a present value. (4) Adjust for dividend timing. The result is the minimum cash reserve needed, with the rest staying invested.',
+  },
+  {
+    question: 'What is the "cash drag" and why does it matter?',
+    answerHtml: '<b>Cash drag</b> is the performance penalty you pay when you hold too much cash instead of keeping it invested in the market. It matters because every dollar sitting in a cash account is a dollar <b>not compounding</b> in equities or bonds.<br /><br />Here is why cash drag is significant:<br /><br /><ul><li><b>Missed compounding:</b> $100,000 in a 0% cash account stays $100,000. The same $100,000 in a diversified portfolio earning 7% annually grows to <b>$196,715</b> after 10 years and <b>$386,968</b> after 20 years. The "drag" is the forgone growth.</li><li><b>The naive approach costs you:</b> If you blindly hold 3 years of $40,000 expenses = $120,000 in cash, but the optimizer shows you only need $75,000, that extra $45,000 sitting in cash is <b>not working for you</b>.</li><li><b>Reinvestment opportunity:</b> The freed-up capital from the optimized approach can be invested back into your portfolio, where it continues to generate returns and dividends, further strengthening your retirement outlook.</li><li><b>The illusion of safety:</b> Many retirees hold excessive cash because it "feels safe." But the opportunity cost of that safety is enormous over a multi-decade retirement. The optimizer helps you find the <b>rational balance</b> between safety and returns.</li></ul><br />This calculator not only shows the difference between the naive and optimized cash amounts, but also calculates the <b>missed growth on freed-up capital</b> so you can see the long-term cost of over-hoarding cash.',
+    answerText: 'Cash drag is the performance penalty of holding too much cash instead of investing it. $100K in 0% cash stays $100K, but invested at 7% grows to $387K after 20 years. If the optimizer shows you need $75K instead of $120K naive, that $45K freed-up can compound for decades. The calculator quantifies this missed growth so you can see the long-term cost of over-hoarding cash.',
+  },
+  {
+    question: 'What is the optimized cash cushion formula?',
+    answerHtml: 'The optimized cash cushion formula uses the <b>Present Value of an Annuity</b> to calculate the exact cash reserve required. The two-step formula is:<br /><br /><div class="rounded-lg bg-canvas-soft-2 p-3 font-mono text-xs text-ink">Annuity Factor (AF) = (1 &minus; (1 + Y<sub>c</sub>)<sup>&minus;N</sup>) / Y<sub>c</sub></div><br /><div class="rounded-lg bg-canvas-soft-2 p-3 font-mono text-xs text-ink">Optimized Cash (C) = ((E &minus; P &times; Y<sub>e</sub>) &times; AF) / (1 &minus; Y<sub>e</sub> &times; AF)</div><br />Where:<br /><ul><li><b>E</b> = Annual expenses (what you spend each year)</li><li><b>P</b> = Total portfolio value</li><li><b>Y<sub>e</sub></b> = Equity dividend yield (e.g., 1.5% = 0.015)</li><li><b>Y<sub>c</sub></b> = Cash yield (interest on cash, e.g., 4% = 0.04)</li><li><b>N</b> = Number of safety years (how long the cushion must last)</li></ul><br /><b>Example:</b> $1,000,000 portfolio, $40,000 annual expenses, 3 safety years, 1.5% dividend yield, 4% cash yield:<br /><br /><ul><li>Dividend income = $1,000,000 × 0.015 = <b>$15,000/year</b></li><li>Annual shortfall = $40,000 &minus; $15,000 = <b>$25,000</b></li><li>AF = (1 &minus; (1.04)<sup>&minus;3</sup>) / 0.04 = <b>2.775</b></li><li>Optimized Cash = ($25,000 × 2.775) / (1 &minus; 0.015 × 2.775) = <b>$72,562</b></li><li>Naive Cash (3 years) = <b>$120,000</b></li><li><b>Capital Freed Up = $47,438</b></li></ul>',
+    answerText: 'The formula uses two steps: (1) Annuity Factor AF = (1 - (1 + Y_c)^(-N)) / Y_c. (2) Optimized Cash C = ((E - P × Y_e) × AF) / (1 - Y_e × AF). Example: $1M portfolio, $40K expenses, 1.5% dividend yield, 4% cash yield, 3 years → $72,562 optimized vs. $120,000 naive = $47,438 freed up.',
+  },
+  {
+    question: 'How do equity dividends protect my cash cushion?',
+    answerHtml: 'Equity dividends protect your cash cushion by <b>reducing the annual withdrawal burden</b> during a market crash. Even when stock prices are falling, most healthy companies continue paying dividends. Here is how it works:<br /><br /><ul><li><b>Dividends provide income without selling shares:</b> During a market downturn, the worst thing you can do is sell stocks at depressed prices. But dividends keep flowing — they are cash payments from companies that do not require you to sell any shares.</li><li><b>Dividends reduce required withdrawals:</b> If you need $40,000/year for expenses and your portfolio pays $15,000/year in dividends, you only need to withdraw <b>$25,000</b> from your cash cushion. This extends the life of your cushion by 60% compared to having no dividend income.</li><li><b>Dividend aristocrats are resilient:</b> Companies in the S&P 500 Dividend Aristocrats index have increased dividends for 25+ consecutive years. Even during the 2008 financial crisis, the <b>majority of dividend-paying companies maintained or increased their payouts</b>.</li><li><b>Historical dividend yields:</b> The S&P 500 has historically yielded 1.5&ndash;2.0% in dividends. Even at the bottom of the 2008 crash, the dividend yield spiked to ~3.5% because prices fell faster than dividends were cut. In a way, crashes <b>increase your dividend yield</b> on the shares you hold.</li></ul><br />The calculator lets you adjust the dividend yield assumption from 0% to 5%, so you can see the impact of conservative assumptions (0&ndash;1%) vs. typical market yields (1.5&ndash;2%). A 0% dividend yield essentially reduces the optimizer to the naive approach — proving that dividends are the key to the optimization.',
+    answerText: 'Equity dividends protect your cash cushion by providing income without requiring you to sell shares at depressed prices. If you need $40K/year and dividends provide $15K, you only withdraw $25K from cash — extending the cushion by 60%. Dividend aristocrats have maintained payouts for 25+ years, even through the 2008 crash. The calculator lets you test dividend yield assumptions from 0% to 5%.',
+  },
+  {
+    question: 'When should I use a cash cushion vs. a bond tent?',
+    answerHtml: 'Both <b>cash cushions</b> and <b>bond tents</b> protect against sequence of returns risk, but they work differently and suit different situations:<br /><br /><div class="overflow-x-auto rounded-lg border border-hairline mt-2 mb-2"><table class="w-full text-left text-sm"><thead><tr class="border-b border-hairline bg-canvas-soft-2"><th class="p-2 font-medium text-ink">Factor</th><th class="p-2 font-medium text-ink">Cash Cushion</th><th class="p-2 font-medium text-ink">Bond Tent</th></tr></thead><tbody class="font-mono text-xs tabular-nums"><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Complexity</td><td class="p-2 text-success-deep">Simple — just cash</td><td class="p-2 text-ink">Moderate — bond ladder</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Liquidity</td><td class="p-2 text-success-deep">Instant access</td><td class="p-2 text-ink">May need to sell bonds</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Growth Potential</td><td class="p-2 text-ink">None (cash yields)</td><td class="p-2 text-ink">Bond yields + price appreciation</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Volatility Risk</td><td class="p-2 text-success-deep">Very low</td><td class="p-2 text-ink">Bonds can lose value</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Best for</td><td class="p-2 text-ink">Short bear markets (1&ndash;3 yrs)</td><td class="p-2 text-ink">Long uncertainty (3&ndash;10 yrs)</td></tr><tr class="bg-success/5"><td class="p-2 text-body font-sans">Dividend synergy</td><td class="p-2 font-semibold text-success-deep">Yes — optimizer uses dividends</td><td class="p-2 text-ink">No — bonds pay interest separately</td></tr></tbody></table></div><br /><b>When to choose a cash cushion:</b><br /><ul><li>You want <b>simplicity</b> — a cash cushion is easy to set up and understand</li><li>You expect a <b>relatively short bear market</b> (1&ndash;3 years)</li><li>You want to <b>optimize using dividends</b> to reduce the cash needed</li><li>You value <b>certainty</b> — cash will not lose nominal value</li></ul><br /><b>When to choose a bond tent:</b><br /><ul><li>You expect a <b>prolonged downturn</b> (5+ years) and need more return from your buffer</li><li>You are comfortable with <b>some volatility</b> in your safety reserve</li><li>You want a <b>glide path</b> — gradually shifting back to equities as you age</li><li>You are <b>5&ndash;10 years from retirement</b> and can plan ahead</li></ul><br />Many retirees use <b>both</b> — a cash cushion for immediate expenses (years 1&ndash;3) and a bond tent for the medium term (years 3&ndash;10).',
+    answerText: 'Use a cash cushion for simplicity, short bear markets (1-3 years), and when you want to optimize using dividend income. Use a bond tent for longer uncertainty (3-10 years), when you want growth potential from your buffer, or if you are years from retirement and can plan a glide path. Many retirees use both: cash for immediate years, bonds for the medium term. The optimizer specifically helps you minimize your cash cushion by factoring in dividends.',
+  },
+  {
+    question: 'What cash yield assumptions should I use?',
+    answerHtml: 'The <b>cash yield</b> is the interest rate your cash cushion earns while sitting in liquid, safe accounts. The default in the calculator is 4.0%, but you should adjust based on the current rate environment and the type of account you use:<br /><br /><b>Common cash vehicles and their typical yields:</b><br /><ul><li><b>High-Yield Savings Account (HYSA):</b> 3.5&ndash;5.0% APY (rate-sensitive, changes with Fed policy). Best for <b>instant liquidity</b> and FDIC insurance up to $250K.</li><li><b>Money Market Fund:</b> 4.0&ndash;5.2% yield. Slightly higher than HYSA but may have <b>minimum balance requirements</b> or check-writing limits.</li><li><b>Short-Term Treasury Bills (4&ndash;13 week):</b> 4.0&ndash;5.5%. State tax-free. Requires buying at auction or on secondary market. <b>Very liquid</b> but takes 1&ndash;2 days to settle.</li><li><b>Certificates of Deposit (6&ndash;12 month):</b> 4.0&ndash;5.5%. Fixed rate for the term. <b>Early withdrawal penalties</b> apply, so best to ladder maturities.</li><li><b>Checking Account (0%):</b> No interest. The naive approach effectively assumes this — keeping cash in a non-interest-bearing account.</li></ul><br /><b>How to choose your assumption:</b><br /><ul><li>Use the <b>current HYSA rate</b> from a reputable online bank (Ally, Marcus, SoFi, etc.) as your baseline.</li><li>If rates are falling, use a <b>conservative estimate</b> (e.g., 0.5&ndash;1% below current rates) to account for future rate cuts.</li><li>If you plan to hold cash in checking (0%), the cash yield should be <b>0%</b> — eliminating the interest benefit and making the naive and optimized approaches converge.</li><li>The calculator lets you adjust from 0% to 8%, covering everything from zero-interest checking to high-rate environments.</li></ul><br />A higher cash yield reduces the optimized cash amount because your cash reserve earns more interest while being drawn down. A 0% cash yield means your cushion earns nothing and must be larger.',
+    answerText: 'Default cash yield is 4.0%. Use current HYSA rates (3.5-5.0%) as a baseline. Money market funds (4.0-5.2%) and short-term T-bills (4.0-5.5%) are alternatives. For conservative estimates, use 0.5-1% below current rates. If holding cash in checking at 0%, set the yield to 0%. Higher cash yield = smaller optimized cushion. The calculator adjusts from 0% to 8%.',
+  },
+  {
+    question: 'Does this calculator account for inflation?',
+    answerHtml: 'This calculator uses a <b>simplified nominal model</b> that does <b>not</b> explicitly account for inflation over the safety period. This is intentional and reasonable for the use case:<br /><br /><b>Why inflation is not modeled:</b><br /><ul><li><b>Short time horizon:</b> The cash cushion is designed to cover 1&ndash;5 years of expenses. Over such a short period, even 3% inflation only increases expenses by 3&ndash;16% cumulatively. The difference is small enough that it does not materially change the optimized cash amount.</li><li><b>Nominal expenses are stable:</b> Most retirees\' near-term expenses — mortgage, insurance, utilities — are relatively stable in nominal terms over 1&ndash;3 years. The largest variable (food, travel) can be adjusted.</li><li><b>Cash yield already reflects inflation:</b> When inflation is high, cash yields (HYSA, T-bills, money market) typically rise in tandem. The Federal Reserve raises rates to combat inflation, which means your cash cushion earns more — partially offsetting inflation\'s effect.</li><li><b>Safety through conservatism:</b> By using conservative dividend and cash yield assumptions, you inherently build in a margin of safety that covers mild inflation surprises.</li></ul><br /><b>When to worry about inflation:</b><br />If you are modeling a <b>longer safety period</b> (5+ years) or if you expect <b>high inflation</b> (5%+), use the <b>Sequence of Returns Risk (SRR) Stress Tester</b> instead, which explicitly models inflation-adjusted withdrawals over 30-year periods. The SRR calculator also lets you test how inflation compounds with a market crash — which is the "stagflation" scenario.<br /><br />For short-term cash cushion planning (1&ndash;5 years), the simplified model is appropriate and produces reliable results without over-complicating the math.',
+    answerText: 'No, this calculator uses a simplified nominal model and does not explicitly account for inflation. This is reasonable for short horizons (1-5 years) because: (1) even 3% inflation has a small cumulative effect over 2-3 years, (2) near-term expenses are relatively stable, (3) cash yields rise with inflation, and (4) conservative assumptions build in a margin of safety. For longer projections, use the SRR Stress Tester which models inflation-adjusted withdrawals.',
+  },
+];
+---
+
+<PageLayout
+  title="Cash Cushion Optimizer — Stop Over-Hoarding Cash in Retirement"
+  description="Free cash cushion optimizer calculator. Find the exact cash reserve needed to survive a bear market using dividend yield math — not guesswork."
+  canonical="https://truefinancetools.com/cash-cushion-optimizer"
+  ogImage="https://truefinancetools.com/og-cash-cushion-optimizer.png"
+  ogImageAlt="Cash Cushion Optimizer — Find Your Optimal Cash Reserve"
+  pageType="website"
+  keywords="cash cushion calculator, cash reserve optimizer, bear market cash buffer, dividend yield cash strategy, sequence of returns protection, retirement cash tent, FIRE cash reserve, equity dividend shield"
+>
+  <StructuredData
+    title="Cash Cushion Optimizer"
+    description="Free cash cushion optimizer calculator for retirees. Calculate the mathematically optimal cash reserve factoring in equity dividend yields and cash interest rates."
+    url="https://truefinancetools.com/cash-cushion-optimizer"
+    toolName="Cash Cushion Optimizer"
+    toolDescription="Calculate the optimal cash reserve to survive a bear market by factoring in equity dividend yields and cash interest rates."
+    faqItems={toolFaqItems}
+    features={[
+      'Optimized cash cushion calculation using annuity factor math',
+      'Naive vs. optimized cash comparison with capital freed-up amount',
+      'Interactive stacked bar chart showing year-by-year expense funding',
+      'Dividend yield and cash yield adjustable parameters',
+      'Missed growth calculation on freed-up capital',
+      'Shareable results and PDF-ready layout'
+    ]}
+  />
+
+  <!-- Hero Section -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Cash Cushion Optimizer
+      </h1>
+      <p class="text-lg text-body">Stop over-hoarding cash. Find the exact reserve you need to survive a bear market — factoring in dividend yields and cash interest.</p>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <CashCushionOptimizer />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Cash Cushion Optimizer Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Portfolio Details</h3>
+      <p class="text-sm text-body">Input your portfolio value, annual expenses, and how many years of bear market you want to survive.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Set Your Yield Assumptions</h3>
+      <p class="text-sm text-body">Adjust the equity dividend yield (what your stocks pay even in a crash) and the cash yield (interest on your cash reserve).</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See Your Optimized Buffer</h3>
+      <p class="text-sm text-body">Compare the naive cash amount with the mathematically optimized amount and see how much capital stays invested.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is a Cash Cushion? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is a Cash Cushion?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Cash Cushion</strong> (also called a <strong>cash tent</strong> or <strong>cash buffer</strong>) is a liquid reserve that retirees hold to avoid selling stocks during bear markets. The traditional approach is to set aside 2&ndash;3 years of living expenses in cash or cash equivalents (HYSA, money market, short-term Treasuries). During a market downturn, you withdraw from this cash cushion instead of selling stocks at depressed prices, giving your portfolio time to recover.
+        </p>
+
+        <p class="mb-4">
+          The <strong>cash cushion optimizer</strong> takes this concept further by using mathematical optimization. Rather than blindly setting aside "3 years of expenses," it calculates the <strong>exact minimum cash reserve</strong> needed given your portfolio size, dividend yield, and cash interest rate. The result is that you hold less cash (reducing cash drag) and keep more capital invested and compounding in the market.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Optimized Cash Cushion Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          AF = (1 &minus; (1 + Y<sub>c</sub>)<sup>&minus;N</sup>) / Y<sub>c</sub>
+        </div>
+        <div class="mt-2 rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          C = ((E &minus; P &times; Y<sub>e</sub>) &times; AF) / (1 &minus; Y<sub>e</sub> &times; AF)
+        </div>
+        <div class="mt-2 rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Where: E = expenses, P = portfolio, Y<sub>e</sub> = dividend yield, Y<sub>c</sub> = cash yield, N = safety years
+        </div>
+
+        <p class="mb-4 mt-4">
+          For example, with a $1,000,000 portfolio, $40,000 annual expenses, 1.5% dividend yield, 4% cash yield, and a 3-year safety period: the optimized cash cushion is <strong>$72,562</strong> compared to the naive <strong>$120,000</strong> — freeing up <strong>$47,438</strong> to stay invested.
+        </p>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Naive vs. Optimized Cash Cushion</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Metric</th>
+                <th class="p-3 font-medium text-ink">Naive Approach</th>
+                <th class="p-3 font-medium text-ink">Optimized Approach</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Cash Needed ($1M, $40K, 3 yrs)</td>
+                <td class="p-3 text-ink">$120,000</td>
+                <td class="p-3 text-success-deep">$72,562</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Dividends Considered</td>
+                <td class="p-3 text-ink">No</td>
+                <td class="p-3 text-success-deep">Yes (1.5% yield)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Cash Interest Considered</td>
+                <td class="p-3 text-ink">No</td>
+                <td class="p-3 text-success-deep">Yes (4% yield)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Capital Freed Up</td>
+                <td class="p-3 text-ink">$0</td>
+                <td class="p-3 text-success-deep">$47,438</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 text-body font-sans">Growth on Freed Capital (10 yrs @ 7%)</td>
+                <td class="p-3 text-ink">$0</td>
+                <td class="p-3 font-semibold text-success-deep">~$93,000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose a Cash Cushion Optimizer?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Early Retirees (FIRE)</h4>
+            <p class="text-sm text-body">Need a 2&ndash;3 year buffer to protect against sequence of returns risk but do not want the drag of excessive cash holdings. The optimizer finds the perfect balance.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Market Crash Worriers</h4>
+            <p class="text-sm text-body">Want the certainty of a cash buffer without sacrificing growth. The optimizer shows you the minimum cash needed so you can sleep well at night.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">High-Dividend Investors</h4>
+            <p class="text-sm text-body">If your portfolio already earns meaningful dividends, you can reduce your cash cushion significantly. The optimizer quantifies exactly how much.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Conservative Retirees</h4>
+            <p class="text-sm text-body">Want to optimize even your "safe" cash allocation. The optimizer helps you avoid the trap of holding more cash than you actually need.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Cash Cushion Optimizer Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Reduces unnecessary cash drag — more capital stays compounding in the market</li>
+              <li>• Keeps more capital invested for long-term growth</li>
+              <li>• Mathematically rigorous — uses proven annuity factor formulas</li>
+              <li>• Simple to understand and implement with any brokerage or HYSA</li>
+              <li>• Transparent comparison between naive and optimized approaches</li>
+              <li>• Adjustable assumptions let you stress test different yield environments</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Assumes constant dividend yield — dividends can be cut in severe crashes</li>
+              <li>• Does not model inflation over the short safety horizon</li>
+              <li>• Dividends can be reduced or suspended in the most extreme downturns</li>
+              <li>• Requires accurate yield estimates — garbage in, garbage out</li>
+              <li>• Only covers short safety periods (1&ndash;5 years), not full retirement</li>
+              <li>• The optimized amount may feel "too small" for risk-averse retirees</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Cash Cushion Optimizer
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Cash Cushion Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>cash cushion optimizer calculator</strong> is the most precise free tool available for determining the optimal cash reserve to protect your retirement portfolio during a bear market. Whether you are a newly retired early retiree worried about sequence of returns risk, or a seasoned FIRE veteran looking to fine-tune your asset allocation, this calculator gives you a data-driven answer to one of the most important retirement planning questions: <strong>how much cash do I really need?</strong>
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose a Cash Cushion Optimizer?</h3>
+
+        <p class="mb-4">
+          The traditional advice — "hold 2&ndash;3 years of expenses in cash" — is a useful rule of thumb, but it is <strong>imprecise and potentially costly</strong>. The amount of cash you actually need depends on your portfolio size, the dividend yield your equities generate, the interest your cash earns, and the length of the bear market you want to survive. A retiree with a $3M portfolio earning 2% dividends has vastly different needs than one with a $500K portfolio earning 1% dividends — but the rule of thumb treats them the same.
+        </p>
+
+        <p class="mb-4">
+          The <strong>opportunity cost of over-hoarding cash</strong> is enormous. Every dollar you hold in cash is a dollar not earning compounding returns in the market. Over a 20-year retirement, $50,000 of unnecessary cash drag could cost you over $150,000 in missed growth (at 7% annual returns). The optimizer eliminates this waste by calculating the <strong>exact minimum cash reserve</strong> that still provides full protection against your chosen bear market scenario.
+        </p>
+
+        <p class="mb-4">
+          For <strong>FIRE retirees</strong> with 50+ year time horizons, reducing cash drag is especially critical because the compounding effect over decades is immense. The cash cushion optimizer helps you maintain the protection you need without sacrificing the growth you depend on. It is also an excellent tool for <strong>dividend-focused investors</strong> who want to understand how their portfolio's natural income reduces their liquidity requirements.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Cash Cushion Optimizer Calculator</h3>
+
+        <p class="mb-4">
+          See your <strong>optimized cash cushion</strong> instantly alongside the <strong>naive 3-year benchmark</strong> — making the savings immediately visible. The calculator clearly shows the <strong>capital freed up</strong> by the optimized approach and estimates the <strong>missed growth</strong> over a 10-year period at 7% returns, so you can see the long-term cost of holding excess cash. The <strong>interactive stacked bar chart</strong> visualizes how each year's expenses are funded — showing the portion covered by equity dividends versus cash withdrawals.
+        </p>
+
+        <p class="mb-4">
+          Adjust the <strong>equity dividend yield</strong> from 0% to 5% and <strong>cash yield</strong> from 0% to 8% to model different market environments. Set the <strong>safety years</strong> from 1 to 10 to see how longer bear market scenarios affect your cash needs. All calculations are performed client-side — no data is sent to any server, and nothing is stored. The chart automatically updates when you switch between dark and light mode. Whether you are a conservative retireer or an optimization-focused FIRE enthusiast, this calculator helps you find the perfect cash balance for your retirement plan — completely free, no signup required.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Retirement Protection Tools
+      </h2>
+      <p class="mb-8 text-body">Discover more calculators and guides to protect and optimize your retirement strategy.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/cash-cushion-optimizer" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Cash Cushion Optimizer</h3>
+          <p class="text-xs text-body">Find the exact cash reserve needed to survive a bear market.</p>
+        </a>
+        <a href="/sequence-of-returns-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">SRR Stress Tester</h3>
+          <p class="text-xs text-body">Test how sequence of returns risk affects your retirement portfolio.</p>
+        </a>
+        <a href="/fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Plan your path to financial independence with Lean, Regular, Fat, Barista, and Coast FIRE.</p>
+        </a>
+        <a href="/die-with-zero-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Die with Zero Calculator</h3>
+          <p class="text-xs text-body">Optimize your retirement spending to drain your portfolio by end of life.</p>
+        </a>
+        <a href="/geographic-arbitrage-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Geo Arbitrage Calculator</h3>
+          <p class="text-xs text-body">See how far your retirement portfolio stretches in a lower cost-of-living country.</p>
+        </a>
+        <a href="/one-more-year-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">OMY Syndrome Calculator</h3>
+          <p class="text-xs text-body">Quantify the financial benefit and time cost of delaying retirement.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
