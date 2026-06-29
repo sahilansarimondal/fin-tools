@@ -1,0 +1,333 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import OneMoreYearCalculator from '../../components/calculator/OneMoreYearCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is One More Year Syndrome?',
+    answerHtml: '<b>One More Year (OMY) Syndrome</b> is a psychological phenomenon common in the FIRE (Financial Independence, Retire Early) community where someone who has already reached their FIRE number keeps delaying retirement by <b>"just one more year"</b> to accumulate additional savings. While it sounds prudent, OMY Syndrome can lead to <b>years of unnecessary work</b> — the "one more year" often becomes two, then three, then more.<br /><br />The syndrome is driven by a few key psychological factors:<br /><br /><ul><li><b>Fear of not having enough:</b> Even when the numbers say you can retire, the fear of running out of money pushes you to keep working.</li><li><b>Loss aversion:</b> The pain of seeing your portfolio potentially decline feels worse than the pleasure of the extra growth.</li><li><b>Identity and purpose:</b> Your career provides structure, social connections, and identity. Letting go is emotionally difficult.</li><li><b>Goalpost shifting:</b> Once you reach your FIRE number, you redefine what "enough" means — moving from Lean FIRE to Regular FIRE to Fat FIRE.</li></ul><br />This OMY Syndrome calculator quantifies exactly what each extra year costs you in <b>time</b> and what it buys you in <b>additional lifetime income</b>. The goal is to make the trade-off explicit so you can make an informed, intentional decision.',
+    answerText: 'One More Year (OMY) Syndrome is a psychological phenomenon in the FIRE community where people delay retirement by "just one more year" even after reaching their FIRE number. It is driven by fear, loss aversion, identity attachment to work, and goalpost shifting. This calculator quantifies the time vs. money trade-off to help you make an informed decision.',
+  },
+  {
+    question: 'How does the OMY calculator work?',
+    answerHtml: 'The One More Year Syndrome calculator works by comparing <b>two scenarios</b>: retiring today versus working 1-5 more years. It uses standard future value (FV) math with annual additions to project how much larger your portfolio grows, then translates that into additional safe spending.<br /><br />Here is how it works step by step:<br /><br /><ul><li><b>Baseline scenario (retire today):</b> Your portfolio immediately starts supporting your safe withdrawal income. At a 4% withdrawal rate, a $1,500,000 portfolio generates $60,000/year.</li><li><b>OMY scenario (work longer):</b> Your portfolio continues to compound for 1-5 more years while you add annual savings from your salary. The result is a significantly larger portfolio that generates more safe withdrawal income.</li><li><b>Compare the difference:</b> The calculator shows the "perpetual income boost" — the extra annual spending you lock in for life by working longer. It also shows the "time cost" — the hours of your life you trade for that income.</li><li><b>Lifestyle converters:</b> The calculator translates your income boost into tangible lifestyle upgrades like luxury vacations and cars you can afford every year.</li><li><b>30-year chart:</b> A projection chart shows how the portfolio divergence grows over three decades of retirement, making the "double compounding" effect visually clear.</li></ul><br />All calculations adjust for your expected real return (after inflation) and your chosen safe withdrawal rate.',
+    answerText: 'The OMY calculator compares retiring today vs. working 1-5 more years. It calculates the portfolio growth from continued compounding plus new savings, then shows the perpetual income boost, hours of life traded, and tangible lifestyle upgrades. A 30-year projection chart visualizes the growing portfolio divergence over time.',
+  },
+  {
+    question: 'What is the "double compounding" effect of OMY?',
+    answerHtml: 'The <b>double compounding effect</b> is the most powerful insight of the One More Year decision. When you work one more year, two positive financial forces happen simultaneously:<br /><br /><ul><li><b>Force 1 — Your existing portfolio compounds without withdrawals:</b> Instead of withdrawing 4% ($60,000 on a $1.5M portfolio) for living expenses, your portfolio keeps growing at the expected real return rate. Over one year at 6%, that is $90,000 of growth that stays in the portfolio.</li><li><b>Force 2 — You add new savings:</b> Your salary continues, and you save a portion of it. At $50,000/year in savings, that is another $50,000 added to the portfolio.</li></ul><br />Combined, these two forces create a <b>double compounding effect</b> that dramatically widens the gap between retiring today and waiting:<br /><br /><div class="rounded-lg bg-canvas-soft-2 p-3 font-mono text-xs text-ink">Year 1 Impact = Portfolio Growth (6% × $1.5M = $90K) + New Savings ($50K) = <b>$140,000</b> vs. Retire Today (withdraw $60K) → <b>$200,000 swing</b></div><br />Over 30 years of retirement, that single year of delay can result in <b>hundreds of thousands of dollars</b> more in total lifetime spending. The chart in the calculator visualizes this growing divergence — the OMY portfolio stays significantly ahead for the entire retirement, creating lasting financial advantage.',
+    answerText: 'The double compounding effect means your portfolio grows from continued compounding without withdrawals (Force 1) while you also add new savings from your salary (Force 2). On a $1.5M portfolio with $50K annual savings, this creates a ~$200K swing in year one compared to retiring today. Over 30 years, this compounds into hundreds of thousands more in lifetime spending.',
+  },
+  {
+    question: 'How much does one extra year of work actually add to my portfolio?',
+    answerHtml: 'The amount one extra year adds depends on your <b>portfolio size, expected returns, and savings rate</b>. Here are some illustrative examples using a 6% real return and 4% safe withdrawal rate:<br /><br /><div class="overflow-x-auto rounded-lg border border-hairline mt-2 mb-2"><table class="w-full text-left text-sm"><thead><tr class="border-b border-hairline bg-canvas-soft-2"><th class="p-2 font-medium text-ink">Current Portfolio</th><th class="p-2 font-medium text-ink">Annual Savings</th><th class="p-2 font-medium text-ink">Portfolio Boost (1 yr)</th><th class="p-2 font-medium text-ink">Extra Income/Yr</th></tr></thead><tbody class="font-mono text-xs tabular-nums"><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">$500K</td><td class="p-2">$20K</td><td class="p-2 text-success-deep">$50,000</td><td class="p-2 text-success-deep">$2,000</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">$1M</td><td class="p-2">$40K</td><td class="p-2 text-success-deep">$100,000</td><td class="p-2 text-success-deep">$4,000</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">$1.5M</td><td class="p-2">$50K</td><td class="p-2 text-success-deep">$140,000</td><td class="p-2 text-success-deep">$5,600</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">$2M</td><td class="p-2">$80K</td><td class="p-2 text-success-deep">$200,000</td><td class="p-2 text-success-deep">$8,000</td></tr><tr class="bg-success/5"><td class="p-2 text-body font-sans">$3M</td><td class="p-2">$100K</td><td class="p-2 font-semibold text-success-deep">$280,000</td><td class="p-2 font-semibold text-success-deep">$11,200</td></tr></tbody></table></div><br />The key insight: the boost is <b>not just your savings</b>. Most of the gain comes from <b>preventing portfolio withdrawals</b> (keeping your money compounding) while continuing to add new capital. The larger your portfolio, the bigger the absolute gain from one more year — which is why OMY Syndrome becomes harder to resist as your wealth grows.',
+    answerText: 'One extra year adds $50K–$280K+ to your portfolio depending on portfolio size and savings rate. On a $1.5M portfolio with $50K savings at 6% returns: ~$140K boost = ~$5,600/year extra safe income forever. Most of the gain comes from preventing withdrawals, not just new savings.',
+  },
+  {
+    question: 'Is working one more year always worth it?',
+    answerHtml: '<b>No — working one more year is not always worth it.</b> The OMY calculator is designed to help you evaluate the trade-off, not to advocate for one choice over the other. Here is when it <b>may</b> be worth it and when it <b>may not</b>:<br /><br /><b>One More Year may be worth it if:</b><br /><ul><li>Your portfolio is <b>borderline</b> — you are close to your FIRE number but not quite there with a comfortable margin for market volatility.</li><li>You <b>enjoy your work</b> — your job provides meaning, social connection, and purpose. If you would work anyway, the financial upside is a bonus.</li><li>You want a <b>buffer against sequence of returns risk</b> — an extra year of contributions and compounding can significantly de-risk early retirement.</li><li>You are targeting a <b>specific lifestyle upgrade</b> — the extra perpetual income moves you from Lean to Regular FIRE or enables a specific dream.</li></ul><br /><b>One More Year may NOT be worth it if:</b><br /><ul><li>Your <b>health is uncertain</b> — the years you trade now are your healthiest. You cannot buy back lost health with extra money.</li><li>You already have <b>more than enough</b> — if your portfolio already supports your desired lifestyle with a margin, extra money has diminishing returns.</li><li>You <b>dislike your work</b> — trading 2,080 hours of misery for extra spending you may not even need is a terrible exchange rate.</li><li>You are experiencing <b>lifestyle creep</b> in your FIRE target — each year you adjust your goalpost upward, trapping yourself in the accumulation mindset.</li></ul><br />The OMY calculator helps you make this decision <b>explicit and quantified</b>. Once you see exactly what you gain (extra vacations) and what you lose (hours of life), the right choice often becomes obvious.',
+    answerText: 'Working one more year is not always worth it. It may be worth it if you are borderline on your FIRE number, enjoy your work, want a buffer against market risk, or need a specific lifestyle upgrade. It may NOT be worth it if your health is uncertain, you already have enough, you dislike your work, or you are experiencing goalpost creep. The calculator quantifies the trade-off so you can decide with data, not fear.',
+  },
+  {
+    question: 'What is the opportunity cost of delaying retirement?',
+    answerHtml: 'The <b>opportunity cost of delaying retirement</b> is everything you give up by working additional years instead of retiring. This is often more significant than people realize:<br /><br /><b>Quantifiable costs (shown in this calculator):</b><br /><ul><li><b>Time:</b> Each extra year costs 2,080 hours of your life (40 hrs/week × 52 weeks). For 3 extra years, that is 6,240 hours — over 260 full days of your life traded for work.</li><li><b>Healthy years:</b> The years immediately after retirement are typically your healthiest — the "Go-Go Years" where you can travel, hike, and pursue physically active hobbies. Delaying retirement shifts those activities to older, potentially less capable years.</li></ul><br /><b>Less quantifiable but equally important costs:</b><br /><ul><li><b>Memory dividends:</b> Experiences you could be having right now create "memory dividends" — positive memories that pay emotional returns for the rest of your life. Every year you delay is a year of potential memories lost forever.</li><li><b>Time with loved ones:</b> Aging parents, growing children, and your own health are not guaranteed. The time you spend at work instead of with family is time you cannot get back.</li><li><b>Burnout risk:</b> Working longer than necessary can lead to physical and mental health deterioration that reduces the quality of your actual retirement years.</li><li><b>Diminishing marginal utility:</b> The extra money from OMY has declining happiness value. Once your basic needs and reasonable wants are covered, additional spending does not meaningfully increase life satisfaction.</li></ul><br />The OMY calculator focuses on the quantifiable trade-off (extra income vs. hours traded). But the real opportunity cost — lost memories, experiences, and time with loved ones — is something only you can value.',
+    answerText: 'The opportunity cost of delaying retirement includes quantifiable costs (2,080 hours/year of your life) and less quantifiable costs (lost memory dividends, time with loved ones, burnout risk, and declining marginal utility of money). The calculator quantifies the time vs. money trade-off, but the real cost of lost experiences is something only you can value.',
+  },
+  {
+    question: 'How does the safe withdrawal rate affect my OMY calculation?',
+    answerHtml: 'Your <b>safe withdrawal rate (SWR)</b> directly determines how much of your portfolio boost translates into spendable income. The calculator uses the same SWR for both the baseline and OMY scenarios for a fair comparison.<br /><br />Here is how different SWRs affect your OMY results:<br /><br /><div class="overflow-x-auto rounded-lg border border-hairline mt-2 mb-2"><table class="w-full text-left text-sm"><thead><tr class="border-b border-hairline bg-canvas-soft-2"><th class="p-2 font-medium text-ink">SWR</th><th class="p-2 font-medium text-ink">Baseline Income ($1.5M)</th><th class="p-2 font-medium text-ink">OMY Income (1yr, 6%, $50K)</th><th class="p-2 font-medium text-ink">Income Boost</th></tr></thead><tbody class="font-mono text-xs tabular-nums"><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">3% (Conservative)</td><td class="p-2">$45,000</td><td class="p-2">~$49,200</td><td class="p-2 text-success-deep">$4,200</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">4% (Standard)</td><td class="p-2">$60,000</td><td class="p-2">~$65,600</td><td class="p-2 text-success-deep">$5,600</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">5% (Aggressive)</td><td class="p-2">$75,000</td><td class="p-2">~$82,000</td><td class="p-2 text-success-deep">$7,000</td></tr></tbody></table></div><br /><b>Key insights about SWR and OMY:</b><br /><ul><li>A <b>lower SWR</b> (conservative) reduces both baseline and OMY income, making the absolute boost smaller. However, the <b>percentage boost</b> from OMY remains similar because both scenarios scale linearly with SWR.</li><li>If you use a <b>higher SWR</b>, the absolute income boost from OMY is larger, making the financial argument for working another year seem more compelling.</li><li>The SWR does not change the portfolio boost itself — it only changes how much of that boost you can safely spend each year.</li><li>Your choice of SWR should reflect your personal risk tolerance, retirement duration, and portfolio allocation. The Trinity Study found 4% historically safe for 30+ year retirements, but many FIRE purists use 3.5% for longer time horizons.</li></ul><br />Use the SWR slider in the calculator to see how different assumptions change your OMY trade-off.',
+    answerText: 'The safe withdrawal rate directly determines how much of your portfolio boost becomes spendable income. A lower SWR (3%) gives a smaller absolute boost, a higher SWR (5%) gives a larger one. The SWR does not change the portfolio boost itself — only the annual income it generates. Use the SWR slider in the calculator to test different assumptions.',
+  },
+  {
+    question: 'Who should use this OMY Syndrome calculator?',
+    answerHtml: 'This OMY Syndrome calculator is designed for anyone in or near the FIRE community who is struggling with the decision of <b>when to pull the trigger on retirement</b>. It is particularly useful for:<br /><br /><ul><li><b>People who have hit their FIRE number but are hesitant to retire:</b> If your portfolio already supports your desired spending, this calculator shows exactly what you gain and lose by waiting longer.</li><li><b>FIRE enthusiasts experiencing decision paralysis:</b> The fear of retiring "too early" is real. This calculator replaces vague anxiety with specific, quantified trade-offs.</li><li><b>Anyone considering working 1-5 more years to "be safe":</b> The calculator tests whether the extra safety margin is worth the time cost, and helps you set a firm retirement date rather than drifting indefinitely.</li><li><b>High-income professionals with high savings rates:</b> If you earn and save a lot, the compounding effect of OMY is particularly dramatic. The calculator may show you are already working for rapidly diminishing returns.</li><li><b>People trying to choose between FIRE strategies:</b> Want to upgrade from Lean FIRE to Regular FIRE? The calculator shows exactly how many more years of work each upgrade costs.</li><li><b>Couples debating retirement timing:</b> If one partner wants to retire and the other wants to keep working, the calculator provides objective data for the conversation.</li></ul><br />The calculator is <b>not</b> designed for people decades away from FIRE who need to focus on accumulation, or for those who have not yet calculated their FIRE number.',
+    answerText: 'This OMY calculator is ideal for people who have hit their FIRE number but are hesitant to retire, those with decision paralysis, high-income professionals, people choosing between FIRE strategies, and couples debating retirement timing. It replaces vague anxiety with quantified trade-offs. Not designed for people still in the early accumulation phase.',
+  },
+];
+---
+
+<PageLayout
+  title="One More Year Syndrome Calculator — The True Cost of Delaying Retirement"
+  description="Free One More Year syndrome calculator. Quantify the exact financial benefit and time cost of delaying FIRE retirement by 1-5 years. See your portfolio boost, perpetual income increase, and hours traded."
+  canonical="https://truefinancetools.com/one-more-year-calculator"
+  ogImage="https://truefinancetools.com/og-one-more-year-calculator.png"
+  ogImageAlt="One More Year Syndrome Calculator — The True Cost of Delaying Retirement"
+  pageType="website"
+  keywords="one more year syndrome calculator, OMY FIRE, cost of delaying retirement, one more year syndrome, FIRE retirement delay calculator, compound growth calculator, retirement opportunity cost"
+>
+  <StructuredData
+    title="One More Year Syndrome Calculator"
+    description="Free One More Year syndrome calculator for quantifying the financial benefit and time cost of delaying FIRE retirement."
+    url="https://truefinancetools.com/one-more-year-calculator"
+    faqItems={toolFaqItems}
+    features={[
+      'Portfolio growth projection comparing retire today vs. delay',
+      'Perpetual income boost calculation',
+      'Lifestyle converter (vacations and cars per year)',
+      'Time cost calculator (hours of life traded)',
+      '30-year portfolio divergence chart',
+      'Customizable safe withdrawal rate and return assumptions'
+    ]}
+  />
+
+  <!-- Hero Section -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        One More Year Syndrome Calculator
+      </h1>
+      <p class="text-lg text-body">Quantify the financial benefit and time cost of delaying retirement — so you can decide if the trade-off is worth it.</p>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <OneMoreYearCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the OMY Syndrome Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Details</h3>
+      <p class="text-sm text-body">Input your current portfolio, expenses, savings rate, and expected return. Choose how many extra years to evaluate.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. See Your Financial Impact</h3>
+      <p class="text-sm text-body">View the portfolio boost, perpetual income increase, and lifestyle upgrades — quantified in vacations and hours traded.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Compare Time vs. Money</h3>
+      <p class="text-sm text-body">Decide if the extra lifetime spending is worth the hours of your healthy life you trade for it.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is One More Year Syndrome? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is One More Year Syndrome?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>One More Year (OMY) Syndrome</strong> is a psychological phenomenon affecting the FIRE community: the tendency to postpone retirement year after year, even after reaching your target FIRE number. Each year, the compounding math makes the financial case for "one more year" look compelling — but the cumulative cost in healthy life years can be enormous.
+        </p>
+
+        <p class="mb-4">
+          This <strong>OMY Syndrome calculator</strong> makes the trade-off explicit. Instead of vague anxiety about "not having enough," you get concrete numbers: <strong>extra safe income per year</strong> vs. <strong>hours of life traded</strong>. The goal is not to tell you to retire or to keep working — it is to give you the data to make an intentional choice.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The OMY Portfolio Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          New Portfolio = P × (1 + r)<sup>n</sup> + S × (((1 + r)<sup>n</sup> &minus; 1) / r)
+        </div>
+        <div class="mt-2 rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Where: P = current portfolio, r = real return rate, n = extra years, S = annual savings
+        </div>
+
+        <p class="mb-4 mt-4">
+          For example, with a $1,500,000 portfolio, $50,000 annual savings, 6% real returns, and one extra year: the portfolio grows to $1,640,000 — a boost of $140,000. That translates to an extra <strong>$5,600/year</strong> in safe spending for the rest of your life (at 4% withdrawal). But it costs you <strong>2,080 hours</strong> of your healthy life.
+        </p>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Retire Today vs. Wait One More Year</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Metric</th>
+                <th class="p-3 font-medium text-ink">Retire Today</th>
+                <th class="p-3 font-medium text-ink">Wait 1 Year</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Starting Portfolio</td>
+                <td class="p-3 text-ink">$1,500,000</td>
+                <td class="p-3 text-success-deep">$1,500,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Portfolio After 1 Year</td>
+                <td class="p-3 text-ink">$1,530,000*</td>
+                <td class="p-3 text-success-deep">$1,640,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Safe Income (4%)</td>
+                <td class="p-3 text-ink">$60,000/year</td>
+                <td class="p-3 text-success-deep">$65,600/year</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">30-Year Wealth</td>
+                <td class="p-3 text-ink">$1.66M**</td>
+                <td class="p-3 text-success-deep">$1.82M**</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 text-body font-sans">Time Invested</td>
+                <td class="p-3 text-ink">0 hours</td>
+                <td class="p-3 text-ink">2,080 hours</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-2 text-xs text-mute">* Assuming 6% growth minus $60K withdrawal. ** Projected portfolio at year 30, assuming constant returns and withdrawals.</p>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Consider the OMY Trade-Off?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Borderline FIRE Candidates</h4>
+            <p class="text-sm text-body">If your portfolio just barely covers your expenses, one more year provides a meaningful safety buffer against sequence of returns risk and unexpected costs.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Lifestyle Upgraders</h4>
+            <p class="text-sm text-body">If you are targeting a specific lifestyle upgrade (e.g., moving from Lean to Regular FIRE), the calculator shows exactly how many years of work that upgrade costs.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Risk-Averse Retirees</h4>
+            <p class="text-sm text-body">If you are terrified of sequence of returns risk, the extra cushion from OMY can significantly improve your retirement confidence and sleep quality.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">People with Purposeful Work</h4>
+            <p class="text-sm text-body">If you genuinely enjoy your work and find meaning in it, the OMY trade-off is less about "trading time" and more about optimizing your life transition.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">OMY Syndrome Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Significantly larger portfolio — the double compounding effect is powerful</li>
+              <li>• Higher perpetual safe spending for life</li>
+              <li>• Better buffer against sequence of returns risk in early retirement</li>
+              <li>• May enable a more comfortable FIRE lifestyle (Lean → Regular → Fat)</li>
+              <li>• Extra savings provide peace of mind for unexpected expenses</li>
+              <li>• More inheritance to leave for family or charity</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• You trade 2,080 hours of your healthy life per year of delay</li>
+              <li>• Lost "memory dividends" — experiences you could be having instead of working</li>
+              <li>• Risk of burnout or health deterioration from prolonged work</li>
+              <li>• Goalpost creep — "one more year" can become 5+ years quickly</li>
+              <li>• Diminishing marginal utility — extra money has less impact on happiness</li>
+              <li>• Less time with aging parents, growing children, and friends</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About One More Year Syndrome
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to OMY Syndrome Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>One More Year Syndrome calculator</strong> helps you make one of the most important decisions of your financial journey: when to stop accumulating and start living off your savings. Whether you are a Lean FIRE minimalist or a Fat FIRE aspirant, the psychological pull of "just one more year" affects everyone. This calculator replaces emotional decision-making with quantified trade-offs.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose This OMY Calculator?</h3>
+
+        <p class="mb-4">
+          Most FIRE calculators focus on the accumulation phase — how much you need and when you will get there. But once you arrive at your FIRE number, a new challenge emerges: <strong>knowing when to walk away</strong>. The One More Year syndrome calculator addresses this gap by quantifying the specific impact of working 1-5 extra years after hitting your number.
+        </p>
+
+        <p class="mb-4">
+          Unlike generic retirement calculators, this tool focuses on <strong>marginal analysis</strong> — the incremental benefit of each additional year. It translates abstract portfolio growth into tangible outcomes: how many extra luxury vacations per year, how many more cars you could buy, and most importantly, how many hours of your life each upgrade costs. This <strong>time vs. money framework</strong> is the most honest way to evaluate the OMY decision.
+        </p>
+
+        <p class="mb-4">
+          The calculator is particularly powerful for <strong>high-income professionals</strong> who save aggressively. For someone earning $200K+ and saving $80K+/year, the double compounding effect makes each extra year extremely lucrative financially. But the same math also shows that after a certain point, you are working for <strong>rapidly diminishing returns on happiness</strong> — extra vacations you may not even want, on a timeline where your health may not support them.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This OMY Syndrome Calculator</h3>
+
+        <p class="mb-4">
+          See your <strong>portfolio boost and perpetual income increase</strong> instantly as you adjust the "Extra Years to Work" slider. The calculator translates financial gains into <strong>lifestyle upgrades</strong> — showing exactly how many luxury international vacations or cars you can afford every year forever with the extra safe income. The <strong>time cost</strong> is presented equally prominently: the exact hours of healthy life you trade for those upgrades, so you can judge the exchange rate honestly.
+        </p>
+
+        <p class="mb-4">
+          The <strong>30-year portfolio divergence chart</strong> visualizes the growing gap between retiring today vs. waiting. You can adjust your <strong>expected real return</strong> (0–12%) and <strong>safe withdrawal rate</strong> (2–6%) to test different market assumptions. The chart automatically updates when you switch between dark and light mode. All calculations are performed client-side — no data is sent to any server, and nothing is stored.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Financial Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Financial Tools
+      </h2>
+      <p class="mb-8 text-body">Discover more calculators and guides to optimize your financial independence journey.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/fire-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Plan your path to financial independence with Lean, Regular, Fat, Barista, and Coast FIRE.</p>
+        </a>
+        <a href="/die-with-zero-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Die with Zero Calculator</h3>
+          <p class="text-xs text-body">Optimize your retirement spending to drain your portfolio by end of life.</p>
+        </a>
+        <a href="/sequence-of-returns-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">SRR Stress Tester</h3>
+          <p class="text-xs text-body">Test how sequence of returns risk affects your retirement portfolio.</p>
+        </a>
+        <a href="/geographic-arbitrage-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Geo Arbitrage Calculator</h3>
+          <p class="text-xs text-body">See how far your retirement portfolio stretches in a lower cost-of-living country.</p>
+        </a>
+        <a href="/barista-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Calculator</h3>
+          <p class="text-xs text-body">Work part-time, let investments cover the rest.</p>
+        </a>
+        <a href="/learn/what-is-fire" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">What is FIRE?</h3>
+          <p class="text-xs text-body">Learn the fundamentals of financial independence.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

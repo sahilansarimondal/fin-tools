@@ -1,0 +1,363 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="omy-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="omy-form" class="space-y-4">
+          <!-- EMPHASIZED: Extra Years to Work slider -->
+          <div class="rounded-lg bg-canvas-soft-2 p-4 border border-hairline">
+            <Slider
+              label="Extra Years to Work"
+              name="extraYearsToWork"
+              value={1}
+              min={1}
+              max={5}
+              step={1}
+              inputId="omy-extraYearsToWork"
+              displayId="omy-extraYearsToWorkValue"
+              formatValue={(v) => v + (v === 1 ? ' Year' : ' Years')}
+              class="[&_label]:text-base [&_label]:font-semibold"
+            />
+          </div>
+
+          <Input
+            label="Current Portfolio"
+            name="currentPortfolio"
+            type="number"
+            value={1500000}
+            min={0}
+            step={10000}
+            suffix="$"
+            hideArrows
+            required
+          />
+
+          <Input
+            label="Annual Expenses"
+            name="annualExpenses"
+            type="number"
+            value={60000}
+            min={0}
+            step={1000}
+            suffix="$"
+            hideArrows
+            required
+          />
+
+          <Input
+            label="Annual Savings"
+            name="annualSavings"
+            type="number"
+            value={50000}
+            min={0}
+            step={1000}
+            suffix="$"
+            hideArrows
+            tooltip="Amount you save from your salary each year during the extra working period."
+            required
+          />
+
+          <Slider
+            label="Expected Real Return"
+            name="expectedRealReturn"
+            value={6}
+            min={0}
+            max={12}
+            step={0.5}
+            suffix="%"
+            inputId="omy-expectedRealReturn"
+            displayId="omy-expectedRealReturnValue"
+            tooltip="Annual return after inflation. Use 6% for a balanced estimate."
+          />
+
+          <Slider
+            label="Safe Withdrawal Rate"
+            name="safeWithdrawalRate"
+            value={4}
+            min={2}
+            max={6}
+            step={0.1}
+            suffix="%"
+            inputId="omy-safeWithdrawalRate"
+            displayId="omy-safeWithdrawalRateValue"
+            tooltip="The Trinity Study found 4% is historically safe for 30+ year retirements."
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- KPI cards row (3 cards) -->
+      <div class="grid gap-4 sm:grid-cols-3">
+        <ResultCard
+          label="Portfolio Boost"
+          valueId="omy-portfolio-boost"
+          value="$0"
+          valueClass="text-success-deep"
+          description="Extra wealth from compound growth + new savings"
+        />
+        <ResultCard
+          label="Perpetual Income Boost"
+          valueId="omy-income-boost"
+          value="$0/year"
+          valueClass="text-success-deep text-lg"
+          description="Extra you can spend every year forever"
+        />
+        <ResultCard
+          label="Time Cost"
+          valueId="omy-hours-traded"
+          value="0 hours"
+          valueClass="text-error"
+          description="Hours of healthy life traded"
+        />
+      </div>
+
+      <!-- The Reality Check -->
+      <Card padding="lg">
+        <div class="space-y-4">
+          <!-- Lifestyle Upgrade block -->
+          <div class="rounded-lg bg-success/5 border border-success/30 p-4">
+            <h3 class="mb-2 text-sm font-semibold text-success-deep">The Lifestyle Upgrade</h3>
+            <p class="text-sm text-body" id="omy-lifestyle-text">
+              Working 1 more year buys you an extra $6,000/year forever.
+              That equals 1 luxury international vacations every year for the rest of your life.
+            </p>
+          </div>
+          <!-- Time Cost block -->
+          <div class="rounded-lg bg-error/5 border border-error/30 p-4">
+            <h3 class="mb-2 text-sm font-semibold text-error">The Time Cost</h3>
+            <p class="text-sm text-body" id="omy-time-cost-text">
+              You are trading 2,080 hours of your healthy life to get this.
+            </p>
+          </div>
+        </div>
+      </Card>
+
+      <!-- Chart -->
+      <Card padding="lg">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">30-Year Portfolio Projection: Retire Today vs. Wait</h2>
+        </div>
+        <div class="relative h-64 sm:h-80">
+          <canvas
+            id="omy-chart"
+            role="img"
+            aria-label="Chart comparing portfolio growth if you retire today versus working one more year"
+          ></canvas>
+        </div>
+      </Card>
+    </div>
+  </div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+  import { calculateOMY } from '../../utils/omy-calculations';
+  import { formatCurrency } from '../../utils/formatters';
+
+  let chart = null;
+
+  function getFormData() {
+    const form = document.getElementById('omy-form');
+    const formData = new FormData(form);
+    return {
+      currentPortfolio: Number(formData.get('currentPortfolio')) || 1500000,
+      annualExpenses: Number(formData.get('annualExpenses')) || 60000,
+      annualSavings: Number(formData.get('annualSavings')) || 50000,
+      expectedRealReturn: Number(formData.get('expectedRealReturn')) || 6,
+      safeWithdrawalRate: Number(formData.get('safeWithdrawalRate')) || 4,
+      extraYearsToWork: Number(formData.get('extraYearsToWork')) || 1,
+    };
+  }
+
+  function updateResults() {
+    const input = getFormData();
+    const result = calculateOMY(input);
+
+    // Update KPI values
+    document.getElementById('omy-portfolio-boost').textContent = formatCurrency(result.portfolioBoost);
+    document.getElementById('omy-income-boost').textContent = formatCurrency(result.perpetualIncomeBoost) + '/year';
+    document.getElementById('omy-hours-traded').textContent = result.hoursTraded.toLocaleString() + ' hours';
+
+    // Update lifestyle text
+    const years = input.extraYearsToWork;
+    const yearLabel = years === 1 ? 'year' : 'years';
+    const vacationCount = result.extraVacationsPerYear;
+    const vacationLabel = vacationCount === 1 ? 'vacation' : 'vacations';
+
+    document.getElementById('omy-lifestyle-text').innerHTML =
+      'Working <strong>' + years + ' more ' + yearLabel + '</strong> buys you an extra <strong>' + formatCurrency(result.perpetualIncomeBoost) + '/year</strong> forever. ' +
+      'That equals <strong>' + vacationCount + ' luxury international ' + vacationLabel + '</strong> every year for the rest of your life.';
+
+    document.getElementById('omy-time-cost-text').innerHTML =
+      'You are trading <strong>' + result.hoursTraded.toLocaleString() + ' hours</strong> of your healthy life to get this.';
+
+    updateChart(result);
+  }
+
+  function updateChart(result) {
+    var ctx = document.getElementById('omy-chart');
+    if (!ctx) return;
+    if (chart) chart.destroy();
+
+    var isDark = document.documentElement.classList.contains('dark');
+    var gridColor = isDark ? '#262626' : '#ebebeb';
+    var textColor = isDark ? '#737373' : '#888888';
+    var tooltipBg = isDark ? '#ededed' : '#171717';
+    var tooltipText = isDark ? '#171717' : '#ffffff';
+    var linkColor = isDark ? '#3291ff' : '#0070f3';
+    var successColor = isDark ? '#22c55e' : '#16a34a';
+    var errorColor = isDark ? '#ff4444' : '#ee0000';
+
+    var labels = result.projection.map(function(p) { return 'Year ' + p.year; });
+
+    var input = getFormData();
+    var yearsLabel = input.extraYearsToWork + ' More Year(s)';
+
+    chart = new window.Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Retire Today',
+            data: result.projection.map(function(p) { return p.retireTodayPortfolio; }),
+            borderColor: errorColor,
+            backgroundColor: isDark ? 'rgba(255, 68, 68, 0.1)' : 'rgba(238, 0, 0, 0.1)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+          },
+          {
+            label: 'Work ' + yearsLabel,
+            data: result.projection.map(function(p) { return p.omyPortfolio; }),
+            borderColor: successColor,
+            backgroundColor: isDark ? 'rgba(34, 197, 94, 0.1)' : 'rgba(22, 163, 74, 0.1)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 2,
+              usePointStyle: false,
+              padding: 16,
+              font: { family: 'Inter, system-ui, sans-serif', size: 11 },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: { family: 'Inter, system-ui, sans-serif', size: 12, weight: 500 },
+            bodyFont: { family: 'Inter, system-ui, sans-serif', size: 12 },
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': ' + formatCurrency(context.parsed.y);
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: {
+              font: { family: 'Inter, system-ui, sans-serif', size: 11 },
+              color: textColor,
+              maxTicksLimit: 8,
+            },
+            border: { display: false },
+          },
+          y: {
+            grid: { color: gridColor },
+            ticks: {
+              font: { family: 'Inter, system-ui, sans-serif', size: 11 },
+              color: textColor,
+              callback: function(value) {
+                if (value >= 1000000) return '$' + (value / 1000000).toFixed(1) + 'M';
+                if (value >= 1000) return '$' + (value / 1000).toFixed(0) + 'K';
+                return '$' + value.toFixed(0);
+              },
+            },
+            border: { display: false },
+            min: 0,
+          },
+        },
+      },
+    });
+  }
+
+  function initSliders() {
+    var sliders = [
+      { id: 'omy-extraYearsToWork', displayId: 'omy-extraYearsToWorkValue', suffix: '' },
+      { id: 'omy-expectedRealReturn', displayId: 'omy-expectedRealReturnValue', suffix: '%' },
+      { id: 'omy-safeWithdrawalRate', displayId: 'omy-safeWithdrawalRateValue', suffix: '%' },
+    ];
+    sliders.forEach(function(slider) {
+      var el = document.getElementById(slider.id);
+      var display = document.getElementById(slider.displayId);
+      if (el && display) {
+        el.addEventListener('input', function() {
+          var val = Number(el.value);
+          if (slider.id === 'omy-extraYearsToWork') {
+            display.textContent = val + (val === 1 ? ' Year' : ' Years');
+          } else {
+            display.textContent = el.value + slider.suffix;
+          }
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('omy-form');
+    if (form) {
+      form.addEventListener('input', function() { updateResults(); });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    initSliders();
+    initFormListeners();
+    updateResults();
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+      updateResults();
+    });
+
+    var observer = new MutationObserver(function() { updateResults(); });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>

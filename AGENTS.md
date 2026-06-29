@@ -39,6 +39,7 @@ fin-tools/
 │   │   │   └── GeoArbitrageCalculator.astro # Geographic arbitrage calculator (vanilla JS)
 │   │   │   └── DieWithZeroCalculator.astro # Die with Zero decumulation calculator (vanilla JS)
 │   │   │   └── SequenceOfReturnsCalculator.astro # SRR stress tester (vanilla JS)
+│   │   │   └── OneMoreYearCalculator.astro # OMY syndrome cost calculator (vanilla JS)
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -71,6 +72,7 @@ fin-tools/
 │       ├── geo-arbitrage-calculations.ts # Geographic arbitrage calculation engine
 │       ├── decumulation-calculations.ts    # Die with Zero calculation engine
 │       ├── srr-calculations.ts              # SRR stress test calculation engine
+│       ├── omy-calculations.ts              # OMY syndrome calculation engine
 │       └── formatters.ts               # Currency/number formatting utilities
 ├── astro.config.mjs                    # Astro config (site URL, Tailwind vite plugin)
 ├── package.json
@@ -95,6 +97,7 @@ fin-tools/
 | `/geographic-arbitrage-calculator` | `src/pages/geographic-arbitrage-calculator/index.astro` | Geographic Arbitrage PPP Calculator |
 | `/die-with-zero-calculator` | `src/pages/die-with-zero-calculator/index.astro` | Die with Zero Decumulation Calculator |
 | `/sequence-of-returns-calculator` | `src/pages/sequence-of-returns-calculator/index.astro` | Sequence of Returns Risk Stress Tester |
+| `/one-more-year-calculator` | `src/pages/one-more-year-calculator/index.astro` | One More Year Syndrome Cost Calculator |
 
 **URL convention:** New tools go at `/{tool-name}` (e.g., `/mortgage-calculator`).
 
@@ -178,6 +181,17 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 - 30-year retirement simulation with inflation-adjusted withdrawals
 - 3 preset historical crash scenarios (Dot-Com, GFC, Stagflation) + custom
 - Zero-floor rule: portfolio stays at $0 once depleted
+- Theme-aware chart colors via MutationObserver on `html` class
+
+### One More Year (OMY) Syndrome Calculator
+
+- File: `src/components/calculator/OneMoreYearCalculator.astro`
+- Uses `src/utils/omy-calculations.ts` for math
+- Chart.js dual-line chart comparing retire today vs. wait portfolio projections
+- 30-year projection showing portfolio divergence over time
+- Emphasized "Extra Years to Work" slider (1-5 years)
+- Lifestyle converters: translates income boost into vacations and cars per year
+- Time cost display: hours of healthy life traded for additional income
 - Theme-aware chart colors via MutationObserver on `html` class
 
 ### Adding a New Tool
