@@ -41,6 +41,7 @@ fin-tools/
 │   │   │   └── SequenceOfReturnsCalculator.astro # SRR stress tester (vanilla JS)
 │   │   │   └── OneMoreYearCalculator.astro # OMY syndrome cost calculator (vanilla JS)
 │   │   │   └── CashCushionOptimizer.astro # Cash cushion vs equity yield optimizer (vanilla JS)
+│   │   │   └── PerpetualSWRCalculator.astro # Perpetual SWR calculator (vanilla JS)
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -68,6 +69,8 @@ fin-tools/
 │   │           └── index.astro             # SRR Stress Tester page
 │   │       └── cash-cushion-optimizer/
 │   │           └── index.astro             # Cash Cushion Optimizer page
+│   │       └── perpetual-swr-calculator/
+│   │           └── index.astro             # Perpetual SWR calculator page
 │   ├── styles/
 │   │   └── global.css                  # Tailwind v4 @theme tokens + dark mode
 │   └── utils/
@@ -77,6 +80,7 @@ fin-tools/
 │       ├── srr-calculations.ts              # SRR stress test calculation engine
 │       ├── omy-calculations.ts              # OMY syndrome calculation engine
 │       ├── cash-cushion-calculations.ts    # Cash cushion optimization calculation engine
+│       ├── pswr-calculations.ts              # Perpetual SWR calculation engine
 │       └── formatters.ts               # Currency/number formatting utilities
 ├── astro.config.mjs                    # Astro config (site URL, Tailwind vite plugin)
 ├── package.json
@@ -103,6 +107,7 @@ fin-tools/
 | `/sequence-of-returns-calculator` | `src/pages/sequence-of-returns-calculator/index.astro` | Sequence of Returns Risk Stress Tester |
 | `/one-more-year-calculator` | `src/pages/one-more-year-calculator/index.astro` | One More Year Syndrome Cost Calculator |
 | `/cash-cushion-optimizer` | `src/pages/cash-cushion-optimizer/index.astro` | Cash Cushion vs. Equity Yield Optimizer |
+| `/perpetual-swr-calculator` | `src/pages/perpetual-swr-calculator/index.astro` | Perpetual Safe Withdrawal Rate Calculator |
 
 **URL convention:** New tools go at `/{tool-name}` (e.g., `/mortgage-calculator`).
 
@@ -208,6 +213,19 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 - 3 KPI cards: Naive Cash (red), Optimized Cash (green), Capital Freed (blue)
 - Year-by-year breakdown showing how expenses are funded during a crash
 - Theme-aware chart colors via MutationObserver on `html` class
+
+### Perpetual Safe Withdrawal Rate (PSWR) Calculator
+
+- File: `src/components/calculator/PerpetualSWRCalculator.astro`
+- Uses `src/utils/pswr-calculations.ts` for math
+- Chart.js dual-line chart comparing real purchasing power (flat) vs. nominal account balance (exponential)
+- Fisher Equation for exact real return calculation: ((1 + nominal) / (1 + inflation)) - 1
+- PSWR = Real Return - Investment Fees
+- 50–100 year projection with inflation-adjusted spending
+- 3 KPI cards: Perpetual SWR (green), Annual Safe Spend (ink), Nominal Legacy (blue)
+- Unsustainable warning when PSWR ≤ 0
+- Theme-aware chart colors via MutationObserver on `html` class
+- Target audience: FatFIRE individuals, estate planners, generational wealth builders, endowment managers
 
 ### Adding a New Tool
 
