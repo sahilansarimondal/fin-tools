@@ -1,0 +1,376 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="cc-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="cc-form" class="space-y-4">
+          <Input
+            label="Portfolio Value"
+            name="portfolioValue"
+            type="number"
+            value={1000000}
+            min={0}
+            step={10000}
+            suffix="$"
+            hideArrows
+            required
+          />
+          <Input
+            label="Annual Expenses"
+            name="annualExpenses"
+            type="number"
+            value={40000}
+            min={0}
+            step={1000}
+            suffix="$"
+            hideArrows
+            required
+          />
+          <Slider
+            label="Target Safety Years"
+            name="targetSafetyYears"
+            value={3}
+            min={1}
+            max={10}
+            step={1}
+            suffix=" years"
+            inputId="cc-safetyYears"
+            displayId="cc-safetyYearsValue"
+            tooltip="Number of years the cash cushion should cover expenses"
+          />
+          <Slider
+            label="Equity Dividend Yield"
+            name="equityDividendYield"
+            value={1.5}
+            min={0}
+            max={5}
+            step={0.1}
+            suffix="%"
+            inputId="cc-divYield"
+            displayId="cc-divYieldValue"
+            tooltip="The dividend yield your stock portfolio pays even during a market crash"
+          />
+          <Slider
+            label="Cash Yield"
+            name="cashYield"
+            value={4.0}
+            min={0}
+            max={8}
+            step={0.1}
+            suffix="%"
+            inputId="cc-cashYield"
+            displayId="cc-cashYieldValue"
+            tooltip="Interest rate on your cash cushion (Money Market / HYSA)"
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- KPI cards row (3 cards) -->
+      <div class="grid gap-4 sm:grid-cols-3">
+        <ResultCard
+          label="Naive Cash Buffer"
+          valueId="cc-naiveCash"
+          value="$—"
+          valueClass="text-error"
+          description="No dividend yield considered"
+        />
+        <ResultCard
+          label="Optimized Cash Buffer"
+          valueId="cc-optimizedCash"
+          value="$—"
+          valueClass="text-success-deep"
+          description="Factoring in dividend income"
+        />
+        <ResultCard
+          label="Capital Freed Up"
+          valueId="cc-capitalFreed"
+          value="$—"
+          valueClass="text-link"
+          description="Keep additional capital invested"
+        />
+      </div>
+
+      <!-- KPI description row -->
+      <div class="-mt-4 grid gap-4 sm:grid-cols-3">
+        <div class="px-1">
+          <p id="cc-naiveCashDesc" class="text-xs text-mute">Set aside cash for expenses</p>
+        </div>
+        <div class="px-1">
+          <p id="cc-optimizedCashDesc" class="text-xs text-mute">Optimized using dividend yield</p>
+        </div>
+        <div class="px-1">
+          <p id="cc-capitalFreedDesc" class="text-xs text-mute">Keep extra capital fully invested</p>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <Card padding="lg">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">How Your Expenses Are Funded During the Crash</h2>
+        </div>
+        <div class="relative h-64 sm:h-80">
+          <canvas
+            id="cc-chart"
+            role="img"
+            aria-label="Stacked bar chart showing how annual expenses are funded by equity dividends versus cash withdrawals over the safety period"
+          ></canvas>
+        </div>
+      </Card>
+    </div>
+  </div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+  import { calculateCashCushion } from '../../utils/cash-cushion-calculations';
+  import { formatCurrency, formatCurrencyShort } from '../../utils/formatters';
+
+  let chart = null;
+
+  function getFormData() {
+    const form = document.getElementById('cc-form');
+    const formData = new FormData(form);
+
+    return {
+      portfolioValue: Number(formData.get('portfolioValue')) || 1000000,
+      annualExpenses: Number(formData.get('annualExpenses')) || 40000,
+      targetSafetyYears: Number(formData.get('targetSafetyYears')) || 3,
+      equityDividendYield: Number(formData.get('equityDividendYield')) || 1.5,
+      cashYield: Number(formData.get('cashYield')) || 4.0,
+    };
+  }
+
+  function updateDescriptionTexts(result, input) {
+    // Naive cash description
+    const naiveDesc = document.getElementById('cc-naiveCashDesc');
+    naiveDesc.textContent = '$' + formatCurrency(input.annualExpenses)
+      + ' × ' + input.targetSafetyYears + ' years of cash';
+
+    // Optimized cash description
+    const optimizedDesc = document.getElementById('cc-optimizedCashDesc');
+    optimizedDesc.textContent = '$' + formatCurrency(result.optimizedCash)
+      + ' factoring in ' + input.equityDividendYield + '% dividend yield';
+
+    // Freed capital description
+    const freedDesc = document.getElementById('cc-capitalFreedDesc');
+    freedDesc.textContent = 'Keep extra $' + formatCurrency(result.capitalFreedUp) + ' fully invested';
+  }
+
+  function updateResults() {
+    const input = getFormData();
+    const result = calculateCashCushion(input);
+
+    // Update KPI cards
+    const naiveCashEl = document.getElementById('cc-naiveCash');
+    const optimizedCashEl = document.getElementById('cc-optimizedCash');
+    const capitalFreedEl = document.getElementById('cc-capitalFreed');
+
+    naiveCashEl.textContent = formatCurrency(result.naiveCash);
+    optimizedCashEl.textContent = formatCurrency(result.optimizedCash);
+    capitalFreedEl.textContent = formatCurrency(result.capitalFreedUp);
+
+    // Update description texts
+    updateDescriptionTexts(result, input);
+
+    updateChart(result);
+  }
+
+  function updateChart(result) {
+    const ctx = document.getElementById('cc-chart');
+    if (!ctx) return;
+    if (chart) chart.destroy();
+
+    const isDark = document.documentElement.classList.contains('dark');
+    const gridColor = isDark ? '#262626' : '#ebebeb';
+    const textColor = isDark ? '#737373' : '#888888';
+    const tooltipBg = isDark ? '#ededed' : '#171717';
+    const tooltipText = isDark ? '#171717' : '#ffffff';
+    const linkColor = isDark ? '#3291ff' : '#0070f3';
+    const violetColor = isDark ? '#a855f7' : '#7c3aed';
+
+    const labels = result.annualBreakdown.map(function (d) {
+      return 'Year ' + d.year;
+    });
+    const dividendData = result.annualBreakdown.map(function (d) {
+      return d.dividendIncome;
+    });
+    const cashData = result.annualBreakdown.map(function (d) {
+      return d.cashWithdrawal;
+    });
+
+    chart = new window.Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Funded by Equity Dividends',
+            data: dividendData,
+            backgroundColor: linkColor,
+            stack: 'stack0',
+          },
+          {
+            label: 'Funded by Cash Withdrawals',
+            data: cashData,
+            backgroundColor: violetColor,
+            stack: 'stack0',
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 12,
+              usePointStyle: false,
+              padding: 16,
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: 500,
+            },
+            bodyFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+            },
+            callbacks: {
+              label: function (context) {
+                return context.dataset.label + ': ' + formatCurrency(context.parsed.y);
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            stacked: true,
+            grid: {
+              display: false,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+            },
+            border: {
+              display: false,
+            },
+          },
+          y: {
+            stacked: true,
+            grid: {
+              color: gridColor,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              callback: function (value) {
+                return formatCurrencyShort(value);
+              },
+            },
+            border: {
+              display: false,
+            },
+            min: 0,
+          },
+        },
+      },
+    });
+  }
+
+  function initSliders() {
+    const sliders = [
+      {
+        id: 'cc-safetyYears',
+        displayId: 'cc-safetyYearsValue',
+        suffix: ' years',
+      },
+      {
+        id: 'cc-divYield',
+        displayId: 'cc-divYieldValue',
+        suffix: '%',
+      },
+      {
+        id: 'cc-cashYield',
+        displayId: 'cc-cashYieldValue',
+        suffix: '%',
+      },
+    ];
+
+    sliders.forEach(function (slider) {
+      var el = document.getElementById(slider.id);
+      var display = document.getElementById(slider.displayId);
+
+      if (el && display) {
+        el.addEventListener('input', function () {
+          display.textContent = el.value + slider.suffix;
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('cc-form');
+    if (form) {
+      form.addEventListener('input', function () {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initSliders();
+    initFormListeners();
+    updateResults();
+
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', function () {
+        updateResults();
+      });
+
+    var observer = new MutationObserver(function () {
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
