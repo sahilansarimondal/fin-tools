@@ -40,6 +40,7 @@ fin-tools/
 │   │   │   └── DieWithZeroCalculator.astro # Die with Zero decumulation calculator (vanilla JS)
 │   │   │   └── SequenceOfReturnsCalculator.astro # SRR stress tester (vanilla JS)
 │   │   │   └── OneMoreYearCalculator.astro # OMY syndrome cost calculator (vanilla JS)
+│   │   │   └── CashCushionOptimizer.astro # Cash cushion vs equity yield optimizer (vanilla JS)
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -65,6 +66,8 @@ fin-tools/
 │   │       └── index.astro             # Die with Zero calculator
 │   │       └── sequence-of-returns-calculator/
 │   │           └── index.astro             # SRR Stress Tester page
+│   │       └── cash-cushion-optimizer/
+│   │           └── index.astro             # Cash Cushion Optimizer page
 │   ├── styles/
 │   │   └── global.css                  # Tailwind v4 @theme tokens + dark mode
 │   └── utils/
@@ -73,6 +76,7 @@ fin-tools/
 │       ├── decumulation-calculations.ts    # Die with Zero calculation engine
 │       ├── srr-calculations.ts              # SRR stress test calculation engine
 │       ├── omy-calculations.ts              # OMY syndrome calculation engine
+│       ├── cash-cushion-calculations.ts    # Cash cushion optimization calculation engine
 │       └── formatters.ts               # Currency/number formatting utilities
 ├── astro.config.mjs                    # Astro config (site URL, Tailwind vite plugin)
 ├── package.json
@@ -98,6 +102,7 @@ fin-tools/
 | `/die-with-zero-calculator` | `src/pages/die-with-zero-calculator/index.astro` | Die with Zero Decumulation Calculator |
 | `/sequence-of-returns-calculator` | `src/pages/sequence-of-returns-calculator/index.astro` | Sequence of Returns Risk Stress Tester |
 | `/one-more-year-calculator` | `src/pages/one-more-year-calculator/index.astro` | One More Year Syndrome Cost Calculator |
+| `/cash-cushion-optimizer` | `src/pages/cash-cushion-optimizer/index.astro` | Cash Cushion vs. Equity Yield Optimizer |
 
 **URL convention:** New tools go at `/{tool-name}` (e.g., `/mortgage-calculator`).
 
@@ -192,6 +197,16 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 - Emphasized "Extra Years to Work" slider (1-5 years)
 - Lifestyle converters: translates income boost into vacations and cars per year
 - Time cost display: hours of healthy life traded for additional income
+- Theme-aware chart colors via MutationObserver on `html` class
+
+### Cash Cushion vs. Equity Yield Optimizer
+
+- File: `src/components/calculator/CashCushionOptimizer.astro`
+- Uses `src/utils/cash-cushion-calculations.ts` for math
+- Chart.js stacked bar chart showing dividend vs. cash-funded expenses
+- Annuity factor (PMT-like) formula for optimized cash calculation
+- 3 KPI cards: Naive Cash (red), Optimized Cash (green), Capital Freed (blue)
+- Year-by-year breakdown showing how expenses are funded during a crash
 - Theme-aware chart colors via MutationObserver on `html` class
 
 ### Adding a New Tool
