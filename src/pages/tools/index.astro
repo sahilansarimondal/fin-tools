@@ -175,19 +175,22 @@ import Footer from '../../components/layout/Footer.astro';
             <p class="text-sm text-body">Track your assets and liabilities to calculate and monitor your total net worth over time.</p>
           </div>
 
-          <div class="rounded-xl border border-hairline bg-canvas p-6 opacity-60">
-            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-canvas-soft-2 text-mute">
+          <a href="/core-satellite-rebalancer" class="group rounded-xl border border-hairline bg-canvas p-6 shadow-sm transition-all hover:shadow-md">
+            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-canvas-soft-2 text-ink">
               <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
                 <path d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
               </svg>
             </div>
-            <div class="mb-2 flex items-center gap-2">
-              <h2 class="text-sm font-semibold text-ink">Portfolio Rebalancing Tool</h2>
-              <span class="rounded-full bg-canvas-soft-2 px-2 py-0.5 text-xs font-medium text-mute">Coming Soon</span>
-            </div>
-            <p class="text-sm text-body">Optimize your asset allocation and get rebalancing recommendations for your investment portfolio.</p>
-          </div>
+            <h2 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Core-Satellite Rebalancer</h2>
+            <p class="mb-3 text-xs text-body">Optimize your asset allocation with tax-aware core-satellite rebalancing.</p>
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-link">
+              Calculate
+              <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </span>
+          </a>
         </div>
       </div>
     </section>
