@@ -42,6 +42,10 @@ fin-tools/
 │   │   │   └── OneMoreYearCalculator.astro # OMY syndrome cost calculator (vanilla JS)
 │   │   │   └── CashCushionOptimizer.astro # Cash cushion vs equity yield optimizer (vanilla JS)
 │   │   │   └── PerpetualSWRCalculator.astro # Perpetual SWR calculator (vanilla JS)
+│   │   │   └── CoastFireShiftCalculator.astro # Coast FIRE shift to part-time calculator (vanilla JS)
+│   │   │   └── CoastFireNumber.astro # Coast FIRE number calculator (vanilla JS)
+│   │   │   └── OwnerEarningsCalculator.astro # Owner earnings calculator (vanilla JS)
+│   │   │   └── VPWCalculator.astro # Variable percentage withdrawal calculator (vanilla JS)
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -71,6 +75,20 @@ fin-tools/
 │   │           └── index.astro             # Cash Cushion Optimizer page
 │   │       └── perpetual-swr-calculator/
 │   │           └── index.astro             # Perpetual SWR calculator page
+│   │       └── coast-fire-shift-calculator/
+│   │           └── index.astro             # Coast FIRE shift to part-time calculator page
+│   │       └── coast-fire-number/
+│   │           └── index.astro             # Coast FIRE number calculator page
+│   │       └── owner-earnings-calculator/
+│   │           └── index.astro             # Owner earnings calculator page
+│   │       └── vpw-calculator/
+│   │           └── index.astro             # Variable percentage withdrawal calculator page
+│   │       └── lean-fire-calculator/
+│   │           └── index.astro             # Lean FIRE calculator page
+│   │       └── fat-fire-calculator/
+│   │           └── index.astro             # Fat FIRE calculator page
+│   │       └── barista-fire-calculator/
+│   │           └── index.astro             # Barista FIRE calculator page
 │   ├── styles/
 │   │   └── global.css                  # Tailwind v4 @theme tokens + dark mode
 │   └── utils/
@@ -81,6 +99,8 @@ fin-tools/
 │       ├── omy-calculations.ts              # OMY syndrome calculation engine
 │       ├── cash-cushion-calculations.ts    # Cash cushion optimization calculation engine
 │       ├── pswr-calculations.ts              # Perpetual SWR calculation engine
+│       ├── coast-fire-shift-calculations.ts  # Coast FIRE shift calculation engine
+│       ├── coast-fire-calculations.ts        # Coast FIRE number calculation engine
 │       └── formatters.ts               # Currency/number formatting utilities
 ├── astro.config.mjs                    # Astro config (site URL, Tailwind vite plugin)
 ├── package.json
@@ -108,6 +128,13 @@ fin-tools/
 | `/one-more-year-calculator` | `src/pages/one-more-year-calculator/index.astro` | One More Year Syndrome Cost Calculator |
 | `/cash-cushion-optimizer` | `src/pages/cash-cushion-optimizer/index.astro` | Cash Cushion vs. Equity Yield Optimizer |
 | `/perpetual-swr-calculator` | `src/pages/perpetual-swr-calculator/index.astro` | Perpetual Safe Withdrawal Rate Calculator |
+| `/coast-fire-shift-calculator` | `src/pages/coast-fire-shift-calculator/index.astro` | Coast FIRE Shift to Part-Time Calculator |
+| `/coast-fire-number` | `src/pages/coast-fire-number/index.astro` | Coast FIRE Number Calculator |
+| `/lean-fire-calculator` | `src/pages/lean-fire-calculator/index.astro` | Lean FIRE Calculator |
+| `/fat-fire-calculator` | `src/pages/fat-fire-calculator/index.astro` | Fat FIRE Calculator |
+| `/barista-fire-calculator` | `src/pages/barista-fire-calculator/index.astro` | Barista FIRE Calculator |
+| `/owner-earnings-calculator` | `src/pages/owner-earnings-calculator/index.astro` | Owner Earnings Calculator |
+| `/vpw-calculator` | `src/pages/vpw-calculator/index.astro` | Variable Percentage Withdrawal Calculator |
 
 **URL convention:** New tools go at `/{tool-name}` (e.g., `/mortgage-calculator`).
 
@@ -164,6 +191,10 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 - URL-based state sharing via query params
 - Chart.js rendered on `<canvas id="projection-chart">`
 - Theme-aware chart colors via MutationObserver on `html` class
+
+The main FIRE calculator supports `coast` as one of five `FIREType` values (`'lean' | 'regular' | 'fat' | 'coast' | 'barista'`). It calculates `coastFireNumber`, `coastFireProgress`, and `currentCoastFireAge`. The `partTimeIncome` input field is used for the `barista` type.
+
+For detailed Coast FIRE shift-to-part-time planning, see the dedicated `CoastFireShiftCalculator.astro` component.
 
 ### Geographic Arbitrage Calculator
 
@@ -226,6 +257,21 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 - Unsustainable warning when PSWR ≤ 0
 - Theme-aware chart colors via MutationObserver on `html` class
 - Target audience: FatFIRE individuals, estate planners, generational wealth builders, endowment managers
+
+### Coast FIRE Shift to Part-Time Calculator
+
+- File: `src/components/calculator/CoastFireShiftCalculator.astro`
+- Uses `src/utils/coast-fire-shift-calculations.ts` for math
+- Chart.js line chart with 3 phase-separated datasets (accumulation, part-time, retirement)
+- Models two-phase transition: full-time accumulation → part-time coast → full retirement
+- Inputs: current age, transition age, retirement age, current net worth, annual savings, expenses, part-time income, returns, inflation, SWR
+- Outputs: nest egg target, transition required, transition projected, gap/surplus, progress percentage
+- "One More Year" cost index shows marginal benefit of extra full-time year
+- Target line uses present-value discounting to show required portfolio at each age
+- Zero-floor rule: portfolio stays at $0 once depleted in part-time and retirement phases
+- 20-year retirement projection for portfolio survival visualization
+- Theme-aware chart colors via MutationObserver on `html` class
+- URL-based state sharing via query params
 
 ### Adding a New Tool
 
