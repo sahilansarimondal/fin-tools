@@ -3,6 +3,7 @@ export type CoastFireShiftInput = {
   transitionAge: number;
   retirementAge: number;
   currentNetWorth: number;
+  annualSavings: number;
   fullRetirementExpenses: number;
   partTimeExpenses: number;
   partTimeIncome: number;
@@ -75,9 +76,17 @@ function calculateTransitionRequired(
 function calculateTransitionProjected(
   currentNetWorth: number,
   realRate: number,
-  yearsInAccumulation: number
+  yearsInAccumulation: number,
+  annualSavings: number
 ): number {
-  return currentNetWorth * Math.pow(1 + realRate, yearsInAccumulation);
+  if (yearsInAccumulation <= 0) return currentNetWorth;
+  // Future value of current savings + future value of annuity (annual savings)
+  const futureValueOfSavings = currentNetWorth * Math.pow(1 + realRate, yearsInAccumulation);
+  if (annualSavings <= 0 || realRate === 0) {
+    return futureValueOfSavings + annualSavings * yearsInAccumulation;
+  }
+  const futureValueOfAnnuity = annualSavings * ((Math.pow(1 + realRate, yearsInAccumulation) - 1) / realRate);
+  return futureValueOfSavings + futureValueOfAnnuity;
 }
 
 export function calculateCoastFireShift(input: CoastFireShiftInput): CoastFireShiftResult {
@@ -86,6 +95,7 @@ export function calculateCoastFireShift(input: CoastFireShiftInput): CoastFireSh
     transitionAge,
     retirementAge,
     currentNetWorth,
+    annualSavings,
     fullRetirementExpenses,
     partTimeExpenses,
     partTimeIncome,
@@ -113,7 +123,8 @@ export function calculateCoastFireShift(input: CoastFireShiftInput): CoastFireSh
   const transitionProjected = calculateTransitionProjected(
     currentNetWorth,
     realRate,
-    yearsInAccumulation
+    yearsInAccumulation,
+    annualSavings
   );
 
   const hasAchievedCoast = transitionProjected >= transitionRequired;
@@ -127,7 +138,8 @@ export function calculateCoastFireShift(input: CoastFireShiftInput): CoastFireSh
   const oneMoreYearProjected = calculateTransitionProjected(
     currentNetWorth,
     realRate,
-    yearsInAccumulation + 1
+    yearsInAccumulation + 1,
+    annualSavings
   );
   const oneMoreYearCost = transitionRequired - oneMoreYearProjected;
   const oneMoreYearCostAdjusted = Math.max(0, oneMoreYearCost);
@@ -139,19 +151,19 @@ export function calculateCoastFireShift(input: CoastFireShiftInput): CoastFireSh
   // Accumulation phase (current age to transition age)
   for (let year = 0; year <= yearsInAccumulation; year++) {
     const age = currentAge + year;
-    const targetAtAge = transitionRequired * Math.pow(1 + realRate, year);
+    const targetAtAge = transitionRequired / Math.pow(1 + realRate, yearsInAccumulation - year);
 
     if (year > 0) {
       const yearlyGrowth = balance * realRate;
-      balance = balance + yearlyGrowth;
+      balance = balance + yearlyGrowth + annualSavings;
     }
 
     projection.push({
       age,
       year,
       savings: balance,
-      contributions: 0,
-      growth: balance - currentNetWorth,
+      contributions: year > 0 ? annualSavings : 0,
+      growth: year > 0 ? (balance - annualSavings) * realRate / (1 + realRate) : 0,
       drawdown: 0,
       target: targetAtAge,
       phase: 'accumulation',
@@ -162,15 +174,16 @@ export function calculateCoastFireShift(input: CoastFireShiftInput): CoastFireSh
   let partTimeBalance = balance;
   for (let year = 1; year <= yearsInPartTime; year++) {
     const age = transitionAge + year;
-    const yearsRemainingInPartTime = yearsInPartTime - year + 1;
-    let targetAtAge = nestEggTarget / Math.pow(1 + realRate, yearsInPartTime - year + 1);
+    const yearsRemaining = yearsInPartTime - year + 1;
+    let targetAtAge = transitionRequired / Math.pow(1 + realRate, yearsRemaining);
     if (annualGap > 0) {
-      targetAtAge += annualGap * ((1 - Math.pow(1 + realRate, -(yearsInPartTime - year + 1))) / realRate);
+      targetAtAge += annualGap * ((1 - Math.pow(1 + realRate, -yearsRemaining)) / realRate);
     }
 
     const yearlyGrowth = partTimeBalance * realRate;
     const yearlyDrawdown = annualGap;
     partTimeBalance = partTimeBalance + yearlyGrowth - yearlyDrawdown;
+    partTimeBalance = Math.max(partTimeBalance, 0);
 
     projection.push({
       age,
@@ -184,13 +197,14 @@ export function calculateCoastFireShift(input: CoastFireShiftInput): CoastFireSh
     });
   }
 
-  // Retirement phase (retirement age + 10 years for visibility)
+  // Retirement phase (retirement age + 20 years for visibility)
   let retirementBalance = partTimeBalance;
-  for (let year = 1; year <= 10; year++) {
+  for (let year = 1; year <= 20; year++) {
     const age = retirementAge + year;
     const yearlyGrowth = retirementBalance * realRate;
     const yearlyDrawdown = fullRetirementExpenses;
     retirementBalance = retirementBalance + yearlyGrowth - yearlyDrawdown;
+    retirementBalance = Math.max(retirementBalance, 0);
 
     projection.push({
       age,

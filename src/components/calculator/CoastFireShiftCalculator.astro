@@ -60,6 +60,19 @@ import ResultCard from '../ui/ResultCard.astro';
           />
 
           <Slider
+            label="Annual Savings (Full-Time)"
+            name="annualSavings"
+            value={30000}
+            min={0}
+            max={200000}
+            step={1000}
+            inputId="annualSavings"
+            displayId="annualSavingsValue"
+            formatValue={(v) => `$${v.toLocaleString()}`}
+            tooltip="How much you save per year during full-time work. This accelerates your path to Coast FIRE. Set to $0 to see pure compound growth on existing savings."
+          />
+
+          <Slider
             label="Annual Expenses in Full Retirement"
             name="fullRetirementExpenses"
             value={40000}
@@ -294,6 +307,7 @@ import ResultCard from '../ui/ResultCard.astro';
     { id: 'transitionAge', displayId: 'transitionAgeValue', format: (v) => v.toString() },
     { id: 'retirementAge', displayId: 'retirementAgeValue', format: (v) => v.toString() },
     { id: 'currentNetWorth', displayId: 'currentNetWorthValue', format: (v) => `$${Number(v).toLocaleString()}` },
+    { id: 'annualSavings', displayId: 'annualSavingsValue', format: (v) => `$${Number(v).toLocaleString()}` },
     { id: 'fullRetirementExpenses', displayId: 'fullRetirementExpensesValue', format: (v) => `$${Number(v).toLocaleString()}` },
     { id: 'partTimeExpenses', displayId: 'partTimeExpensesValue', format: (v) => `$${Number(v).toLocaleString()}` },
     { id: 'partTimeIncome', displayId: 'partTimeIncomeValue', format: (v) => `$${Number(v).toLocaleString()}` },
@@ -319,6 +333,7 @@ import ResultCard from '../ui/ResultCard.astro';
     let transitionAge = getSliderValue('transitionAge');
     const retirementAge = getSliderValue('retirementAge');
     const currentNetWorth = getSliderValue('currentNetWorth');
+    const annualSavings = getSliderValue('annualSavings');
     const fullRetirementExpenses = getSliderValue('fullRetirementExpenses');
     const partTimeExpenses = getSliderValue('partTimeExpenses');
     const partTimeIncome = getSliderValue('partTimeIncome');
@@ -349,6 +364,7 @@ import ResultCard from '../ui/ResultCard.astro';
       transitionAge,
       retirementAge,
       currentNetWorth,
+      annualSavings,
       fullRetirementExpenses,
       partTimeExpenses,
       partTimeIncome,
@@ -492,11 +508,12 @@ import ResultCard from '../ui/ResultCard.astro';
       },
     };
 
-    // Register plugin
-    if (!(window as any).CoastFireVerticalLineRegistered) {
-      (window as any).Chart.register(verticalLinePlugin);
-      (window as any).CoastFireVerticalLineRegistered = true;
+    // Register plugin — unregister previous instance and re-register
+    if ((window as any).CoastFireVerticalLinePlugin) {
+      (window as any).Chart.unregister((window as any).CoastFireVerticalLinePlugin);
     }
+    (window as any).Chart.register(verticalLinePlugin);
+    (window as any).CoastFireVerticalLinePlugin = verticalLinePlugin;
 
     chart = new (window as any).Chart(ctx, {
       type: 'line',
@@ -688,6 +705,7 @@ import ResultCard from '../ui/ResultCard.astro';
         transitionAge: input.transitionAge.toString(),
         retirementAge: input.retirementAge.toString(),
         netWorth: input.currentNetWorth.toString(),
+        annualSavings: input.annualSavings.toString(),
         fullExpenses: input.fullRetirementExpenses.toString(),
         ptExpenses: input.partTimeExpenses.toString(),
         ptIncome: input.partTimeIncome.toString(),
@@ -864,6 +882,7 @@ import ResultCard from '../ui/ResultCard.astro';
       { id: 'transitionAge', param: 'transitionAge' },
       { id: 'retirementAge', param: 'retirementAge' },
       { id: 'currentNetWorth', param: 'netWorth' },
+      { id: 'annualSavings', param: 'annualSavings' },
       { id: 'fullRetirementExpenses', param: 'fullExpenses' },
       { id: 'partTimeExpenses', param: 'ptExpenses' },
       { id: 'partTimeIncome', param: 'ptIncome' },
