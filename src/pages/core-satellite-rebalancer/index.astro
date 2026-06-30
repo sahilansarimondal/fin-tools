@@ -1,0 +1,354 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import CoreSatelliteRebalancer from '../../components/calculator/CoreSatelliteRebalancer.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const rebalancerFaqItems: FAQItem[] = [
+  {
+    question: 'What is the Core-Satellite investment strategy?',
+    answerHtml: 'The <b>Core-Satellite investment strategy</b> combines a passive, broad-market index fund (the "Core," typically 80–90% of the portfolio) with smaller, actively managed positions in individual stocks or sectors (the "Satellites," 10–20%).<br /><br />The core provides <b>broad diversification</b> and <b>low-cost market returns</b>, while the satellites allow you to pursue <b>higher returns</b> through tactical bets on specific companies, sectors, or themes. This hybrid approach aims to capture the best of both passive and active investing.<br /><br /><ul><li><b>Core holdings:</b> Low-cost ETFs like VTI, VOO, BND, or target-date funds. These are the "buy and hold forever" positions.</li><li><b>Satellite holdings:</b> Individual stocks (AAPL, GOOGL), thematic ETFs (clean energy, AI), or sector bets. These are actively managed and rebalanced more frequently.</li></ul>The strategy is popular because it provides a <b>diversified anchor</b> while still allowing room for <b>alpha-seeking bets</b> that can outperform the market.',
+    answerText: 'The Core-Satellite strategy combines a passive broad-market index fund (Core, 80-90% of portfolio) with active individual stock positions (Satellites, 10-20%). The core provides diversification and low-cost market returns while satellites let you pursue higher returns through tactical bets.',
+  },
+  {
+    question: 'How does the Core-Satellite portfolio rebalancing calculator work?',
+    answerHtml: 'Our <b>Core-Satellite rebalancer</b> calculates the exact buy, sell, or hold actions needed to bring your portfolio back to your target allocation. Here is how it works:<br /><br /><ul><li><b>1. Enter your holdings:</b> Add each position with its ticker, current price, share count, cost basis, and target allocation weight. The calculator automatically computes the current market value and percentage of your portfolio.</li><li><b>2. Configure parameters:</b> Set your available cash, capital gains tax rate, transaction fees, and rebalancing threshold. The threshold determines how far a position can drift before triggering a rebalance.</li><li><b>3. Review recommendations:</b> The calculator generates prioritized rebalancing actions — first using available cash, then selling positions only when necessary. Each recommendation includes the trade size, estimated capital gains tax, and transaction cost.</li><li><b>4. Total impact assessment:</b> A summary panel shows the total portfolio value, net cash required, estimated tax liability, and total fees, so you can evaluate whether the rebalance is cost-effective.</li></ul>The calculator uses a <b>cash-first optimization</b> approach: it first applies incoming cash to underweight positions before triggering taxable sales, minimizing your tax drag.',
+    answerText: 'The rebalancer works in 4 steps: 1) Enter holdings with ticker, price, shares, cost basis, and target weight; 2) Configure cash, tax rate, fees, and threshold; 3) Review prioritized buy/sell recommendations; 4) Assess total tax impact and fees. It uses cash-first optimization to minimize tax drag.',
+  },
+  {
+    question: 'What is cash-first rebalancing and why does it matter?',
+    answerHtml: '<b>Cash-first rebalancing</b> is a tax-efficient strategy that uses incoming cash flows — dividends, new contributions, or interest payments — to correct portfolio drift before selling any positions. It matters because it <b>minimizes taxable events</b> and <b>reduces transaction costs</b>.<br /><br />Here is how it works in practice:<br /><br /><ul><li><b>Without cash-first:</b> You notice your core allocation drifted from 80% to 85%. You sell 5% worth of core holdings (triggering capital gains tax) and buy 5% of your underweight satellite positions.</li><li><b>With cash-first:</b> You have a $10,000 cash contribution coming in. Instead of selling core holdings, you direct the cash to your underweight satellite positions, bringing them back to target. <b>Zero tax impact.</b></li></ul><br />Our calculator always prioritizes cash-first moves. Over time, this approach can save you <b>thousands in unnecessary capital gains taxes</b> and make your rebalancing more cost-effective. Cash-first rebalancing is especially powerful in taxable accounts where every trade has tax consequences.',
+    answerText: 'Cash-first rebalancing uses incoming cash flows (dividends, contributions, interest) to correct portfolio drift instead of selling positions. This minimizes taxable events and transaction costs. Our calculator always prioritizes cash-first moves before recommending taxable sales, potentially saving thousands in capital gains taxes.',
+  },
+  {
+    question: 'How are capital gains taxes calculated on rebalancing trades?',
+    answerHtml: 'The calculator estimates <b>capital gains taxes</b> for each sell recommendation using your cost basis and the current market price. Here is the methodology:<br /><br /><div class="rounded-lg bg-canvas-soft-2 p-3 font-mono text-xs text-ink">Gain per Share = Current Price &minus; Cost Basis Per Share<br />Total Gain = Gain per Share × Shares Sold<br />Tax = Total Gain × Capital Gains Tax Rate</div><br /><b>Key assumptions:</b><br /><ul><li><b>Short-term vs. long-term:</b> The calculator uses your blended long-term capital gains rate. For most users, this is 0%, 15%, or 20% depending on taxable income.</li><li><b>State taxes:</b> Consider adding your state capital gains tax rate to the federal rate for a more accurate estimate.</li><li><b>Wash sale rule:</b> The calculator does not account for wash sale rules. Consult your tax advisor if you are rebalancing at a loss and plan to repurchase similar securities.</li><li><b>Tax-loss harvesting:</b> If a position has a loss, the calculator identifies it as a tax-loss harvesting opportunity that can offset gains elsewhere.</li></ul><br />The tax estimate is shown per trade and in the total impact summary, helping you evaluate the <b>tax efficiency</b> of your rebalancing plan before executing.',
+    answerText: 'Capital gains tax = (Current Price - Cost Basis Per Share) × Shares Sold × Tax Rate. The calculator uses your blended long-term capital gains rate. It flags tax-loss harvesting opportunities when positions are at a loss. Add your state tax rate for more accuracy. Consult a tax advisor for complex situations.',
+  },
+  {
+    question: 'What is the rebalancing threshold band?',
+    answerHtml: 'The <b>rebalancing threshold band</b> is the allowed deviation from your target allocation before a position triggers a rebalance action. It prevents unnecessary trading due to small, random price fluctuations.<br /><br /><b>Example with a 5% threshold:</b><br /><ul><li>Target allocation for AAPL: <b>10%</b></li><li>No action needed if AAPL stays between <b>9.5% and 10.5%</b> (within the ±5% relative band)</li><li>If AAPL drifts to <b>10.6% or above</b>, a sell recommendation is triggered</li><li>If AAPL drops to <b>9.4% or below</b>, a buy recommendation is triggered</li></ul><br />The threshold is expressed as a <b>relative percentage</b> of the target. A wider band (e.g., 10%) means fewer trades and lower transaction costs, but allows larger deviations. A tighter band (e.g., 1%) keeps you closer to target but increases trading frequency. We recommend a <b>3–5% threshold</b> for most portfolios as a balance between precision and cost efficiency.',
+    answerText: 'The rebalancing threshold band allows a position to deviate from its target before triggering a trade. Example: with a 5% threshold and 10% target, no action is needed between 9.5% and 10.5%. Wider bands = fewer trades but larger drift. We recommend 3-5% for most portfolios.',
+  },
+  {
+    question: 'How do I determine my core vs satellite allocation?',
+    answerHtml: 'Your <b>core vs. satellite allocation</b> depends on your risk tolerance, investment philosophy, and the time you want to spend managing your portfolio. Here is a framework for deciding:<br /><br /><b>Conservative (90/10 split):</b><br /><ul><li><b>90% Core:</b> Total market ETFs (VTI, VXUS, BND)</li><li><b>10% Satellites:</b> 3–5 individual stock positions or sector bets</li><li><b>Best for:</b> Most investors who want a hands-off approach with some tactical flexibility</li></ul><br /><b>Moderate (80/20 split):</b><br /><ul><li><b>80% Core:</b> Diversified index funds across multiple asset classes</li><li><b>20% Satellites:</b> 5–10 individual positions or thematic ETFs</li><li><b>Best for:</b> Experienced investors who actively follow markets and have strong conviction picks</li></ul><br /><b>Aggressive (70/30 split):</b><br /><ul><li><b>70% Core:</b> Broad market index funds as the foundation</li><li><b>30% Satellites:</b> Concentrated positions, sector rotations, or factor tilts</li><li><b>Best for:</b> Sophisticated investors who dedicate significant time to portfolio management</li></ul><br />A good rule of thumb: keep your satellite allocation below <b>20%</b> unless you have a strong track record of stock picking. The core is your "safety net" — protect it.',
+    answerText: 'Core vs. satellite allocation depends on risk tolerance and time commitment: Conservative (90/10), Moderate (80/20), or Aggressive (70/30). Keep satellites below 20% unless you have a strong stock-picking track record. The core is your safety net — protect it.',
+  },
+  {
+    question: 'Can I use this calculator for tax-loss harvesting?',
+    answerHtml: 'Yes! Our Core-Satellite rebalancer can help you identify <b>tax-loss harvesting opportunities</b> during the rebalancing process. Here is how:<br /><br /><ul><li><b>Loss detection:</b> The calculator compares each position\'s current market value to its cost basis. If a position is trading below your cost basis, it is flagged as a potential tax-loss harvesting candidate.</li><li><b>Offsetting gains:</b> When you sell a position at a loss, you can use that loss to offset capital gains from other positions in the rebalance, reducing your overall tax liability.</li><li><b>Wash sale consideration:</b> The calculator highlights positions where selling at a loss might trigger the wash sale rule. You should avoid buying a "substantially identical" security within 30 days before or after the sale.</li><li><b>Net tax impact:</b> The total impact summary shows your net tax liability including both gains and losses, giving you a clear picture of the tax consequences.</li></ul><br /><b>Pro tip:</b> In taxable accounts, consider using tax-loss harvesting to offset up to $3,000 of ordinary income per year (in the US) — the calculator can help you identify opportunities to reach this limit.',
+    answerText: 'Yes, the calculator flags positions trading below cost basis as tax-loss harvesting candidates. Losses can offset gains from other positions to reduce tax liability. The wash sale rule is highlighted. The net tax impact summary shows gains and losses together for a complete picture.',
+  },
+  {
+    question: 'What transaction costs should I consider when rebalancing?',
+    answerHtml: 'When evaluating rebalancing trades, consider these <b>transaction costs</b> that can eat into your returns:<br /><br /><ul><li><b>Commissions and fees:</b> While many brokers now offer commission-free trading, some charge fees for options, mutual funds, or over-the-counter securities. Enter your per-trade fee in the calculator for an accurate picture.</li><li><b>Bid-ask spread:</b> The difference between the buy and sell price of a security. For highly liquid ETFs like VTI or SPY, the spread is tiny (~0.01%). For small-cap stocks or ETFs, it can be 0.1–0.5% or more.</li><li><b>Market impact:</b> For large positions in less-liquid securities, selling all at once can move the price against you. Consider using limit orders and spreading large trades over multiple days.</li><li><b>Taxes:</b> The most significant cost for most investors. Capital gains taxes can turn a profitable rebalance into a net loss if not planned carefully. The calculator includes tax estimation for every sell trade.</li><li><b>Opportunity cost:</b> While you are out of the market during the rebalancing process, you miss potential gains. Minimize this by executing all trades as quickly as practical.</li></ul><br />The calculator\'s <b>Total Impact</b> summary helps you decide if the rebalance is worth executing by showing the combined cost of taxes and fees against the benefit of getting back to target allocation.',
+    answerText: 'Key transaction costs: commissions/fees, bid-ask spreads, market impact on large orders, capital gains taxes (the biggest cost), and opportunity cost of being out of the market. The calculator\'s Total Impact summary helps you evaluate if the rebalance is cost-effective.',
+  },
+];
+---
+
+<PageLayout
+  title="Core-Satellite Portfolio Rebalancer — Optimize Your Asset Allocation"
+  description="Free core-satellite portfolio rebalancer. Calculate optimal buy/sell orders, minimize tax drag, and rebalance your investment portfolio with cash-first optimization."
+  canonical="https://truefinancetools.com/core-satellite-rebalancer/"
+  ogImage="https://truefinancetools.com/og-core-satellite-rebalancer.png"
+  ogImageAlt="Core-Satellite Portfolio Rebalancer — Optimize Your Asset Allocation"
+  pageType="website"
+  keywords="core satellite portfolio, portfolio rebalancer, asset allocation rebalancing, tax optimized rebalancing, core satellite strategy, investment rebalancing tool, portfolio optimization"
+>
+  <StructuredData
+    title="Core-Satellite Portfolio Rebalancer — Optimize Your Asset Allocation"
+    description="Free core-satellite portfolio rebalancer. Calculate optimal buy/sell orders, minimize tax drag, and rebalance your investment portfolio."
+    url="https://truefinancetools.com/core-satellite-rebalancer/"
+    toolName="Core-Satellite Portfolio Rebalancer"
+    toolDescription="Optimize your core-satellite portfolio allocation with tax-aware rebalancing, cash-first optimization, and transaction cost analysis."
+    faqItems={rebalancerFaqItems}
+    features={[
+      'Core-satellite portfolio allocation optimization',
+      'Cash-first rebalancing to minimize tax drag',
+      'Capital gains tax estimation per trade',
+      'Transaction cost viability analysis',
+      'Dynamic holdings management',
+      'Real-time deviation tracking'
+    ]}
+  />
+
+  <!-- Hero Section -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Core-Satellite Portfolio Rebalancer
+      </h1>
+      <p class="text-lg text-body">Optimize your asset allocation with tax-aware rebalancing. Minimize selling, maximize growth.</p>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <CoreSatelliteRebalancer />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Core-Satellite Rebalancer Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 01-1.125-1.125v-3.75zM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-8.25zM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-2.25z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Add Your Holdings</h3>
+      <p class="text-sm text-body">Enter your core and satellite positions with current prices, cost basis, and target allocation weights.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Configure Parameters</h3>
+      <p class="text-sm text-body">Set your cash inflow, tax bracket, transaction fees, and rebalancing threshold tolerance.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Get Your Plan</h3>
+      <p class="text-sm text-body">Receive optimized buy/sell recommendations with estimated tax impact and transaction cost analysis.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is Core-Satellite Portfolio Rebalancing? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is Core-Satellite Portfolio Rebalancing?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Core-Satellite portfolio rebalancing</strong> is the process of realigning your portfolio's current allocation back to your target core and satellite weights. The Core-Satellite strategy combines a passive, broad-market index fund (the "Core," typically 80–90% of the portfolio) with individual high-conviction stocks or thematic ETFs (the "Satellites," 10–20%). Over time, market movements cause these allocations to drift — some positions grow faster than others, pushing your portfolio away from its intended risk profile.
+        </p>
+
+        <p class="mb-4">
+          Rebalancing brings your portfolio back in line by <strong>selling overweight positions</strong> and <strong>buying underweight ones</strong>. Our <strong>Core-Satellite rebalancer</strong> makes this process tax-efficient by prioritizing cash-first moves and estimating capital gains impact before you trade. The goal is to maintain your target asset allocation while minimizing transaction costs and tax drag.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Rebalancing Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          V = Σ(P<sub>j</sub> × Q<sub>j</sub>)<br />
+          T<sub>j</sub> = V × W<sub>j</sub><br />
+          Δ<sub>j</sub> = (P<sub>j</sub> × Q<sub>j</sub>) &minus; T<sub>j</sub>
+        </div>
+        <div class="mt-2 rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Where: V = total portfolio value, P<sub>j</sub> = price of holding j, Q<sub>j</sub> = quantity of holding j,<br />
+          T<sub>j</sub> = target value for holding j, W<sub>j</sub> = target weight for holding j,<br />
+          Δ<sub>j</sub> = deviation (positive = overweight, negative = underweight)
+        </div>
+
+        <p class="mb-4 mt-4">
+          For example, if your total portfolio is $500,000 and your core ETF target is 80% ($400,000 target), but it has grown to $425,000, the deviation is +$25,000 (overweight). The calculator would recommend either directing new cash to underweight satellites or selling $25,000 of the core, depending on your tax situation and available cash.
+        </p>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Strategy Comparison</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Aspect</th>
+                <th class="p-3 font-medium text-ink">Core-Satellite</th>
+                <th class="p-3 font-medium text-ink">Pure Index</th>
+                <th class="p-3 font-medium text-ink">All Individual Stocks</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Management Effort</td>
+                <td class="p-3 text-ink">Moderate</td>
+                <td class="p-3 text-ink">Low</td>
+                <td class="p-3 text-ink">High</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Diversification</td>
+                <td class="p-3 text-success-deep">High</td>
+                <td class="p-3 text-success-deep">Very High</td>
+                <td class="p-3 text-error">Low</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Cost</td>
+                <td class="p-3 text-ink">Low–Moderate</td>
+                <td class="p-3 text-success-deep">Very Low</td>
+                <td class="p-3 text-error">High</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Alpha Potential</td>
+                <td class="p-3 text-success-deep">Moderate</td>
+                <td class="p-3 text-ink">None (market return)</td>
+                <td class="p-3 text-ink">High (or negative)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Tax Efficiency</td>
+                <td class="p-3 text-ink">Moderate</td>
+                <td class="p-3 text-success-deep">High</td>
+                <td class="p-3 text-error">Low</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 text-body font-sans">Rebalancing Frequency</td>
+                <td class="p-3 text-ink">Quarterly</td>
+                <td class="p-3 text-success-deep">Annually</td>
+                <td class="p-3 text-error">Monthly+</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose the Core-Satellite Strategy?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Hands-on Investors</h4>
+            <p class="text-sm text-body">You enjoy researching companies and making tactical allocation decisions but want a diversified foundation. The core protects you from your own overconfidence while satellites let you act on your best ideas.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Tax-Conscious Rebalancers</h4>
+            <p class="text-sm text-body">Rebalancing in taxable accounts creates capital gains events. Our cash-first approach minimizes selling, keeping more of your returns working for you. Ideal for those managing six-figure+ portfolios outside retirement accounts.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Long-Term Wealth Builders</h4>
+            <p class="text-sm text-body">The core provides steady market returns while satellites give you the chance to outperform. Over decades, even small alpha from satellites compounds into significant wealth differences — without the risk of an all-stock-picking approach.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Risk-Aware Diversifiers</h4>
+            <p class="text-sm text-body">You want exposure to specific sectors (tech, healthcare, clean energy) without going all-in. The core anchors your portfolio, preventing thematic bets from destroying your retirement if a sector crashes.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Core-Satellite Rebalancing Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Combines passive diversification with active upside potential</li>
+              <li>• Tax-efficient cash-first rebalancing reduces capital gains</li>
+              <li>• Core provides a safety net against satellite underperformance</li>
+              <li>• Flexible — easy to adjust satellite positions without disrupting the core</li>
+              <li>• Lower costs than an entirely active stock-picking strategy</li>
+              <li>• Clear framework for disciplined portfolio management</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• More complex to manage than a single total-market ETF</li>
+              <li>• Satellites can underperform, dragging down overall returns</li>
+              <li>• Requires periodic monitoring and rebalancing discipline</li>
+              <li>• Tax consequences from selling overweight satellite positions</li>
+              <li>• Risk of over-trading satellites, increasing transaction costs</li>
+              <li>• Behavioral risk — chasing performance with satellite allocations</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Core-Satellite Rebalancing
+      </h2>
+
+      <div class="space-y-4">
+        {rebalancerFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Core-Satellite Rebalancing
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>Core-Satellite Portfolio Rebalancer</strong> helps you manage the most critical maintenance task for any hybrid portfolio: keeping your allocation aligned with your targets. Whether you are a hands-on investor managing a modest satellite allocation or a sophisticated portfolio manager with multiple thematic bets, this tool provides the precision you need to rebalance efficiently.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose Our Core-Satellite Rebalancer?</h3>
+
+        <p class="mb-4">
+          Most rebalancing tools are generic — they treat all positions equally and ignore the tax consequences of selling. Our calculator is purpose-built for the <strong>Core-Satellite strategy</strong>, with features that address its unique challenges. The <strong>cash-first optimization</strong> engine prioritizes using incoming cash to correct drift before triggering taxable sales, a critical advantage for taxable accounts where capital gains erode returns.
+        </p>
+
+        <p class="mb-4">
+          The calculator provides <strong>per-trade tax estimates</strong> so you know the exact capital gains impact before you execute a trade. This transparency lets you evaluate whether a rebalance is worth doing — sometimes the tax cost of selling an overweight position exceeds the benefit of getting back to target. Our <strong>transaction cost analysis</strong> adds fees and spreads to the evaluation, giving you the full picture.
+        </p>
+
+        <p class="mb-4">
+          <strong>Privacy is paramount.</strong> All calculations happen in your browser. No data is sent to any server, and nothing is stored. You can add your entire portfolio with cost basis information with complete confidence that your financial data remains private. No signups, no email required, no tracking.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Rebalancer</h3>
+
+        <p class="mb-4">
+          <strong>Dynamic holdings management</strong> — Add, remove, or update positions on the fly. Each holding shows its current deviation from target, so you can see at a glance which positions need attention. The <strong>cash-inflow optimization</strong> automatically applies any available cash to the most underweight positions first, minimizing taxable events. The <strong>threshold band</strong> prevents unnecessary trading by allowing small deviations to persist without action.
+        </p>
+
+        <p class="mb-4">
+          <strong>Real-time deviation tracking</strong> shows the percentage and dollar deviation for every position as you adjust prices or targets. The <strong>total impact summary</strong> aggregates all trades into a single view: net cash required, estimated capital gains tax, and total transaction fees. This lets you quickly determine whether the rebalance is cost-effective or if you should wait for a more favorable window.
+        </p>
+
+        <p class="mb-4">
+          Whether you rebalance monthly, quarterly, or annually, our Core-Satellite rebalancer gives you the data you need to make informed, tax-efficient decisions. Start optimizing your portfolio today — no signup required, completely free, with results in seconds.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Financial Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Financial Tools
+      </h2>
+      <p class="mb-8 text-body">Discover more calculators to optimize your investment strategy and retirement planning.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/fire-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Calculate your FIRE number for early retirement.</p>
+        </a>
+        <a href="/lean-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Lean FIRE Calculator</h3>
+          <p class="text-xs text-body">Minimalist approach with the 20x rule for early retirement.</p>
+        </a>
+        <a href="/fat-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Fat FIRE Calculator</h3>
+          <p class="text-xs text-body">For those who want a luxury retirement lifestyle.</p>
+        </a>
+        <a href="/barista-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Calculator</h3>
+          <p class="text-xs text-body">Work part-time, let investments cover the rest.</p>
+        </a>
+        <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+          <p class="text-xs text-body">Find your exact Coast FIRE target.</p>
+        </a>
+        <a href="/vpw-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">VPW Withdrawal Calculator</h3>
+          <p class="text-xs text-body">Variable withdrawal strategy for retirement income.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

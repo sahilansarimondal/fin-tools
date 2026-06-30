@@ -1,5 +1,9 @@
 # CLAUDE.md — True Finance Tools
 
+> **⚠️ DEPRECATED:** This file is superseded by `AGENTS.md` as the single source of truth for agent context. CLAUDE.md contains outdated/duplicated information. All agents should read `AGENTS.md` instead. This file is kept only for human developer reference and will be removed in a future cleanup.
+
+---
+
 ## Project
 
 **True Finance Tools** — truefinancetools.com — Multi-tool financial calculator website built with Astro.

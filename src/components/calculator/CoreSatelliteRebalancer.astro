@@ -1,0 +1,698 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="csr-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- ===== LEFT PANEL: Inputs (5 cols, sticky) ===== -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <!-- Holdings Section -->
+        <div class="mb-6">
+          <div class="mb-3 flex items-center justify-between">
+            <h3 class="text-sm font-semibold text-ink">Portfolio Holdings</h3>
+            <button
+              type="button"
+              id="add-holding-btn"
+              class="inline-flex items-center gap-1 rounded-md border border-hairline bg-canvas px-2.5 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-canvas-soft-2"
+            >
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              </svg>
+              Add Holding
+            </button>
+          </div>
+          <p class="mb-4 text-xs text-mute">Add your current holdings with target allocation percentages.</p>
+
+          <div id="holdings-list" class="space-y-2">
+            <!-- Holdings rows rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <hr class="my-6 border-hairline" />
+
+        <!-- System Parameters -->
+        <h3 class="mb-4 text-sm font-semibold text-ink">System Parameters</h3>
+        <div class="mb-5 space-y-4">
+          <Input
+            label="Cash Inflow"
+            name="cashInflow"
+            type="number"
+            value={0}
+            min={0}
+            step={100}
+            suffix="$"
+            hideArrows
+            helpText="New cash available to deploy into the portfolio"
+          />
+
+          <Slider
+            label="Capital Gains Tax Rate"
+            name="taxRate"
+            value={15}
+            min={0}
+            max={30}
+            step={0.5}
+            suffix="%"
+            inputId="csr-taxRate"
+            displayId="csr-taxRateValue"
+            tooltip="Your long-term capital gains tax rate (federal + state)"
+          />
+
+          <Input
+            label="Transaction Fee per Trade"
+            name="transactionFee"
+            type="number"
+            value={9.99}
+            min={0}
+            step={0.5}
+            suffix="$"
+            hideArrows
+            helpText="Flat fee per buy or sell order"
+          />
+
+          <Slider
+            label="Rebalance Threshold"
+            name="thresholdBand"
+            value={2}
+            min={1}
+            max={10}
+            step={0.5}
+            suffix="%"
+            inputId="csr-threshold"
+            displayId="csr-thresholdValue"
+            tooltip="Maximum allowable deviation before rebalancing triggers"
+          />
+        </div>
+
+        <!-- Calculate Button -->
+        <button
+          type="button"
+          id="calculate-btn"
+          class="w-full rounded-lg bg-ink px-4 py-3 text-sm font-semibold text-canvas transition-all hover:opacity-90"
+        >
+          Calculate Rebalancing
+        </button>
+      </Card>
+    </div>
+
+    <!-- ===== RIGHT PANEL: Results (7 cols) ===== -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- KPI cards row (3 cards) -->
+      <div class="grid gap-4 sm:grid-cols-3">
+        <ResultCard
+          label="Total Portfolio Value"
+          valueId="csr-totalValue"
+          value="—"
+          valueClass="text-ink"
+          description="Current value + cash inflow"
+        />
+        <ResultCard
+          label="Trade Orders"
+          valueId="csr-tradeOrders"
+          value="—"
+          valueClass="text-ink"
+          description="Buys / Sells recommended"
+        />
+        <ResultCard
+          label="Estimated Tax Impact"
+          valueId="csr-taxImpact"
+          value="—"
+          valueClass="text-error"
+          description="Capital gains tax on sell orders"
+        />
+      </div>
+
+      <!-- Weight Validation Warning -->
+      <div id="csr-weight-warning" class="hidden rounded-lg border border-warning/30 bg-warning/5 p-4">
+        <div class="flex items-start gap-3">
+          <svg class="mt-0.5 h-4 w-4 shrink-0 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+          <div>
+            <p class="text-sm font-medium text-warning">Weights Normalized</p>
+            <p id="csr-weight-warning-text" class="mt-0.5 text-xs text-body">
+              Target weights did not sum to 100%. They have been automatically normalized.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tax Warning -->
+      <div id="csr-tax-warning" class="hidden rounded-lg border border-error/30 bg-error/5 p-4">
+        <div class="flex items-start gap-3">
+          <svg class="mt-0.5 h-4 w-4 shrink-0 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <p class="text-sm font-medium text-error">Significant Tax Impact</p>
+            <p id="csr-tax-warning-text" class="mt-0.5 text-xs text-body">
+              Estimated capital gains tax exceeds $1,000. Consider holding overweight positions or using tax-loss harvesting.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rebalancing Table -->
+      <Card padding="lg">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">Rebalancing Plan</h2>
+        </div>
+        <div id="csr-results-container" class="overflow-x-auto">
+          <p id="csr-no-results" class="py-8 text-center text-sm text-mute">
+            Adjust your holdings and parameters, then click "Calculate Rebalancing" to see your plan.
+          </p>
+          <table id="csr-results-table" class="hidden w-full text-left text-xs">
+            <thead>
+              <tr class="border-b border-hairline text-mute">
+                <th class="pb-2 pr-3 font-medium">Asset</th>
+                <th class="pb-2 pr-3 font-medium">Type</th>
+                <th class="pb-2 pr-3 text-right font-medium">Current %</th>
+                <th class="pb-2 pr-3 text-right font-medium">Target %</th>
+                <th class="pb-2 pr-3 text-right font-medium">Deviation</th>
+                <th class="pb-2 pr-3 text-center font-medium">Action</th>
+                <th class="pb-2 pr-3 text-right font-medium">Amount</th>
+                <th class="pb-2 pr-3 text-right font-medium">Shares</th>
+                <th class="pb-2 pr-3 text-right font-medium">Tax</th>
+                <th class="pb-2 text-center font-medium">Viable</th>
+              </tr>
+            </thead>
+            <tbody id="csr-results-body">
+              <!-- Results rows rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </Card>
+    </div>
+  </div>
+</div>
+
+<script>
+  import {
+    calculateRebalancing,
+    formatCurrency as fmtCurrency,
+  } from '../../utils/rebalancer-calculations';
+
+  // ---------------------------------------------------------------------------
+  // State
+  // ---------------------------------------------------------------------------
+
+  /** @type {Array<{ticker: string, classification: string, quantity: number, costBasis: number, currentPrice: number, targetWeight: number}>} */
+  var holdings = [
+    { ticker: 'VOO', classification: 'core', quantity: 100, costBasis: 350, currentPrice: 450, targetWeight: 60 },
+    { ticker: 'AAPL', classification: 'satellite', quantity: 50, costBasis: 120, currentPrice: 180, targetWeight: 20 },
+    { ticker: 'MSFT', classification: 'satellite', quantity: 30, costBasis: 250, currentPrice: 380, targetWeight: 20 },
+  ];
+
+  // ---------------------------------------------------------------------------
+  // Helpers
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Format a number as USD currency with commas and 2 decimal places.
+   * Falls back to raw value if formatting fails.
+   */
+  function formatCurrency(amount) {
+    if (typeof amount !== 'number' || isNaN(amount)) return '$0.00';
+    try {
+      return fmtCurrency(amount);
+    } catch (_e) {
+      return '$' + amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+  }
+
+  /**
+   * Format a percentage value (0-100 range) with 1 decimal place.
+   */
+  function formatPctValue(value) {
+    if (typeof value !== 'number' || isNaN(value)) return '—';
+    return value.toFixed(1) + '%';
+  }
+
+  /**
+   * Escape HTML special characters in a string to prevent XSS.
+   */
+  function escapeHtml(str) {
+    if (typeof str !== 'string') return String(str);
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Holdings Rendering
+  // ---------------------------------------------------------------------------
+
+  function renderHoldings() {
+    var container = document.getElementById('holdings-list');
+    if (!container) return;
+
+    var html = '';
+    for (var i = 0; i < holdings.length; i++) {
+      var h = holdings[i];
+      var isCore = h.classification === 'core';
+      var isSat = h.classification === 'satellite';
+
+      html +=
+        '<div class="holding-row rounded-lg border border-hairline bg-canvas p-2.5" data-index="' +
+        i +
+        '">' +
+        '<div class="flex flex-wrap items-end gap-x-2 gap-y-1.5">' +
+        /* Ticker */
+        '<div class="w-[68px]">' +
+        '<label class="mb-0.5 block text-[9px] font-medium uppercase tracking-wider text-mute">Ticker</label>' +
+        '<input type="text" name="ticker-' +
+        i +
+        '" value="' +
+        escapeHtml(h.ticker) +
+        '" placeholder="VOO" class="h-7 w-full rounded border border-hairline bg-canvas px-1.5 text-xs text-ink font-mono placeholder:text-mute/50 focus:border-link focus:outline-none focus:ring-1 focus:ring-link/20" data-field="ticker" />' +
+        '</div>' +
+        /* Classification toggle */
+        '<div class="w-[82px]">' +
+        '<label class="mb-0.5 block text-[9px] font-medium uppercase tracking-wider text-mute">Type</label>' +
+        '<div class="classification-toggle flex overflow-hidden rounded border border-hairline">' +
+        '<button type="button" class="toggle-btn flex-1 px-1.5 py-1 text-[10px] font-medium leading-none transition-colors ' +
+        (isCore ? 'bg-ink text-canvas' : 'bg-canvas text-mute hover:text-ink') +
+        '" data-value="core">Core</button>' +
+        '<button type="button" class="toggle-btn flex-1 px-1.5 py-1 text-[10px] font-medium leading-none transition-colors ' +
+        (isSat ? 'bg-ink text-canvas' : 'bg-canvas text-mute hover:text-ink') +
+        '" data-value="satellite">Sat</button>' +
+        '</div>' +
+        '<input type="hidden" name="classification-' +
+        i +
+        '" value="' +
+        h.classification +
+        '" />' +
+        '</div>' +
+        /* Quantity */
+        '<div class="w-[56px]">' +
+        '<label class="mb-0.5 block text-[9px] font-medium uppercase tracking-wider text-mute">Qty</label>' +
+        '<input type="number" name="quantity-' +
+        i +
+        '" value="' +
+        h.quantity +
+        '" min="0" class="h-7 w-full rounded border border-hairline bg-canvas px-1.5 text-xs text-ink font-mono focus:border-link focus:outline-none focus:ring-1 focus:ring-link/20" data-field="quantity" />' +
+        '</div>' +
+        /* Cost Basis */
+        '<div class="w-[72px]">' +
+        '<label class="mb-0.5 block text-[9px] font-medium uppercase tracking-wider text-mute">Cost $</label>' +
+        '<input type="number" name="costBasis-' +
+        i +
+        '" value="' +
+        h.costBasis.toFixed(2) +
+        '" min="0" step="0.01" class="h-7 w-full rounded border border-hairline bg-canvas px-1.5 text-xs text-ink font-mono focus:border-link focus:outline-none focus:ring-1 focus:ring-link/20" data-field="costBasis" />' +
+        '</div>' +
+        /* Current Price */
+        '<div class="w-[72px]">' +
+        '<label class="mb-0.5 block text-[9px] font-medium uppercase tracking-wider text-mute">Price $</label>' +
+        '<input type="number" name="currentPrice-' +
+        i +
+        '" value="' +
+        h.currentPrice.toFixed(2) +
+        '" min="0" step="0.01" class="h-7 w-full rounded border border-hairline bg-canvas px-1.5 text-xs text-ink font-mono focus:border-link focus:outline-none focus:ring-1 focus:ring-link/20" data-field="currentPrice" />' +
+        '</div>' +
+        /* Target Weight (percentage) */
+        '<div class="w-[60px]">' +
+        '<label class="mb-0.5 block text-[9px] font-medium uppercase tracking-wider text-mute">Target %</label>' +
+        '<div class="relative">' +
+        '<input type="number" name="targetWeight-' +
+        i +
+        '" value="' +
+        h.targetWeight +
+        '" min="0" max="100" step="0.1" class="h-7 w-full rounded border border-hairline bg-canvas px-1.5 pr-3.5 text-xs text-ink font-mono focus:border-link focus:outline-none focus:ring-1 focus:ring-link/20" data-field="targetWeight" />' +
+        '<span class="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 text-[9px] text-mute">%</span>' +
+        '</div>' +
+        '</div>' +
+        /* Remove button */
+        '<div class="flex items-end pb-px">' +
+        '<button type="button" class="remove-btn flex h-7 w-7 items-center justify-center rounded text-mute transition-colors hover:bg-error/5 hover:text-error" data-index="' +
+        i +
+        '" aria-label="Remove holding">' +
+        '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1 1l8 8M9 1l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>' +
+        '</button>' +
+        '</div>' +
+        '</div>' +
+        '</div>';
+    }
+
+    container.innerHTML = html;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Collect Holdings from DOM
+  // ---------------------------------------------------------------------------
+
+  function collectHoldingsFromDOM() {
+    var rows = document.querySelectorAll('#holdings-list .holding-row');
+    var collected = [];
+
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      var tickerInput = row.querySelector('input[data-field="ticker"]');
+      var classificationInput = row.querySelector('input[type="hidden"]');
+      var quantityInput = row.querySelector('input[data-field="quantity"]');
+      var costBasisInput = row.querySelector('input[data-field="costBasis"]');
+      var priceInput = row.querySelector('input[data-field="currentPrice"]');
+      var weightInput = row.querySelector('input[data-field="targetWeight"]');
+
+      if (!tickerInput || !classificationInput || !quantityInput || !costBasisInput || !priceInput || !weightInput) continue;
+
+      var ticker = tickerInput.value.trim();
+      if (!ticker) continue; // Skip rows with empty ticker
+
+      collected.push({
+        ticker: ticker,
+        classification: classificationInput.value,
+        quantity: Number(quantityInput.value) || 0,
+        costBasis: Number(costBasisInput.value) || 0,
+        currentPrice: Number(priceInput.value) || 0,
+        targetWeight: Number(weightInput.value) / 100 || 0,
+      });
+    }
+
+    return collected;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Collect System Parameters from DOM
+  // ---------------------------------------------------------------------------
+
+  function collectParams() {
+    var cashInflowEl = document.querySelector('input[name="cashInflow"]');
+    var taxRateEl = document.querySelector('input[name="taxRate"]');
+    var feeEl = document.querySelector('input[name="transactionFee"]');
+    var thresholdEl = document.querySelector('input[name="thresholdBand"]');
+
+    return {
+      cashInflow: Number(cashInflowEl ? cashInflowEl.value : 0) || 0,
+      taxRate: Number(taxRateEl ? taxRateEl.value : 15) || 15,
+      transactionFee: Number(feeEl ? feeEl.value : 9.99) || 9.99,
+      thresholdBand: Number(thresholdEl ? thresholdEl.value : 2) / 100 || 0.02,
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Results Rendering
+  // ---------------------------------------------------------------------------
+
+  function renderResults(result) {
+    if (!result || !result.holdings || result.holdings.length === 0) {
+      document.getElementById('csr-no-results').classList.remove('hidden');
+      document.getElementById('csr-results-table').classList.add('hidden');
+      document.getElementById('csr-weight-warning').classList.add('hidden');
+      document.getElementById('csr-tax-warning').classList.add('hidden');
+      return;
+    }
+
+    // Show table, hide placeholder
+    document.getElementById('csr-no-results').classList.add('hidden');
+    document.getElementById('csr-results-table').classList.remove('hidden');
+
+    // Update KPI cards
+    updateKPIs(result);
+
+    // Update table
+    renderHoldingsTable(result);
+
+    // Show warnings
+    showWarnings(result);
+  }
+
+  function updateKPIs(result) {
+    var totalValueEl = document.getElementById('csr-totalValue');
+    var tradeOrdersEl = document.getElementById('csr-tradeOrders');
+    var taxImpactEl = document.getElementById('csr-taxImpact');
+
+    if (totalValueEl) {
+      totalValueEl.textContent = formatCurrency(result.postCashPortfolioValue);
+    }
+
+    if (tradeOrdersEl) {
+      tradeOrdersEl.textContent = result.netBuyOrders + ' / ' + result.netSellOrders;
+    }
+
+    if (taxImpactEl) {
+      taxImpactEl.textContent = formatCurrency(result.totalEstimatedTax);
+      if (result.totalEstimatedTax > 0) {
+        taxImpactEl.className = 'text-2xl font-semibold tabular-nums text-error';
+      } else {
+        taxImpactEl.className = 'text-2xl font-semibold tabular-nums text-ink';
+      }
+    }
+  }
+
+  function renderHoldingsTable(result) {
+    var tbody = document.getElementById('csr-results-body');
+    if (!tbody) return;
+
+    var html = '';
+    for (var i = 0; i < result.holdings.length; i++) {
+      var r = result.holdings[i];
+
+      var isBuy = r.recommendedAction === 'buy';
+      var isSell = r.recommendedAction === 'sell';
+
+      var rowClass = '';
+      if (isBuy) rowClass = 'bg-success/5';
+      else if (isSell) rowClass = 'bg-error/5';
+
+      var actionClass = '';
+      if (isBuy) actionClass = 'text-success-deep';
+      else if (isSell) actionClass = 'text-error';
+      else actionClass = 'text-mute';
+
+      var actionLabel = isBuy ? 'Buy' : isSell ? 'Sell' : 'Hold';
+
+      var amountDisplay = r.isEconomicallyViable ? formatCurrency(r.recommendedAmount) : '—';
+      var sharesDisplay = r.isEconomicallyViable ? r.recommendedShares.toFixed(2) : '—';
+      var taxDisplay = formatCurrency(r.estimatedTax);
+      var viableDisplay = r.isEconomicallyViable ? '✓' : '✗';
+      var viableClass = r.isEconomicallyViable ? 'text-success-deep' : 'text-mute';
+
+      var typeLabel = r.classification === 'core' ? 'Core' : 'Sat';
+
+      html +=
+        '<tr class="border-b border-hairline transition-colors ' +
+        rowClass +
+        '">' +
+        '<td class="py-2.5 pr-3 font-medium text-ink">' +
+        escapeHtml(r.ticker) +
+        '</td>' +
+        '<td class="py-2.5 pr-3 text-mute">' +
+        typeLabel +
+        '</td>' +
+        '<td class="py-2.5 pr-3 text-right font-mono text-xs tabular-nums text-body">' +
+        formatPctValue(r.currentWeight * 100) +
+        '</td>' +
+        '<td class="py-2.5 pr-3 text-right font-mono text-xs tabular-nums text-body">' +
+        formatPctValue(r.targetWeight * 100) +
+        '</td>' +
+        '<td class="py-2.5 pr-3 text-right font-mono text-xs tabular-nums ' +
+        (r.deviation > 0 ? 'text-error' : r.deviation < 0 ? 'text-success-deep' : 'text-mute') +
+        '">' +
+        (r.deviation > 0 ? '+' : '') +
+        formatPctValue(r.deviationPercent) +
+        '</td>' +
+        '<td class="py-2.5 pr-3 text-center text-xs font-semibold ' +
+        actionClass +
+        '">' +
+        actionLabel +
+        '</td>' +
+        '<td class="py-2.5 pr-3 text-right font-mono text-xs tabular-nums text-ink">' +
+        amountDisplay +
+        '</td>' +
+        '<td class="py-2.5 pr-3 text-right font-mono text-xs tabular-nums text-ink">' +
+        sharesDisplay +
+        '</td>' +
+        '<td class="py-2.5 pr-3 text-right font-mono text-xs tabular-nums text-body">' +
+        taxDisplay +
+        '</td>' +
+        '<td class="py-2.5 text-center text-xs ' +
+        viableClass +
+        '">' +
+        viableDisplay +
+        '</td>' +
+        '</tr>';
+    }
+
+    tbody.innerHTML = html;
+  }
+
+  function showWarnings(result) {
+    // Weight validation warning
+    var weightWarning = document.getElementById('csr-weight-warning');
+    var weightWarningText = document.getElementById('csr-weight-warning-text');
+    if (result.weightsNormalized && weightWarning && weightWarningText) {
+      weightWarning.classList.remove('hidden');
+      var errorPct = (result.totalWeightError * 100).toFixed(1);
+      weightWarningText.textContent =
+        'Target weights summed to ' + (100 - Number(errorPct)).toFixed(1) + '% instead of 100%. They have been automatically normalized.';
+    } else if (weightWarning) {
+      weightWarning.classList.add('hidden');
+    }
+
+    // Tax warning
+    var taxWarning = document.getElementById('csr-tax-warning');
+    var taxWarningText = document.getElementById('csr-tax-warning-text');
+    if (result.totalEstimatedTax > 1000 && taxWarning && taxWarningText) {
+      taxWarning.classList.remove('hidden');
+      taxWarningText.textContent =
+        'Estimated capital gains tax is ' +
+        formatCurrency(result.totalEstimatedTax) +
+        '. Consider holding overweight positions or using tax-loss harvesting strategies.';
+    } else if (taxWarning) {
+      taxWarning.classList.add('hidden');
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Main Calculate Handler
+  // ---------------------------------------------------------------------------
+
+  function calculateRebalance() {
+    var holdingsData = collectHoldingsFromDOM();
+    if (holdingsData.length === 0) {
+      renderResults(null);
+      return;
+    }
+
+    var params = collectParams();
+
+    var result = calculateRebalancing({
+      holdings: holdingsData,
+      cashInflow: params.cashInflow,
+      taxRate: params.taxRate,
+      transactionFee: params.transactionFee,
+      thresholdBand: params.thresholdBand,
+    });
+
+    renderResults(result);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Holdings Management
+  // ---------------------------------------------------------------------------
+
+  function addHolding() {
+    holdings.push({
+      ticker: '',
+      classification: 'core',
+      quantity: 0,
+      costBasis: 0,
+      currentPrice: 0,
+      targetWeight: 0,
+    });
+    renderHoldings();
+  }
+
+  function removeHolding(index) {
+    if (holdings.length <= 1) return; // Keep at least one row
+    holdings.splice(index, 1);
+    renderHoldings();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Event Delegation Setup
+  // ---------------------------------------------------------------------------
+
+  function initEventDelegation() {
+    var holdingsList = document.getElementById('holdings-list');
+    if (!holdingsList) return;
+
+    // Classification toggle clicks
+    holdingsList.addEventListener('click', function (e) {
+      var toggleBtn = e.target.closest('.toggle-btn');
+      if (!toggleBtn) return;
+
+      var toggleGroup = toggleBtn.closest('.classification-toggle');
+      if (!toggleGroup) return;
+
+      var hiddenInput = toggleGroup.parentElement.querySelector('input[type="hidden"]');
+      if (!hiddenInput) return;
+
+      var value = toggleBtn.getAttribute('data-value');
+      hiddenInput.value = value;
+
+      // Update button styles
+      var btns = toggleGroup.querySelectorAll('.toggle-btn');
+      for (var i = 0; i < btns.length; i++) {
+        if (btns[i] === toggleBtn) {
+          btns[i].classList.remove('bg-canvas', 'text-mute', 'hover:text-ink');
+          btns[i].classList.add('bg-ink', 'text-canvas');
+        } else {
+          btns[i].classList.remove('bg-ink', 'text-canvas');
+          btns[i].classList.add('bg-canvas', 'text-mute', 'hover:text-ink');
+        }
+      }
+    });
+
+    // Remove button clicks
+    holdingsList.addEventListener('click', function (e) {
+      var removeBtn = e.target.closest('.remove-btn');
+      if (!removeBtn) return;
+      var index = parseInt(removeBtn.getAttribute('data-index'), 10);
+      if (!isNaN(index)) {
+        removeHolding(index);
+      }
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Init
+  // ---------------------------------------------------------------------------
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // Render initial holdings
+    renderHoldings();
+
+    // Initialize event delegation for holdings
+    initEventDelegation();
+
+    // Add holding button
+    var addBtn = document.getElementById('add-holding-btn');
+    if (addBtn) {
+      addBtn.addEventListener('click', addHolding);
+    }
+
+    // Calculate button
+    var calcBtn = document.getElementById('calculate-btn');
+    if (calcBtn) {
+      calcBtn.addEventListener('click', calculateRebalance);
+    }
+
+    // Slider display updates
+    var sliders = [
+      { id: 'csr-taxRate', displayId: 'csr-taxRateValue', suffix: '%' },
+      { id: 'csr-threshold', displayId: 'csr-thresholdValue', suffix: '%' },
+    ];
+
+    sliders.forEach(function (s) {
+      var el = document.getElementById(s.id);
+      var display = document.getElementById(s.displayId);
+      if (el && display) {
+        el.addEventListener('input', function () {
+          display.textContent = el.value + s.suffix;
+        });
+      }
+    });
+
+    // Dark mode change detection for future chart support
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', function () {
+        // No chart to update currently, but keep the listener for future use
+      });
+
+    var observer = new MutationObserver(function () {
+      // No chart to update currently, but keep for future use
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
