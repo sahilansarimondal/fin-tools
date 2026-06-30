@@ -1,0 +1,314 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import SEPPCalculator from '../../components/calculator/SEPPCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const seppFaqItems: FAQItem[] = [
+  {
+    question: 'What is a 72(t) SEPP distribution?',
+    answerHtml: 'A <b>72(t) SEPP distribution</b> (Substantially Equal Periodic Payments) allows you to withdraw money from your IRA, 401(k), or other qualified retirement account before age 59½ <b>without paying the 10% early withdrawal penalty</b>. The payments must be calculated using one of three IRS-approved methods and must continue for the longer of 5 years or until you reach age 59½.<br /><br />Section 72(t) of the Internal Revenue Code provides this exception to the normal 10% penalty rule. It is one of the most common strategies used by early retirees to access their retirement funds.',
+    answerText: 'A 72(t) SEPP distribution lets you withdraw from retirement accounts before age 59½ without the 10% penalty. Payments must follow one of three IRS methods and continue for 5+ years or until age 59½.',
+  },
+  {
+    question: 'What are the three methods for calculating SEPP payments?',
+    answerHtml: 'The IRS approves three methods for calculating SEPP payments:<br /><br /><b>1. Required Minimum Distribution (RMD) Method</b><br />Formula: Account Balance ÷ Life Expectancy Factor<br />This method produces <b>variable payments</b> that change each year as your balance and life expectancy change. It typically starts with higher payments that decrease over time.<br /><br /><b>2. Fixed Amortization Method</b><br />Formula: Account Balance × PMT formula (similar to a mortgage payment)<br />This produces <b>level payments</b> that remain constant for the entire SEPP duration. The payment is calculated once and locked in.<br /><br /><b>3. Fixed Annuitization Method</b><br />Formula: Account Balance ÷ Annuity Factor<br />This also produces <b>level payments</b> using a different calculation. The annuity factor is the present value of $1 per year over the life expectancy period.',
+    answerText: 'The three IRS-approved methods are: (1) RMD Method — variable payments calculated as Balance ÷ Life Expectancy Factor; (2) Fixed Amortization — level payments using a mortgage-style formula; (3) Fixed Annuitization — level payments using an annuity factor calculation.',
+  },
+  {
+    question: 'How long must I continue SEPP payments?',
+    answerHtml: 'You must continue SEPP payments for the <b>longer of</b>:<br /><br /><ul><li><b>5 years</b> from the date of your first SEPP distribution, OR</li><li><b>Until you reach age 59½</b></li></ul><br />For example, if you start SEPP payments at age 45, you must continue until age 59½ (14.5 years). If you start at age 56, you must continue for 5 years (until age 61, which is past 59½).<br /><br /><b>Important:</b> The 5-year clock starts on January 1 of the year you take your first SEPP distribution, not the actual date of the first distribution.',
+    answerText: 'SEPP payments must continue for the longer of 5 years or until you reach age 59½. For example, starting at age 45 means payments until 59½ (14.5 years). Starting at age 56 means 5 years (until age 61).',
+  },
+  {
+    question: 'What interest rate can I use for SEPP calculations?',
+    answerHtml: 'Per <b>IRS Notice 2022-06</b>, the interest rate used for SEPP calculations cannot exceed the <b>greater of</b>:<br /><br /><ul><li><b>5.0%</b>, OR</li><li><b>120% of the Federal Mid-Term Rate</b> for either of the two months immediately before the first distribution</li></ul><br />The IRS publishes the Federal Mid-Term Rate monthly. For example, if the Federal Mid-Term Rate is 4.5%, the maximum SEPP rate would be 5.4% (120% × 4.5% = 5.4%, which is greater than 5.0%).<br /><br />You can choose to use a <b>lower</b> rate than the maximum allowed, which would result in lower annual payments.',
+    answerText: 'The SEPP interest rate cannot exceed the greater of 5.0% or 120% of the Federal Mid-Term Rate. You may use a lower rate, which would result in lower annual payments.',
+  },
+  {
+    question: 'What happens if I stop or modify my SEPP payments early?',
+    answerHtml: '<b>Warning:</b> If you modify, suspend, or stop SEPP payments before the lock-in period ends, the IRS will <b>retroactively apply the 10% early withdrawal penalty</b> to ALL previous SEPP distributions, plus interest and potential penalties on the underpayment.<br /><br />The only exceptions are:<ul><li><b>Disability</b> (as defined by Social Security Administration rules)</li><li><b>Death</b> — the payments transfer to your beneficiaries</li></ul><br />There is no "undo" button. Once you start a SEPP plan, you are legally bound to continue for the full lock-in period. This is why it is critical to carefully consider whether SEPP is right for you before starting.',
+    answerText: 'Stopping or modifying SEPP payments early triggers retroactive 10% penalty on ALL previous distributions plus interest. The only exceptions are disability or death. There is no undo — you are locked in for the full duration.',
+  },
+  {
+    question: 'Can I use SEPP with a 401(k) or only an IRA?',
+    answerHtml: 'You can use SEPP with:<br /><br /><ul><li><b>Traditional IRA</b> — most common option</li><li><b>Roth IRA</b> — but only for contributions (not earnings) if the account is less than 5 years old</li><li><b>401(k) and 403(b) plans</b> — but you typically need to roll the funds into an IRA first</li><li><b>SEP IRA and SIMPLE IRA</b> — with some restrictions on SIMPLE IRAs</li></ul><br />The most common approach is to <b>roll your 401(k) into a Traditional IRA</b> and then establish the SEPP from the IRA. This gives you more flexibility and lower fees than maintaining a SEPP directly from an employer plan.',
+    answerText: 'SEPP can be used with Traditional IRAs, Roth IRAs (for contributions), 401(k)s, 403(b)s, SEP IRAs, and SIMPLE IRAs. Most people roll 401(k) funds into an IRA first for more flexibility and lower fees.',
+  },
+  {
+    question: 'Which SEPP method gives the highest payment?',
+    answerHtml: 'Generally, the <b>RMD method</b> gives the <b>highest initial payment</b> because it divides the account balance by the life expectancy factor without accounting for growth. However, the payment <b>decreases each year</b> as the balance is drawn down.<br /><br />The <b>Fixed Amortization</b> and <b>Fixed Annuitization</b> methods produce <b>level payments</b> that remain constant. These are typically lower than the RMD method\'s Year 1 payment but higher in later years.<br /><br /><b>Example</b> (on a $500,000 account at age 40 with 5% rate):<br />• RMD: ~$12,346 (Year 1, variable)<br />• Fixed Amortization: ~$26,235 (level for all years)<br />• Fixed Annuitization: ~$25,307 (level for all years)<br /><br />Use our calculator above to compare methods for your specific situation.',
+    answerText: 'The RMD method typically gives the highest initial payment but decreases annually. Fixed Amortization and Fixed Annuitization produce level payments that are usually lower in Year 1 but higher in later years.',
+  },
+  {
+    question: 'Do I need to report SEPP distributions on my taxes?',
+    answerHtml: '<b>Yes.</b> SEPP distributions are treated as <b>ordinary income</b> and must be reported on your federal tax return (Form 1040). They are <b>not</b> subject to the 10% early withdrawal penalty if you follow SEPP rules, but they <b>are</b> subject to:<br /><br /><ul><li><b>Federal income tax</b> at your marginal tax rate</li><li><b>State income tax</b> (if applicable in your state)</li><li><b>No 10% penalty</b> — this is the key benefit of SEPP</li></ul><br />The custodian may also withhold federal income tax from each SEPP distribution. You can adjust this by filing Form W-4P with your custodian. It is often beneficial to have taxes withheld to avoid underpayment penalties.',
+    answerText: 'Yes, SEPP distributions are ordinary income reported on your tax return. They are subject to federal and state income tax but NOT the 10% early withdrawal penalty. Custodians may withhold taxes automatically.',
+  },
+];
+---
+
+<PageLayout
+  title="72(t) SEPP Calculator — Calculate Substantially Equal Periodic Payments"
+  description="Free 72(t) SEPP calculator to calculate Substantially Equal Periodic Payments from your IRA or 401(k) before age 59½. Compare RMD, Amortization, and Annuitization methods. IRS Notice 2022-06 compliant."
+  canonical="https://truefinancetools.com/sepp-calculator"
+  ogImage="https://truefinancetools.com/og-sepp-calculator.png"
+  ogImageAlt="72(t) SEPP Calculator - Substantially Equal Periodic Payments"
+  pageType="website"
+  keywords="72t calculator, SEPP calculator, substantially equal periodic payments, early retirement withdrawal, IRA before 59.5, 72t distribution, SEPP plan, early retirement penalty, IRS 72t, RMD method SEPP, amortization method SEPP, annuitization method SEPP"
+>
+  <StructuredData
+    title="72(t) SEPP Calculator"
+    description="Free 72(t) SEPP calculator for Substantially Equal Periodic Payments. Compare RMD, Fixed Amortization, and Fixed Annuitization methods. IRS Notice 2022-06 compliant."
+    url="https://truefinancetools.com/sepp-calculator"
+    toolName="72(t) SEPP Calculator"
+    toolDescription="Calculate Substantially Equal Periodic Payments from your retirement account before age 59½ to avoid the 10% early withdrawal penalty."
+    faqItems={seppFaqItems}
+    features={[
+      'Compare RMD, Fixed Amortization, and Fixed Annuitization methods',
+      'IRS Notice 2022-06 compliant interest rate validation',
+      'Interactive amortization schedule with year-by-year breakdown',
+      'SVG chart showing balance drawdown over time',
+      'SEPP lock-in period calculator',
+      'IRS Single Life Expectancy table (2022+ update)'
+    ]}
+  />
+
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        72(t) SEPP Calculator
+      </h1>
+      <p class="text-lg text-body">Calculate Substantially Equal Periodic Payments from your retirement account before age 59½ — without the 10% early withdrawal penalty.</p>
+    </div>
+  </section>
+
+  <SEPPCalculator />
+
+  <HowItWorks title="How the 72(t) SEPP Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Details</h3>
+      <p class="text-sm text-body">Input your current age, retirement account balance, and the Federal Mid-Term interest rate.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Choose Your Method</h3>
+      <p class="text-sm text-body">Compare three IRS-approved methods: RMD (variable), Fixed Amortization (level), and Fixed Annuitization (level).</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Review Your Schedule</h3>
+      <p class="text-sm text-body">See your annual distributions, lock-in period, and projected balance drawdown over the full SEPP duration.</p>
+    </div>
+  </HowItWorks>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is a 72(t) SEPP Distribution?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Section 72(t)</strong> of the Internal Revenue Code allows you to take <strong>Substantially Equal Periodic Payments (SEPP)</strong> from your IRA, 401(k), or other qualified retirement accounts before age 59½ <strong>without paying the 10% early withdrawal penalty</strong>. This is one of the few legal strategies to access retirement funds early.
+        </p>
+
+        <p class="mb-4">
+          The payments must be calculated using one of three IRS-approved methods and must continue for the <strong>longer of 5 years or until you reach age 59½</strong>. Once started, modifying the payment schedule triggers a retroactive 10% penalty on all previous withdrawals.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Three IRS-Approved Calculation Methods</h3>
+
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Method</th>
+                <th class="p-3 font-medium text-ink">Payment Type</th>
+                <th class="p-3 font-medium text-ink">Formula</th>
+                <th class="p-3 font-medium text-ink">Best For</th>
+              </tr>
+            </thead>
+            <tbody class="text-sm">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 font-medium text-ink">RMD (Required Minimum Distribution)</td>
+                <td class="p-3 text-body">Variable — changes annually</td>
+                <td class="p-3 font-mono text-xs text-ink">Balance ÷ Life Expectancy Factor</td>
+                <td class="p-3 text-body">Those who want higher initial payments</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 font-medium text-ink">Fixed Amortization</td>
+                <td class="p-3 text-body">Level — constant for full duration</td>
+                <td class="p-3 font-mono text-xs text-ink">Balance × PMT formula</td>
+                <td class="p-3 text-body">Those who want predictable, steady income</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-ink">Fixed Annuitization</td>
+                <td class="p-3 text-body">Level — constant for full duration</td>
+                <td class="p-3 font-mono text-xs text-ink">Balance ÷ Annuity Factor</td>
+                <td class="p-3 text-body">Conservative approach with slightly different calculation</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">The Risk of Modifying a SEPP Plan (Recapture Tax)</h3>
+
+        <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+          <p class="mb-2 text-sm font-semibold text-error">⚠️ Critical Warning</p>
+          <p class="text-sm text-body">
+            Once you start a SEPP plan, you <strong>must</strong> continue taking the calculated payments for the full lock-in period (5 years or until age 59½, whichever is longer). If you modify, suspend, or change the payment amount before the lock-in period ends, the IRS will <strong>retroactively apply the 10% early withdrawal penalty</strong> to all previous distributions, plus interest and potential penalties on the underpayment.
+          </p>
+          <p class="mt-2 text-sm text-body">
+            The only exceptions are <strong>disability</strong> (as defined by IRS rules) or <strong>death</strong>. There is no "undo" button — this is a binding commitment.
+          </p>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Consider a 72(t) SEPP Plan?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Early Retirees (Under 59½)</h4>
+            <p class="text-sm text-body">Those who have retired early and need to bridge the gap until age 59½ when penalty-free withdrawals become available.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Career Changers</h4>
+            <p class="text-sm text-body">Professionals taking a sabbatical, starting a business, or transitioning to lower-income work who need access to retirement funds.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">FIRE Enthusiasts</h4>
+            <p class="text-sm text-body">Those pursuing Financial Independence and Retire Early who want a structured way to access retirement accounts before 59½.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Emergency Situations</h4>
+            <p class="text-sm text-body">People facing unexpected expenses who have exhausted other options and need to access retirement funds without the 10% penalty.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">SEPP Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Avoid the 10% early withdrawal penalty</li>
+              <li>• Three flexible calculation methods</li>
+              <li>• Can be applied to IRAs, 401(k)s, and other qualified accounts</li>
+              <li>• No income limitations</li>
+              <li>• Can be combined with other early retirement strategies</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Locked in for 5+ years — no flexibility</li>
+              <li>• Modifying triggers retroactive 10% penalty</li>
+              <li>• Payments may be higher or lower than needed</li>
+              <li>• RMD method payments decrease over time</li>
+              <li>• Must recalculate using IRS tables — no custom schedules</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About 72(t) SEPP
+      </h2>
+
+      <div class="space-y-4">
+        {seppFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to 72(t) SEPP Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose a 72(t) SEPP Plan?</h3>
+        <p class="mb-4">The 72(t) SEPP strategy is one of the most powerful tools for early retirees who need access to their retirement accounts before age 59½. Unlike a Roth conversion ladder (which requires a 5-year waiting period) or a Rule of 55 (which only applies to your most recent employer's 401(k)), a SEPP plan can be established with any IRA or qualified retirement account at any time.</p>
+
+        <p class="mb-4">The key advantage is <strong>immediate access</strong> — once you establish the SEPP, your first payment can be taken right away. This makes it ideal for people who have already retired or are about to retire and need their retirement funds to cover living expenses.</p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This 72(t) SEPP Calculator</h3>
+        <p class="mb-4">Unlike generic calculators that only show one method, our tool compares <strong>all three IRS-approved methods</strong> side by side. You can instantly see how RMD, Fixed Amortization, and Fixed Annuitization differ in Year 1 payments and total distributions over the full SEPP duration.</p>
+
+        <p class="mb-4">The calculator also validates your chosen interest rate against IRS rules — the rate cannot exceed the <strong>greater of 5% or 120% of the current Federal Mid-Term Rate</strong>. This ensures your SEPP plan is compliant from the start.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Financial Calculators
+      </h2>
+      <p class="mb-8 text-body">More tools to help you plan your financial future.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Calculate your Financial Independence number and retirement timeline.</p>
+        </a>
+        <a href="/die-with-zero-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Die with Zero Calculator</h3>
+          <p class="text-xs text-body">Optimize your spending to enjoy life while maintaining financial security.</p>
+        </a>
+        <a href="/perpetual-swr-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Perpetual SWR Calculator</h3>
+          <p class="text-xs text-body">Find a withdrawal rate that preserves your portfolio indefinitely.</p>
+        </a>
+        <a href="/vpw-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">VPW Withdrawal Calculator</h3>
+          <p class="text-xs text-body">Variable Percentage Withdrawal for dynamic retirement income.</p>
+        </a>
+        <a href="/one-more-year-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">One More Year Calculator</h3>
+          <p class="text-xs text-body">See if working one more year really makes a difference.</p>
+        </a>
+        <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+          <p class="text-xs text-body">Find your Coast FIRE target and stop aggressive saving.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Disclaimer -->
+  <section class="border-t border-hairline bg-canvas-soft py-8">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <div class="rounded-lg border border-warning/30 bg-warning-soft p-4">
+        <p class="text-xs text-body">
+          <strong class="text-warning">Disclaimer:</strong> This tool provides mathematical estimations based on IRS Notice 2022-6. It does not constitute certified tax or legal counsel. SEPP rules are complex and violating them can result in significant penalties. Always consult a qualified tax professional before establishing a SEPP plan. The IRS may impose a 10% additional tax on early distributions if SEPP requirements are not met.
+        </p>
+      </div>
+    </div>
+  </section>
+
+</PageLayout>

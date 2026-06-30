@@ -1,0 +1,580 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+---
+
+<div id="sepp-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="mb-8 text-center">
+    <p class="mb-2 font-mono text-xs uppercase tracking-wider text-mute">Free Calculator</p>
+    <h1 class="mb-3 text-3xl font-semibold tracking-tight text-ink sm:text-4xl lg:text-5xl" style="letter-spacing: -0.02em;">
+      72(t) SEPP Calculator
+    </h1>
+    <p class="mx-auto max-w-2xl text-body">
+      Compare IRS-approved methods for penalty-free early retirement distributions. See how RMD, Fixed Amortization, and Fixed Annuitization affect your portfolio over time.
+    </p>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- ──── INPUT PANEL ──── -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <div class="mb-4">
+          <h2 class="text-sm font-semibold text-ink">Account Details</h2>
+        </div>
+
+        <form id="sepp-form" class="space-y-4">
+          <Input label="Current Age" name="currentAge" type="number" value={40} min={20} max={59} required />
+
+          <Slider label="Retirement Account Balance" name="accountBalance" value={500000} min={10000} max={10000000} step={10000} suffix="" inputId="accountBalance" displayId="accountBalanceValue" />
+
+          <Slider label="Federal Mid-Term Rate" name="federalMidTermRate" value={4.5} min={1} max={10} step={0.1} suffix="%" inputId="federalMidTermRate" displayId="federalMidTermRateValue" tooltip="The current IRS Federal Mid-Term rate. The IRS updates this monthly." />
+
+          <Slider label="Chosen Interest Rate" name="interestRate" value={4.5} min={1} max={12} step={0.1} suffix="%" inputId="interestRate" displayId="interestRateValue" tooltip="Must not exceed the GREATER of 5% or 120% of the Federal Mid-Term Rate." />
+
+          <Slider label="Estimated Portfolio Growth" name="growthRate" value={7} min={1} max={12} step={0.5} suffix="%" inputId="growthRate" displayId="growthRateValue" tooltip="For visualization purposes. The SEPP distribution is set at the start and locked in." />
+        </form>
+
+        <!-- Rate Validation Warning -->
+        <div id="rate-warning" class="hidden mt-4 rounded-md bg-error/10 p-3 text-xs text-error">
+          <span id="rate-warning-text"></span>
+        </div>
+
+        <!-- Duration / Lock-in Info -->
+        <div id="duration-info" class="mt-4 rounded-md bg-canvas-soft-2 p-4">
+          <h3 class="mb-2 text-xs font-semibold text-ink">SEPP Lock-In Period</h3>
+          <div class="space-y-1 font-mono text-xs tabular-nums">
+            <div class="flex justify-between">
+              <span class="text-body">Years until age 59½:</span>
+              <span id="years-to-59" class="text-ink">19.5 years</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-body">Minimum SEPP duration:</span>
+              <span id="required-years" class="text-ink font-semibold">19.5 years</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-body">Lock-in ends at age:</span>
+              <span id="lock-in-age" class="text-link font-semibold">59½</span>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </div>
+
+    <!-- ──── OUTPUT PANEL ──── -->
+    <div class="lg:col-span-7">
+      <!-- Tab Bar -->
+      <div class="flex gap-2 mb-4">
+        <button id="tab-comparison" class="tab-btn rounded-md bg-ink px-3 py-2 text-xs font-medium text-canvas" data-tab="comparison">Method Comparison</button>
+        <button id="tab-schedule" class="tab-btn rounded-md bg-canvas-soft-2 px-3 py-2 text-xs font-medium text-body hover:text-ink" data-tab="schedule">Amortization Schedule</button>
+        <button id="tab-chart" class="tab-btn rounded-md bg-canvas-soft-2 px-3 py-2 text-xs font-medium text-body hover:text-ink" data-tab="chart">Cash Flow Chart</button>
+      </div>
+
+      <!-- Tab: Comparison -->
+      <div id="panel-comparison" class="tab-panel">
+        <div class="grid gap-4 sm:grid-cols-3">
+          <!-- RMD Card -->
+          <div class="rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <div class="mb-2 flex items-center gap-2">
+              <div class="h-2 w-2 rounded-full bg-link"></div>
+              <h3 class="text-xs font-semibold text-ink">RMD Method</h3>
+            </div>
+            <p id="rmd-year1" class="font-mono text-2xl font-semibold text-ink tabular-nums">$0</p>
+            <p class="mt-1 text-xs text-body">Variable schedule — recalculates annually</p>
+            <div class="mt-3 border-t border-hairline pt-3">
+              <p class="text-xs text-mute">Year 1 Payment</p>
+              <p id="rmd-year1-detail" class="font-mono text-xs text-ink tabular-nums">Balance / LE Factor</p>
+            </div>
+          </div>
+
+          <!-- Fixed Amortization Card -->
+          <div class="rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <div class="mb-2 flex items-center gap-2">
+              <div class="h-2 w-2 rounded-full bg-success-deep"></div>
+              <h3 class="text-xs font-semibold text-ink">Fixed Amortization</h3>
+            </div>
+            <p id="amort-year1" class="font-mono text-2xl font-semibold text-ink tabular-nums">$0</p>
+            <p class="mt-1 text-xs text-body">Level payment — constant for full duration</p>
+            <div class="mt-3 border-t border-hairline pt-3">
+              <p class="text-xs text-mute">Year 1 Payment</p>
+              <p id="amort-year1-detail" class="font-mono text-xs text-ink tabular-nums">PMT formula</p>
+            </div>
+          </div>
+
+          <!-- Fixed Annuitization Card -->
+          <div class="rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <div class="mb-2 flex items-center gap-2">
+              <div class="h-2 w-2 rounded-full bg-warning"></div>
+              <h3 class="text-xs font-semibold text-ink">Fixed Annuitization</h3>
+            </div>
+            <p id="annuit-year1" class="font-mono text-2xl font-semibold text-ink tabular-nums">$0</p>
+            <p class="mt-1 text-xs text-body">Level payment — constant for full duration</p>
+            <div class="mt-3 border-t border-hairline pt-3">
+              <p class="text-xs text-mute">Year 1 Payment</p>
+              <p id="annuit-year1-detail" class="font-mono text-xs text-ink tabular-nums">Annuity factor</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary Row -->
+        <div class="mt-4 rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+          <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <div>
+              <p class="text-xs text-mute">Total RMD Distributions</p>
+              <p id="rmd-total" class="font-mono text-sm font-semibold text-ink tabular-nums">$0</p>
+            </div>
+            <div>
+              <p class="text-xs text-mute">Total Amortization Distributions</p>
+              <p id="amort-total" class="font-mono text-sm font-semibold text-ink tabular-nums">$0</p>
+            </div>
+            <div>
+              <p class="text-xs text-mute">Total Annuitization Distributions</p>
+              <p id="annuit-total" class="font-mono text-sm font-semibold text-ink tabular-nums">$0</p>
+            </div>
+            <div>
+              <p class="text-xs text-mute">SEPP Duration</p>
+              <p id="total-duration" class="font-mono text-sm font-semibold text-ink tabular-nums">0 years</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Schedule -->
+      <div id="panel-schedule" class="tab-panel hidden">
+        <div class="overflow-x-auto rounded-lg border border-hairline bg-canvas shadow-sm">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 text-xs font-medium text-mute">Year</th>
+                <th class="p-3 text-xs font-medium text-mute">Age</th>
+                <th class="p-3 text-xs font-medium text-mute">Starting Balance</th>
+                <th class="p-3 text-xs font-medium text-mute">RMD Payment</th>
+                <th class="p-3 text-xs font-medium text-mute">Amort Payment</th>
+                <th class="p-3 text-xs font-medium text-mute">Annuit Payment</th>
+                <th class="p-3 text-xs font-medium text-mute">Ending Balance</th>
+              </tr>
+            </thead>
+            <tbody id="schedule-body" class="font-mono text-xs tabular-nums">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab: Chart -->
+      <div id="panel-chart" class="tab-panel hidden">
+        <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
+          <h2 class="mb-4 text-sm font-medium text-ink">Balance Drawdown Over SEPP Duration</h2>
+          <div class="relative h-64 sm:h-80">
+            <svg id="sepp-chart" class="h-full w-full" role="img" aria-label="SEPP balance drawdown chart showing portfolio value over time for all three methods"></svg>
+          </div>
+          <div class="mt-3 flex gap-4 text-xs">
+            <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-link"></span> RMD</span>
+            <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-success-deep"></span> Fixed Amortization</span>
+            <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-full bg-warning"></span> Fixed Annuitization</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { calculateSEPPComparison, validateInterestRate, calculateSEPPDuration, formatDollar, type SEPPComparison } from '../../utils/seppMath';
+
+  let comparison: SEPPComparison | null = null;
+  let activeTab = 'comparison';
+
+  function getFormData() {
+    const form = document.getElementById('sepp-form') as HTMLFormElement;
+    const formData = new FormData(form);
+    return {
+      accountBalance: Number(formData.get('accountBalance')) || 500000,
+      currentAge: Number(formData.get('currentAge')) || 40,
+      interestRate: Number(formData.get('interestRate')) || 4.5,
+      federalMidTermRate: Number(formData.get('federalMidTermRate')) || 4.5,
+      growthRate: Number(formData.get('growthRate')) || 7,
+    };
+  }
+
+  function updateAll() {
+    const input = getFormData();
+
+    // Convert percentages to decimals for the math module
+    comparison = calculateSEPPComparison({
+      accountBalance: input.accountBalance,
+      currentAge: input.currentAge,
+      interestRate: input.interestRate / 100,
+      federalMidTermRate: input.federalMidTermRate / 100,
+      growthRate: input.growthRate / 100,
+    });
+
+    updateSliderDisplays(input);
+    updateDurationInfo();
+    updateRateWarning();
+    updateComparisonCards();
+    updateScheduleTable();
+    updateChart();
+  }
+
+  function updateSliderDisplays(input: ReturnType<typeof getFormData>) {
+    const balanceDisplay = document.getElementById('accountBalanceValue');
+    if (balanceDisplay) {
+      balanceDisplay.textContent = formatDollar(input.accountBalance);
+    }
+
+    const fedRateDisplay = document.getElementById('federalMidTermRateValue');
+    if (fedRateDisplay) {
+      fedRateDisplay.textContent = `${input.federalMidTermRate.toFixed(1)}%`;
+    }
+
+    const interestDisplay = document.getElementById('interestRateValue');
+    if (interestDisplay) {
+      interestDisplay.textContent = `${input.interestRate.toFixed(1)}%`;
+    }
+
+    const growthDisplay = document.getElementById('growthRateValue');
+    if (growthDisplay) {
+      growthDisplay.textContent = `${input.growthRate.toFixed(1)}%`;
+    }
+  }
+
+  function updateDurationInfo() {
+    if (!comparison) return;
+    const d = comparison.duration;
+    document.getElementById('years-to-59')!.textContent = `${d.yearsByAge.toFixed(1)} years`;
+    document.getElementById('required-years')!.textContent = `${d.requiredYears.toFixed(1)} years`;
+    document.getElementById('lock-in-age')!.textContent = formatLockInAge(d.lockInAge);
+  }
+
+  function formatLockInAge(age: number): string {
+    const whole = Math.floor(age);
+    const frac = age - whole;
+    if (frac >= 0.49 && frac <= 0.51) {
+      return `${whole}½`;
+    }
+    return age.toFixed(1);
+  }
+
+  function updateRateWarning() {
+    if (!comparison) return;
+    const warning = document.getElementById('rate-warning')!;
+    const text = document.getElementById('rate-warning-text')!;
+    const rv = comparison.rateValidation;
+
+    if (rv.valid) {
+      warning.classList.add('hidden');
+    } else {
+      warning.classList.remove('hidden');
+      text.textContent = rv.message;
+    }
+  }
+
+  function updateComparisonCards() {
+    if (!comparison) return;
+
+    const { rmd, fixedAmortization, fixedAnnuitization, duration } = comparison;
+
+    document.getElementById('rmd-year1')!.textContent = formatDollar(rmd.year1Payment);
+    document.getElementById('rmd-year1-detail')!.textContent = `${formatDollar(rmd.year1Payment)}`;
+
+    document.getElementById('amort-year1')!.textContent = formatDollar(fixedAmortization.year1Payment);
+    document.getElementById('amort-year1-detail')!.textContent = `${formatDollar(fixedAmortization.year1Payment)}`;
+
+    document.getElementById('annuit-year1')!.textContent = formatDollar(fixedAnnuitization.year1Payment);
+    document.getElementById('annuit-year1-detail')!.textContent = `${formatDollar(fixedAnnuitization.year1Payment)}`;
+
+    document.getElementById('rmd-total')!.textContent = formatDollar(rmd.totalDistributions);
+    document.getElementById('amort-total')!.textContent = formatDollar(fixedAmortization.totalDistributions);
+    document.getElementById('annuit-total')!.textContent = formatDollar(fixedAnnuitization.totalDistributions);
+    document.getElementById('total-duration')!.textContent = `${duration.requiredYears.toFixed(1)} years`;
+  }
+
+  function updateScheduleTable() {
+    if (!comparison) return;
+    const tbody = document.getElementById('schedule-body')!;
+    const { rmd, fixedAmortization, fixedAnnuitization } = comparison;
+    const totalYears = Math.ceil(comparison.duration.requiredYears);
+
+    const rows: string[] = [];
+    for (let i = 0; i < totalYears; i++) {
+      const rmdYear = rmd.timeline[i];
+      const amortYear = fixedAmortization.timeline[i];
+      const annuitYear = fixedAnnuitization.timeline[i];
+      if (!rmdYear) break;
+
+      const isOdd = i % 2 === 1;
+      const rowClass = isOdd ? 'bg-canvas-soft-2/50' : '';
+
+      rows.push(`
+        <tr class="${rowClass}">
+          <td class="p-3 text-ink">${rmdYear.year}</td>
+          <td class="p-3 text-ink">${rmdYear.age}</td>
+          <td class="p-3 text-ink">${formatDollar(rmdYear.startingBalance)}</td>
+          <td class="p-3 text-link">${formatDollar(rmdYear.seppDistribution)}</td>
+          <td class="p-3 text-success-deep">${amortYear ? formatDollar(amortYear.seppDistribution) : '—'}</td>
+          <td class="p-3 text-warning">${annuitYear ? formatDollar(annuitYear.seppDistribution) : '—'}</td>
+          <td class="p-3 text-ink">${formatDollar(rmdYear.endingBalance)}</td>
+        </tr>
+      `);
+    }
+
+    tbody.innerHTML = rows.join('');
+  }
+
+  // ───────── SVG Chart ─────────
+
+  function formatCompact(value: number): string {
+    try {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        notation: 'compact',
+        compactDisplay: 'short',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 1,
+      }).format(value);
+    } catch {
+      // Fallback for older browsers
+      if (value >= 1000000) return '$' + (value / 1000000).toFixed(1) + 'M';
+      if (value >= 1000) return '$' + (value / 1000).toFixed(0) + 'K';
+      return '$' + Math.round(value);
+    }
+  }
+
+  function updateChart() {
+    if (!comparison) return;
+    const svg = document.getElementById('sepp-chart') as unknown as SVGSVGElement;
+    if (!svg) return;
+
+    const isDark = document.documentElement.classList.contains('dark');
+
+    const rmdColor = isDark ? '#3291ff' : '#0070f3';
+    const amortColor = isDark ? '#50e3c2' : '#29bc9b';
+    const annuitColor = '#f5a623';
+    const gridColor = isDark ? '#262626' : '#ebebeb';
+    const textColor = isDark ? '#737373' : '#888888';
+    const axisColor = isDark ? '#525252' : '#a1a1a1';
+    const bgColor = 'transparent';
+
+    // Layout
+    const margin = { top: 20, right: 20, bottom: 40, left: 60 };
+    const svgWidth = 580;
+    const svgHeight = 300;
+    const chartWidth = svgWidth - margin.left - margin.right;
+    const chartHeight = svgHeight - margin.top - margin.bottom;
+
+    svg.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    svg.innerHTML = '';
+
+    // Data preparation
+    const { rmd, fixedAmortization, fixedAnnuitization, duration } = comparison;
+    const totalYears = Math.ceil(duration.requiredYears);
+    const startingBalance = rmd.timeline[0]?.startingBalance || 0;
+
+    // Build chart data arrays: [startingBalance, ...endingBalances for each year]
+    function buildChartData(schedule: typeof rmd): number[] {
+      const data = [startingBalance];
+      for (let i = 0; i < totalYears && i < schedule.timeline.length; i++) {
+        data.push(schedule.timeline[i].endingBalance);
+      }
+      return data;
+    }
+
+    const rmdData = buildChartData(rmd);
+    const amortData = buildChartData(fixedAmortization);
+    const annuitData = buildChartData(fixedAnnuitization);
+
+    // Find max value for Y-axis
+    let maxVal = startingBalance;
+    for (const arr of [rmdData, amortData, annuitData]) {
+      for (const v of arr) {
+        if (v > maxVal) maxVal = v;
+      }
+    }
+
+    // Round up to a nice number
+    const magnitude = Math.pow(10, Math.floor(Math.log10(Math.max(maxVal, 1))));
+    const niceMax = Math.ceil(maxVal / magnitude) * magnitude;
+
+    // Create main group
+    const ns = 'http://www.w3.org/2000/svg';
+    const g = document.createElementNS(ns, 'g');
+    g.setAttribute('transform', `translate(${margin.left}, ${margin.top})`);
+    svg.appendChild(g);
+
+    // ── Y-axis grid + labels ──
+    const yTickCount = 5;
+    for (let i = 0; i <= yTickCount; i++) {
+      const y = (chartHeight / yTickCount) * i;
+      const value = niceMax - (niceMax / yTickCount) * i;
+
+      const line = document.createElementNS(ns, 'line');
+      line.setAttribute('x1', '0');
+      line.setAttribute('y1', String(y));
+      line.setAttribute('x2', String(chartWidth));
+      line.setAttribute('y2', String(y));
+      line.setAttribute('stroke', gridColor);
+      line.setAttribute('stroke-width', '1');
+      g.appendChild(line);
+
+      const text = document.createElementNS(ns, 'text');
+      text.setAttribute('x', '-8');
+      text.setAttribute('y', String(y + 4));
+      text.setAttribute('text-anchor', 'end');
+      text.setAttribute('fill', textColor);
+      text.setAttribute('font-size', '11');
+      text.setAttribute('font-family', 'Geist Mono, monospace');
+      text.textContent = formatCompact(value);
+      g.appendChild(text);
+    }
+
+    // ── X-axis labels ──
+    const xLabelInterval = Math.max(1, Math.ceil(totalYears / 8));
+    // Round to nearest 5
+    const xStep = Math.ceil(xLabelInterval / 5) * 5;
+    for (let year = 0; year <= totalYears; year += Math.max(1, xStep)) {
+      const x = (chartWidth / totalYears) * year;
+
+      const line = document.createElementNS(ns, 'line');
+      line.setAttribute('x1', String(x));
+      line.setAttribute('y1', '0');
+      line.setAttribute('x2', String(x));
+      line.setAttribute('y2', String(chartHeight));
+      line.setAttribute('stroke', gridColor);
+      line.setAttribute('stroke-width', '1');
+      g.appendChild(line);
+
+      const text = document.createElementNS(ns, 'text');
+      text.setAttribute('x', String(x));
+      text.setAttribute('y', String(chartHeight + 18));
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('fill', textColor);
+      text.setAttribute('font-size', '11');
+      text.textContent = `Year ${year}`;
+      g.appendChild(text);
+    }
+
+    // ── Y-axis title ──
+    const yTitle = document.createElementNS(ns, 'text');
+    yTitle.setAttribute('x', '12');
+    yTitle.setAttribute('y', '-8');
+    yTitle.setAttribute('fill', textColor);
+    yTitle.setAttribute('font-size', '10');
+    yTitle.setAttribute('font-family', 'Geist Mono, monospace');
+    yTitle.textContent = 'Balance';
+    g.appendChild(yTitle);
+
+    // ── Draw a data line ──
+    function drawLine(data: number[], color: string) {
+      if (data.length < 2) return;
+
+      const pointCount = data.length;
+      const points: { x: number; y: number }[] = data.map((val, i) => {
+        const x = (chartWidth / (pointCount - 1)) * i;
+        const y = chartHeight - (val / niceMax) * chartHeight;
+        return { x, y };
+      });
+
+      // Polyline
+      const polyline = document.createElementNS(ns, 'polyline');
+      polyline.setAttribute('points', points.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' '));
+      polyline.setAttribute('fill', 'none');
+      polyline.setAttribute('stroke', color);
+      polyline.setAttribute('stroke-width', '2');
+      polyline.setAttribute('stroke-linejoin', 'round');
+      polyline.setAttribute('stroke-linecap', 'round');
+      g.appendChild(polyline);
+
+      // Dots (skip if too many points — more than 60)
+      if (pointCount <= 60) {
+        points.forEach(p => {
+          const circle = document.createElementNS(ns, 'circle');
+          circle.setAttribute('cx', String(p.x.toFixed(2)));
+          circle.setAttribute('cy', String(p.y.toFixed(2)));
+          circle.setAttribute('r', '3');
+          circle.setAttribute('fill', color);
+          g.appendChild(circle);
+        });
+      }
+    }
+
+    drawLine(rmdData, rmdColor);
+    drawLine(amortData, amortColor);
+    drawLine(annuitData, annuitColor);
+  }
+
+  // ───────── Tab Switching ─────────
+
+  function switchTab(tab: string) {
+    activeTab = tab;
+
+    // Hide all panels
+    document.querySelectorAll('.tab-panel').forEach(el => {
+      (el as HTMLElement).classList.add('hidden');
+    });
+
+    // Update all buttons to inactive style
+    document.querySelectorAll('.tab-btn').forEach(el => {
+      const btn = el as HTMLElement;
+      btn.classList.remove('bg-ink', 'text-canvas');
+      btn.classList.add('bg-canvas-soft-2', 'text-body', 'hover:text-ink');
+    });
+
+    // Show the active panel
+    const panel = document.getElementById(`panel-${tab}`);
+    if (panel) panel.classList.remove('hidden');
+
+    // Style the active button
+    const btn = document.getElementById(`tab-${tab}`);
+    if (btn) {
+      btn.classList.remove('bg-canvas-soft-2', 'text-body', 'hover:text-ink');
+      btn.classList.add('bg-ink', 'text-canvas');
+    }
+
+    // Re-render chart when switching to it (container may have resized)
+    if (tab === 'chart') {
+      updateChart();
+    }
+  }
+
+  // ───────── Dark Mode Listener ─────────
+
+  function handleDarkModeChange() {
+    // Re-render chart and rate warning colors on dark mode toggle
+    if (activeTab === 'chart') {
+      updateChart();
+    }
+    updateRateWarning();
+  }
+
+  // ───────── Initialization ─────────
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('sepp-form') as HTMLFormElement;
+    form?.addEventListener('input', updateAll);
+
+    // Tab click handlers
+    document.querySelectorAll('.tab-btn').forEach(el => {
+      el.addEventListener('click', () => {
+        const tab = (el as HTMLElement).dataset.tab;
+        if (tab) switchTab(tab);
+      });
+    });
+
+    // Listen for dark mode changes via class on <html>
+    const observer = new MutationObserver(() => {
+      handleDarkModeChange();
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+    // Also react to system color scheme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      handleDarkModeChange();
+    });
+
+    // Initial calculation
+    updateAll();
+  });
+</script>
