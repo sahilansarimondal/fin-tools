@@ -1,0 +1,329 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import GuardrailsCalculator from '../../components/calculator/GuardrailsCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is the Guyton-Klinger rules calculator methodology?',
+    answerHtml: 'The <b>Guyton-Klinger rules</b> (also called the guardrails method) update your annual withdrawal based on portfolio performance rather than strictly tracking static inflation indexes. Instead of mechanically increasing your withdrawal by inflation every year — regardless of whether your portfolio gained or lost 30% — the rules create a "test rate" each year: your inflation-adjusted withdrawal divided by your current portfolio balance.<br /><br />If this test rate drifts more than <b>20% above</b> your initial withdrawal rate, you cut spending by 10% (Capital Preservation Rule). If it drifts more than <b>20% below</b>, you increase spending by 10% (Prosperity Rule). This dynamic adjustment protects your portfolio during bear markets while allowing you to enjoy the upside during bull markets.<br /><br />The methodology was developed by Jonathan Guyton and William Klinger in their landmark 2006 paper and has been validated through extensive Monte Carlo simulations showing improved portfolio survival rates compared to static withdrawal strategies.',
+    answerText: 'The Guyton-Klinger rules update withdrawals based on portfolio performance instead of static inflation tracking. A "test rate" is calculated each year. If it drifts 20%+ above your initial rate, spending is cut 10%. If it drifts 20%+ below, spending is increased 10%. This dynamic adjustment protects against bear markets while capturing bull market upside.',
+  },
+  {
+    question: 'How does a guardrails retirement withdrawal calculator prevent portfolio depletion?',
+    answerHtml: 'A guardrails calculator prevents portfolio depletion by <b>automatically scaling back spending during extended bear markets</b>. Here is how it works:<br /><br /><ol><li>When markets crash, your portfolio balance drops</li><li>Your inflation-adjusted withdrawal divided by the smaller portfolio creates a higher "test rate"</li><li>If the test rate exceeds the upper guardrail (120% of your initial rate), the calculator triggers a <b>10% spending cut</b></li><li>This reduced withdrawal means less money leaves the portfolio during the recovery period</li><li>When markets recover, the portfolio rebounds faster because less was withdrawn at the bottom</li></ol><br /><b>Example:</b> On a $1M portfolio with a 5% initial rate, if a crash drops the portfolio to $700K, the test rate would spike to ~7.5% — triggering a cut. Without guardrails, you would keep withdrawing $50K+ from a shrinking portfolio, accelerating depletion. With guardrails, you cut to ~$45K, preserving capital for the rebound.',
+    answerText: 'Guardrails prevent depletion by automatically cutting spending during bear markets. When markets crash and your test rate spikes above the upper guardrail, a 10% spending cut reduces the outflow from a shrinking portfolio. This preserves capital during the recovery period, preventing the death spiral that static withdrawal rules can trigger during extended downturns.',
+  },
+  {
+    question: 'Why choose a flexible retirement withdrawal strategy tool over the 4% rule?',
+    answerHtml: 'A <b>flexible retirement withdrawal strategy</b> like guardrails offers three key advantages over the static 4% rule:<br /><br /><ol><li><b>Higher initial withdrawal rate:</b> Because guardrails reduce spending during bad markets, historical simulations show you can start with a higher initial rate (5-6%) while maintaining similar or better portfolio survival odds compared to a rigid 4% rule.</li><li><b>Active sequence risk protection:</b> The 4% rule assumes average returns will bail out any early losses. Guardrails actively reduce exposure during downturns, making the strategy more resilient to the exact sequence of returns that destroys static withdrawal plans.</li><li><b>Upside capture:</b> The Prosperity Rule lets you increase spending when markets perform well — something the 4% rule cannot do. This means you enjoy more of your wealth during good times while staying protected during bad times.</li></ol><br />The trade-off is spending variability. If you need perfectly predictable annual income, the 4% rule is simpler. But for retirees who value <b>portfolio survival and flexibility</b> over spending consistency, guardrails are the superior strategy.',
+    answerText: 'Flexible strategies like guardrails allow higher initial withdrawal rates (5-6% vs 4%), actively protect against sequence risk by cutting spending during downturns, and capture upside through the Prosperity Rule. The trade-off is spending variability — guardrails require flexibility but offer better portfolio survival odds.',
+  },
+  {
+    question: 'What happens during a stock market crash with the guardrails strategy?',
+    answerHtml: 'During a stock market crash, the guardrails strategy <b>automatically reduces your spending</b> to protect your portfolio. Here is the step-by-step sequence:<br /><br /><ol><li><b>Market drops 30-40%:</b> Your portfolio balance falls significantly</li><li><b>Test rate spikes:</b> Your inflation-adjusted withdrawal divided by the lower portfolio balance creates a higher test rate</li><li><b>Upper guardrail triggered:</b> If test rate exceeds 120% of your initial rate, the Capital Preservation Rule activates</li><li><b>10% spending cut:</b> Your withdrawal is reduced by 10% from the inflation-adjusted target</li><li><b>Reduced outflow:</b> Less money leaves the portfolio during the recovery period</li><li><b>Faster recovery:</b> The portfolio rebounds more quickly because less was withdrawn at the bottom</li></ol><br /><b>Critical insight:</b> The cut is 10% from the <i>inflation-adjusted target</i>, not 10% from your original withdrawal. In Year 1 of a crash, the reduction might be modest. But if the crash persists into Year 2-3, the cuts compound — each year cutting 10% from an already-reduced amount. This compounding protection is what makes guardrails so effective at preventing portfolio depletion.',
+    answerText: 'During a crash, the test rate spikes as your portfolio drops. When it exceeds the upper guardrail (120% of initial rate), spending is cut 10% from the inflation-adjusted target. This reduces outflow during recovery, allowing the portfolio to rebound faster. If the crash persists, cuts compound each year, providing escalating protection.',
+  },
+  {
+    question: 'How do I set the right initial withdrawal rate for guardrails?',
+    answerHtml: 'Setting the right initial withdrawal rate for guardrails requires balancing <b>spending needs</b> against <b>portfolio longevity</b>. Here are the guidelines:<br /><br /><ul><li><b>Conservative (4-5%):</b> Best for retirees with shorter timelines or less flexible spending. Similar to the traditional 4% rule but with dynamic adjustments. Highest portfolio survival odds.</li><li><b>Moderate (5-6%):</b> The sweet spot for most early retirees. Historical simulations show 5% with guardrails performs similarly to 4% without them, because the dynamic adjustments protect against sequence risk.</li><li><b>Aggressive (6-7%):</b> Only for retirees with very flexible spending, substantial Social Security income, or part-time work. Higher risk of depletion during extended bear markets, but guardrails significantly improve odds compared to a static 6% rule.</li></ul><br /><b>Rule of thumb:</b> Start with your desired withdrawal rate, then run this calculator with different return and inflation scenarios. If the guardrail triggers fewer than 3-4 times over 30 years, your rate is conservative enough. If triggers happen frequently (5+ times), consider lowering your initial rate.',
+    answerText: 'Conservative: 4-5% for shorter timelines or inflexible spending. Moderate: 5-6% for most early retirees (historically performs like static 4%). Aggressive: 6-7% only with flexible spending or supplemental income. Run the calculator with different scenarios — fewer than 3-4 triggers over 30 years indicates a sustainable rate.',
+  },
+  {
+    question: 'Can I combine guardrails with other withdrawal strategies?',
+    answerHtml: 'Yes — <b>combining guardrails with other strategies</b> creates a more robust retirement plan. Popular combinations include:<br /><br /><ul><li><b>Guardrails + Bucket Strategy:</b> Keep 2-3 years of expenses in cash (Bucket 1), bonds for years 3-5 (Bucket 2), and equities for years 6+ (Bucket 3). Guardrails manage the overall withdrawal rate while buckets handle short-term sequence risk.</li><li><b>Guardrails + Social Security Bridge:</b> Use guardrails for portfolio withdrawals from retirement until Social Security starts (age 62-70). Once Social Security kicks in, reduce portfolio withdrawals — the guardrails will naturally adjust.</li><li><b>Guardrails + Part-Time Income:</b> If you have part-time income covering 30-50% of expenses, guardrails only need to cover the gap. This dramatically improves portfolio survival because the guardrails have a smaller base to protect.</li><li><b>Guardrails + Cash Cushion:</b> Maintain a 1-2 year cash reserve. When guardrails trigger a cut, draw from cash instead of reducing lifestyle immediately. This smooths the spending adjustment.</li></ul><br />The key insight: guardrails are a <b>withdrawal rate management system</b>, not a complete retirement plan. They work best when combined with other strategies that address different aspects of retirement risk.',
+    answerText: 'Guardrails combine well with bucket strategies (cash/bond/equity buckets), Social Security bridge strategies, part-time income plans, and cash cushions. Guardrails manage the overall withdrawal rate while other strategies address specific risks like short-term sequence risk or income gaps.',
+  },
+  {
+    question: 'What is the difference between guardrails and VPW (Variable Percentage Withdrawal)?',
+    answerHtml: 'Both guardrails and VPW are <b>dynamic withdrawal strategies</b>, but they work differently:<br /><br /><div class="overflow-x-auto rounded-lg border border-hairline mt-2 mb-2"><table class="w-full text-left text-sm"><thead><tr class="border-b border-hairline bg-canvas-soft-2"><th class="p-2 font-medium text-ink">Feature</th><th class="p-2 font-medium text-ink">Guardrails (Guyton-Klinger)</th><th class="p-2 font-medium text-ink">VPW (Bogleheads)</th></tr></thead><tbody class="font-mono text-xs tabular-nums"><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Adjustment Trigger</td><td class="p-2 text-ink">Test rate vs guardrail band</td><td class="p-2 text-ink">Fixed percentage of portfolio</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Spending Floor</td><td class="p-2 text-ink">Yes (cuts are capped at 10%)</td><td class="p-2 text-ink">No (can drop significantly)</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Ruin Risk</td><td class="p-2 text-ink">Low (but not zero)</td><td class="p-2 text-ink">Zero (mathematically impossible)</td></tr><tr class="bg-success/5"><td class="p-2 text-body font-sans">Best For</td><td class="p-2 text-ink">Moderate flexibility</td><td class="p-2 text-ink">Maximum flexibility</td></tr></tbody></table></div><br /><b>Guardrails</b> give you more spending stability (cuts are limited to 10% per year) but carry some ruin risk in extreme scenarios. <b>VPW</b> guarantees you never run out of money (0% ruin risk) but can produce very low withdrawals during extended bear markets. Choose guardrails if you want moderate flexibility with spending floors; choose VPW if you want absolute safety and can tolerate highly variable income.',
+    answerText: 'Guardrails adjust spending based on a test rate vs a guardrail band, with 10% spending cuts/increases. VPW uses a fixed percentage of remaining portfolio each year. Guardrails have spending floors (more stable) but some ruin risk. VPW has zero ruin risk but can produce very low withdrawals. Guardrails suit moderate flexibility; VPW suits maximum flexibility.',
+  },
+];
+---
+
+<PageLayout
+  title="Guardrails Withdrawal Strategy Calculator — Dynamic FIRE Spending"
+  description="Free Guyton-Klinger guardrails calculator. Model dynamic retirement withdrawals with automatic spending adjustments to protect against sequence of returns risk."
+  canonical="https://truefinancetools.com/guardrails-withdrawal-calculator"
+  ogImage="https://truefinancetools.com/og-guardrails-withdrawal-calculator.png"
+  ogImageAlt="Guardrails Withdrawal Strategy Calculator — Dynamic FIRE Spending Adjustments"
+  pageType="website"
+  keywords="guardrails withdrawal calculator, Guyton-Klinger rules, dynamic withdrawal strategy, retirement spending calculator, sequence of returns protection, flexible withdrawal rate, FIRE withdrawal strategy, guardrails retirement"
+>
+  <StructuredData
+    title="Guardrails Withdrawal Strategy Calculator"
+    description="Free Guyton-Klinger guardrails calculator for dynamic retirement withdrawal planning with automatic spending adjustments."
+    url="https://truefinancetools.com/guardrails-withdrawal-calculator"
+    toolName="Guardrails Withdrawal Strategy Calculator"
+    toolDescription="Model the Guyton-Klinger guardrails withdrawal strategy with automatic spending adjustments based on portfolio performance."
+    faqItems={toolFaqItems}
+    features={[
+      'Year-by-year withdrawal simulation',
+      'Capital preservation and prosperity rule triggers',
+      'Interactive portfolio projection chart',
+      'Guardrail trigger visualization',
+      'Year-by-year projection table',
+      'Comparison with static withdrawal strategies'
+    ]}
+  />
+
+  <!-- Hero Section -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Guardrails Withdrawal Strategy Calculator
+      </h1>
+      <p class="text-lg text-body">Model dynamic retirement withdrawals with automatic spending adjustments that protect your portfolio from market volatility.</p>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <GuardrailsCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Guardrails Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Set Your Retirement Parameters</h3>
+      <p class="text-sm text-body">Enter your initial portfolio value, target withdrawal rate, expected returns, inflation, and retirement timeline.</p>
+    </div>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Watch the Guardrails Adjust</h3>
+      <p class="text-sm text-body">See how the calculator automatically cuts or increases spending when your withdrawal rate drifts beyond the 20% guardrail band.</p>
+    </div>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+          <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Analyze the Full Projection</h3>
+      <p class="text-sm text-body">Review the interactive chart and year-by-year table showing portfolio balance, withdrawals, and guardrail triggers over your entire retirement.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is the Guardrails Withdrawal Strategy? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is the Guardrails Withdrawal Strategy?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <!-- Definition -->
+        <p><strong>The Guardrails Withdrawal Strategy</strong> (also known as the Guyton-Klinger rules) is a dynamic retirement spending approach that automatically adjusts your annual withdrawal based on portfolio performance. Unlike the static 4% rule, which blindly increases withdrawals for inflation every year regardless of market conditions, guardrails create a "safety band" around your withdrawal rate. When markets perform well and your withdrawal rate drops too low, you give yourself a raise. When markets crash and your rate spikes too high, you cut spending temporarily to preserve your portfolio.</p>
+
+        <!-- Formula -->
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Guardrails Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Upper Guardrail = Initial Withdrawal Rate × 1.2<br />
+          Lower Guardrail = Initial Withdrawal Rate × 0.8<br />
+          Test Rate = (Inflation-Adjusted Withdrawal / Current Portfolio) × 100<br /><br />
+          If Test Rate > Upper → Cut withdrawal by 10%<br />
+          If Test Rate &lt; Lower → Increase withdrawal by 10%<br />
+          Otherwise → Standard inflation adjustment
+        </div>
+
+        <!-- Comparison Table -->
+        <h3 class="mb-3 mt-6 text-lg font-semibold text-ink">Guardrails vs. Static 4% Rule</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Factor</th>
+                <th class="p-3 font-medium text-ink">Guardrails Strategy</th>
+                <th class="p-3 font-medium text-ink">Static 4% Rule</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Spending Adjustments</td>
+                <td class="p-3 text-ink">Dynamic (adjusts with market)</td>
+                <td class="p-3 text-ink">Fixed (inflation only)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Bear Market Response</td>
+                <td class="p-3 text-success-deep">Cuts spending automatically</td>
+                <td class="p-3 text-ink">Continues same withdrawal</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Bull Market Response</td>
+                <td class="p-3 text-success-deep">Increases spending (prosperity)</td>
+                <td class="p-3 text-ink">No adjustment</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Sequence Risk Protection</td>
+                <td class="p-3 text-success-deep">Active — reduces exposure</td>
+                <td class="p-3 text-ink">Passive — relies on averages</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 text-body font-sans">Best For</td>
+                <td class="p-3 font-semibold text-success-deep">Flexible retirees</td>
+                <td class="p-3 text-ink">Set-and-forget planners</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Who Should Choose -->
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose the Guardrails Strategy?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Flexible FIRE Retirees</h4>
+            <p class="text-sm text-body">People who are willing to adjust their lifestyle spending up or down based on market conditions. If you can cut discretionary spending by 10% during a bear market, guardrails protect your portfolio from sequence of returns risk.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Early Retirees (Under 50)</h4>
+            <p class="text-sm text-body">With 40-50 year retirement timelines, static withdrawal rules become increasingly risky. Guardrails provide active protection that adapts to actual market conditions rather than relying on historical averages.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Above-Average Savers</h4>
+            <p class="text-sm text-body">If you retired with more than 25× expenses, guardrails let you enjoy the upside (prosperity rule increases) while still protecting against downside. The extra cushion makes the strategy more resilient.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Portfolio Longevity Seekers</h4>
+            <p class="text-sm text-body">Those who prioritize portfolio survival over spending consistency. Guardrails sacrifice a small amount of spending predictability for significantly improved odds of portfolio survival over 30+ years.</p>
+          </div>
+        </div>
+
+        <!-- Pros and Cons -->
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Guardrails Strategy Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Active protection against sequence of returns risk</li>
+              <li>• Allows higher initial withdrawal rates than static rules</li>
+              <li>• Automatically increases spending in good markets</li>
+              <li>• Preserves portfolio longevity during extended bear markets</li>
+              <li>• Simple rules — easy to follow without complex calculations</li>
+              <li>• Historically outperformed static strategies in Monte Carlo simulations</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Spending is variable — harder to budget a fixed lifestyle</li>
+              <li>• Cuts happen during bear markets when you least want them</li>
+              <li>• Requires discipline to actually reduce spending when triggered</li>
+              <li>• Based on constant (nominal) returns — real returns vary</li>
+              <li>• May be overly complex for those who prefer set-and-forget</li>
+              <li>• No guarantee of success — extreme scenarios can still deplete</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Guardrails Withdrawal
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Guardrails Withdrawal Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>guardrails withdrawal calculator</strong> brings the proven Guyton-Klinger methodology to life, giving you a year-by-year simulation of how a dynamic withdrawal strategy would perform under your specific retirement parameters. Unlike static calculators that assume you mechanically increase withdrawals by inflation every year regardless of market conditions, this tool models the real decision-making process that flexible retirees actually use — cutting spending during bear markets to protect their portfolio, and increasing spending during bull markets to enjoy their wealth.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose the Guardrails Withdrawal Strategy?</h3>
+
+        <p class="mb-4">
+          The <strong>traditional 4% rule</strong> was designed for a 30-year retirement and assumes you blindly increase withdrawals by inflation every year, regardless of portfolio performance. This works well in average market conditions but fails during the exact scenarios that destroy early retirements — a prolonged bear market in the first decade, followed by high inflation that compounds the damage. The guardrails strategy solves this by making <strong>spending a function of portfolio health</strong>, not calendar years.
+        </p>
+
+        <p class="mb-4">
+          The <strong>Capital Preservation Rule</strong> activates when your withdrawal rate drifts more than 20% above your starting rate (the upper guardrail). In simple terms: if your portfolio has taken a significant hit and your spending now represents a dangerously high percentage of your remaining balance, the guardrails cut your spending by 10%. This is not a huge cut — most retirees can absorb a 10% lifestyle reduction, especially in discretionary categories like travel and entertainment — but it makes a massive difference to portfolio survival.
+        </p>
+
+        <p class="mb-4">
+          The <strong>Prosperity Rule</strong> activates when your withdrawal rate drifts more than 20% below your starting rate (the lower guardrail). When markets have been exceptionally kind and your portfolio has grown significantly faster than your inflation-adjusted withdrawals, the guardrails give you a raise. This lets you enjoy the upside of bull markets rather than leaving a massive unspent balance for heirs who may not need it.
+        </p>
+
+        <p class="mb-4">
+          Research by Jonathan Guyton and William Klinger (2006) showed that this simple two-rule system dramatically improves portfolio survival rates compared to static withdrawal rules. Their Monte Carlo simulations demonstrated that a <strong>5.2% initial withdrawal rate with guardrails</strong> had the same or better survival odds as a <strong>4% static withdrawal rate</strong> — meaning guardrails allowed retirees to spend nearly 30% more while maintaining the same safety level. This is the power of dynamic withdrawal planning.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Guardrails Withdrawal Calculator</h3>
+
+        <p class="mb-4">
+          This calculator provides a complete view of how guardrails would work for your specific situation. The <strong>interactive portfolio projection chart</strong> shows your portfolio balance over time, with the guardrail triggers clearly marked so you can see exactly when the Capital Preservation or Prosperity Rules would activate. The <strong>year-by-year projection table</strong> details every year of your retirement — showing starting balance, inflation-adjusted withdrawal, actual withdrawal (after guardrail adjustments), portfolio return, and ending balance.
+        </p>
+
+        <p class="mb-4">
+          Adjust the <strong>initial withdrawal rate slider</strong> from 3% to 8% to see how your spending aggressiveness affects portfolio survival. Set the <strong>return and inflation assumptions</strong> to model conservative or aggressive scenarios. Review the <strong>guardrail trigger events</strong> to understand how often the strategy would adjust your spending under different market conditions. All calculations run entirely in your browser — no data is sent to any server, and nothing is stored or tracked.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Withdrawal Strategy Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Withdrawal Strategy Tools
+      </h2>
+      <p class="mb-8 text-body">Dynamic strategies to protect your retirement portfolio from market volatility.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/sequence-of-returns-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">SRR Stress Tester</h3>
+          <p class="text-xs text-body">Test how sequence of returns risk affects your retirement portfolio.</p>
+        </a>
+        <a href="/vpw-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">VPW Withdrawal Calculator</h3>
+          <p class="text-xs text-body">Variable percentage withdrawal — actuarial approach to sustainable spending.</p>
+        </a>
+        <a href="/perpetual-swr-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Perpetual SWR Calculator</h3>
+          <p class="text-xs text-body">Calculate the withdrawal rate that preserves your portfolio forever.</p>
+        </a>
+        <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+          <p class="text-xs text-body">Find how much you need saved today to let compound interest do the rest.</p>
+        </a>
+        <a href="/die-with-zero-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Die with Zero Calculator</h3>
+          <p class="text-xs text-body">Optimize your retirement spending to use your portfolio fully by end of life.</p>
+        </a>
+        <a href="/fire-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Plan your path to financial independence with Lean, Regular, Fat, and Coast FIRE.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
