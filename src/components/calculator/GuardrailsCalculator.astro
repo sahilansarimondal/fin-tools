@@ -1,0 +1,437 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="guardrails-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="guardrails-form" class="space-y-4">
+          <Input
+            label="Initial Portfolio Value"
+            name="initialPortfolio"
+            type="number"
+            value={1000000}
+            min={100000}
+            max={10000000}
+            step={50000}
+            suffix="$"
+            hideArrows
+            required
+          />
+
+          <Slider
+            label="Initial Withdrawal Rate"
+            name="initialWithdrawalRate"
+            value={5.0}
+            min={2.0}
+            max={8.0}
+            step={0.1}
+            suffix="%"
+            inputId="guardrails-withdrawalRate"
+            displayId="guardrails-withdrawalRateValue"
+            tooltip="Your target withdrawal rate in Year 1 (e.g., 5% = $50K from a $1M portfolio)"
+          />
+
+          <Slider
+            label="Estimated Annual Return"
+            name="annualReturn"
+            value={7.0}
+            min={0.0}
+            max={12.0}
+            step={0.1}
+            suffix="%"
+            inputId="guardrails-annualReturn"
+            displayId="guardrails-annualReturnValue"
+            tooltip="Expected nominal annual portfolio return before inflation"
+          />
+
+          <Slider
+            label="Estimated Annual Inflation"
+            name="annualInflation"
+            value={2.5}
+            min={0.0}
+            max={6.0}
+            step={0.1}
+            suffix="%"
+            inputId="guardrails-annualInflation"
+            displayId="guardrails-annualInflationValue"
+            tooltip="Expected annual inflation rate (historical average ~2.5-3%)"
+          />
+
+          <Slider
+            label="Retirement Timeline"
+            name="timelineYears"
+            value={30}
+            min={15}
+            max={50}
+            step={1}
+            suffix=" years"
+            inputId="guardrails-timeline"
+            displayId="guardrails-timelineValue"
+            tooltip="How many years to simulate (15-50 years)"
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- KPI cards row (4 cards in a 2x2 grid) -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Final Portfolio"
+          valueId="guardrails-finalPortfolio"
+          value="—"
+          valueClass="text-ink"
+          description="Portfolio balance at end of timeline"
+        />
+        <ResultCard
+          label="Total Withdrawn"
+          valueId="guardrails-totalWithdrawn"
+          value="—"
+          valueClass="text-success-deep"
+          description="Cumulative withdrawals over timeline"
+        />
+        <ResultCard
+          label="Avg. Annual Withdrawal"
+          valueId="guardrails-avgWithdrawal"
+          value="—"
+          valueClass="text-link"
+          description="Mean annual withdrawal amount"
+        />
+        <ResultCard
+          label="Guardrail Triggers"
+          valueId="guardrails-triggers"
+          value="—"
+          valueClass="text-ink"
+          description="Number of capital preservation or prosperity adjustments"
+        />
+      </div>
+
+      <!-- Depletion warning (hidden by default) -->
+      <div id="guardrails-depletion-warning" class="hidden rounded-lg border border-error/30 bg-error/5 p-4">
+        <p class="text-sm font-medium text-error">⚠ Portfolio Depleted Before Timeline End</p>
+        <p class="mt-1 text-xs text-body">Your portfolio ran out of money before the simulation ended. Consider reducing your initial withdrawal rate or increasing your portfolio size.</p>
+      </div>
+
+      <!-- Chart -->
+      <Card padding="lg">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">Portfolio Balance &amp; Withdrawals Over Time</h2>
+        </div>
+        <div class="relative h-64 sm:h-80">
+          <canvas
+            id="guardrails-chart"
+            role="img"
+            aria-label="Line chart showing portfolio balance declining and annual withdrawals adjusting over the retirement timeline"
+          ></canvas>
+        </div>
+      </Card>
+
+      <!-- Year-by-year table (collapsible) -->
+      <Card padding="lg">
+        <details class="group">
+          <summary class="cursor-pointer py-2 text-sm font-medium text-ink">
+            Year-by-Year Projection
+            <svg class="ml-2 inline h-4 w-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M19 9l-7 7-7-7" />
+            </svg>
+          </summary>
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="border-b border-hairline bg-canvas-soft-2">
+                  <th class="p-2 font-medium text-ink">Year</th>
+                  <th class="p-2 font-medium text-ink">Start Balance</th>
+                  <th class="p-2 font-medium text-ink">Withdrawal</th>
+                  <th class="p-2 font-medium text-ink">Test Rate</th>
+                  <th class="p-2 font-medium text-ink">Action</th>
+                  <th class="p-2 font-medium text-ink">End Balance</th>
+                </tr>
+              </thead>
+              <tbody id="guardrails-table-body" class="font-mono text-xs tabular-nums">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </Card>
+    </div>
+  </div>
+</div>
+
+<p class="mx-auto max-w-6xl px-4 pb-8 text-center text-xs text-mute sm:px-6">
+  Disclaimer: This tool is for educational and illustrative purposes only. It does not constitute formal financial, investment, or tax advice.
+</p>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+  import { calculateGuardrails } from '../../utils/guardrails-calculations';
+  import { formatCurrency, formatCurrencyShort } from '../../utils/formatters';
+
+  let chart = null;
+
+  function getFormData() {
+    var form = document.getElementById('guardrails-form');
+    var formData = new FormData(form);
+
+    return {
+      initialPortfolio: Number(formData.get('initialPortfolio')) || 1000000,
+      initialWithdrawalRate: Number(formData.get('initialWithdrawalRate')) || 5.0,
+      annualReturn: Number(formData.get('annualReturn')) || 7.0,
+      annualInflation: Number(formData.get('annualInflation')) || 2.5,
+      timelineYears: Number(formData.get('timelineYears')) || 30,
+    };
+  }
+
+  function updateResults() {
+    var inputs = getFormData();
+    var results = calculateGuardrails(inputs);
+
+    // Update KPI cards
+    document.getElementById('guardrails-finalPortfolio').textContent = formatCurrency(results.finalPortfolio);
+    document.getElementById('guardrails-totalWithdrawn').textContent = formatCurrency(results.totalWithdrawn);
+    document.getElementById('guardrails-avgWithdrawal').textContent = formatCurrency(results.averageWithdrawal);
+
+    // Count guardrail triggers
+    var triggers = results.years.filter(function(y) { return y.guardrailAction !== 'none'; }).length;
+    document.getElementById('guardrails-triggers').textContent = triggers.toString();
+
+    // Show/hide depletion warning
+    var warningEl = document.getElementById('guardrails-depletion-warning');
+    if (results.depletionYear !== null) {
+      warningEl.classList.remove('hidden');
+    } else {
+      warningEl.classList.add('hidden');
+    }
+
+    // Update table
+    var tbody = document.getElementById('guardrails-table-body');
+    tbody.innerHTML = results.years.map(function(y) {
+      var actionClass = y.guardrailAction === 'capital-preservation' ? 'text-error' :
+                        y.guardrailAction === 'prosperity' ? 'text-success-deep' : 'text-body';
+      var actionLabel = y.guardrailAction === 'capital-preservation' ? '▼ Cut 10%' :
+                        y.guardrailAction === 'prosperity' ? '▲ +10%' : '—';
+      return '<tr class="border-b border-hairline/50">' +
+        '<td class="p-2 text-ink">' + y.year + '</td>' +
+        '<td class="p-2 text-ink">' + formatCurrency(y.startPortfolio) + '</td>' +
+        '<td class="p-2 text-ink">' + formatCurrency(y.actualWithdrawal) + '</td>' +
+        '<td class="p-2 text-ink">' + y.testRate.toFixed(2) + '%</td>' +
+        '<td class="p-2 ' + actionClass + '">' + actionLabel + '</td>' +
+        '<td class="p-2 text-ink">' + formatCurrency(y.endPortfolio) + '</td>' +
+        '</tr>';
+    }).join('');
+
+    // Update chart
+    updateChart(results);
+  }
+
+  function updateChart(results) {
+    var ctx = document.getElementById('guardrails-chart');
+    if (!ctx) return;
+
+    var isDark = document.documentElement.classList.contains('dark');
+    var gridColor = isDark ? '#262626' : '#ebebeb';
+    var textColor = isDark ? '#737373' : '#888888';
+    var tooltipBg = isDark ? '#ededed' : '#171717';
+    var tooltipText = isDark ? '#171717' : '#ffffff';
+    var portfolioColor = isDark ? '#60a5fa' : '#2563eb';
+    var withdrawalColor = isDark ? '#34d399' : '#059669';
+
+    var years = results.years.map(function(y) { return 'Year ' + y.year; });
+    var portfolioData = results.years.map(function(y) { return y.endPortfolio; });
+    var withdrawalData = results.years.map(function(y) { return y.actualWithdrawal; });
+
+    if (chart) {
+      chart.data.labels = years;
+      chart.data.datasets[0].data = portfolioData;
+      chart.data.datasets[0].borderColor = portfolioColor;
+      chart.data.datasets[0].backgroundColor = portfolioColor + '10';
+      chart.data.datasets[1].data = withdrawalData;
+      chart.data.datasets[1].borderColor = withdrawalColor;
+      chart.options.scales.x.ticks.color = textColor;
+      chart.options.scales.y.ticks.color = textColor;
+      chart.options.scales.x.grid.color = gridColor;
+      chart.options.scales.y.grid.color = gridColor;
+      chart.options.plugins.legend.labels.color = textColor;
+      chart.update();
+      return;
+    }
+
+    chart = new window.Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: [
+          {
+            label: 'Portfolio Balance',
+            data: portfolioData,
+            borderColor: portfolioColor,
+            backgroundColor: portfolioColor + '10',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            borderWidth: 2,
+          },
+          {
+            label: 'Annual Withdrawal',
+            data: withdrawalData,
+            borderColor: withdrawalColor,
+            backgroundColor: 'transparent',
+            borderDash: [5, 5],
+            tension: 0.3,
+            pointRadius: 0,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 12,
+              usePointStyle: true,
+              pointStyle: 'circle',
+              padding: 16,
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: 500,
+            },
+            bodyFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+            },
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': ' + formatCurrency(context.parsed.y);
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              maxTicksLimit: 10,
+            },
+            border: {
+              display: false,
+            },
+          },
+          y: {
+            grid: {
+              color: gridColor,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              callback: function(value) {
+                return formatCurrencyShort(value);
+              },
+            },
+            border: {
+              display: false,
+            },
+            min: 0,
+          },
+        },
+      },
+    });
+  }
+
+  function initSliders() {
+    var sliders = [
+      { id: 'guardrails-withdrawalRate', displayId: 'guardrails-withdrawalRateValue', suffix: '%' },
+      { id: 'guardrails-annualReturn', displayId: 'guardrails-annualReturnValue', suffix: '%' },
+      { id: 'guardrails-annualInflation', displayId: 'guardrails-annualInflationValue', suffix: '%' },
+      { id: 'guardrails-timeline', displayId: 'guardrails-timelineValue', suffix: ' years' },
+    ];
+
+    sliders.forEach(function(slider) {
+      var el = document.getElementById(slider.id);
+      var display = document.getElementById(slider.displayId);
+
+      if (el && display) {
+        el.addEventListener('input', function() {
+          display.textContent = el.value + slider.suffix;
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('guardrails-form');
+    if (form) {
+      form.addEventListener('input', function() {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    initSliders();
+    initFormListeners();
+    updateResults();
+
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', function() {
+        if (chart) {
+          chart.destroy();
+          chart = null;
+        }
+        updateResults();
+      });
+
+    var observer = new MutationObserver(function() {
+      if (chart) {
+        chart.destroy();
+        chart = null;
+      }
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
