@@ -1,0 +1,452 @@
+---
+// ACA Subsidy Cliff Calculator — fully interactive client-side component
+---
+
+<div id="aca-subsidy-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <!-- Input Panel -->
+  <div class="grid gap-6 lg:grid-cols-12">
+    <div class="lg:col-span-5">
+      <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm lg:sticky lg:top-24">
+        <div class="mb-4">
+          <h2 class="text-sm font-semibold text-ink">Household & Income Details</h2>
+        </div>
+
+        <form id="aca-form" class="space-y-6">
+          <!-- Household Size -->
+          <div>
+            <label for="household-size" class="mb-1.5 block text-sm font-medium text-ink">Household Size</label>
+            <select
+              id="household-size"
+              class="w-full rounded-lg border border-hairline bg-canvas px-3 py-2.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-link"
+            >
+              <option value="1">1 Person</option>
+              <option value="2" selected>2 People</option>
+              <option value="3">3 People</option>
+              <option value="4">4 People</option>
+              <option value="5">5 People</option>
+              <option value="6">6 People</option>
+              <option value="7">7 People</option>
+              <option value="8">8 People</option>
+            </select>
+          </div>
+
+          <!-- Coverage Region -->
+          <div>
+            <label for="coverage-region" class="mb-1.5 block text-sm font-medium text-ink">Coverage Region</label>
+            <select
+              id="coverage-region"
+              class="w-full rounded-lg border border-hairline bg-canvas px-3 py-2.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-link"
+            >
+              <option value="continental" selected>Continental US</option>
+              <option value="alaska">Alaska</option>
+              <option value="hawaii">Hawaii</option>
+            </select>
+          </div>
+
+          <!-- MAGI -->
+          <div>
+            <label for="magi-input" class="mb-1.5 block text-sm font-medium text-ink">Modified Adjusted Gross Income (MAGI)</label>
+            <div class="relative mb-2">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-mute">$</span>
+              <input
+                id="magi-input"
+                type="number"
+                value="60000"
+                min="10000"
+                max="200000"
+                step="1000"
+                class="w-full rounded-lg border border-hairline bg-canvas py-2.5 pl-7 pr-3 text-sm text-ink tabular-nums focus:outline-none focus:ring-2 focus:ring-link"
+              />
+            </div>
+            <input
+              id="magi-slider"
+              type="range"
+              value="60000"
+              min="10000"
+              max="200000"
+              step="1000"
+              class="w-full"
+            />
+            <div class="mt-1 flex justify-between text-xs text-mute">
+              <span>$10,000</span>
+              <span>$200,000</span>
+            </div>
+          </div>
+
+          <!-- Benchmark Premium -->
+          <div>
+            <label for="benchmark-input" class="mb-1.5 block text-sm font-medium text-ink">Benchmark Premium (Annual)</label>
+            <div class="relative mb-2">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-mute">$</span>
+              <input
+                id="benchmark-input"
+                type="number"
+                value="12000"
+                min="3000"
+                max="36000"
+                step="500"
+                class="w-full rounded-lg border border-hairline bg-canvas py-2.5 pl-7 pr-3 text-sm text-ink tabular-nums focus:outline-none focus:ring-2 focus:ring-link"
+              />
+            </div>
+            <input
+              id="benchmark-slider"
+              type="range"
+              value="12000"
+              min="3000"
+              max="36000"
+              step="500"
+              class="w-full"
+            />
+            <div class="mt-1 flex justify-between text-xs text-mute">
+              <span>$3,000</span>
+              <span>$36,000</span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Output Panel -->
+    <div class="lg:col-span-7">
+      <!-- Status Badge -->
+      <div id="status-badge" class="mb-4 inline-flex items-center gap-2 rounded-full bg-success/10 px-4 py-1.5 text-xs font-medium text-success-deep">
+        <span class="inline-block h-2 w-2 rounded-full bg-current"></span>
+        <span id="status-text">Subsidy Eligible</span>
+      </div>
+
+      <!-- 4 KPI Cards -->
+      <div class="mb-6 grid gap-4 sm:grid-cols-2">
+        <div class="rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+          <p class="mb-1 text-xs font-medium text-mute">Your Annual Cost</p>
+          <p id="annual-cost" class="font-mono text-2xl font-semibold text-ink tabular-nums">$5,586</p>
+          <p class="mt-1 text-xs text-body">What you pay after subsidy</p>
+        </div>
+
+        <div class="rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+          <p class="mb-1 text-xs font-medium text-mute">Annual Subsidy</p>
+          <p id="annual-subsidy" class="font-mono text-2xl font-semibold text-ink tabular-nums">$6,414</p>
+          <p class="mt-1 text-xs text-body">Premium tax credit amount</p>
+        </div>
+
+        <div class="rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+          <p class="mb-1 text-xs font-medium text-mute">FPL Percentage</p>
+          <p id="fpl-percentage" class="font-mono text-2xl font-semibold text-ink tabular-nums">293.5%</p>
+          <p class="mt-1 text-xs text-body">Your income as % of FPL</p>
+        </div>
+
+        <div class="rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+          <p class="mb-1 text-xs font-medium text-mute">Cap Percentage</p>
+          <p id="cap-percentage" class="font-mono text-2xl font-semibold text-ink tabular-nums">9.31%</p>
+          <p class="mt-1 text-xs text-body">Max contribution rate</p>
+        </div>
+      </div>
+
+      <!-- Monthly Breakdown -->
+      <div class="mb-6 rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+        <h3 class="mb-3 text-sm font-semibold text-ink">Monthly Breakdown</h3>
+        <div class="space-y-2">
+          <div class="flex justify-between font-mono text-sm tabular-nums">
+            <span class="text-body">Benchmark Premium</span>
+            <span id="monthly-benchmark" class="text-ink">$1,000</span>
+          </div>
+          <div class="flex justify-between font-mono text-sm tabular-nums">
+            <span class="text-body">Your Contribution</span>
+            <span id="monthly-cost" class="text-ink">$466</span>
+          </div>
+          <div class="flex justify-between font-mono text-sm tabular-nums">
+            <span class="text-body">Subsidy</span>
+            <span id="monthly-subsidy" class="text-success-deep">$534</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cliff Penalty Warning -->
+      <div id="cliff-warning" class="mb-6 hidden rounded-lg border border-warning/30 bg-warning/5 p-4">
+        <div class="flex items-start gap-3">
+          <svg class="mt-0.5 h-5 w-5 flex-shrink-0 text-warning" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+          </svg>
+          <div>
+            <p class="text-sm font-medium text-warning">⚠️ Approaching the 400% FPL Cliff</p>
+            <p id="cliff-warning-text" class="mt-1 text-xs text-body">
+              If your MAGI exceeds 400% of FPL, you will lose all subsidy eligibility.
+            </p>
+            <div id="cliff-details" class="mt-2 rounded-md bg-canvas-soft-2 p-2 text-xs text-body font-mono tabular-nums"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Premium Cliff Card (shown when over 400%) -->
+      <div id="over-cliff-card" class="mb-6 hidden rounded-lg border border-error/30 bg-error/5 p-4">
+        <div class="flex items-start gap-3">
+          <svg class="mt-0.5 h-5 w-5 flex-shrink-0 text-error" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg>
+          <div>
+            <p class="text-sm font-medium text-error">Over the ACA Subsidy Cliff</p>
+            <p class="mt-1 text-xs text-body">
+              Your MAGI exceeds 400% of the Federal Poverty Level. You are not eligible for premium tax credits.
+              You must pay the full benchmark premium. Consider strategies to reduce your MAGI.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visual Comparison Bar -->
+      <div class="mb-6 rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+        <h3 class="mb-3 text-sm font-semibold text-ink">Cost Breakdown</h3>
+        <div class="space-y-3">
+          <div>
+            <div class="mb-1 flex justify-between text-xs">
+              <span class="text-body">Full Benchmark Premium</span>
+              <span id="bar-total" class="font-mono text-ink tabular-nums">$12,000</span>
+            </div>
+            <div class="h-6 w-full overflow-hidden rounded-md bg-hairline">
+              <div class="relative h-full w-full">
+                <div id="bar-subsidy" class="absolute left-0 top-0 h-full rounded-l-md bg-link/60 transition-all duration-300" style="width: 53.45%"></div>
+                <div id="bar-cost" class="absolute left-0 top-0 h-full rounded-l-md bg-success-deep/70 transition-all duration-300" style="width: 46.55%"></div>
+              </div>
+            </div>
+            <div class="mt-1 flex justify-between text-xs">
+              <span id="bar-cost-label" class="text-success-deep">Your Cost: $5,586</span>
+              <span id="bar-subsidy-label" class="text-link">Subsidy: $6,414</span>
+            </div>
+          </div>
+
+          <!-- Legend -->
+          <div class="flex items-center gap-4 text-xs text-body">
+            <span class="flex items-center gap-1.5">
+              <span class="inline-block h-3 w-3 rounded-sm bg-success-deep/70"></span>
+              Your Cost
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="inline-block h-3 w-3 rounded-sm bg-link/60"></span>
+              Subsidy
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Details Card -->
+      <div class="rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+        <h3 class="mb-3 text-sm font-semibold text-ink">Calculation Details</h3>
+        <div id="details-content" class="space-y-1.5 text-xs text-body font-mono tabular-nums">
+          <div class="flex justify-between">
+            <span>FPL Threshold</span>
+            <span id="detail-fpl" class="text-ink">$20,440</span>
+          </div>
+          <div class="flex justify-between">
+            <span>FPL %</span>
+            <span id="detail-fpl-pct" class="text-ink">293.5%</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Max Contribution</span>
+            <span id="detail-max-contrib" class="text-ink">$5,586</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Subsidy</span>
+            <span id="detail-subsidy" class="text-ink">$6,414</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Annual Cost</span>
+            <span id="detail-cost" class="text-ink">$5,586</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="mx-auto mt-12 max-w-4xl rounded-lg border border-hairline bg-canvas-soft p-4 text-center text-xs text-mute">
+    <strong class="text-body">Disclaimer:</strong> This tool is for educational purposes only. ACA rules vary by state, age, and tobacco status. Verify your official eligibility directly with HealthCare.gov or your state marketplace exchange.
+  </div>
+</div>
+
+<script>
+(function () {
+  const householdSize = document.getElementById('household-size');
+  const coverageRegion = document.getElementById('coverage-region');
+  const magiInput = document.getElementById('magi-input');
+  const magiSlider = document.getElementById('magi-slider');
+  const benchmarkInput = document.getElementById('benchmark-input');
+  const benchmarkSlider = document.getElementById('benchmark-slider');
+
+  // FPL config by region
+  const FPL_CONFIG = {
+    continental: { base: 15060, additional: 5380 },
+    alaska: { base: 18810, additional: 6730 },
+    hawaii: { base: 17310, additional: 6190 },
+  };
+
+  // Sliding scale caps as percentage
+  function getCapPercentage(fplPct) {
+    if (fplPct < 133) {
+      return 2.0;
+    } else if (fplPct < 150) {
+      // 133% to 150%: 3.0% to 4.0%
+      const t = (fplPct - 133) / (150 - 133);
+      return 3.0 + t * (4.0 - 3.0);
+    } else if (fplPct < 200) {
+      // 150% to 200%: 4.0% to 6.3%
+      const t = (fplPct - 150) / (200 - 150);
+      return 4.0 + t * (6.3 - 4.0);
+    } else if (fplPct < 250) {
+      // 200% to 250%: 6.3% to 8.05%
+      const t = (fplPct - 200) / (250 - 200);
+      return 6.3 + t * (8.05 - 6.3);
+    } else if (fplPct < 300) {
+      // 250% to 300%: 8.05% to 9.5%
+      const t = (fplPct - 250) / (300 - 250);
+      return 8.05 + t * (9.5 - 8.05);
+    } else if (fplPct <= 400) {
+      return 9.5;
+    } else {
+      return 100;
+    }
+  }
+
+  function formatCurrency(val) {
+    return '$' + val.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function formatCurrencyDec(val) {
+    return '$' + val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function update() {
+    const hSize = parseInt(householdSize.value, 10);
+    const region = coverageRegion.value;
+    const magi = parseFloat(magiInput.value) || 0;
+    const benchmark = parseFloat(benchmarkInput.value) || 0;
+
+    // FPL Threshold
+    const fplConfig = FPL_CONFIG[region];
+    const fplThreshold = fplConfig.base + (hSize - 1) * fplConfig.additional;
+
+    // FPL Percentage
+    const fplPct = magi > 0 ? (magi / fplThreshold) * 100 : 0;
+
+    // Cap percentage
+    const capPct = getCapPercentage(fplPct);
+
+    // Max contribution
+    const maxContrib = magi * (capPct / 100);
+
+    // Subsidy
+    const isEligible = fplPct <= 400;
+    const subsidy = isEligible ? Math.max(0, benchmark - maxContrib) : 0;
+    const userCost = benchmark - subsidy;
+
+    // ─── Update KPI Cards ───
+    document.getElementById('annual-cost').textContent = formatCurrency(userCost);
+    document.getElementById('annual-subsidy').textContent = formatCurrency(subsidy);
+    document.getElementById('fpl-percentage').textContent = fplPct.toFixed(1) + '%';
+    document.getElementById('cap-percentage').textContent = capPct.toFixed(2) + '%';
+
+    // ─── Status Badge ───
+    const badge = document.getElementById('status-badge');
+    const statusText = document.getElementById('status-text');
+    if (fplPct > 400) {
+      badge.className = 'mb-4 inline-flex items-center gap-2 rounded-full bg-error/10 px-4 py-1.5 text-xs font-medium text-error';
+      statusText.textContent = 'Over Cliff — No Subsidy';
+    } else if (fplPct >= 350) {
+      badge.className = 'mb-4 inline-flex items-center gap-2 rounded-full bg-warning/10 px-4 py-1.5 text-xs font-medium text-warning';
+      statusText.textContent = 'Near Cliff — ' + fplPct.toFixed(1) + '% FPL';
+    } else {
+      badge.className = 'mb-4 inline-flex items-center gap-2 rounded-full bg-success/10 px-4 py-1.5 text-xs font-medium text-success-deep';
+      statusText.textContent = 'Subsidy Eligible — ' + fplPct.toFixed(1) + '% FPL';
+    }
+
+    // ─── Monthly Breakdown ───
+    document.getElementById('monthly-benchmark').textContent = formatCurrency(benchmark / 12);
+    document.getElementById('monthly-cost').textContent = formatCurrency(userCost / 12);
+    document.getElementById('monthly-subsidy').textContent = formatCurrency(subsidy / 12);
+
+    // ─── Cliff Warning ───
+    const cliffWarning = document.getElementById('cliff-warning');
+    const overCliffCard = document.getElementById('over-cliff-card');
+    const cliffText = document.getElementById('cliff-warning-text');
+    const cliffDetails = document.getElementById('cliff-details');
+
+    if (fplPct > 350 && fplPct <= 400) {
+      cliffWarning.classList.remove('hidden');
+      overCliffCard.classList.add('hidden');
+
+      // What would happen if MAGI went $1 over 400%
+      const magiAtCliff = (400 / 100) * fplThreshold;
+      const extraIncomeNeeded = magiAtCliff - magi;
+      const subsidyLost = subsidy; // All subsidy would be lost
+
+      cliffText.textContent =
+        'You are approaching the 400% FPL cliff. If your MAGI exceeds 400% of FPL, you will lose all subsidy eligibility.';
+      cliffDetails.innerHTML =
+        'MAGI at 400% FPL: ' + formatCurrency(magiAtCliff) +
+        '<br />Income buffer: <strong>' + formatCurrency(extraIncomeNeeded) + '</strong>' +
+        '<br />Subsidy at risk: <strong>' + formatCurrency(subsidyLost) + '</strong>/year (' + formatCurrency(subsidyLost / 12) + '/month)';
+    } else if (fplPct > 400) {
+      cliffWarning.classList.add('hidden');
+      overCliffCard.classList.remove('hidden');
+    } else {
+      cliffWarning.classList.add('hidden');
+      overCliffCard.classList.add('hidden');
+    }
+
+    // ─── Visual Bar ───
+    const barTotal = document.getElementById('bar-total');
+    const barCost = document.getElementById('bar-cost');
+    const barSubsidy = document.getElementById('bar-subsidy');
+    const barCostLabel = document.getElementById('bar-cost-label');
+    const barSubsidyLabel = document.getElementById('bar-subsidy-label');
+
+    barTotal.textContent = formatCurrency(benchmark);
+
+    if (benchmark > 0 && userCost > 0) {
+      const subsidyPct = (subsidy / benchmark) * 100;
+      const costPct = (userCost / benchmark) * 100;
+
+      barSubsidy.style.width = subsidyPct + '%';
+      barCost.style.width = costPct + '%';
+
+      if (subsidy <= 0) {
+        barSubsidy.style.width = '0%';
+        barCost.style.width = '100%';
+        barCost.className = 'absolute left-0 top-0 h-full rounded-md bg-error/50 transition-all duration-300';
+      } else {
+        barCost.className = 'absolute left-0 top-0 h-full rounded-l-md bg-success-deep/70 transition-all duration-300';
+      }
+    } else {
+      barSubsidy.style.width = '0%';
+      barCost.style.width = '0%';
+    }
+
+    barCostLabel.textContent = 'Your Cost: ' + formatCurrency(userCost);
+    barSubsidyLabel.textContent = 'Subsidy: ' + formatCurrency(subsidy);
+
+    // ─── Details ───
+    document.getElementById('detail-fpl').textContent = formatCurrency(fplThreshold);
+    document.getElementById('detail-fpl-pct').textContent = fplPct.toFixed(1) + '%';
+    document.getElementById('detail-max-contrib').textContent = formatCurrency(maxContrib);
+    document.getElementById('detail-subsidy').textContent = formatCurrency(subsidy);
+    document.getElementById('detail-cost').textContent = formatCurrency(userCost);
+  }
+
+  // Sync slider <-> input bidirectionally
+  function syncInputs(source, target) {
+    source.addEventListener('input', function () {
+      target.value = source.value;
+      update();
+    });
+  }
+
+  syncInputs(magiSlider, magiInput);
+  syncInputs(magiInput, magiSlider);
+  syncInputs(benchmarkSlider, benchmarkInput);
+  syncInputs(benchmarkInput, benchmarkSlider);
+
+  householdSize.addEventListener('change', update);
+  coverageRegion.addEventListener('change', update);
+
+  // Initial calculation
+  update();
+})();
+</script>

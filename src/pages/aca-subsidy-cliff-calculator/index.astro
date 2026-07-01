@@ -1,0 +1,330 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import AcaSubsidyCalculator from '../../components/calculator/AcaSubsidyCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const acaFaqItems: FAQItem[] = [
+  {
+    question: 'What counts as income for the Affordable Care Act subsidy calculator?',
+    answerHtml: '<b>Modified Adjusted Gross Income (MAGI)</b> is used to determine ACA subsidy eligibility. MAGI includes:<br /><br /><ul><li><b>Taxable investment income</b> — dividends, interest, and capital gains from taxable brokerage accounts</li><li><b>Traditional IRA distributions</b> — money withdrawn from traditional IRAs and 401(k)s is added to your AGI</li><li><b>Capital gains</b> — realized gains from selling investments count as income</li><li><b>Wages and self-employment income</b> — any earned income you generate</li><li><b>Social Security benefits</b> — a portion may be taxable depending on your total income</li></ul><br />Importantly, <b>Roth IRA withdrawals</b> and <b>Roth 401(k) distributions</b> do NOT count as income for ACA purposes. This makes Roth accounts a powerful tool for managing your MAGI in early retirement.',
+    answerText: 'MAGI includes taxable investment income, traditional IRA distributions, capital gains, wages, and some Social Security benefits. Roth IRA withdrawals and Roth 401(k) distributions do NOT count toward your MAGI, making them valuable for early retirees managing ACA subsidies.',
+  },
+  {
+    question: 'What are the exact MAGI limits for ACA subsidies in early retirement?',
+    answerHtml: 'The ACA subsidy eligibility limit is <b>400% of the Federal Poverty Level (FPL)</b> for your household size and region. Here are the exact 2025 thresholds:<br /><br /><ul><li><b>Continental US:</b> Base $15,060 for 1 person, add $5,380 per additional member. <b>4-person limit:</b> $15,060 + (3 × $5,380) = $31,200 → 400% = <b>$124,800</b></li><li><b>Alaska:</b> Base $18,810 for 1 person, add $6,730 per additional member. <b>4-person limit:</b> $18,810 + (3 × $6,730) = $39,000 → 400% = <b>$156,000</b></li><li><b>Hawaii:</b> Base $17,310 for 1 person, add $6,190 per additional member. <b>4-person limit:</b> $17,310 + (3 × $6,190) = $35,880 → 400% = <b>$143,520</b></li></ul><br />Below 400% FPL, your premium contribution is capped on a sliding scale from 2.0% to 9.5% of your MAGI. Above 400%, you must pay the full premium with no subsidy.',
+    answerText: 'The 400% FPL limit varies by household size and region. For a family of 4 in Continental US, the limit is $124,800. In Alaska it is $156,000. In Hawaii it is $143,520. Below 400% FPL, your contribution is capped at 2.0% to 9.5% of MAGI. Above 400%, you get no subsidy at all.',
+  },
+  {
+    question: 'How can the Obamacare cliff calculator FIRE community protect healthcare credits?',
+    answerHtml: 'Early retirees in the FIRE community can use several strategies to keep their MAGI below the 400% FPL cliff:<br /><br /><ul><li><b>Roth Conversion Ladder</b> — Convert traditional IRA funds to Roth accounts. The converted amount counts as income in the year of conversion, so plan conversions for years when you can stay under the cliff.</li><li><b>Prioritize Roth withdrawals</b> — Live off Roth IRA contributions and Roth conversion principal (which are tax-free and do not count as MAGI) rather than traditional IRA distributions.</li><li><b>Manage tax-gain harvesting strategically</b> — Realize capital gains in years with lower income, but keep the total under the cliff limit. Avoid realizing large gains that would push you over 400% FPL.</li><li><b>Use HSA withdrawals for qualified expenses</b> — HSA distributions for medical expenses are tax-free and do not count as income.</li><li><b>Consider a Health Sharing Ministry</b> — Some early retirees opt for health sharing plans alongside partial subsidies or as an alternative if they expect to exceed the cliff.</li></ul><br />The key insight is that every dollar of MAGI above the 400% cliff can cost thousands in lost subsidies — so careful income management is essential.',
+    answerText: 'FIRE early retirees can protect ACA credits by using Roth conversion ladders, prioritizing Roth withdrawals (which don\'t count as MAGI), managing capital gains tax harvesting carefully, using HSA withdrawals for qualified expenses, and considering Health Sharing Ministries. Every dollar above the 400% cliff can cost thousands in lost subsidies.',
+  },
+];
+---
+
+<PageLayout
+  title="ACA Subsidy Cliff Calculator — Optimize Health Insurance Credits"
+  description="Calculate your Modified Adjusted Gross Income (MAGI) thresholds for ACA premium tax credits. Avoid the 400% federal poverty level subsidy cliff."
+  canonical="https://truefinancetools.com/aca-subsidy-cliff-calculator"
+  ogImage="https://truefinancetools.com/og-aca-subsidy-cliff-calculator.png"
+  ogImageAlt="ACA Subsidy Cliff Calculator — Optimize Health Insurance Credits"
+  pageType="website"
+  keywords="ACA subsidy calculator, ACA subsidy cliff, MAGI calculator, health insurance subsidy, premium tax credit, affordable care act calculator, obamacare cliff, FIRE health insurance"
+>
+  <StructuredData
+    title="ACA Subsidy Cliff Calculator"
+    description="Calculate your Modified Adjusted Gross Income (MAGI) thresholds for ACA premium tax credits."
+    url="https://truefinancetools.com/aca-subsidy-cliff-calculator"
+    toolName="ACA Subsidy Cliff Calculator"
+    toolDescription="Calculate your MAGI thresholds and ACA premium tax credit subsidies to avoid the 400% FPL cliff."
+    faqItems={acaFaqItems}
+    features={[
+      'Federal Poverty Level (FPL) calculation',
+      'ACA Premium Tax Credit modeling',
+      '400% FPL subsidy cliff detection',
+      'Cliff penalty warning system',
+      'Regional coverage support (US, Alaska, Hawaii)',
+      'Household size optimization'
+    ]}
+  />
+
+  <!-- Hero Section -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        ACA Subsidy Cliff Calculator
+      </h1>
+      <p class="text-lg text-body">Calculate your MAGI thresholds for ACA premium tax credits. Avoid the 400% FPL subsidy cliff.</p>
+    </div>
+  </section>
+
+  <!-- Intro Section -->
+  <section class="border-b border-hairline bg-canvas-soft py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          The <strong>ACA subsidy cliff</strong> is one of the most important obstacles early retirees face when planning their healthcare budget. Under the Affordable Care Act, premium tax credits are available to households with a Modified Adjusted Gross Income (MAGI) between 100% and 400% of the Federal Poverty Level (FPL). The critical threshold is at 400% FPL — earn one dollar above it, and you lose your entire subsidy for the year. This is the infamous "cliff."
+        </p>
+        <p>
+          Our <strong>ACA Subsidy Cliff Calculator</strong> helps you model your subsidy eligibility and plan your retirement income to stay under the cliff. Adjust your household size, coverage region, and MAGI to see exactly how much subsidy you qualify for — and how close you are to losing it. For FIRE retirees, managing MAGI is essential: a Roth conversion ladder, strategic withdrawal sequencing, and careful tax planning can save tens of thousands of dollars in healthcare costs each year.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Component -->
+  <AcaSubsidyCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the ACA Subsidy Cliff Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 01-1.125-1.125v-3.75zM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-8.25zM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-2.25z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Details</h3>
+      <p class="text-sm text-body">Input your household size, coverage region, and annual MAGI to model your ACA subsidy eligibility.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. See Your Subsidy</h3>
+      <p class="text-sm text-body">Instantly view your premium tax credit, annual cost, and FPL percentage with real-time calculations.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Avoid the Cliff</h3>
+      <p class="text-sm text-body">Use the cliff warning system to see how close you are to losing your subsidies and plan your MAGI accordingly.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- Methodology Section -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        How the ACA Subsidy Cliff is Calculated
+      </h2>
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          The calculator uses the official 2025 Federal Poverty Level (FPL) guidelines published by the Department of Health and Human Services. The FPL threshold is determined by your <strong>household size</strong> and <strong>coverage region</strong>. For the Continental US, the base is $15,060 for a single person with an additional $5,380 per extra household member. Alaska and Hawaii use higher base amounts reflecting their higher cost of living.
+        </p>
+        <p class="mb-4">
+          Your <strong>FPL percentage</strong> is simply your MAGI divided by the FPL threshold. This percentage determines both your eligibility for subsidies (you must be at or below 400% FPL) and your <strong>premium contribution cap</strong>, the maximum percentage of your income you are expected to pay for a benchmark silver plan. The cap scales linearly across income brackets: from 2.0% at the lowest incomes to 9.5% for those between 300% and 400% FPL.
+        </p>
+        <p class="mb-4">
+          The <strong>subsidy amount</strong> is the difference between your benchmark premium and your maximum contribution. If you are at or below 400% FPL, the government pays the difference directly to your insurer. The moment your MAGI crosses 400% of FPL, the subsidy drops to zero — this is the <strong>ACA subsidy cliff</strong>. Our calculator flags this by showing a warning when you are between 350% and 400% FPL, telling you exactly how much subsidy is at risk and how much income buffer remains.
+        </p>
+        <p>
+          Note that actual ACA subsidies also account for <strong>age rating</strong> and <strong>tobacco status</strong>, which vary by state and insurer. This calculator models the standard subsidy calculation. For a personalized estimate, verify your eligibility directly on HealthCare.gov.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- What is ACA Subsidy Cliff? -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is the ACA Subsidy Cliff?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          The <strong>ACA subsidy cliff</strong> is the sharp cutoff at 400% of the Federal Poverty Level where premium tax credits end entirely. Unlike most government benefit phase-outs that gradually reduce support, the ACA cliff means that earning just one dollar above 400% FPL costs you the entire subsidy — potentially thousands of dollars. For an early retiree with a $60,000 MAGI and $12,000 in benchmark premiums, losing the full subsidy means paying $6,414 more per year.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">ACA Subsidy vs. Full Premium</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Scenario</th>
+                <th class="p-3 font-medium text-ink">MAGI</th>
+                <th class="p-3 font-medium text-ink">FPL %</th>
+                <th class="p-3 font-medium text-ink">Annual Cost</th>
+                <th class="p-3 font-medium text-ink">Subsidy</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Well Below Cliff</td>
+                <td class="p-3 text-ink">$40,000</td>
+                <td class="p-3 text-ink">195.7%</td>
+                <td class="p-3 text-ink">$1,830</td>
+                <td class="p-3 text-success-deep">$10,170</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Near Cliff</td>
+                <td class="p-3 text-ink">$75,000</td>
+                <td class="p-3 text-ink">366.9%</td>
+                <td class="p-3 text-warning">$7,125</td>
+                <td class="p-3 text-warning">$4,875</td>
+              </tr>
+              <tr class="border-b border-hairline/50 bg-error/5">
+                <td class="p-3 font-sans font-semibold text-error">Over the Cliff</td>
+                <td class="p-3 text-error">$81,760</td>
+                <td class="p-3 text-error">400.0%+</td>
+                <td class="p-3 font-semibold text-error">$12,000</td>
+                <td class="p-3 font-semibold text-error">$0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="mb-4 mt-4">
+          <em>Assumes a family of 2 in Continental US with $12,000 annual benchmark premium.</em> At exactly 400.01% FPL, the subsidy drops from thousands of dollars to $0 — the cliff is absolute.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Who Should Use This Calculator?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Early Retirees</h4>
+            <p class="text-sm text-body">FIRE retirees managing their MAGI through a Roth conversion ladder or strategic withdrawal sequencing need to stay below 400% FPL to retain subsidies.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Solo Self-Employed</h4>
+            <p class="text-sm text-body">Freelancers and independent contractors paying for their own health insurance can optimize their business income to maximize subsidy eligibility.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Semi-Retirees</h4>
+            <p class="text-sm text-body">Those working part-time (Barista FIRE) can model how their part-time earnings affect subsidy eligibility and plan accordingly.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Financial Planners</h4>
+            <p class="text-sm text-body">Advisors helping clients navigate the transition from employer-sponsored insurance to ACA marketplace plans can model optimal income levels.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">ACA Subsidy Calculator Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Real-time subsidy calculation as you adjust inputs</li>
+              <li>• Cliff warning alerts when approaching 400% FPL</li>
+              <li>• Supports all household sizes (1–8) and regions</li>
+              <li>• Shows exact dollar amount at risk near the cliff</li>
+              <li>• Monthly and annual cost breakdowns</li>
+              <li>• Visual bar chart comparing cost vs. subsidy</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Does not factor in age rating or tobacco surcharges</li>
+              <li>• State-specific subsidies (e.g., California, Colorado) not included</li>
+              <li>• Assumes benchmark silver plan premium only</li>
+              <li>• Does not model premium cap for plans below age 30</li>
+              <li>• Actual results depend on your state marketplace</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About ACA Subsidy Cliff
+      </h2>
+
+      <div class="space-y-4">
+        {acaFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to ACA Subsidy Cliff Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>ACA Subsidy Cliff Calculator</strong> is the most practical tool available for early retirees who need to understand how their retirement income affects health insurance costs. For FIRE retirees, healthcare is often the largest and most unpredictable expense — and the ACA subsidy cliff compounds this uncertainty by creating a sharp penalty at a specific income threshold.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose This ACA Subsidy Calculator?</h3>
+
+        <p class="mb-4">
+          Unlike generic tax estimators, this calculator is purpose-built for the unique income patterns of early retirement. FIRE retirees typically live off investment income, which gives them significant control over their MAGI. By choosing which accounts to draw from each year — taxable brokerage, traditional IRA, Roth IRA, or HSA — you can fine-tune your reported income to maximize subsidy eligibility while meeting your spending needs.
+        </p>
+
+        <p class="mb-4">
+          The <strong>cliff warning system</strong> is the standout feature: when your FPL percentage falls between 350% and 400%, the calculator shows you exactly how much subsidy is at risk and how much income buffer remains before you hit the cliff. This allows you to plan your withdrawals with precision, ensuring you never accidentally lose thousands of dollars in premium tax credits.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This ACA Subsidy Cliff Calculator</h3>
+
+        <p class="mb-4">
+          This calculator includes real-time FPL threshold calculations for all 50 states (grouped by region), a detailed sliding-scale premium contribution model that matches ACA regulations, visual cost breakdown bars that update instantly, and a monthly spending breakdown to help with budgeting. All calculations run entirely in your browser — no data is stored or transmitted.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Internal Links Section -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Related Calculators
+      </h2>
+      <p class="mb-8 text-body">
+        Plan your full financial independence journey with these complementary tools.
+      </p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+          <p class="text-xs text-body">Find out how much you need saved today to reach retirement through compound interest alone.</p>
+        </a>
+
+        <a href="/fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Calculate your full retirement number across all FIRE strategies.</p>
+        </a>
+
+        <a href="/perpetual-swr-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Perpetual SWR Calculator</h3>
+          <p class="text-xs text-body">Find the withdrawal rate that preserves your portfolio's purchasing power forever.</p>
+        </a>
+
+        <a href="/coast-fire-shift-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Shift</h3>
+          <p class="text-xs text-body">Model your transition from full-time to part-time work.</p>
+        </a>
+
+        <a href="/barista-fire-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Calculator</h3>
+          <p class="text-xs text-body">Plan semi-retirement with part-time work and health insurance benefits.</p>
+        </a>
+
+        <a href="/lean-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Lean FIRE Calculator</h3>
+          <p class="text-xs text-body">Minimalist retirement planning with a reduced savings target.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
