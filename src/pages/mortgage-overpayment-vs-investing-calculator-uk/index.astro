@@ -77,6 +77,40 @@ const toolFaqItems: FAQItem[] = [
     </div>
   </section>
 
+  <!-- Calculator -->
+  <MortgageVsIsaCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Mortgage Overpayment vs Investing Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Mortgage Details</h3>
+      <p class="text-sm text-body">Input your current mortgage balance, remaining term, interest rate, monthly surplus, and expected ISA return to set up the comparison.</p>
+    </div>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Compare Two Strategies</h3>
+      <p class="text-sm text-body">Strategy A invests your surplus into a tax-free ISA from day one. Strategy B overpays the mortgage first, then redirects the full budget into an ISA once the mortgage is cleared.</p>
+    </div>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See the Winner</h3>
+      <p class="text-sm text-body">View the net worth comparison, interest saved, years shaved off your mortgage, and interactive chart showing both strategies over time.</p>
+    </div>
+  </HowItWorks>
+
   <!-- What is Mortgage Overpayment vs ISA Investing? -->
   <section class="border-t border-hairline bg-canvas-soft py-16">
     <div class="mx-auto max-w-4xl px-4 sm:px-6">
@@ -136,6 +170,14 @@ Break-even: When ISA Return &gt; Mortgage Rate → Investing wins<br />
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">UK Overpayment Limits &amp; Early Repayment Charges</h3>
+        <div class="rounded-lg border border-warning/30 bg-warning-soft p-4">
+          <p class="mb-2 text-sm font-semibold text-warning">⚠️ Important for UK Homeowners</p>
+          <p class="text-sm text-body">
+            <strong>Most UK fixed-rate mortgages cap penalty-free overpayments at 10% of the outstanding balance per year.</strong> For example, on a £200,000 mortgage, you could typically overpay up to £20,000 per year without triggering Early Repayment Charges (ERCs). ERCs typically range from <strong>1-5% of the overpaid amount</strong>, depending on how many years remain on your fixed rate. On a £30,000 overpayment with a 3% ERC, you would pay £900 in charges — potentially wiping out the interest saving benefit. This calculator assumes unlimited overpayments for mathematical simplicity. <strong>Always check your mortgage terms</strong> before implementing either strategy.
+          </p>
         </div>
 
         <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose Each Strategy?</h3>
@@ -205,65 +247,6 @@ Break-even: When ISA Return &gt; Mortgage Rate → Investing wins<br />
     </div>
   </section>
 
-  <!-- Calculator -->
-  <MortgageVsIsaCalculator />
-
-  <!-- How It Works -->
-  <HowItWorks title="How the Mortgage Overpayment vs Investing Calculator Works">
-    <div class="text-center">
-      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
-        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-        </svg>
-      </div>
-      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Mortgage Details</h3>
-      <p class="text-sm text-body">Input your current mortgage balance, remaining term, interest rate, monthly surplus, and expected ISA return to set up the comparison.</p>
-    </div>
-    <div class="text-center">
-      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
-        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-        </svg>
-      </div>
-      <h3 class="mb-2 text-sm font-semibold text-ink">2. Compare Two Strategies</h3>
-      <p class="text-sm text-body">Strategy A invests your surplus into a tax-free ISA from day one. Strategy B overpays the mortgage first, then redirects the full budget into an ISA once the mortgage is cleared.</p>
-    </div>
-    <div class="text-center">
-      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
-        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-        </svg>
-      </div>
-      <h3 class="mb-2 text-sm font-semibold text-ink">3. See the Winner</h3>
-      <p class="text-sm text-body">View the net worth comparison, interest saved, years shaved off your mortgage, and interactive chart showing both strategies over time.</p>
-    </div>
-  </HowItWorks>
-
-  <!-- ERC Warning Callout -->
-  <section class="border-t border-hairline bg-canvas-soft py-16">
-    <div class="mx-auto max-w-4xl px-4 sm:px-6">
-      <div class="rounded-lg border border-warning/30 bg-warning-soft p-6">
-        <div class="mb-3 flex items-center gap-2">
-          <svg class="h-5 w-5 text-warning" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-          </svg>
-          <h3 class="text-lg font-semibold text-warning">UK Overpayment Limits &amp; Early Repayment Charges</h3>
-        </div>
-        <div class="prose prose-gray max-w-none text-body">
-          <p class="mb-3">
-            <strong>Most UK fixed-rate mortgages cap penalty-free overpayments at 10% of the outstanding balance per year.</strong> For example, on a £200,000 mortgage, you could typically overpay up to £20,000 per year without triggering Early Repayment Charges (ERCs).
-          </p>
-          <p class="mb-3">
-            ERCs typically range from <strong>1-5% of the overpaid amount</strong>, depending on how many years remain on your fixed rate. On a £30,000 overpayment with a 3% ERC, you would pay £900 in charges — potentially wiping out the interest saving benefit.
-          </p>
-          <p>
-            This calculator assumes unlimited overpayments for mathematical simplicity. <strong>Always check your mortgage terms</strong> and factor in any ERCs before implementing either strategy. If you are within a fixed-rate period, the 10% annual limit is a hard constraint on Strategy B.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- FAQ Section -->
   <section class="border-t border-hairline bg-canvas py-16">
     <div class="mx-auto max-w-4xl px-4 sm:px-6">
@@ -280,7 +263,7 @@ Break-even: When ISA Return &gt; Mortgage Rate → Investing wins<br />
   </section>
 
   <!-- Complete Guide to Mortgage Overpayment vs ISA Investing -->
-  <section class="border-t border-hairline bg-canvas-soft py-16">
+  <section class="border-t border-hairline bg-canvas py-16">
     <div class="mx-auto max-w-4xl px-4 sm:px-6">
       <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink">Complete Guide to Mortgage Overpayment vs ISA Investing</h2>
       <div class="prose prose-gray max-w-none text-body">
@@ -303,7 +286,7 @@ Break-even: When ISA Return &gt; Mortgage Rate → Investing wins<br />
   </section>
 
   <!-- Explore Other Financial Tools -->
-  <section class="border-t border-hairline bg-canvas py-16">
+  <section class="border-t border-hairline bg-canvas-soft py-16">
     <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
       <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink">Explore Other Financial Tools</h2>
       <p class="mb-8 text-body">Use our free calculators to plan your path to financial independence.</p>
