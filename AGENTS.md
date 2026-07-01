@@ -46,7 +46,8 @@ fin-tools/
 │   │   │   ├── VPWCalculator.astro                  # Variable percentage withdrawal calculator
 │   │   │   ├── CoreSatelliteRebalancer.astro        # Core-Satellite portfolio rebalancer
 │   │   │   ├── DividendTaxDragCalculator.astro      # Dividend tax drag modeler
-│   │   │   └── SEPPCalculator.astro                 # SEPP / 72(t) early withdrawal calculator
+│   │   │   ├── SEPPCalculator.astro                 # SEPP / 72(t) early withdrawal calculator
+│   │   │   ├── GuardrailsCalculator.astro            # Guyton-Klinger guardrails withdrawal calculator
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -164,6 +165,7 @@ fin-tools/
 | `/vpw-calculator` | `src/pages/vpw-calculator/index.astro` | Variable Percentage Withdrawal Calculator |
 | `/core-satellite-rebalancer` | `src/pages/core-satellite-rebalancer/index.astro` | Core-Satellite Portfolio Rebalancer |
 | `/sepp-calculator` | `src/pages/sepp-calculator/index.astro` | SEPP / 72(t) Early Distribution Calculator |
+| `/guardrails-withdrawal-calculator` | `src/pages/guardrails-withdrawal-calculator/index.astro` | Guardrails Withdrawal Strategy Calculator |
 | `/tools` | `src/pages/tools/index.astro` | All tools overview |
 | `/about` | `src/pages/about/index.astro` | About page |
 | `/contact` | `src/pages/contact/index.astro` | Contact page |
@@ -377,6 +379,20 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 - Annual schedule table with starting balance, payment, ending balance for each method
 - Interest rate validation (IRS §7520 federal mid-term rate)
 - Single Modifications and multiple SEPP segments supported
+
+### Guardrails Withdrawal Strategy Calculator (Guyton-Klinger)
+
+- File: `src/components/calculator/GuardrailsCalculator.astro` (~437 lines)
+- Uses `src/utils/guardrails-calculations.ts` for math
+- Implements the Guyton-Klinger guardrails withdrawal strategy with automatic spending adjustments
+- Year-by-year simulation: calculates test rate, compares against upper (120%) and lower (80%) guardrails
+- Capital Preservation Rule: 10% spending cut when test rate exceeds upper guardrail
+- Prosperity Rule: 10% spending increase when test rate falls below lower guardrail
+- 4 KPI cards: Final Portfolio, Total Withdrawn, Avg. Annual Withdrawal, Guardrail Triggers
+- Chart.js dual-line chart showing portfolio balance and annual withdrawals over time
+- Collapsible year-by-year projection table with guardrail action indicators
+- Depletion warning when portfolio hits zero before timeline end
+- Theme-aware chart colors via MutationObserver on `html` class
 
 ### Adding a New Tool
 
