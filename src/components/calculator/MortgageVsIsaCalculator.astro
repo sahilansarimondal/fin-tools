@@ -1,0 +1,668 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="mortgage-isa-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="mortgage-isa-form" class="space-y-4">
+          <!-- 1. Current Mortgage Balance -->
+          <Input
+            label="Current Mortgage Balance"
+            name="balance"
+            type="number"
+            value={200000}
+            min={20000}
+            max={1500000}
+            step={5000}
+            suffix="£"
+            hideArrows
+            required
+          />
+
+          <Slider
+            label="Mortgage Balance"
+            name="balance"
+            value={200000}
+            min={20000}
+            max={1500000}
+            step={5000}
+            suffix=""
+            inputId="mortgage-balance"
+            displayId="mortgage-balanceValue"
+            tooltip="Your outstanding mortgage balance"
+          />
+
+          <!-- 2. Remaining Mortgage Term -->
+          <Input
+            label="Remaining Mortgage Term"
+            name="termYears"
+            type="number"
+            value={25}
+            min={5}
+            max={40}
+            step={1}
+            suffix="years"
+            hideArrows
+            required
+          />
+
+          <Slider
+            label="Remaining Term"
+            name="termYears"
+            value={25}
+            min={5}
+            max={40}
+            step={1}
+            suffix=" years"
+            inputId="mortgage-term"
+            displayId="mortgage-termValue"
+            tooltip="Years remaining on your mortgage"
+          />
+
+          <!-- 3. Mortgage Interest Rate -->
+          <Input
+            label="Mortgage Interest Rate"
+            name="mortgageRate"
+            type="number"
+            value={4.5}
+            min={0.5}
+            max={10.0}
+            step={0.1}
+            suffix="%"
+            hideArrows
+            required
+          />
+
+          <Slider
+            label="Mortgage Rate"
+            name="mortgageRate"
+            value={4.5}
+            min={0.5}
+            max={10.0}
+            step={0.1}
+            suffix="%"
+            inputId="mortgage-rate"
+            displayId="mortgage-rateValue"
+            tooltip="Your current annual mortgage interest rate"
+          />
+
+          <!-- 4. Available Monthly Surplus -->
+          <Input
+            label="Available Monthly Surplus"
+            name="monthlySurplus"
+            type="number"
+            value={500}
+            min={50}
+            max={5000}
+            step={50}
+            suffix="£"
+            hideArrows
+            required
+          />
+
+          <Slider
+            label="Monthly Surplus"
+            name="monthlySurplus"
+            value={500}
+            min={50}
+            max={5000}
+            step={50}
+            suffix=""
+            inputId="mortgage-surplus"
+            displayId="mortgage-surplusValue"
+            tooltip="Extra cash you can overpay or invest each month"
+          />
+
+          <!-- 5. Expected ISA Annual Return -->
+          <Input
+            label="Expected ISA Annual Return"
+            name="isaReturn"
+            type="number"
+            value={7.0}
+            min={2.0}
+            max={12.0}
+            step={0.1}
+            suffix="%"
+            hideArrows
+            required
+          />
+
+          <Slider
+            label="ISA Return"
+            name="isaReturn"
+            value={7.0}
+            min={2.0}
+            max={12.0}
+            step={0.1}
+            suffix="%"
+            inputId="mortgage-isaReturn"
+            displayId="mortgage-isaReturnValue"
+            tooltip="Expected annual return from your Stocks & Shares ISA"
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Winner banner (hidden initially) -->
+      <div id="mortgage-winner-banner" class="hidden rounded-lg border border-success/30 bg-success/5 p-4">
+        <p class="text-sm font-medium text-success-deep" id="mortgage-winner-text"></p>
+      </div>
+
+      <!-- KPI cards (2x2 grid) -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="STRATEGY A: ISA BALANCE"
+          valueId="mortgage-isa-a"
+          value="—"
+          valueClass="text-link"
+          description="Final ISA value if you invest the surplus"
+        />
+        <ResultCard
+          label="STRATEGY B: ISA BALANCE"
+          valueId="mortgage-isa-b"
+          value="—"
+          valueClass="text-success-deep"
+          description="Final ISA value if you overpay first"
+        />
+        <ResultCard
+          label="TOTAL INTEREST SAVED"
+          valueId="mortgage-interest-saved"
+          value="—"
+          valueClass="text-ink"
+          description="Mortgage interest saved by overpaying"
+        />
+        <ResultCard
+          label="YEARS SHAVED OFF"
+          valueId="mortgage-years-shaved"
+          value="—"
+          valueClass="text-ink"
+          description="How much earlier your mortgage is paid off"
+        />
+      </div>
+
+      <!-- Monthly payment card -->
+      <Card padding="lg">
+        <p class="text-sm text-mute">Your standard monthly mortgage payment</p>
+        <p class="text-2xl font-semibold tabular-nums text-ink" id="mortgage-monthly-payment">—</p>
+      </Card>
+
+      <!-- Chart -->
+      <Card padding="lg">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">Strategy Comparison Over Time</h2>
+        </div>
+        <div class="relative h-64 sm:h-80">
+          <canvas
+            id="mortgage-isa-chart"
+            role="img"
+            aria-label="Line chart comparing ISA balances and mortgage balances for both strategies over the mortgage term"
+          ></canvas>
+        </div>
+      </Card>
+
+      <!-- Year-by-year table (collapsible) -->
+      <Card padding="lg">
+        <details class="group">
+          <summary class="cursor-pointer py-2 text-sm font-medium text-ink">
+            Year-by-Year Projection
+            <svg class="ml-2 inline h-4 w-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M19 9l-7 7-7-7" />
+            </svg>
+          </summary>
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="border-b border-hairline bg-canvas-soft-2">
+                  <th class="p-2 font-medium text-ink">Year</th>
+                  <th class="p-2 font-medium text-ink">Strategy A ISA</th>
+                  <th class="p-2 font-medium text-ink">Strategy A Mortgage</th>
+                  <th class="p-2 font-medium text-ink">Strategy B ISA</th>
+                  <th class="p-2 font-medium text-ink">Strategy B Mortgage</th>
+                </tr>
+              </thead>
+              <tbody id="mortgage-table-body" class="font-mono text-xs tabular-nums">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </Card>
+    </div>
+  </div>
+</div>
+
+<!-- Disclaimer -->
+<p class="mx-auto max-w-6xl px-4 pb-8 text-center text-xs text-mute sm:px-6">
+  Disclaimer: This tool is for educational purposes only and assumes constant interest rates and investment growth. It does not account for specific lender overpayment limits (typically 10% per year) or early repayment charges (ERCs). This is not financial advice.
+</p>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+  import { calculateMortgageVsIsa, formatGBP, formatGBPShort } from '../../utils/mortgage-isa-calculations';
+
+  var chart = null;
+
+  // Slider display configurations
+  var sliderConfigs = [
+    {
+      id: 'mortgage-balance',
+      displayId: 'mortgage-balanceValue',
+      formatter: function(v) { return formatGBP(Number(v)); },
+    },
+    {
+      id: 'mortgage-term',
+      displayId: 'mortgage-termValue',
+      suffix: ' years',
+    },
+    {
+      id: 'mortgage-rate',
+      displayId: 'mortgage-rateValue',
+      suffix: '%',
+    },
+    {
+      id: 'mortgage-surplus',
+      displayId: 'mortgage-surplusValue',
+      formatter: function(v) { return formatGBP(Number(v)); },
+    },
+    {
+      id: 'mortgage-isaReturn',
+      displayId: 'mortgage-isaReturnValue',
+      suffix: '%',
+    },
+  ];
+
+  // Map input names to slider IDs for input→slider syncing
+  var nameToSliderId = {
+    balance: 'mortgage-balance',
+    termYears: 'mortgage-term',
+    mortgageRate: 'mortgage-rate',
+    monthlySurplus: 'mortgage-surplus',
+    isaReturn: 'mortgage-isaReturn',
+  };
+
+  function getFormData() {
+    var form = document.getElementById('mortgage-isa-form');
+    var formData = new FormData(form);
+
+    return {
+      balance: Number(formData.get('balance')) || 200000,
+      termYears: Number(formData.get('termYears')) || 25,
+      mortgageRate: Number(formData.get('mortgageRate')) || 4.5,
+      monthlySurplus: Number(formData.get('monthlySurplus')) || 500,
+      isaReturn: Number(formData.get('isaReturn')) || 7.0,
+    };
+  }
+
+  function updateSliderDisplays() {
+    sliderConfigs.forEach(function(cfg) {
+      var el = document.getElementById(cfg.id);
+      var display = document.getElementById(cfg.displayId);
+      if (el && display) {
+        if (cfg.formatter) {
+          display.textContent = cfg.formatter(el.value);
+        } else {
+          display.textContent = Number(el.value).toLocaleString() + (cfg.suffix || '');
+        }
+      }
+    });
+  }
+
+  function updateTable(results) {
+    var tbody = document.getElementById('mortgage-table-body');
+    if (!tbody) return;
+
+    var data = results.yearlyData;
+    if (!data || data.length === 0) {
+      tbody.innerHTML = '';
+      return;
+    }
+
+    tbody.innerHTML = data
+      .map(function(d) {
+        return (
+          '<tr class="border-b border-hairline/50">' +
+          '<td class="p-2 text-ink">' +
+          d.year +
+          '</td>' +
+          '<td class="p-2 text-ink">' +
+          formatGBP(d.strategyA_ISA) +
+          '</td>' +
+          '<td class="p-2 text-ink">' +
+          formatGBP(d.strategyA_mortgage) +
+          '</td>' +
+          '<td class="p-2 text-ink">' +
+          formatGBP(d.strategyB_ISA) +
+          '</td>' +
+          '<td class="p-2 text-ink">' +
+          formatGBP(d.strategyB_mortgage) +
+          '</td>' +
+          '</tr>'
+        );
+      })
+      .join('');
+  }
+
+  function updateChart(results) {
+    var ctx = document.getElementById('mortgage-isa-chart');
+    if (!ctx) return;
+
+    var isDark = document.documentElement.classList.contains('dark');
+    var gridColor = isDark ? '#262626' : '#ebebeb';
+    var textColor = isDark ? '#737373' : '#888888';
+    var tooltipBg = isDark ? '#ededed' : '#171717';
+    var tooltipText = isDark ? '#171717' : '#ffffff';
+
+    var isaAColor = isDark ? '#60a5fa' : '#2563eb';
+    var isaBColor = isDark ? '#34d399' : '#059669';
+    var mortgageAColor = isDark ? '#60a5fa' : '#2563eb';
+    var mortgageBColor = isDark ? '#fb923c' : '#ea580c';
+
+    var data = results.yearlyData;
+    if (!data || data.length === 0) {
+      if (chart) {
+        chart.destroy();
+        chart = null;
+      }
+      return;
+    }
+
+    var years = data.map(function(d) {
+      return 'Year ' + d.year;
+    });
+    var isaAData = data.map(function(d) {
+      return d.strategyA_ISA;
+    });
+    var mortgageAData = data.map(function(d) {
+      return d.strategyA_mortgage;
+    });
+    var isaBData = data.map(function(d) {
+      return d.strategyB_ISA;
+    });
+    var mortgageBData = data.map(function(d) {
+      return d.strategyB_mortgage;
+    });
+
+    if (chart) {
+      chart.data.labels = years;
+      chart.data.datasets[0].data = isaAData;
+      chart.data.datasets[0].borderColor = isaAColor;
+      chart.data.datasets[0].backgroundColor = isaAColor + '20';
+      chart.data.datasets[1].data = isaBData;
+      chart.data.datasets[1].borderColor = isaBColor;
+      chart.data.datasets[1].backgroundColor = isaBColor + '20';
+      chart.data.datasets[2].data = mortgageAData;
+      chart.data.datasets[2].borderColor = mortgageAColor;
+      chart.data.datasets[3].data = mortgageBData;
+      chart.data.datasets[3].borderColor = mortgageBColor;
+      chart.options.scales.x.ticks.color = textColor;
+      chart.options.scales.y.ticks.color = textColor;
+      chart.options.scales.x.grid.color = gridColor;
+      chart.options.scales.y.grid.color = gridColor;
+      chart.options.plugins.legend.labels.color = textColor;
+      chart.update();
+      return;
+    }
+
+    chart = new window.Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: [
+          {
+            label: 'Strategy A — ISA Balance',
+            data: isaAData,
+            borderColor: isaAColor,
+            backgroundColor: isaAColor + '20',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            borderWidth: 2,
+          },
+          {
+            label: 'Strategy B — ISA Balance',
+            data: isaBData,
+            borderColor: isaBColor,
+            backgroundColor: isaBColor + '20',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            borderWidth: 2,
+          },
+          {
+            label: 'Strategy A — Mortgage Balance',
+            data: mortgageAData,
+            borderColor: mortgageAColor,
+            backgroundColor: 'transparent',
+            borderDash: [5, 5],
+            tension: 0.3,
+            pointRadius: 0,
+            borderWidth: 2,
+          },
+          {
+            label: 'Strategy B — Mortgage Balance',
+            data: mortgageBData,
+            borderColor: mortgageBColor,
+            backgroundColor: 'transparent',
+            borderDash: [5, 5],
+            tension: 0.3,
+            pointRadius: 0,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 12,
+              usePointStyle: true,
+              pointStyle: 'circle',
+              padding: 16,
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: 500,
+            },
+            bodyFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+            },
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': ' + formatGBP(context.parsed.y);
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              maxTicksLimit: 10,
+            },
+            border: {
+              display: false,
+            },
+          },
+          y: {
+            grid: {
+              color: gridColor,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              callback: function(value) {
+                return formatGBPShort(value);
+              },
+            },
+            border: {
+              display: false,
+            },
+            min: 0,
+          },
+        },
+      },
+    });
+  }
+
+  function updateResults() {
+    var inputs = getFormData();
+    var results = calculateMortgageVsIsa(inputs);
+
+    // Update KPI cards
+    document.getElementById('mortgage-isa-a').textContent = formatGBP(
+      results.strategyA.isaBalance,
+    );
+    document.getElementById('mortgage-isa-b').textContent = formatGBP(
+      results.strategyB.isaBalance,
+    );
+
+    var interestSaved =
+      results.strategyA.totalInterestPaid - results.strategyB.totalInterestPaid;
+    document.getElementById('mortgage-interest-saved').textContent =
+      formatGBP(interestSaved);
+
+    var yearsShaved = results.yearsShaved;
+    document.getElementById('mortgage-years-shaved').textContent =
+      yearsShaved > 0 ? yearsShaved.toFixed(1) + ' yrs' : '0 yrs';
+
+    // Update monthly payment
+    document.getElementById('mortgage-monthly-payment').textContent =
+      formatGBP(results.monthlyPayment) + '/mo';
+
+    // Update winner banner
+    var winnerBanner = document.getElementById('mortgage-winner-banner');
+    var winnerText = document.getElementById('mortgage-winner-text');
+    winnerBanner.classList.remove('hidden');
+
+    if (results.winner === 'A') {
+      winnerText.textContent =
+        'Strategy A wins by ' +
+        formatGBP(results.difference) +
+        ' — investing your surplus outperforms overpaying.';
+      winnerBanner.className =
+        'rounded-lg border border-success/30 bg-success/5 p-4';
+    } else {
+      winnerText.textContent =
+        'Strategy B wins by ' +
+        formatGBP(results.difference) +
+        ' — overpaying your mortgage first then investing is the better strategy.';
+      winnerBanner.className =
+        'rounded-lg border border-link/30 bg-link/5 p-4';
+    }
+
+    // Update table
+    updateTable(results);
+
+    // Update chart
+    updateChart(results);
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('mortgage-isa-form');
+    if (!form) return;
+
+    form.addEventListener('input', function(e) {
+      var target = e.target;
+      if (!target || !target.name) return;
+
+      var name = target.name;
+
+      // Sync slider ↔ input
+      if (target.type === 'range') {
+        // Slider changed → update paired input
+        var inputId = 'input-' + name;
+        var input = document.getElementById(inputId);
+        if (input) {
+          input.value = target.value;
+        }
+      } else {
+        // Input changed → update paired slider
+        var sliderId = nameToSliderId[name];
+        if (sliderId) {
+          var slider = document.getElementById(sliderId);
+          if (slider) {
+            slider.value = target.value;
+          }
+        }
+      }
+
+      // Update slider displays
+      updateSliderDisplays();
+
+      // Recalculate everything
+      updateResults();
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    initFormListeners();
+    updateSliderDisplays();
+    updateResults();
+
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', function() {
+        if (chart) {
+          chart.destroy();
+          chart = null;
+        }
+        updateResults();
+      });
+
+    var observer = new MutationObserver(function() {
+      if (chart) {
+        chart.destroy();
+        chart = null;
+      }
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
