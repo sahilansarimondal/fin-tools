@@ -48,6 +48,7 @@ fin-tools/
 │   │   │   ├── DividendTaxDragCalculator.astro      # Dividend tax drag modeler
 │   │   │   ├── SEPPCalculator.astro                 # SEPP / 72(t) early withdrawal calculator
 │   │   │   ├── GuardrailsCalculator.astro            # Guyton-Klinger guardrails withdrawal calculator
+│   │   │   ├── TaxGainHarvestingCalculator.astro     # Tax gain harvesting simulator
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -98,6 +99,8 @@ fin-tools/
 │   │   │   └── index.astro             # Core-Satellite Rebalancer page
 │   │   ├── sepp-calculator/
 │   │   │   └── index.astro             # SEPP / 72(t) calculator page
+│   │   ├── tax-gain-harvesting-calculator/
+│   │   │   └── index.astro             # Tax Gain Harvesting Calculator page
 │   │   ├── learn/
 │   │   │   ├── what-is-fire.astro      # Learn: What is FIRE?
 │   │   │   ├── fire-strategies.astro   # Learn: FIRE Strategies
@@ -128,6 +131,7 @@ fin-tools/
 │       ├── vpw-calculations.ts            # VPW actuarial withdrawal engine
 │       ├── rebalancer-calculations.ts     # Core-Satellite rebalancing engine
 │       ├── seppMath.ts                    # SEPP / 72(t) distribution engine
+│       ├── tax-gain-harvesting-calculations.ts # Tax gain harvesting calculation engine
 │       ├── faq-data.ts                    # FAQ types and shared FAQ data
 │       └── formatters.ts               # Currency/number formatting utilities
 ├── astro.config.mjs                    # Astro config (site URL, Tailwind vite plugin)
@@ -166,6 +170,7 @@ fin-tools/
 | `/core-satellite-rebalancer` | `src/pages/core-satellite-rebalancer/index.astro` | Core-Satellite Portfolio Rebalancer |
 | `/sepp-calculator` | `src/pages/sepp-calculator/index.astro` | SEPP / 72(t) Early Distribution Calculator |
 | `/guardrails-withdrawal-calculator` | `src/pages/guardrails-withdrawal-calculator/index.astro` | Guardrails Withdrawal Strategy Calculator |
+| `/tax-gain-harvesting-calculator` | `src/pages/tax-gain-harvesting-calculator/index.astro` | Tax Gain Harvesting Calculator |
 | `/tools` | `src/pages/tools/index.astro` | All tools overview |
 | `/about` | `src/pages/about/index.astro` | About page |
 | `/contact` | `src/pages/contact/index.astro` | Contact page |

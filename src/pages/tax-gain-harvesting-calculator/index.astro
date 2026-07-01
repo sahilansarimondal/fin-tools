@@ -1,0 +1,329 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import TaxGainHarvestingCalculator from '../../components/calculator/TaxGainHarvestingCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is tax gain harvesting and how does it work?',
+    answerHtml: '<b>Tax gain harvesting</b> is the strategy of deliberately selling investments with long-term capital gains while your taxable income is low enough to pay <b>0% federal tax</b> on those gains. Here is how it works:<br /><br /><ol><li>You identify how much "headroom" you have in the 0% long-term capital gains (LTCG) bracket</li><li>You sell appreciated investments up to that amount</li><li>You pay <b>$0 federal tax</b> on those gains</li><li>You can immediately reinvest the proceeds, effectively "stepping up" your cost basis without paying tax</li></ol><br /><b>Example:</b> A single filer with $45,000 of ordinary income has ~$4,450 of headroom in the 0% bracket (after the $16,100 standard deduction). Harvesting gains up to that amount costs nothing in federal tax while resetting the cost basis for future appreciation.',
+    answerText: 'Tax gain harvesting means selling appreciated investments when your income is low enough to qualify for the 0% long-term capital gains rate. You sell, pay no federal tax, and reinvest immediately — resetting your cost basis. A single filer with $45K income typically has about $4,450 of tax-free harvesting room.',
+  },
+  {
+    question: 'How does the 0% long-term capital gains bracket work?',
+    answerHtml: 'The 0% long-term capital gains bracket means that a portion of your realized capital gains is taxed at a <b>0% federal rate</b>. Your gains are "stacked" on top of your ordinary taxable income:<br /><br /><ol><li>Your ordinary income (wages, interest, etc.) fills from the bottom first</li><li>Your long-term capital gains stack on top</li><li>The portion of gains that falls within the 0% threshold is taxed at 0%</li><li>Any gains exceeding that threshold are taxed at 15% or 20%</li></ol><br />For <b>2026</b>, the 0% LTCG thresholds by filing status are:<br /><br /><ul><li><b>Single:</b> Up to $49,450 of taxable income</li><li><b>Married Filing Jointly:</b> Up to $98,900</li><li><b>Head of Household:</b> Up to $66,200</li></ul><br /><b>Key insight:</b> It is your <i>total</i> taxable income (ordinary income + capital gains) that determines which bracket applies. Higher ordinary income leaves less room in the 0% bracket for gains.',
+    answerText: 'The 0% LTCG bracket taxes a portion of your capital gains at zero federal tax. Your ordinary income fills from the bottom, capital gains stack on top. For 2026: Single filers pay 0% up to $49,450 total taxable income, MFJ up to $98,900, and HoH up to $66,200. Higher ordinary income leaves less 0% room for gains.',
+  },
+  {
+    question: 'What is the difference between tax gain harvesting and tax loss harvesting?',
+    answerHtml: '<b>Tax gain harvesting</b> and <b>tax loss harvesting</b> are opposite strategies for different situations:<br /><br /><div class="overflow-x-auto rounded-lg border border-hairline mt-2 mb-2"><table class="w-full text-left text-sm"><thead><tr class="border-b border-hairline bg-canvas-soft-2"><th class="p-2 font-medium text-ink">Factor</th><th class="p-2 font-medium text-ink">Tax Gain Harvesting</th><th class="p-2 font-medium text-ink">Tax Loss Harvesting</th></tr></thead><tbody class="font-mono text-xs tabular-nums"><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Goal</td><td class="p-2 text-ink">Reset cost basis at 0% tax</td><td class="p-2 text-ink">Offset gains or $3K income</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">When to Use</td><td class="p-2 text-ink">Low-income years, early retirement</td><td class="p-2 text-ink">Years with losses or high gains</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Tax Impact</td><td class="p-2 text-ink">$0 tax (if within 0% bracket)</td><td class="p-2 text-ink">Reduces taxable income</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Result</td><td class="p-2 text-ink">Higher cost basis, lower future gains</td><td class="p-2 text-ink">Lower cost basis, defers tax</td></tr><tr class="bg-success/5"><td class="p-2 text-body font-sans">Best For</td><td class="p-2 text-ink">Portfolios with large unrealized gains</td><td class="p-2 text-ink">Portfolios with volatile holdings</td></tr></tbody></table></div><br />Many investors use <b>both</b> strategies: tax loss harvest in high-income years (to offset gains), and tax gain harvest in low-income years (to use the 0% bracket). The two strategies complement each other.',
+    answerText: 'Tax gain harvesting realizes gains at 0% tax to reset cost basis. Tax loss harvesting sells losers to offset gains or income. Use gain harvesting in low-income years (early retirement) and loss harvesting in high-income years. Both strategies complement each other for long-term tax efficiency.',
+  },
+  {
+    question: 'Who should use tax gain harvesting?',
+    answerHtml: 'Tax gain harvesting is most beneficial for:<br /><br /><ul><li><b>Early retirees (FIRE):</b> After leaving full-time work, your ordinary income drops significantly, leaving ample room in the 0% LTCG bracket. Harvest gains each year to reset your cost basis tax-free.</li><li><b>Sabbatical takers:</b> A gap year between jobs is a perfect opportunity to harvest gains at 0% while your income is low.</li><li><b>Stay-at-home spouses/partners:</b> If you file jointly with a high-earning spouse, your combined income may limit eligibility — but sole earners on leave may still benefit.</li><li><b>Part-year workers:</b> If you started a new job mid-year or worked only part of the year, your reduced annual income creates tax-free harvesting headroom.</li><li><b>Investors with concentrated positions:</b> Use the 0% bracket over multiple years to gradually diversify a concentrated stock position without paying capital gains tax.</li></ul><br /><b>Strategy tip:</b> If you have $100,000 of headroom but $300,000 of unrealized gains, spread the harvesting over 3 years — always staying within the 0% bracket each year.',
+    answerText: 'Tax gain harvesting is best for early retirees (FIRE), people on sabbatical, stay-at-home partners, part-year workers, and investors with concentrated positions. The key requirement is a low-income year that leaves 0% bracket headroom. Spread large gains over multiple years to stay within the 0% bracket.',
+  },
+  {
+    question: 'What is the optimal amount of capital gains to harvest?',
+    answerHtml: 'The optimal harvest amount is exactly the amount that fills your <b>0% LTCG bracket without spilling into the 15% bracket</b>. Here is how to calculate it:<br /><br /><b>Optimal Harvest = 0% LTCG Threshold − Taxable Ordinary Income</b><br /><br />Where Taxable Ordinary Income = Gross Ordinary Income − Deductions.<br /><br /><b>Example for a single filer in 2026:</b><br /><ul><li>Gross ordinary income: $45,000</li><li>Standard deduction: $16,100</li><li>Taxable ordinary income: $28,900</li><li>0% LTCG threshold: $49,450</li><li><b>Optimal harvest: $49,450 − $28,900 = $20,550</b></li></ul><br />Harvesting <b>exactly</b> this amount yields $0 tax. Harvesting even $1 more pushes that dollar into the 15% bracket. However, if you have gains you want to realize and are willing to pay 15%, harvesting above the 0% threshold may still make sense — especially if you expect to be in a higher bracket in future years.',
+    answerText: 'The optimal harvest amount equals the 0% LTCG threshold minus your taxable ordinary income. For a single filer with $45K income: $49,450 − $28,900 = $20,550 optimal harvest. Stay at or below this amount to pay $0 tax. Going above triggers 15% tax on the excess, but may still be worthwhile if you expect higher future tax brackets.',
+  },
+  {
+    question: 'Does tax gain harvesting affect state taxes?',
+    answerHtml: 'Yes — <b>state taxes matter</b> for tax gain harvesting. While you may pay 0% federal tax on harvested gains, most states tax capital gains as ordinary income. Key points:<br /><br /><ul><li><b>States with no income tax:</b> Alaska, Florida, Nevada, New Hampshire (interest/dividends only), South Dakota, Tennessee, Texas, Washington, Wyoming — full federal benefit with no state tax.</li><li><b>States that follow federal treatment:</b> Most states use your federal adjusted gross income (AGI) as the starting point for state taxes, so harvested gains increase state taxable income.</li><li><b>State tax rates vary:</b> Rates range from ~2.5% (North Dakota) to 13.3% (California top bracket). A 0% federal harvest could still cost 5-10% in state tax.</li><li><b>State deductions:</b> Some states have their own standard deductions or exemptions that may reduce the impact.</li></ul><br /><b>Recommendation:</b> Run this calculator for the federal analysis, then consult your state tax rules. The strategy may still be worthwhile even with state tax — paying 5% state tax to reset your cost basis on a long-term holding can save much more in future capital gains tax.',
+    answerText: 'Yes, most states tax capital gains as ordinary income even if they are federally tax-free. States without income tax (TX, FL, NV, etc.) give you the full federal benefit. Other states tax at 2.5-13.3%. The strategy usually still makes sense — paying 5% state tax to reset your cost basis can save more in future capital gains.',
+  },
+  {
+    question: 'Can I harvest gains and immediately reinvest without triggering wash sale rules?',
+    answerHtml: '<b>Yes — there is no wash sale rule for gains.</b> The wash sale rule (IRS Section 1091) only applies to <b>losses</b>, not gains. When you harvest gains:<br /><br /><ul><li>You can <b>immediately reinvest</b> in the same security</li><li>There is <b>no 30-day waiting period</b> (unlike tax loss harvesting)</li><li>Your <b>cost basis resets</b> to the higher purchase price</li><li>Future appreciation is calculated from the new, higher basis</li></ul><br /><b>Example:</b> Buy 100 shares of VTI at $200/share ($20,000 basis). Shares appreciate to $300/share ($30,000 value, $10,000 gain). Harvest the gain ($10,000 realized, possibly at 0% tax). Immediately repurchase 100 shares at $300/share ($30,000 new basis). If shares rise to $350, your future gain is only $5,000 instead of $15,000.<br /><br /><b>Important:</b> While there is no wash sale rule for gains, be mindful of <b>round-trip transaction costs</b> and <b>market exposure</b> during the brief time between selling and buying.',
+    answerText: 'Yes, you can reinvest immediately — there is no wash sale rule for gains. The wash sale rule only applies to losses. You can sell, realize the gain, and buy the same security back immediately. This resets your cost basis to the higher price, reducing future taxable gains. Just watch for transaction costs.',
+  },
+  {
+    question: 'How does tax gain harvesting interact with Social Security and ACA subsidies?',
+    answerHtml: 'Tax gain harvesting can affect <b>more than just capital gains tax</b>. Higher AGI from harvesting gains can trigger:<br /><br /><ul><li><b>Social Security taxation:</b> Additional income can make up to 85% of your Social Security benefits taxable. The "provisional income" formula includes tax-exempt interest and 50% of SS benefits. Harvested gains directly increase your AGI, potentially increasing SS tax.</li><li><b>ACA premium tax credits:</b> The Affordable Care Act subsidies phase out based on Modified Adjusted Gross Income (MAGI). Harvesting gains could reduce or eliminate your premium tax credits, effectively increasing your healthcare costs by thousands of dollars.</li><li><b>Medicare IRMAA:</b> Higher AGI two years prior can trigger Medicare income-related monthly adjustment amounts (IRMAA) — surcharges on Part B and Part D premiums.</li></ul><br /><b>Strategy:</b> Always model the <b>total marginal impact</b> before harvesting gains. A "free" federal tax harvest could cost you $5,000+ in lost ACA subsidies or increased Medicare premiums. Our <a href="/aca-subsidy-cliff-calculator" class="text-link underline">ACA Subsidy Cliff Calculator</a> can help you model these interactions.',
+    answerText: 'Tax gain harvesting increases your AGI, which can trigger Social Security taxation, reduce ACA premium tax credits, or increase Medicare IRMAA surcharges. A "free" federal tax harvest could cost thousands in lost subsidies. Always model the total marginal impact, not just the capital gains tax.',
+  },
+];
+---
+
+<PageLayout
+  title="Tax Gain Harvesting Calculator — Harvest Capital Gains at 0% Federal Tax"
+  description="Free tax gain harvesting calculator. See how much 0% LTCG bracket headroom you have and simulate harvesting capital gains without federal tax."
+  canonical="https://truefinancetools.com/tax-gain-harvesting-calculator"
+  ogImage="https://truefinancetools.com/og-tax-gain-harvesting-calculator.png"
+  ogImageAlt="Tax Gain Harvesting Calculator — Visualize Your 0% LTCG Bracket Headroom"
+  pageType="website"
+  keywords="tax gain harvesting calculator, capital gains tax calculator, 0% capital gains bracket, LTCG tax calculator, tax-free gains, gain harvesting strategy, capital gains tax bracket 2026, long-term capital gains tax"
+>
+  <StructuredData
+    title="Tax Gain Harvesting Calculator"
+    description="Free tax gain harvesting calculator. Visualize your 0% LTCG bracket headroom and simulate harvesting capital gains at zero federal tax."
+    url="https://truefinancetools.com/tax-gain-harvesting-calculator"
+    toolName="Tax Gain Harvesting Calculator"
+    toolDescription="Interactive calculator to visualize your 0% long-term capital gains bracket headroom and simulate the federal tax impact of tax gain harvesting."
+    faqItems={toolFaqItems}
+    features={[
+      'Interactive income stacking visualization',
+      'Real-time 0% bracket headroom calculation',
+      'LTCG bracket breakdown by tier',
+      'Tax-free harvest detection and badge',
+      'Multi-year harvest planning insights',
+      'Filing status support (Single, MFJ, HoH)'
+    ]}
+  />
+
+  <!-- Hero Section -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Tax Gain Harvesting Calculator
+      </h1>
+      <p class="text-lg text-body">Visualize your 0% long-term capital gains bracket headroom and simulate harvesting gains without federal tax.</p>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <TaxGainHarvestingCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Tax Gain Harvesting Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Income Details</h3>
+      <p class="text-sm text-body">Provide your filing status, ordinary income, and deduction type. The calculator determines your taxable income and available 0% LTCG headroom.</p>
+    </div>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Simulate Harvesting Gains</h3>
+      <p class="text-sm text-body">Adjust the potential harvest slider to see how realized gains fill the 0%, 15%, and 20% brackets in real-time with a visual stacked bar chart.</p>
+    </div>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Review Tax Impact</h3>
+      <p class="text-sm text-body">See exactly how much tax-free headroom remains, what portion of gains falls into each bracket, and whether your harvest is entirely tax-free.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is Tax Gain Harvesting? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is Tax Gain Harvesting?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <!-- Definition -->
+        <p><strong>Tax gain harvesting</strong> is a tax optimization strategy where you deliberately sell investments with long-term capital gains during years when your taxable income is low enough to qualify for the <b>0% federal long-term capital gains (LTCG) rate</b>. After selling, you immediately reinvest the proceeds — resetting your cost basis to a higher level without paying any federal capital gains tax. Over time, this reduces the taxable gain when you eventually sell the investment for retirement spending.</p>
+
+        <!-- Formula -->
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Tax Gain Harvesting Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Headroom = Max(0, 0% LTCG Threshold − Taxable Ordinary Income)<br />
+          Taxable Ordinary Income = Max(0, Gross Income − Deductions)<br /><br />
+          Optimal Harvest ≤ Headroom → $0 Federal Tax<br />
+          Optimal Harvest &gt; Headroom → 15% on excess, then 20% on further excess<br /><br />
+          2026 0% LTCG Thresholds:<br />
+          Single: $49,450 | MFJ: $98,900 | HoH: $66,200
+        </div>
+
+        <!-- Comparison Table -->
+        <h3 class="mb-3 mt-6 text-lg font-semibold text-ink">Tax Gain Harvesting vs. Tax Loss Harvesting</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Factor</th>
+                <th class="p-3 font-medium text-ink">Tax Gain Harvesting</th>
+                <th class="p-3 font-medium text-ink">Tax Loss Harvesting</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">When to Use</td>
+                <td class="p-3 text-ink">Low-income years</td>
+                <td class="p-3 text-ink">Any year with losses</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Tax Impact</td>
+                <td class="p-3 text-success-deep">$0 tax (if within 0% bracket)</td>
+                <td class="p-3 text-ink">Reduces taxable income</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Reinvest Immediately?</td>
+                <td class="p-3 text-success-deep">Yes — no wash sale rule</td>
+                <td class="p-3 text-ink">Wait 30 days (wash sale rule)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Cost Basis Impact</td>
+                <td class="p-3 text-ink">Increases (resets higher)</td>
+                <td class="p-3 text-ink">Decreases (resets lower)</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 text-body font-sans">Best For</td>
+                <td class="p-3 font-semibold text-success-deep">Low-income years, early retirement</td>
+                <td class="p-3 text-ink">High-income years, volatile holdings</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Who Should Choose -->
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Use Tax Gain Harvesting?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Early Retirees (FIRE)</h4>
+            <p class="text-sm text-body">After leaving full-time work, your ordinary income drops significantly — often to $30-50K from dividends, part-time work, or Roth conversions. This creates ample 0% bracket headroom to harvest gains each year.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Sabbatical &amp; Gap Year Takers</h4>
+            <p class="text-sm text-body">A year off between jobs is a perfect harvesting opportunity. Your annual income will be much lower, leaving significant headroom in the 0% bracket for one-time gain harvesting.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Stay-at-Home Partners</h4>
+            <p class="text-sm text-body">If you file jointly, your combined income is what matters. But if you file separately or have a year with reduced work, the 0% bracket can be especially valuable for portfolio rebalancing.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Long-Term Investors</h4>
+            <p class="text-sm text-body">Anyone holding concentrated positions with large unrealized gains can use multi-year harvesting to gradually diversify without paying capital gains tax — spreading the harvest across several low-income years.</p>
+          </div>
+        </div>
+
+        <!-- Pros and Cons -->
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Tax Gain Harvesting Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Pays $0 federal tax on harvested gains (within 0% bracket)</li>
+              <li>• Resets cost basis higher, reducing future taxable gains</li>
+              <li>• No wash sale rule — reinvest immediately</li>
+              <li>• Can gradually diversify concentrated positions tax-free</li>
+              <li>• Works alongside Roth conversion strategies</li>
+              <li>• Simple to execute — just sell and buy back</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Most states tax harvested gains as ordinary income</li>
+              <li>• Higher AGI may reduce ACA subsidies or increase Medicare premiums</li>
+              <li>• Can trigger Social Security benefit taxation</li>
+              <li>• Requires multi-year planning for maximum benefit</li>
+              <li>• Transaction costs and bid-ask spreads on trades</li>
+              <li>• Market exposure risk during sell/buy gap (minutes)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Tax Gain Harvesting
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Tax Gain Harvesting Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>tax gain harvesting calculator</strong> helps you visualize exactly how much of your long-term capital gains can be realized at the 0% federal tax rate. Unlike generic capital gains estimators that only show final tax due, this tool provides a <strong>visual income stacking chart</strong> — showing you exactly how your ordinary income and capital gains fill the 0%, 15%, and 20% brackets. This real-time visualization makes it easy to understand the marginal impact of each additional dollar of gains you harvest.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose Tax Gain Harvesting?</h3>
+
+        <p class="mb-4">
+          The most powerful reason to harvest gains is the <strong>cost basis step-up</strong>. When you sell an investment, realize the gain at 0% tax, and immediately reinvest, your new cost basis is the higher purchase price. All future appreciation is calculated from this higher basis. Over a lifetime of investing, repeatedly resetting your basis at 0% tax can save <strong>tens of thousands of dollars</strong> in future capital gains tax — especially if you expect to be in a higher tax bracket later in retirement when Required Minimum Distributions (RMDs) from retirement accounts kick in.
+        </p>
+
+        <p class="mb-4">
+          Tax gain harvesting also enables <strong>tax-efficient portfolio rebalancing</strong>. Instead of avoiding rebalancing because you do not want to trigger taxable gains, you can rebalance aggressively during low-income years — selling appreciated positions and buying underweight allocations — all at 0% federal tax. This keeps your portfolio aligned with your target asset allocation without the tax penalty that would apply in high-income years.
+        </p>
+
+        <p class="mb-4">
+          The strategy pairs exceptionally well with <strong>Roth conversion ladders</strong>. In early retirement, you typically have a multi-year window between leaving full-time work and starting Social Security (age 62-70). During these "gap years," your income is low, making it the ideal time to both convert Traditional IRA funds to Roth (paying tax at low ordinary rates) <i>and</i> harvest capital gains from taxable accounts (at 0%). The key is managing total taxable income to stay within your target bracket for both strategies.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Tax Gain Harvesting Calculator</h3>
+
+        <p class="mb-4">
+          This calculator provides a <strong>visual stacked bar chart</strong> that shows your income stacking — how ordinary income fills the tax brackets first, and where your capital gains land in the 0%, 15%, and 20% LTCG tiers. Adjust the harvest slider to see the segments grow and shrink in real-time. The <strong>headroom indicator</strong> shows exactly how much tax-free space you have left, and the <strong>tax-free harvest badge</strong> prominently confirms when your entire harvest is within the 0% bracket.
+        </p>
+
+        <p class="mb-4">
+          The <strong>bracket breakdown table</strong> details exactly what portion of your total capital gains falls into each tax tier and the corresponding dollar amount of tax for each bracket. Use the <strong>filing status selector</strong> to model Single, Married Filing Jointly, or Head of Household scenarios. The <strong>itemized deduction toggle</strong> lets you compare standard vs. itemized deductions to see how your actual tax situation affects the harvest opportunity. All calculations use official <strong>2026 federal tax brackets</strong> and run entirely in your browser — no data is saved or transmitted.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Tax Planning Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Tax Planning Tools
+      </h2>
+      <p class="mb-8 text-body">Optimize your tax strategy with these complementary calculators.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/dividend-tax-drag-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Dividend Tax Drag Modeler</h3>
+          <p class="text-xs text-body">Compare growth of dividend investments in taxable vs. tax-advantaged accounts.</p>
+        </a>
+        <a href="/aca-subsidy-cliff-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">ACA Subsidy Cliff Calculator</h3>
+          <p class="text-xs text-body">Model how income changes affect your Affordable Care Act premium tax credits.</p>
+        </a>
+        <a href="/sepp-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">72(t) SEPP Calculator</h3>
+          <p class="text-xs text-body">Calculate early retirement account distributions without the 10% penalty.</p>
+        </a>
+        <a href="/owner-earnings-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Owner Earnings Calculator</h3>
+          <p class="text-xs text-body">Buffett-style intrinsic value analysis with maintenance CapEx and earnings power.</p>
+        </a>
+        <a href="/vpw-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">VPW Withdrawal Calculator</h3>
+          <p class="text-xs text-body">Variable percentage withdrawal strategy for sustainable retirement income.</p>
+        </a>
+        <a href="/guardrails-withdrawal-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Guardrails Withdrawal Calculator</h3>
+          <p class="text-xs text-body">Dynamic Guyton-Klinger guardrails withdrawal strategy with automatic spending adjustments.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

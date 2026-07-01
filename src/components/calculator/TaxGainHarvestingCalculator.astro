@@ -1,0 +1,562 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="gain-harvesting-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="harvest-form" class="space-y-4">
+          <!-- Filing Status -->
+          <div class="flex flex-col gap-1.5">
+            <label for="filingStatus" class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              Filing Status
+              <span class="group relative inline-flex items-center">
+                <svg class="h-4 w-4 text-mute" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 16v-4M12 8h.01" />
+                </svg>
+                <span class="absolute bottom-full left-1/2 z-10 mb-2 w-48 -translate-x-1/2 rounded-md bg-ink px-3 py-2 text-xs text-canvas shadow-lg opacity-0 transition-opacity group-hover:opacity-100">
+                  Your tax filing status determines standard deduction amounts and long-term capital gains tax brackets.
+                </span>
+              </span>
+            </label>
+            <select
+              id="filingStatus"
+              name="filingStatus"
+              class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
+            >
+              <option value="single">Single</option>
+              <option value="mfj">Married Filing Jointly</option>
+              <option value="hoh">Head of Household</option>
+            </select>
+          </div>
+
+          <!-- Gross Ordinary Income -->
+          <Slider
+            label="Gross Ordinary Income"
+            name="grossOrdinaryIncome"
+            value={45000}
+            min={0}
+            max={250000}
+            step={500}
+            suffix=""
+            inputId="grossOrdinaryIncome"
+            displayId="grossOrdinaryIncomeValue"
+            tooltip="Your ordinary income (wages, interest, distributions) determines how much 0% bracket space remains for capital gains."
+          />
+
+          <!-- Deductions Type Toggle -->
+          <div class="flex flex-col gap-1.5">
+            <label class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              Deductions
+            </label>
+            <div class="flex gap-2">
+              <label class="flex cursor-pointer items-center gap-2 rounded-md border border-hairline px-4 py-2 text-sm text-body has-checked:border-link has-checked:bg-link/5 has-checked:text-ink">
+                <input type="radio" name="deductionType" value="standard" checked class="accent-ink" />
+                Standard
+              </label>
+              <label class="flex cursor-pointer items-center gap-2 rounded-md border border-hairline px-4 py-2 text-sm text-body has-checked:border-link has-checked:bg-link/5 has-checked:text-ink">
+                <input type="radio" name="deductionType" value="itemized" class="accent-ink" />
+                Itemized
+              </label>
+            </div>
+          </div>
+
+          <!-- Itemized Deduction (hidden by default) -->
+          <div id="itemized-deduction-group" class="hidden">
+            <Input
+              label="Itemized Deduction Amount"
+              name="itemizedDeduction"
+              type="number"
+              value={16100}
+              min={0}
+              max={200000}
+              step={100}
+              suffix="$"
+              hideArrows
+            />
+          </div>
+
+          <!-- Already Realized Gains -->
+          <Slider
+            label="LTCG Already Realized"
+            name="alreadyRealizedGains"
+            value={0}
+            min={0}
+            max={100000}
+            step={500}
+            suffix=""
+            inputId="alreadyRealizedGains"
+            displayId="alreadyRealizedGainsValue"
+            tooltip="Gains you've already locked in this year count against your 0% bracket headroom."
+          />
+
+          <!-- Potential Capital Gains to Harvest -->
+          <Slider
+            label="Potential Capital Gains to Harvest"
+            name="potentialHarvest"
+            value={15000}
+            min={0}
+            max={100000}
+            step={500}
+            suffix=""
+            inputId="potentialHarvest"
+            displayId="potentialHarvestValue"
+            tooltip="Drag to simulate harvesting gains. Watch how the tax buckets fill up in real-time."
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Tax-Free Harvest Badge (hidden by default) -->
+      <div id="tax-free-badge" class="hidden rounded-lg border border-success/30 bg-success/5 p-4 text-center">
+        <p class="text-lg font-semibold text-success-deep">✓ Tax-Free Harvest!</p>
+        <p class="text-sm text-body">Your entire capital gains harvest fits within the 0% LTCG bracket — no federal tax owed.</p>
+      </div>
+
+      <!-- SVG Stacked Bar Chart -->
+      <Card padding="lg">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">Income Stacking &amp; Tax Buckets</h2>
+        </div>
+        <div class="relative w-full">
+          <svg
+            id="gain-stacked-chart"
+            viewBox="0 0 600 340"
+            class="w-full h-auto"
+            role="img"
+            aria-label="Stacked bar chart showing ordinary income and capital gains tax bracket allocation"
+          >
+            <!-- Y-axis labels -->
+            <text x="10" y="20" class="fill-mute text-[10px] font-sans">$0</text>
+            <text id="chart-label-zero" x="10" y="70" class="fill-mute text-[10px] font-sans" text-anchor="start">0% Threshold</text>
+            <text id="chart-label-15" x="10" y="120" class="fill-mute text-[10px] font-sans" text-anchor="start">15% Threshold</text>
+
+            <!-- Stacked Bar Group -->
+            <g id="stacked-bar-group" transform="translate(120, 20)">
+              <!-- Background bar outline -->
+              <rect id="chart-bg-bar" x="0" y="0" width="120" height="300" class="fill-none stroke-hairline" stroke-width="1" />
+
+              <!-- Ordinary Income segment -->
+              <rect id="segment-ordinary" x="0" class="fill-slate-400 dark:fill-slate-500" width="120" height="0" />
+              <text id="segment-ordinary-label" x="130" class="fill-ink text-[11px] font-sans" dominant-baseline="middle">Ordinary Income</text>
+
+              <!-- 0% LTCG segment -->
+              <rect id="segment-zero" x="0" class="fill-emerald-400 dark:fill-emerald-500" width="120" height="0" />
+              <text id="segment-zero-label" x="130" class="fill-emerald-600 dark:fill-emerald-400 text-[11px] font-sans" dominant-baseline="middle">0% LTCG</text>
+
+              <!-- 15% LTCG segment -->
+              <rect id="segment-fifteen" x="0" class="fill-amber-400 dark:fill-amber-500" width="120" height="0" />
+              <text id="segment-fifteen-label" x="130" class="fill-amber-600 dark:fill-amber-400 text-[11px] font-sans" dominant-baseline="middle">15% LTCG</text>
+
+              <!-- 20% LTCG segment -->
+              <rect id="segment-twenty" x="0" class="fill-red-400 dark:fill-red-500" width="120" height="0" />
+              <text id="segment-twenty-label" x="130" class="fill-red-600 dark:fill-red-400 text-[11px] font-sans" dominant-baseline="middle">20% LTCG</text>
+
+              <!-- Dollar amount labels on segments -->
+              <text id="segment-ordinary-amount" x="60" class="fill-white text-[11px] font-semibold font-sans text-anchor-middle" dominant-baseline="middle"></text>
+              <text id="segment-zero-amount" x="60" class="fill-white text-[11px] font-semibold font-sans text-anchor-middle" dominant-baseline="middle"></text>
+              <text id="segment-fifteen-amount" x="60" class="fill-white text-[11px] font-semibold font-sans text-anchor-middle" dominant-baseline="middle"></text>
+              <text id="segment-twenty-amount" x="60" class="fill-white text-[11px] font-semibold font-sans text-anchor-middle" dominant-baseline="middle"></text>
+
+              <!-- Bracket threshold marker lines -->
+              <line id="marker-zero-line" x1="0" x2="120" class="stroke-mute stroke-dasharray-4" stroke-width="1" />
+              <text id="marker-zero-value" x="125" class="fill-mute text-[9px] font-sans" dominant-baseline="middle"></text>
+            </g>
+          </svg>
+        </div>
+      </Card>
+
+      <!-- KPI Result Cards -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="0% Headroom Remaining"
+          valueId="result-headroom"
+          value="—"
+          valueClass="text-success-deep"
+          description="Tax-free space left for additional gain harvesting"
+        />
+        <ResultCard
+          label="Tax on Harvest"
+          valueId="result-tax-on-harvest"
+          value="—"
+          valueClass="text-success-deep"
+          description="Federal tax incurred on the newly harvested gains"
+        />
+        <ResultCard
+          label="Effective Tax Rate"
+          valueId="result-effective-rate"
+          value="—"
+          valueClass="text-ink"
+          description="Effective federal tax rate on harvested gains"
+        />
+        <ResultCard
+          label="Total LTCG Tax"
+          valueId="result-total-tax"
+          value="—"
+          valueClass="text-ink"
+          description="Total tax on all capital gains (realized + harvest)"
+        />
+      </div>
+
+      <!-- Bracket Breakdown Table -->
+      <Card padding="lg">
+        <h2 class="mb-4 text-sm font-medium text-ink">LTCG Bracket Breakdown</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-2 font-medium text-ink">Bracket</th>
+                <th class="p-2 font-medium text-ink">Portion</th>
+                <th class="p-2 font-medium text-ink">Tax Rate</th>
+                <th class="p-2 font-medium text-ink">Tax</th>
+              </tr>
+            </thead>
+            <tbody id="breakdown-table-body" class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-2 text-ink"><span class="inline-block h-2 w-2 rounded-full bg-emerald-400 dark:bg-emerald-500 mr-1.5"></span>0% Bracket</td>
+                <td id="bt-0-portion" class="p-2 text-ink">—</td>
+                <td class="p-2 text-ink">0%</td>
+                <td id="bt-0-tax" class="p-2 text-success-deep">$0</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-2 text-ink"><span class="inline-block h-2 w-2 rounded-full bg-amber-400 dark:bg-amber-500 mr-1.5"></span>15% Bracket</td>
+                <td id="bt-15-portion" class="p-2 text-ink">—</td>
+                <td class="p-2 text-ink">15%</td>
+                <td id="bt-15-tax" class="p-2 text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-2 text-ink"><span class="inline-block h-2 w-2 rounded-full bg-red-400 dark:bg-red-500 mr-1.5"></span>20% Bracket</td>
+                <td id="bt-20-portion" class="p-2 text-ink">—</td>
+                <td class="p-2 text-ink">20%</td>
+                <td id="bt-20-tax" class="p-2 text-ink">—</td>
+              </tr>
+              <tr class="bg-canvas-soft font-semibold">
+                <td class="p-2 text-ink">Total</td>
+                <td id="bt-total-portion" class="p-2 text-ink">—</td>
+                <td class="p-2 text-ink"></td>
+                <td id="bt-total-tax" class="p-2 text-ink">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <!-- Parameter Summary -->
+      <Card padding="lg">
+        <h2 class="mb-4 text-sm font-medium text-ink">Parameter Summary</h2>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div class="flex justify-between border-b border-hairline/50 pb-2">
+            <span class="text-xs text-mute">Filing Status</span>
+            <span id="summary-status" class="text-xs font-medium text-ink">Single</span>
+          </div>
+          <div class="flex justify-between border-b border-hairline/50 pb-2">
+            <span class="text-xs text-mute">Standard Deduction</span>
+            <span id="summary-deduction" class="text-xs font-medium text-ink">—</span>
+          </div>
+          <div class="flex justify-between border-b border-hairline/50 pb-2">
+            <span class="text-xs text-mute">Taxable Ordinary Income</span>
+            <span id="summary-taxable-oi" class="text-xs font-medium text-ink">—</span>
+          </div>
+          <div class="flex justify-between border-b border-hairline/50 pb-2">
+            <span class="text-xs text-mute">0% LTCG Threshold</span>
+            <span id="summary-zero-threshold" class="text-xs font-medium text-ink">—</span>
+          </div>
+        </div>
+      </Card>
+    </div>
+  </div>
+</div>
+
+<p class="mx-auto max-w-6xl px-4 pb-8 text-center text-xs text-mute sm:px-6">
+  Disclaimer: This tool is for educational and illustrative purposes only. It uses 2026 federal tax brackets and does not constitute formal tax advice. Consult a qualified tax professional for your specific situation.
+</p>
+
+<script>
+  import {
+    calculateTaxGainHarvesting,
+    formatCurrency,
+    TAX_CONSTANTS,
+    type FilingStatus,
+    type CalculationResult,
+  } from '../../utils/tax-gain-harvesting-calculations';
+
+  /** Helper to format currency with full dollars */
+  function fmtFull(value: number): string {
+    if (!Number.isFinite(value)) return '$0';
+    return '$' + Math.round(value).toLocaleString('en-US');
+  }
+
+  /** Gather form data */
+  function getFormData() {
+    const form = document.getElementById('harvest-form') as HTMLFormElement;
+    const formData = new FormData(form);
+
+    const filingStatus = formData.get('filingStatus') as FilingStatus || 'single';
+    const deductionType = formData.get('deductionType') as string || 'standard';
+
+    return {
+      filingStatus,
+      grossOrdinaryIncome: Number(formData.get('grossOrdinaryIncome')) || 0,
+      useStandardDeduction: deductionType === 'standard',
+      itemizedDeduction: Number(formData.get('itemizedDeduction')) || 0,
+      alreadyRealizedGains: Number(formData.get('alreadyRealizedGains')) || 0,
+      potentialHarvest: Number(formData.get('potentialHarvest')) || 0,
+    };
+  }
+
+  /** Get standard deduction for a filing status */
+  function getStandardDeduction(status: FilingStatus): number {
+    return TAX_CONSTANTS.standardDeductions[status];
+  }
+
+  /** Update the itemized deduction default value when filing status changes */
+  function updateItemizedDeductionDefault(status: FilingStatus) {
+    const std = getStandardDeduction(status);
+    const itemizedInput = document.querySelector('[name="itemizedDeduction"]') as HTMLInputElement;
+    if (itemizedInput) {
+      itemizedInput.value = std.toString();
+    }
+  }
+
+  /** Update results and chart */
+  function updateResults() {
+    const inputs = getFormData();
+    const results = calculateTaxGainHarvesting(inputs);
+
+    // Update parameter summary
+    const statusLabels: Record<string, string> = { single: 'Single', mfj: 'Married Filing Jointly', hoh: 'Head of Household' };
+    document.getElementById('summary-status')!.textContent = statusLabels[inputs.filingStatus] || 'Single';
+    document.getElementById('summary-deduction')!.textContent = fmtFull(results.totalDeduction);
+    document.getElementById('summary-taxable-oi')!.textContent = fmtFull(results.taxableOrdinaryIncome);
+    const tiers = TAX_CONSTANTS.ltcgTiers[inputs.filingStatus];
+    document.getElementById('summary-zero-threshold')!.textContent = fmtFull(tiers.zero);
+
+    // Show/hide itemized deduction field
+    const itemizedGroup = document.getElementById('itemized-deduction-group')!;
+    if (!inputs.useStandardDeduction) {
+      itemizedGroup.classList.remove('hidden');
+    } else {
+      itemizedGroup.classList.add('hidden');
+    }
+
+    // Update result cards
+    const headroomEl = document.getElementById('result-headroom')!;
+    headroomEl.textContent = fmtFull(results.headroom);
+    headroomEl.className = results.headroom > 0
+      ? 'text-2xl font-semibold tabular-nums text-success-deep'
+      : 'text-2xl font-semibold tabular-nums text-error';
+
+    const harvestTaxEl = document.getElementById('result-tax-on-harvest')!;
+    harvestTaxEl.textContent = results.isHarvestTaxFree ? '$0' : fmtFull(results.taxOnHarvestedGains);
+    harvestTaxEl.className = results.isHarvestTaxFree
+      ? 'text-2xl font-semibold tabular-nums text-success-deep'
+      : 'text-2xl font-semibold tabular-nums text-error';
+
+    document.getElementById('result-effective-rate')!.textContent = results.effectiveRate > 0
+      ? (results.effectiveRate * 100).toFixed(2) + '%'
+      : '0.00%';
+
+    document.getElementById('result-total-tax')!.textContent = fmtFull(results.totalTax);
+
+    // Show/hide tax-free badge
+    const badge = document.getElementById('tax-free-badge')!;
+    if (results.isHarvestTaxFree && results.totalCapitalGains > 0) {
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
+
+    // Update breakdown table
+    document.getElementById('bt-0-portion')!.textContent = fmtFull(results.brackets.zeroPercentPortion);
+    document.getElementById('bt-0-tax')!.textContent = '$0';
+    document.getElementById('bt-15-portion')!.textContent = fmtFull(results.brackets.fifteenPercentPortion);
+    document.getElementById('bt-15-tax')!.textContent = fmtFull(results.taxOnFifteenPercent);
+    document.getElementById('bt-20-portion')!.textContent = fmtFull(results.brackets.twentyPercentPortion);
+    document.getElementById('bt-20-tax')!.textContent = fmtFull(results.taxOnTwentyPercent);
+    document.getElementById('bt-total-portion')!.textContent = fmtFull(results.totalCapitalGains);
+    document.getElementById('bt-total-tax')!.textContent = fmtFull(results.totalTax);
+
+    // Update SVG chart
+    updateChart(results, inputs);
+  }
+
+  /** Update the SVG stacked bar chart */
+  function updateChart(results: CalculationResult, inputs: ReturnType<typeof getFormData>) {
+    const tiers = TAX_CONSTANTS.ltcgTiers[inputs.filingStatus];
+    const zeroThreshold = tiers.zero;
+    const fifteenThreshold = tiers.fifteen;
+
+    // Scale: map dollar values to bar height (max height = 300px)
+    // Use max(total, threshold) for scale
+    const maxVal = Math.max(
+      results.taxableOrdinaryIncome + results.brackets.zeroPercentPortion + results.brackets.fifteenPercentPortion + results.brackets.twentyPercentPortion,
+      zeroThreshold,
+      50000
+    );
+    const barMaxHeight = 280;
+    const scale = barMaxHeight / maxVal;
+
+    // Helper to convert dollar to SVG y position (bottom = 0 in dollars = 300 in SVG)
+    const toY = (dollars: number) => 300 - dollars * scale;
+
+    // Segment heights
+    const hOrdinary = results.taxableOrdinaryIncome * scale;
+    const hZero = results.brackets.zeroPercentPortion * scale;
+    const hFifteen = results.brackets.fifteenPercentPortion * scale;
+    const hTwenty = results.brackets.twentyPercentPortion * scale;
+    const totalHeight = Math.min(hOrdinary + hZero + hFifteen + hTwenty, 300);
+
+    // Stacked bar y positions (bottom to top)
+    const yTwenty = 300 - hTwenty;
+    const yFifteen = yTwenty - hFifteen;
+    const yZero = yFifteen - hZero;
+    const yOrdinary = yZero - hOrdinary;
+    // yOrdinary should be 300 - totalHeight
+
+    // Update segment rectangles
+    const segOrdinary = document.getElementById('segment-ordinary')!;
+    segOrdinary.setAttribute('y', String(yOrdinary));
+    segOrdinary.setAttribute('height', String(hOrdinary));
+
+    const segZero = document.getElementById('segment-zero')!;
+    segZero.setAttribute('y', String(yZero));
+    segZero.setAttribute('height', String(hZero));
+
+    const segFifteen = document.getElementById('segment-fifteen')!;
+    segFifteen.setAttribute('y', String(yFifteen));
+    segFifteen.setAttribute('height', String(hFifteen));
+
+    const segTwenty = document.getElementById('segment-twenty')!;
+    segTwenty.setAttribute('y', String(yTwenty));
+    segTwenty.setAttribute('height', String(hTwenty));
+
+    // Update segment dollar amount labels
+    const fmtAmt = (v: number) => v > 0 ? '$' + Math.round(v).toLocaleString('en-US') : '';
+
+    const updateAmountLabel = (id: string, yPos: number, height: number, text: string) => {
+      const el = document.getElementById(id)!;
+      if (height > 20 && text) {
+        el.textContent = text;
+        el.setAttribute('y', String(yPos + height / 2));
+        el.classList.remove('hidden');
+      } else {
+        el.textContent = '';
+        el.classList.add('hidden');
+      }
+    };
+
+    updateAmountLabel('segment-ordinary-amount', yOrdinary, hOrdinary, fmtAmt(results.taxableOrdinaryIncome));
+    updateAmountLabel('segment-zero-amount', yZero, hZero, fmtAmt(results.brackets.zeroPercentPortion));
+    updateAmountLabel('segment-fifteen-amount', yFifteen, hFifteen, fmtAmt(results.brackets.fifteenPercentPortion));
+    updateAmountLabel('segment-twenty-amount', yTwenty, hTwenty, fmtAmt(results.brackets.twentyPercentPortion));
+
+    // Update segment labels on the right side
+    const updateLabel = (id: string, yPos: number, height: number, text: string) => {
+      const el = document.getElementById(id)!;
+      if (height > 0) {
+        el.textContent = text;
+        el.setAttribute('y', String(yPos + height / 2 + 1));
+        el.classList.remove('hidden');
+      } else {
+        el.textContent = '';
+        el.classList.add('hidden');
+      }
+    };
+
+    updateLabel('segment-ordinary-label', yOrdinary, hOrdinary, 'Ordinary Income');
+    updateLabel('segment-zero-label', yZero, hZero, '0% LTCG');
+    updateLabel('segment-fifteen-label', yFifteen, hFifteen, '15% LTCG');
+    updateLabel('segment-twenty-label', yTwenty, hTwenty, '20% LTCG');
+
+    // Update bracket threshold markers
+    const zeroY = toY(zeroThreshold);
+    const fifteenY = toY(fifteenThreshold);
+
+    const markerLine = document.getElementById('marker-zero-line')!;
+    markerLine.setAttribute('y1', String(zeroY));
+    markerLine.setAttribute('y2', String(zeroY));
+
+    const markerValue = document.getElementById('marker-zero-value')!;
+    markerValue.setAttribute('y', String(zeroY));
+    markerValue.textContent = '0% threshold: ' + fmtFull(zeroThreshold);
+
+    // Update label text mentions for thresholds on the left
+    document.getElementById('chart-label-zero')!.setAttribute('y', String(zeroY + 4));
+    document.getElementById('chart-label-15')!.setAttribute('y', String(fifteenY + 4));
+
+    // Hide threshold markers if off-screen
+    if (zeroY < 0 || zeroY > 300) {
+      markerLine.classList.add('hidden');
+      markerValue.classList.add('hidden');
+    } else {
+      markerLine.classList.remove('hidden');
+      markerValue.classList.remove('hidden');
+    }
+  }
+
+  // --- INITIALIZATION ---
+
+  function initSliders() {
+    const sliders = [
+      { id: 'grossOrdinaryIncome', displayId: 'grossOrdinaryIncomeValue', prefix: '$' },
+      { id: 'alreadyRealizedGains', displayId: 'alreadyRealizedGainsValue', prefix: '$' },
+      { id: 'potentialHarvest', displayId: 'potentialHarvestValue', prefix: '$' },
+    ];
+
+    sliders.forEach(function(slider) {
+      const el = document.getElementById(slider.id) as HTMLInputElement;
+      const display = document.getElementById(slider.displayId);
+
+      if (el && display) {
+        el.addEventListener('input', function() {
+          display.textContent = slider.prefix + Number(el.value).toLocaleString('en-US');
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    const form = document.getElementById('harvest-form');
+    if (form) {
+      form.addEventListener('input', function(e) {
+        updateResults();
+      });
+    }
+
+    // Filing status change
+    const statusSelect = document.getElementById('filingStatus') as HTMLSelectElement;
+    if (statusSelect) {
+      statusSelect.addEventListener('change', function() {
+        updateItemizedDeductionDefault(this.value as FilingStatus);
+        updateResults();
+      });
+    }
+
+    // Deduction type toggle (radio buttons)
+    const radioButtons = document.querySelectorAll('[name="deductionType"]');
+    radioButtons.forEach(function(radio) {
+      radio.addEventListener('change', function() {
+        updateResults();
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize itemized deduction default
+    const initialStatus = (document.getElementById('filingStatus') as HTMLSelectElement)?.value as FilingStatus || 'single';
+    updateItemizedDeductionDefault(initialStatus);
+
+    initSliders();
+    initFormListeners();
+    updateResults();
+  });
+</script>
