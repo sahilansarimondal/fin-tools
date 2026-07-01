@@ -1,0 +1,200 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import MortgageVsIsaCalculator from '../../components/calculator/MortgageVsIsaCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'Is it better to overpay a mortgage or invest in an ISA in the UK?',
+    answerHtml: `<b>It depends on the spread between your mortgage interest rate and your expected investment return.</b> If your mortgage rate is 4.5% and you expect 7% long-term returns from a Stocks &amp; Shares ISA, investing the surplus typically produces a higher net worth over time — but it comes with market risk. Overpaying your mortgage guarantees a return equal to your mortgage interest rate, which is risk-free. For risk-averse borrowers, the psychological benefit of being debt-free early often outweighs the mathematical optimality of investing. Use this calculator to model your specific numbers and see which strategy wins for your situation.`,
+    answerText: 'It depends on your mortgage rate vs expected ISA returns. Investing wins mathematically when returns exceed your mortgage rate, but overpaying offers guaranteed, risk-free returns.'
+  },
+  {
+    question: 'How do lender early repayment charges affect a mortgage overpayment vs investing calculator UK?',
+    answerHtml: `<b>Most UK fixed-rate mortgages limit penalty-free overpayments to 10% of the outstanding balance per year.</b> For example, on a £200,000 mortgage, you could typically overpay up to £20,000 per year without triggering Early Repayment Charges (ERCs). ERCs typically range from 1-5% of the amount overpaid, depending on how many years remain on your fixed rate. This calculator assumes unlimited overpayments for mathematical simplicity, but in practice you should check your mortgage terms and factor in any ERCs that would reduce the benefit of overpaying.`,
+    answerText: 'Most UK fixed-rate mortgages cap penalty-free overpayments at 10% of the outstanding balance per year. ERCs typically range from 1-5% of the overpaid amount.'
+  },
+  {
+    question: 'Does paying off a mortgage early beat compound interest from stock investing?',
+    answerHtml: `<b>Paying off a mortgage early gives you a guaranteed, risk-free return equal to your mortgage interest rate.</b> If your mortgage rate is 4.5%, every pound you overpay "earns" 4.5% tax-free — a return no savings account can match. However, historical stock market returns (7-10% annually over long periods) have typically outpaced mortgage rates. The key difference is certainty: mortgage overpayment provides a guaranteed return, while equity investing carries market risk. Over a 15-25 year horizon, equities have historically won, but past performance doesn't guarantee future results. The optimal choice depends on your risk tolerance, tax situation, and time horizon.`,
+    answerText: 'Mortgage overpayment guarantees a return equal to your mortgage rate (risk-free). Equities have historically returned more over 15-25 years, but with market risk.'
+  }
+];
+---
+
+<PageLayout
+  title="Mortgage Overpayment vs Investing Calculator UK — ISA Tracker"
+  description="Should you overpay your UK mortgage or invest in a Stocks &amp; Shares ISA? Use our dynamic calculator to compare guaranteed debt returns vs compound stock returns."
+  canonical="https://truefinancetools.com/mortgage-overpayment-vs-investing-calculator-uk"
+  ogImage="https://truefinancetools.com/og-mortgage-overpayment-vs-investing-calculator-uk.png"
+  ogImageAlt="UK Mortgage Overpayment vs ISA Investing Calculator — Compare strategies"
+  pageType="website"
+  keywords="mortgage overpayment calculator UK, overpay mortgage or invest ISA, UK mortgage vs stocks and shares ISA, mortgage overpayment vs investing calculator uk, mortgage early repayment UK, ISA investing vs mortgage payoff"
+>
+  <StructuredData
+    title="UK Mortgage Overpayment vs ISA Investing Calculator"
+    description="Should you overpay your UK mortgage or invest in a Stocks &amp; Shares ISA? Compare guaranteed debt returns vs compound stock returns."
+    url="https://truefinancetools.com/mortgage-overpayment-vs-investing-calculator-uk"
+    features={[
+      'Compare mortgage overpayment vs ISA investing strategies',
+      'Interactive Chart.js visualisation of net worth over time',
+      'Year-by-year projection table for both strategies',
+      'UK-specific with GBP formatting and ISA tax-free wrapper modelling',
+      'Early repayment charge awareness and overpayment limit guidance',
+    ]}
+    faqItems={toolFaqItems}
+  />
+
+  <!-- Hero Section -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        UK Mortgage Overpayment vs ISA Investing Calculator
+      </h1>
+      <p class="text-lg text-body">Compare two strategies: overpay your mortgage early or invest your surplus in a tax-free Stocks &amp; Shares ISA.</p>
+    </div>
+  </section>
+
+  <!-- Introductory Context -->
+  <section class="border-t border-hairline bg-canvas-soft py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <div class="prose prose-gray max-w-none text-body">
+        <p>
+          For millions of UK homeowners, the question of whether to overpay a mortgage or invest the surplus in a Stocks and Shares ISA is one of the most consequential financial decisions they will make. The UK tax system makes this dilemma particularly acute: mortgage interest is not tax-deductible for residential borrowers, while ISA gains and income are completely tax-free. This creates a level playing field where the comparison comes down to raw returns — the guaranteed saving from reduced mortgage interest versus the historically higher but variable returns from equity markets.
+        </p>
+        <p>
+          Behavioural finance research shows that the psychological comfort of being mortgage-free earlier provides a measurable wellbeing dividend that purely mathematical models cannot capture. Yet the compounding power of redirecting freed-up mortgage payments into a tax-free ISA wrapper after early payoff can create significant long-term wealth. Our calculator models both pathways over your exact remaining mortgage term, showing you the year-by-year trajectory of each strategy so you can make an informed decision based on your specific numbers, risk tolerance, and financial goals.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <MortgageVsIsaCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Mortgage Overpayment vs Investing Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Mortgage Details</h3>
+      <p class="text-sm text-body">Input your current mortgage balance, remaining term, interest rate, monthly surplus, and expected ISA return to set up the comparison.</p>
+    </div>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Compare Two Strategies</h3>
+      <p class="text-sm text-body">Strategy A invests your surplus into a tax-free ISA from day one. Strategy B overpays the mortgage first, then redirects the full budget into an ISA once the mortgage is cleared.</p>
+    </div>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See the Winner</h3>
+      <p class="text-sm text-body">View the net worth comparison, interest saved, years shaved off your mortgage, and interactive chart showing both strategies over time.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- How the Overpayment vs Investing Trade-Off is Calculated -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink">How the Overpayment vs Investing Trade-Off is Calculated</h2>
+      <div class="prose prose-gray max-w-none text-body">
+        <p>
+          This calculator uses an <strong>opportunity cost simulation engine</strong> that runs both strategies over the exact same time horizon — your original remaining mortgage term. This ensures a mathematically fair, apples-to-apples comparison.
+        </p>
+        <p>
+          Simply looking at mortgage interest saved is an incomplete calculation. When you overpay your mortgage and clear it early, you free up your entire monthly housing budget (standard payment plus surplus). The critical insight is that this freed-up cash can then be invested, compounding tax-free inside a Stocks and Shares ISA for the remaining years of the original term. Our model captures this "redirect effect" by tracking the ISA balance that accumulates from the early payoff date through to the end of the original mortgage term.
+        </p>
+        <p>
+          <strong>Strategy A (Invest)</strong> pays the standard mortgage payment for the full term while investing the monthly surplus into an ISA from month one. The ISA benefits from the full compounding period. <strong>Strategy B (Overpay)</strong> applies the surplus to the mortgage each month, clearing the debt early, then redirects the entire housing budget (standard payment plus surplus) into the ISA for the remaining months. The strategy with the higher total net worth at the end of the original term wins.
+        </p>
+        <p>
+          The calculation uses the standard amortisation formula for the baseline mortgage payment and month-by-month simulation for the overpayment strategy, accounting for compound interest on both the mortgage debt and the ISA investments. All figures are displayed in GBP and rounded to the nearest whole pound.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide to Mortgage Overpayment vs ISA Investing -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink">Complete Guide to Mortgage Overpayment vs ISA Investing</h2>
+      <div class="prose prose-gray max-w-none text-body">
+        <p>
+          Our <strong>UK mortgage overpayment vs ISA investing calculator</strong> helps you make one of the most important financial decisions UK homeowners face. Whether you have a 2-year fixed rate coming to an end or a 25-year repayment mortgage, understanding the mathematical trade-off between debt reduction and wealth accumulation is essential for long-term financial planning.
+        </p>
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose This Calculator?</h3>
+        <p>
+          Unlike simple "interest saved" calculators, our tool models the full opportunity cost of each strategy. It accounts for the compounding power of redirecting freed-up mortgage payments into tax-free ISA investments after early payoff, giving you a complete picture of both pathways. The interactive chart and year-by-year table make it easy to visualise how each strategy performs over time, helping you make a confident, data-driven decision.
+        </p>
+        <p>
+          The calculator is specifically designed for UK investors, using GBP formatting and the ISA tax-free wrapper as the investment vehicle. Whether you are a member of the FIRE community optimising your path to financial independence or a homeowner looking to clear your mortgage efficiently, this tool provides the clarity you need.
+        </p>
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Calculator</h3>
+        <p>
+          The tool features interactive sliders and input fields for all five key parameters, a real-time winner declaration, side-by-side KPI comparison cards, an interactive Chart.js line chart with dark mode support, and a collapsible year-by-year projection table. All calculations run entirely in your browser with no data sent to any server, ensuring complete privacy for your financial information.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Financial Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink">Explore Other Financial Tools</h2>
+      <p class="mb-8 text-body">Use our free calculators to plan your path to financial independence.</p>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/sequence-of-returns-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Sequence of Returns Risk</h3>
+          <p class="text-xs text-body">Stress-test your portfolio against historical market crashes.</p>
+        </a>
+        <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+          <p class="text-xs text-body">Find out how much you need saved today to retire on time.</p>
+        </a>
+        <a href="/perpetual-swr-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Perpetual SWR Calculator</h3>
+          <p class="text-xs text-body">Calculate a safe withdrawal rate that lasts forever.</p>
+        </a>
+        <a href="/cash-cushion-optimizer" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Cash Cushion Optimizer</h3>
+          <p class="text-xs text-body">Optimise your emergency fund vs equity allocation.</p>
+        </a>
+        <a href="/vpw-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">VPW Calculator</h3>
+          <p class="text-xs text-body">Variable percentage withdrawal for mathematically guaranteed income.</p>
+        </a>
+        <a href="/fire-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Calculate your FIRE number and years to financial independence.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
