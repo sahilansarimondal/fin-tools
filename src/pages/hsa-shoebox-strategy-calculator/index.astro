@@ -1,0 +1,291 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import HsaShoeboxStrategyCalculator from '../../components/calculator/HsaShoeboxStrategyCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is the HSA shoebox strategy for early retirement?',
+    answerHtml: 'The <b>HSA shoebox strategy</b> is a powerful tax optimization technique where you pay for qualified medical expenses out-of-pocket, save the receipts in a digital "shoebox," and let your Health Savings Account (HSA) balance compound tax-free for years or even decades. Later, you file claims for those saved receipts and receive <b>tax-free reimbursements</b> from your HSA — essentially turning old healthcare bills into a tax-free cash generator in early retirement.<br /><br />Because HSAs offer a rare <b>triple tax advantage</b> — tax-free contributions, tax-free growth, and tax-free withdrawals for qualified medical expenses — delaying reimbursements maximizes the compounding power of every dollar inside the account. The longer you wait, the more your money grows, and the larger your eventual tax-free withdrawal becomes. For early retirees, this strategy can fund years of healthcare spending without touching retirement accounts or triggering taxable events.',
+    answerText: 'The HSA shoebox strategy involves paying medical bills out-of-pocket, saving receipts, and letting your HSA compound tax-free. Years later, you file claims for those receipts and receive tax-free reimbursements — turning old healthcare bills into a tax-free cash generator in retirement.',
+  },
+  {
+    question: 'How long can you delay HSA reimbursements under IRS rules?',
+    answerHtml: 'Under current IRS guidelines, there is <b>no time limit or deadline</b> for submitting claims for qualified medical expenses from your HSA. The only requirement is that the expense must have been incurred <b>after your HSA was originally established</b>. This means you can pay for a doctor visit today, save the receipt, and file a reimbursement claim 10, 20, or even 30 years later — completely tax-free and penalty-free.<br /><br />This open-ended timeline is what makes the shoebox strategy so powerful for early retirees. You can accumulate medical receipts during your high-income working years, let the HSA compound for decades, and then systematically reimburse yourself during early retirement when your income is lower and your tax bracket may be more favorable. Just be sure to keep meticulous records — the IRS requires documentation that the expense was qualified and incurred after HSA establishment.',
+    answerText: 'There is no IRS deadline for HSA reimbursements. Qualified medical expenses incurred after your HSA was established can be reimbursed years or decades later — tax-free and penalty-free. This open-ended timeline is what makes the shoebox strategy powerful for early retirees.',
+  },
+  {
+    question: 'How do I track and organize receipts for an HSA receipt shoebox strategy?',
+    answerHtml: 'Organizing your HSA receipt shoebox is critical for long-term success. Here are the best practices:<br /><br /><ul><li><b>Go digital immediately:</b> Scan or photograph every receipt the day you receive it. Physical thermal paper receipts fade and degrade over 10-20 years, which could pose a risk during an IRS audit.</li><li><b>Use cloud storage:</b> Store receipts in a dedicated cloud folder (Google Drive, Dropbox, iCloud) with a consistent naming convention like <code>YYYY-MM-DD-Provider-Amount.pdf</code>.</li><li><b>Keep a spreadsheet:</b> Maintain a running log with columns for: Date of Service, Provider, Amount, Payment Method (out-of-pocket), and Date Reimbursed. This makes bulk filing much easier.</li><li><b>Save Explanation of Benefits (EOBs):</b> Your insurance company\'s EOB documents are excellent secondary proof of the qualified expense.</li><li><b>Back up redundantly:</b> Keep copies in at least two locations (e.g., cloud + external hard drive). A single lost hard drive could wipe out decades of receipt documentation.</li><li><b>Include HSA establishment date:</b> Keep a record of when your HSA was first opened — only expenses incurred after that date are eligible for reimbursement.</li></ul>',
+    answerText: 'Go digital immediately — scan receipts the same day. Use cloud storage with consistent naming (YYYY-MM-DD-Provider-Amount.pdf). Keep a spreadsheet tracking date, provider, amount, and reimbursement status. Save EOBs as secondary proof. Maintain backups in at least two locations.',
+  },
+  {
+    question: 'Is an HSA better than a 401(k) or IRA for early retirement?',
+    answerHtml: 'An HSA is often called the <b>"stealth IRA"</b> or the most tax-advantaged account in the US tax code, and for good reason. Here is how it compares:<br /><br /><div class="overflow-x-auto rounded-lg border border-hairline mt-2 mb-2"><table class="w-full text-left text-sm"><thead><tr class="border-b border-hairline bg-canvas-soft-2"><th class="p-2 font-medium text-ink">Feature</th><th class="p-2 font-medium text-ink">HSA</th><th class="p-2 font-medium text-ink">Traditional 401(k)/IRA</th><th class="p-2 font-medium text-ink">Roth 401(k)/IRA</th></tr></thead><tbody class="font-mono text-xs tabular-nums"><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Contributions</td><td class="p-2 text-success-deep">Tax-free</td><td class="p-2 text-ink">Tax-deductible</td><td class="p-2 text-ink">After-tax</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Growth</td><td class="p-2 text-success-deep">Tax-free</td><td class="p-2 text-ink">Tax-deferred</td><td class="p-2 text-success-deep">Tax-free</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Withdrawals</td><td class="p-2 text-success-deep">Tax-free (medical)</td><td class="p-2 text-ink">Taxed as income</td><td class="p-2 text-success-deep">Tax-free</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Early access</td><td class="p-2 text-success-deep">No penalty for medical</td><td class="p-2 text-error">10% penalty before 59½</td><td class="p-2 text-error">10% penalty before 59½</td></tr><tr class="bg-success/5"><td class="p-2 text-body font-sans">Triple tax advantage</td><td class="p-2 text-success-deep font-semibold">Yes</td><td class="p-2 text-error">No</td><td class="p-2 text-ink">No (double only)</td></tr></tbody></table></div><br />The HSA is the <b>only account in the US tax code</b> that offers tax-free contributions, tax-free growth, AND tax-free withdrawals — a true triple tax advantage. For early retirees who can pay medical expenses out-of-pocket and delay HSA reimbursements, it functions as a stealth retirement account with unmatched tax efficiency.',
+    answerText: 'The HSA offers a unique triple tax advantage: tax-free contributions, growth, and withdrawals (for medical expenses). Unlike 401(k)s and IRAs, HSAs allow penalty-free access before age 59½ for qualified medical expenses. For early retirees, the HSA is the most tax-efficient account available.',
+  },
+  {
+    question: 'What are the 2026 HSA contribution limits?',
+    answerHtml: 'For the 2026 tax year, the IRS has set the following HSA contribution limits:<br /><br /><ul><li><b>Self-only coverage:</b> $4,150 (this is the default used in our calculator)</li><li><b>Family coverage:</b> $8,300</li><li><b>Catch-up contribution (age 55+):</b> Additional $1,000 per year</li></ul><br />To be eligible for an HSA, you must be enrolled in a <b>High Deductible Health Plan (HDHP)</b>. For 2026, an HDHP requires a minimum deductible of $1,700 for self-only coverage or $3,400 for family coverage. The maximum out-of-pocket is capped at $8,300 (self-only) or $16,600 (family).<br /><br />Our calculator uses the self-only 2026 limit of <b>$4,150</b> as the default annual contribution, but you can adjust the slider up to $10,000 to model family coverage or catch-up contributions.',
+    answerText: 'For 2026: Self-only HSA contribution limit is $4,150, family limit is $8,300, with an additional $1,000 catch-up for age 55+. You must be enrolled in a High Deductible Health Plan (HDHP) to contribute. Our calculator defaults to the self-only limit of $4,150.',
+  },
+  {
+    question: 'Can I use HSA funds for non-medical expenses in retirement?',
+    answerHtml: 'Yes, but with a catch. After age 65, you can withdraw HSA funds for <b>any purpose</b> — not just medical expenses. However, non-medical withdrawals are taxed as ordinary income (just like a Traditional 401(k) or IRA), and there is no penalty.<br /><br />Before age 65, non-medical withdrawals are subject to <b>both ordinary income tax AND a 20% penalty</b>, making them extremely costly. This is why the shoebox strategy is so valuable — by saving medical receipts, you create a pool of tax-free withdrawals that can cover healthcare costs without touching your other retirement accounts.<br /><br /><b>Strategic takeaway:</b> Use your HSA receipts as a tax-free income bridge in early retirement. Reimburse yourself for past medical expenses to generate tax-free cash flow, while letting your 401(k) and IRA continue growing. This coordination between accounts is the hallmark of a sophisticated early retirement plan.',
+    answerText: 'After age 65, HSA funds can be withdrawn for any purpose — non-medical withdrawals are taxed as ordinary income but carry no penalty. Before 65, non-medical withdrawals face a 20% penalty plus income tax. The shoebox strategy maximizes tax-free withdrawals by using saved medical receipts.',
+  },
+  {
+    question: 'How does the shoebox strategy compare to immediately reimbursing HSA expenses?',
+    answerHtml: 'The mathematical advantage of the shoebox strategy comes down to <b>compound growth on a larger tax-free principal</b>. When you reimburse immediately, you remove money from the HSA each year, reducing the balance that compounds tax-free. When you delay, the full balance — including the portion that would have been withdrawn — continues growing.<br /><br /><b>Example with defaults ($10K balance, $4,150 contribution, $1,500 expenses, 7% return, 20 years):</b><br /><ul><li><b>Immediate Reimbursement:</b> HSA grows to approximately $177,000</li><li><b>Delayed Reimbursement (Shoebox):</b> HSA grows to approximately $243,000</li><li><b>Growth Bonus:</b> ~$66,000 extra from deferring</li><li><b>Receipt Value:</b> $30,000 in tax-free withdrawals available</li><li><b>Net Nest Egg:</b> ~$213,000 remaining after reimbursing all receipts</li></ul><br />The shoebox strategy effectively lets you have your cake and eat it too — you extract your medical costs tax-free while preserving a significantly larger investment portfolio.',
+    answerText: 'With default inputs ($10K balance, $4,150 contribution, $1,500 expenses, 7% return, 20 years), immediate reimbursement yields ~$177K while the shoebox strategy yields ~$243K — a ~$66K growth bonus. After reimbursing $30K in receipts, you still have ~$213K remaining, far exceeding the immediate path.',
+  },
+];
+---
+
+<PageLayout
+  title="HSA Shoebox Strategy Calculator — Delayed Reimbursement Growth"
+  description="Calculate the compounded growth advantage of the HSA shoebox strategy. Compare immediate vs delayed medical reimbursements to maximize tax-free HSA growth."
+  canonical="https://truefinancetools.com/hsa-shoebox-strategy-calculator"
+  ogImage="https://truefinancetools.com/og-hsa-shoebox-strategy-calculator.png"
+  ogImageAlt="HSA Shoebox Strategy Calculator — Maximize Tax-Free HSA Growth"
+  pageType="website"
+  keywords="HSA shoebox strategy calculator, HSA delayed reimbursement, HSA receipt strategy, health savings account growth, HSA triple tax advantage, early retirement healthcare, HSA vs 401k, tax-free medical withdrawals, HSA compound growth"
+>
+  <StructuredData
+    title="HSA Shoebox Strategy Calculator"
+    description="Free calculator to compare immediate vs delayed HSA medical reimbursements and maximize tax-free compound growth."
+    url="https://truefinancetools.com/hsa-shoebox-strategy-calculator"
+    toolName="HSA Shoebox Strategy Calculator"
+    toolDescription="Calculate the compounded growth advantage of delaying HSA medical reimbursements using the shoebox receipt strategy."
+    faqItems={toolFaqItems}
+    features={[
+      'Dual-path HSA growth comparison (Immediate vs Delayed)',
+      'Year-by-year compound interest projection',
+      'Shoebox receipt value calculator',
+      'Tax-free reimbursement optimization',
+      'Interactive Chart.js visualization',
+      'IRS-compliant medical expense tracking guidance'
+    ]}
+  />
+
+  <!-- 1. Hero Section -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        HSA Shoebox Strategy &amp; Delayed Growth Calculator
+      </h1>
+      <p class="text-lg text-body">Calculate the compounded growth advantage of delaying medical reimbursements in your Health Savings Account.</p>
+    </div>
+  </section>
+
+  <!-- 2. Introductory Context Block -->
+  <section class="border-t border-hairline bg-canvas-soft py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          A <strong>Health Savings Account (HSA)</strong> is the only account in the United States tax code that offers a <strong>triple tax advantage</strong>: contributions are tax-deductible, investments grow tax-free, and withdrawals for qualified medical expenses are completely tax-free. Most people treat their HSA like a simple spending account — they pay for doctor visits and prescriptions, then immediately reimburse themselves from the HSA. But this approach leaves a massive amount of tax-free compounding potential on the table.
+        </p>
+        <p class="mb-4">
+          The <strong>"shoebox strategy"</strong> — named after the practice of stuffing medical receipts into a shoebox for later reimbursement — flips this approach on its head. Instead of reimbursing expenses immediately, you pay for qualified medical costs out-of-pocket from your regular cash flow, save the receipts in a secure digital archive, and let your entire HSA balance compound untouched in tax-free index funds for years or even decades. When you eventually file those saved receipts as claims, you receive a <strong>tax-free lump-sum reimbursement</strong> from an account that has been growing without any tax drag the entire time.
+        </p>
+        <p class="mb-4">
+          This calculator models two parallel financial paths side by side: the <strong>standard approach</strong> (immediate reimbursement, where your HSA balance is reduced each year by your medical expenses) and the <strong>shoebox strategy</strong> (delayed reimbursement, where your full HSA balance compounds uninterrupted). The difference between the two — what we call the <strong>"Shoebox Bonus"</strong> — represents the pure mathematical advantage of deferring your reimbursements. For early retirees, this strategy can generate tens of thousands of dollars in additional tax-free wealth.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Calculator Component -->
+  <HsaShoeboxStrategyCalculator />
+
+  <!-- 4. How It Works -->
+  <HowItWorks title="How the HSA Shoebox Strategy Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your HSA Details</h3>
+      <p class="text-sm text-body">Set your current HSA balance, annual contribution, expected medical expenses, delay horizon, and growth rate.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Compare Both Paths</h3>
+      <p class="text-sm text-body">See the immediate reimbursement balance versus the delayed shoebox balance side by side, with the growth bonus highlighted.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Plan Your Strategy</h3>
+      <p class="text-sm text-body">Use the year-by-year projection to see exactly when and how the shoebox strategy builds your tax-free nest egg.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- 5. Methodology Section -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink">How the HSA Shoebox Strategy is Calculated</h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          The calculator runs a <strong>year-by-year simulation</strong> of two parallel financial paths over your selected delay horizon. Each path starts with your current HSA balance and adds your annual contribution every year. The critical difference is how each path handles annual medical expenses.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Path A: Immediate Reimbursement (Standard Approach)</h3>
+        <p class="mb-4">
+          In this path, you reimburse medical expenses from your HSA each year. Your annual contribution is added, but your expenses are subtracted before compounding. This means your invested principal is reduced by your medical costs every year.
+        </p>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Year 1: Principal = Current Balance + Contribution − Expenses<br />
+          Year 1: Ending Balance = max(0, Principal) × (1 + Growth Rate)<br /><br />
+          Year t: Principal = Previous Balance + Contribution − Expenses<br />
+          Year t: Ending Balance = max(0, Principal) × (1 + Growth Rate)
+        </div>
+
+        <h3 class="mb-3 mt-6 text-lg font-semibold text-ink">Path B: Delayed Reimbursement (Shoebox Strategy)</h3>
+        <p class="mb-4">
+          In this path, you pay medical bills from non-HSA cash. Your entire annual contribution compounds untouched inside the HSA. The full balance — including the portion that would have been withdrawn under Path A — continues to grow tax-free.
+        </p>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Year 1: Principal = Current Balance + Contribution<br />
+          Year 1: Ending Balance = Principal × (1 + Growth Rate)<br /><br />
+          Year t: Principal = Previous Balance + Contribution<br />
+          Year t: Ending Balance = Principal × (1 + Growth Rate)
+        </div>
+
+        <h3 class="mb-3 mt-6 text-lg font-semibold text-ink">The Shoebox Bonus</h3>
+        <p class="mb-4">
+          At the end of the delay horizon, you have accumulated a "digital shoebox" of medical receipts worth <strong>E × N</strong> (annual expenses × number of years). You can instantly withdraw this entire amount from your HSA — tax-free and penalty-free — using your saved receipts as proof. The "Shoebox Bonus" is simply the difference between the two ending balances: the pure extra wealth generated by leaving your money inside the tax-free compounding engine for longer.
+        </p>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Shoebox Value = Annual Expenses × Delay Horizon<br />
+          Growth Bonus = Path B Ending Balance − Path A Ending Balance<br />
+          Net Remaining HSA = max(0, Path B Balance − Shoebox Value)
+        </div>
+
+        <h3 class="mb-3 mt-6 text-lg font-semibold text-ink">Key Assumptions</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Constant Growth Rate</h4>
+            <p class="text-sm text-body">The calculator assumes a fixed annual return. In reality, market returns vary. Use 5-7% for a realistic long-term estimate.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Stable Annual Expenses</h4>
+            <p class="text-sm text-body">Medical expenses are held constant each year. In practice, costs may rise with inflation or change with age.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">No HSA Withdrawals</h4>
+            <p class="text-sm text-body">Path B assumes no withdrawals from the HSA during the delay horizon — the full balance compounds uninterrupted.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Qualified Medical Expenses</h4>
+            <p class="text-sm text-body">All expenses must be IRS-qualified medical expenses incurred after the HSA was established.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink">Frequently Asked Questions About HSA Shoebox Strategy</h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Complete Guide Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink">Complete Guide to HSA Shoebox Strategy Planning</h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>HSA shoebox strategy calculator</strong> helps you visualize one of the most powerful and underutilized tax optimization strategies available to US-based savers. The Health Savings Account is the only account in the federal tax code that offers a true triple tax advantage — tax-deductible contributions, tax-free investment growth, and tax-free withdrawals for qualified medical expenses. Yet most HSA holders never take full advantage of this benefit. They reimburse expenses immediately, removing money from the tax-free compounding engine and leaving significant wealth on the table.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose the Shoebox Strategy?</h3>
+
+        <p class="mb-4">
+          The shoebox strategy is particularly powerful for <strong>early retirees</strong> and members of the <strong>FIRE (Financial Independence, Retire Early) community</strong> who need to bridge the gap between early retirement and Medicare eligibility at age 65. By accumulating medical receipts during working years and delaying reimbursements, early retirees can create a tax-free cash reserve that funds healthcare costs without drawing down retirement accounts or triggering taxable events. The mathematical advantage compounds dramatically over time — even modest annual medical expenses of $1,500-$3,000 can generate tens of thousands of dollars in additional tax-free wealth over a 20-30 year horizon.
+        </p>
+
+        <p class="mb-4">
+          The shoebox strategy also provides exceptional <strong>flexibility</strong>. Unlike 401(k) and IRA withdrawals, HSA reimbursements for qualified medical expenses have no age restrictions, no income limits, and no withdrawal penalties. You can reimburse yourself for a doctor visit from 15 years ago, using a receipt you saved in your digital archive. This makes the HSA a uniquely powerful tool for managing cash flow and tax exposure in early retirement.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This HSA Shoebox Strategy Calculator</h3>
+
+        <p class="mb-4">
+          This calculator provides a comprehensive side-by-side comparison of the immediate reimbursement approach versus the delayed shoebox strategy. You can adjust your <strong>current HSA balance</strong>, <strong>annual contribution</strong>, <strong>medical expenses</strong>, <strong>delay horizon</strong> (5-40 years), and <strong>expected growth rate</strong> to model your specific scenario. The <strong>interactive chart</strong> plots both paths over time, making the compounding advantage instantly visible. A <strong>year-by-year projection table</strong> shows exactly how the gap between the two strategies widens with each passing year. The <strong>Shoebox Bonus</strong> metric tells you the pure dollar advantage of deferring reimbursements, while the <strong>Net Remaining HSA</strong> shows what is left after you successfully extract all your saved receipts tax-free.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Internal Links / Related Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink">Explore Related Retirement Tools</h2>
+      <p class="mb-8 text-body">Optimize your early retirement strategy with these complementary calculators.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/coast-fire-by-age-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE by Age Calculator</h3>
+          <p class="text-xs text-body">See your exact Coast FIRE milestone at every age with compound interest glide path projections.</p>
+        </a>
+        <a href="/aca-subsidy-cliff-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">ACA Subsidy Cliff Calculator</h3>
+          <p class="text-xs text-body">Model how your income affects ACA health insurance subsidies and optimize your early retirement healthcare costs.</p>
+        </a>
+        <a href="/die-with-zero-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Die with Zero Calculator</h3>
+          <p class="text-xs text-body">Optimize decumulation to maximize lifetime spending without running out of money.</p>
+        </a>
+        <a href="/perpetual-swr-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Perpetual SWR Calculator</h3>
+          <p class="text-xs text-body">Find the withdrawal rate that preserves your portfolio's purchasing power indefinitely.</p>
+        </a>
+        <a href="/cash-cushion-optimizer" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Cash Cushion Optimizer</h3>
+          <p class="text-xs text-body">Optimize your cash buffer versus equity allocation for maximum yield during early retirement.</p>
+        </a>
+        <a href="/sequence-of-returns-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Sequence of Returns Risk</h3>
+          <p class="text-xs text-body">Stress-test your retirement against historical market crashes to understand downside risk.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. Disclaimer -->
+  <section class="border-t border-hairline bg-canvas-soft py-8">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <p class="text-center text-xs text-mute">
+        <strong>Tax &amp; Regulatory Disclaimer:</strong> This calculator is based on current US federal tax rules for Health Savings Accounts (HSAs). It assumes constant annual growth and spending. Tax laws, contribution limits, and eligible HSA rules are subject to change. Always maintain a secure, organized digital backup of your healthcare receipts. This is not tax or investment advice. Consult a qualified tax professional for guidance specific to your situation.
+      </p>
+    </div>
+  </section>
+
+  <!-- TODO: Add internal links to this tool from early retirement and tax optimization calculator pages -->
+</PageLayout>

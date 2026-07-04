@@ -1,0 +1,401 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="hsa-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="hsa-form" class="space-y-4">
+          <Slider
+            label="Current HSA Balance"
+            name="currentBalance"
+            value={10000}
+            min={0}
+            max={200000}
+            step={500}
+            suffix="$"
+            inputId="hsa-currentBalance"
+            displayId="hsa-currentBalanceValue"
+          />
+
+          <Slider
+            label="Annual HSA Contribution"
+            name="annualContribution"
+            value={4150}
+            min={0}
+            max={10000}
+            step={100}
+            suffix="$"
+            inputId="hsa-annualContribution"
+            displayId="hsa-annualContributionValue"
+            tooltip="2026 self-only HSA contribution limit is $4,150; family limit is $8,300"
+          />
+
+          <Slider
+            label="Annual Out-of-Pocket Medical Expenses"
+            name="annualExpenses"
+            value={1500}
+            min={0}
+            max={15000}
+            step={100}
+            suffix="$"
+            inputId="hsa-annualExpenses"
+            displayId="hsa-annualExpensesValue"
+            tooltip="Value of receipts you save each year by paying medical bills out-of-pocket"
+          />
+
+          <Slider
+            label="Reimbursement Delay Horizon"
+            name="delayHorizon"
+            value={20}
+            min={5}
+            max={40}
+            step={1}
+            suffix=" years"
+            inputId="hsa-delayHorizon"
+            displayId="hsa-delayHorizonValue"
+            tooltip="How many years you delay before filing for tax-free reimbursement"
+          />
+
+          <Slider
+            label="Expected Annual Investment Growth Rate"
+            name="growthRate"
+            value={7.0}
+            min={1.0}
+            max={12.0}
+            step={0.1}
+            suffix="%"
+            inputId="hsa-growthRate"
+            displayId="hsa-growthRateValue"
+            tooltip="Expected annual return on HSA investments (7% = historical S&P 500 average)"
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Warning card (hidden by default) -->
+      <div id="hsa-excess-warning" class="hidden rounded-lg border border-error/30 bg-error/5 p-4">
+        <p class="text-sm font-medium text-error">⚠ Expenses Exceed HSA Capacity</p>
+        <p class="mt-1 text-xs text-body">Your annual out-of-pocket expenses exceed what your HSA can cover in year 1. Consider reducing expenses or increasing contributions.</p>
+      </div>
+
+      <!-- KPI cards row (4 cards in 2x2 grid) -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Immediate Reimbursement"
+          valueId="hsa-pathA"
+          value="—"
+          valueClass="text-error"
+          description="HSA balance if you reimburse expenses each year"
+        />
+        <ResultCard
+          label="Delayed Reimbursement"
+          valueId="hsa-pathB"
+          value="—"
+          valueClass="text-link"
+          description="HSA balance if you pay out-of-pocket and delay"
+        />
+        <ResultCard
+          label="Shoebox Receipt Value"
+          valueId="hsa-shoebox"
+          value="—"
+          valueClass="text-ink"
+          description="Total medical receipts you can withdraw tax-free"
+        />
+        <ResultCard
+          label="Shoebox Bonus"
+          valueId="hsa-bonus"
+          value="—"
+          valueClass="text-success-deep"
+          description="Extra growth from delaying reimbursements"
+        />
+      </div>
+
+      <!-- Net HSA After Reimbursement (wider result below) -->
+      <ResultCard
+        label="Net HSA After Reimbursement"
+        valueId="hsa-net"
+        value="—"
+        valueClass="text-link"
+        description="Remaining nest egg after withdrawing all saved receipts tax-free"
+      />
+
+      <!-- Chart card -->
+      <Card padding="lg">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">HSA Growth: Immediate vs. Delayed Reimbursement</h2>
+        </div>
+        <div class="relative h-64 sm:h-80">
+          <canvas
+            id="hsa-chart"
+            role="img"
+            aria-label="Line chart comparing HSA balance growth under immediate versus delayed reimbursement strategies"
+          ></canvas>
+        </div>
+      </Card>
+
+      <!-- Year-by-year table (collapsible) -->
+      <Card padding="lg">
+        <details class="group">
+          <summary class="cursor-pointer py-2 text-sm font-medium text-ink">
+            Year-by-Year Projection
+            <svg class="ml-2 inline h-4 w-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M19 9l-7 7-7-7" />
+            </svg>
+          </summary>
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="border-b border-hairline bg-canvas-soft-2">
+                  <th class="p-2 font-medium text-ink">Year</th>
+                  <th class="p-2 font-medium text-ink">Immediate Reimbursement</th>
+                  <th class="p-2 font-medium text-ink">Delayed Reimbursement</th>
+                  <th class="p-2 font-medium text-ink">Annual Advantage</th>
+                </tr>
+              </thead>
+              <tbody id="hsa-table-body" class="font-mono text-xs tabular-nums">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </Card>
+    </div>
+  </div>
+</div>
+
+<p class="mx-auto max-w-6xl px-4 pb-8 text-center text-xs text-mute sm:px-6">
+  Disclaimer: This calculator is based on current US federal tax rules for Health Savings Accounts (HSAs). It assumes constant annual growth and spending. Tax laws, contribution limits, and eligible HSA rules are subject to change. Always maintain a secure, organized digital backup of your healthcare receipts. This is not tax or investment advice.
+</p>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+  import { calculateHsaShoebox } from '../../utils/hsa-shoebox-calculations';
+  import { formatCurrency, formatCurrencyShort } from '../../utils/formatters';
+
+  let chart = null;
+
+  function getFormData() {
+    var form = document.getElementById('hsa-form');
+    var formData = new FormData(form);
+    return {
+      currentBalance: Number(formData.get('currentBalance')) || 10000,
+      annualContribution: Number(formData.get('annualContribution')) || 4150,
+      annualExpenses: Number(formData.get('annualExpenses')) || 1500,
+      delayHorizon: Number(formData.get('delayHorizon')) || 20,
+      growthRate: Number(formData.get('growthRate')) || 7.0,
+    };
+  }
+
+  function updateResults() {
+    var inputs = getFormData();
+    var result = calculateHsaShoebox(inputs);
+
+    // Show/hide excess warning
+    var warningEl = document.getElementById('hsa-excess-warning');
+    if (result.hasExcessWarning) {
+      warningEl.classList.remove('hidden');
+    } else {
+      warningEl.classList.add('hidden');
+    }
+
+    // Update KPI cards
+    document.getElementById('hsa-pathA').textContent = formatCurrency(result.pathAFinalBalance);
+    document.getElementById('hsa-pathB').textContent = formatCurrency(result.pathBFinalBalance);
+    document.getElementById('hsa-shoebox').textContent = formatCurrency(result.shoeboxValue);
+
+    var bonusEl = document.getElementById('hsa-bonus');
+    bonusEl.textContent = '+' + formatCurrency(result.growthBonus);
+    bonusEl.className = 'text-2xl font-semibold tabular-nums text-success-deep';
+
+    document.getElementById('hsa-net').textContent = formatCurrency(result.netRemainingHSA);
+
+    updateChart(result);
+    updateTable(result);
+  }
+
+  function updateChart(result) {
+    var ctx = document.getElementById('hsa-chart');
+    if (!ctx) return;
+    if (chart) chart.destroy();
+
+    var isDark = document.documentElement.classList.contains('dark');
+    var gridColor = isDark ? '#262626' : '#ebebeb';
+    var textColor = isDark ? '#737373' : '#888888';
+    var tooltipBg = isDark ? '#ededed' : '#171717';
+    var tooltipText = isDark ? '#171717' : '#ffffff';
+    var linkColor = isDark ? '#3291ff' : '#0070f3';
+    var errorColor = isDark ? '#ff4444' : '#ee0000';
+
+    var labels = result.yearData.map(function(d) { return 'Year ' + d.year; });
+    var pathAData = result.yearData.map(function(d) { return d.pathABalance; });
+    var pathBData = result.yearData.map(function(d) { return d.pathBBalance; });
+
+    chart = new window.Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Delayed Reimbursement (Shoebox)',
+            data: pathBData,
+            borderColor: linkColor,
+            backgroundColor: isDark ? 'rgba(50,145,255,0.1)' : 'rgba(0,112,243,0.1)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+          },
+          {
+            label: 'Immediate Reimbursement',
+            data: pathAData,
+            borderColor: errorColor,
+            backgroundColor: isDark ? 'rgba(255,68,68,0.1)' : 'rgba(238,0,0,0.1)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+            borderDash: [5, 5],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 2,
+              usePointStyle: false,
+              padding: 16,
+              font: { family: 'Inter, system-ui, sans-serif', size: 11 },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: { family: 'Inter, system-ui, sans-serif', size: 12, weight: 500 },
+            bodyFont: { family: 'Inter, system-ui, sans-serif', size: 12 },
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': ' + formatCurrency(context.parsed.y);
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: {
+              font: { family: 'Inter, system-ui, sans-serif', size: 11 },
+              color: textColor,
+              maxTicksLimit: 10,
+            },
+            border: { display: false },
+          },
+          y: {
+            grid: { color: gridColor },
+            ticks: {
+              font: { family: 'Inter, system-ui, sans-serif', size: 11 },
+              color: textColor,
+              callback: function(value) { return formatCurrencyShort(value); },
+            },
+            border: { display: false },
+            min: 0,
+          },
+        },
+      },
+    });
+  }
+
+  function updateTable(result) {
+    var tbody = document.getElementById('hsa-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    result.yearData.forEach(function(d) {
+      var advantage = d.pathBBalance - d.pathABalance;
+      var row = document.createElement('tr');
+      row.className = 'border-b border-hairline/50';
+      row.innerHTML =
+        '<td class="p-2 text-body font-sans">' + d.year + '</td>' +
+        '<td class="p-2 text-error">' + formatCurrency(d.pathABalance) + '</td>' +
+        '<td class="p-2 text-link">' + formatCurrency(d.pathBBalance) + '</td>' +
+        '<td class="p-2 text-success-deep">+' + formatCurrency(advantage) + '</td>';
+      tbody.appendChild(row);
+    });
+  }
+
+  function initSliders() {
+    var sliders = [
+      { id: 'hsa-currentBalance', displayId: 'hsa-currentBalanceValue', suffix: '$' },
+      { id: 'hsa-annualContribution', displayId: 'hsa-annualContributionValue', suffix: '$' },
+      { id: 'hsa-annualExpenses', displayId: 'hsa-annualExpensesValue', suffix: '$' },
+      { id: 'hsa-delayHorizon', displayId: 'hsa-delayHorizonValue', suffix: ' years' },
+      { id: 'hsa-growthRate', displayId: 'hsa-growthRateValue', suffix: '%' },
+    ];
+
+    sliders.forEach(function(slider) {
+      var el = document.getElementById(slider.id);
+      var display = document.getElementById(slider.displayId);
+      if (el && display) {
+        el.addEventListener('input', function() {
+          var val = Number(el.value);
+          if (slider.suffix === '$') {
+            display.textContent = formatCurrencyShort(val);
+          } else {
+            display.textContent = val + slider.suffix;
+          }
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('hsa-form');
+    if (form) {
+      form.addEventListener('input', function() { updateResults(); });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    initSliders();
+    initFormListeners();
+    updateResults();
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+      if (chart) { chart.destroy(); chart = null; }
+      updateResults();
+    });
+
+    var observer = new MutationObserver(function() {
+      if (chart) { chart.destroy(); chart = null; }
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
