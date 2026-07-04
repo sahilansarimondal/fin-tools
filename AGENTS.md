@@ -50,6 +50,7 @@ fin-tools/
 │   │   │   ├── GuardrailsCalculator.astro            # Guyton-Klinger guardrails withdrawal calculator
 │   │   │   ├── TaxGainHarvestingCalculator.astro     # Tax gain harvesting simulator
 │   │   │   ├── RetirementBucketCalculator.astro      # 3-bucket drawdown strategy simulator
+│   │   │   ├── BondTentCalculator.astro              # Bond tent / SRR glide path calculator
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -134,6 +135,7 @@ fin-tools/
 │       ├── seppMath.ts                    # SEPP / 72(t) distribution engine
 │       ├── tax-gain-harvesting-calculations.ts # Tax gain harvesting calculation engine
 │       ├── retirement-bucket-calculations.ts    # 3-bucket drawdown strategy engine
+│       ├── bond-tent-calculations.ts            # Bond tent / SRR glide path engine
 │       ├── faq-data.ts                    # FAQ types and shared FAQ data
 │       └── formatters.ts               # Currency/number formatting utilities
 ├── astro.config.mjs                    # Astro config (site URL, Tailwind vite plugin)
@@ -173,6 +175,7 @@ fin-tools/
 | `/sepp-calculator` | `src/pages/sepp-calculator/index.astro` | SEPP / 72(t) Early Distribution Calculator |
 | `/guardrails-withdrawal-calculator` | `src/pages/guardrails-withdrawal-calculator/index.astro` | Guardrails Withdrawal Strategy Calculator |
 | `/tax-gain-harvesting-calculator` | `src/pages/tax-gain-harvesting-calculator/index.astro` | Tax Gain Harvesting Calculator |
+| `/bond-tent-calculator` | `src/pages/bond-tent-calculator/index.astro` | Bond Tent / SRR Glide Path Calculator |
 | `/retirement-bucket-strategy-calculator` | `src/pages/retirement-bucket-strategy-calculator/index.astro` | 3-Bucket Retirement Drawdown Strategy Simulator |
 | `/tools` | `src/pages/tools/index.astro` | All tools overview |
 | `/about` | `src/pages/about/index.astro` | About page |
@@ -415,6 +418,21 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 - Chart.js stacked area line chart showing 3-bucket balances over 30 years
 - 3 color-coded initial allocation summary boxes (green Cash, blue Bonds, violet Stocks)
 - Disclaimer block about fixed-rate modeling limitations
+- Theme-aware chart colors via MutationObserver on `html` class
+
+### Bond Tent / SRR Glide Path Calculator
+
+- File: `src/components/calculator/BondTentCalculator.astro` (~481 lines)
+- Uses `src/utils/bond-tent-calculations.ts` for math
+- Simulates a rising equity glide path (bond tent) to protect against sequence of returns risk
+- 3-phase simulation: pre-retirement ramp-up, post-retirement ramp-down, post-glide path
+- 3 crash scenarios: Severe (-30%), Moderate (-15%), Flat (0% for 3 years)
+- Compares dynamic tent portfolio vs. static baseline allocation
+- Inputs: Portfolio value, annual spending, ramp-up years, ramp-down years, baseline equity %, peak bond %
+- 4 KPI cards: Bond Tent Final, Static Final, Tent Advantage, Max Drawdown Saved
+- Summary banner showing dollar advantage
+- Chart.js dual-line chart comparing tent vs. static portfolio trajectories
+- Collapsible year-by-year projection table with bond allocation %
 - Theme-aware chart colors via MutationObserver on `html` class
 
 ### Adding a New Tool
