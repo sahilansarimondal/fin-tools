@@ -1,0 +1,470 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+import { calculateBucketStrategy } from '../../utils/retirement-bucket-calculations';
+import { formatCurrency, formatCurrencyShort } from '../../utils/formatters';
+---
+
+<div id="rbs-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="rbs-form" class="space-y-4">
+          <Input
+            label="Portfolio Value"
+            name="portfolioValue"
+            type="number"
+            value={1000000}
+            min={100000}
+            max={5000000}
+            step={10000}
+            suffix="$"
+            hideArrows
+            required
+          />
+          <Input
+            label="Annual Spending"
+            name="annualSpending"
+            type="number"
+            value={40000}
+            min={10000}
+            max={250000}
+            step={1000}
+            suffix="$"
+            hideArrows
+            required
+          />
+          <Slider
+            label="Cash Buffer Years"
+            name="bucket1Years"
+            value={3}
+            min={1}
+            max={5}
+            step={1}
+            suffix=" years"
+            inputId="rbs-b1Years"
+            displayId="rbs-b1YearsValue"
+            tooltip="How many years of spending to hold in cash/money-market"
+          />
+          <Slider
+            label="Bond Buffer Years"
+            name="bucket2Years"
+            value={5}
+            min={2}
+            max={10}
+            step={1}
+            suffix=" years"
+            inputId="rbs-b2Years"
+            displayId="rbs-b2YearsValue"
+            tooltip="How many years of spending to hold in bonds/income (beyond the cash buffer)"
+          />
+          <Slider
+            label="Cash Rate"
+            name="bucket1Rate"
+            value={2.0}
+            min={0}
+            max={8}
+            step={0.1}
+            suffix="%"
+            inputId="rbs-b1Rate"
+            displayId="rbs-b1RateValue"
+            tooltip="Expected annual yield on cash / money-market holdings"
+          />
+          <Slider
+            label="Bond Rate"
+            name="bucket2Rate"
+            value={4.0}
+            min={0}
+            max={10}
+            step={0.1}
+            suffix="%"
+            inputId="rbs-b2Rate"
+            displayId="rbs-b2RateValue"
+            tooltip="Expected annual return on bond / income holdings"
+          />
+          <Slider
+            label="Stock Rate"
+            name="bucket3Rate"
+            value={7.0}
+            min={0}
+            max={15}
+            step={0.1}
+            suffix="%"
+            inputId="rbs-b3Rate"
+            displayId="rbs-b3RateValue"
+            tooltip="Expected annual return on stock / growth holdings"
+          />
+          <Slider
+            label="Inflation"
+            name="inflation"
+            value={2.5}
+            min={0}
+            max={6}
+            step={0.1}
+            suffix="%"
+            inputId="rbs-inflation"
+            displayId="rbs-inflationValue"
+            tooltip="Expected long-term annual inflation rate"
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Warning card -->
+      <div id="rbs-warning" class="hidden rounded-lg border border-warning/30 bg-warning/5 p-4">
+        <p class="text-sm font-medium text-warning">⚠ Portfolio Too Small</p>
+        <p id="rbs-warning-text" class="mt-1 text-xs text-body"></p>
+      </div>
+
+      <!-- Initial Allocation Summary -->
+      <div class="grid gap-4 sm:grid-cols-3">
+        <div class="rounded-lg border border-success/30 bg-success/5 p-4 text-center">
+          <p class="mb-0.5 text-xs font-medium uppercase tracking-wider text-success-deep">Bucket 1 — Cash</p>
+          <p id="rbs-initialB1" class="text-lg font-semibold tabular-nums text-ink">$—</p>
+        </div>
+        <div class="rounded-lg border border-link/30 bg-link/5 p-4 text-center">
+          <p class="mb-0.5 text-xs font-medium uppercase tracking-wider text-link">Bucket 2 — Bonds</p>
+          <p id="rbs-initialB2" class="text-lg font-semibold tabular-nums text-ink">$—</p>
+        </div>
+        <div class="rounded-lg border border-violet/30 bg-violet/5 p-4 text-center">
+          <p class="mb-0.5 text-xs font-medium uppercase tracking-wider text-violet">Bucket 3 — Stocks</p>
+          <p id="rbs-initialB3" class="text-lg font-semibold tabular-nums text-ink">$—</p>
+        </div>
+      </div>
+
+      <!-- KPI cards row (3 cards) -->
+      <div class="grid gap-4 sm:grid-cols-3">
+        <ResultCard
+          label="Years Lasted"
+          valueId="rbs-yearsLasted"
+          value="—"
+          valueClass="text-ink"
+          description="Number of years portfolio sustained spending"
+        />
+        <ResultCard
+          label="Total Return Generated"
+          valueId="rbs-totalReturn"
+          value="$—"
+          valueClass="text-link"
+          description="Cumulative growth from stock holdings"
+        />
+        <ResultCard
+          label="Final Growth Bucket"
+          valueId="rbs-finalB3"
+          value="$—"
+          valueClass="text-ink"
+          description="Remaining stock portfolio at end of simulation"
+        />
+      </div>
+
+      <!-- Chart -->
+      <Card padding="lg">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">Portfolio Breakdown Over Time</h2>
+        </div>
+        <div class="relative h-64 sm:h-80">
+          <canvas
+            id="rbs-chart"
+            role="img"
+            aria-label="Stacked area chart showing the portfolio allocation across Cash (Bucket 1), Bonds (Bucket 2), and Stocks (Bucket 3) over the simulation timeline"
+          ></canvas>
+        </div>
+      </Card>
+    </div>
+  </div>
+</div>
+
+<div class="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+  <p class="rounded-lg border border-hairline bg-canvas-soft p-4 text-xs text-mute">
+    <strong>Disclaimer:</strong> This simulator models fixed annual growth rates and is for educational planning only. In real-world market downturns, replenishment from stocks may be paused dynamically to let equities recover, further extending cash buffer timelines. This is not financial advice.
+  </p>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+  import { calculateBucketStrategy } from '../../utils/retirement-bucket-calculations';
+  import { formatCurrency, formatCurrencyShort } from '../../utils/formatters';
+
+  let chart = null;
+
+  function getFormData() {
+    const form = document.getElementById('rbs-form');
+    const formData = new FormData(form);
+
+    return {
+      portfolioValue: Number(formData.get('portfolioValue')) || 1000000,
+      annualSpending: Number(formData.get('annualSpending')) || 40000,
+      bucket1Years: Number(formData.get('bucket1Years')) || 3,
+      bucket2Years: Number(formData.get('bucket2Years')) || 5,
+      bucket1Rate: Number(formData.get('bucket1Rate')) || 2.0,
+      bucket2Rate: Number(formData.get('bucket2Rate')) || 4.0,
+      bucket3Rate: Number(formData.get('bucket3Rate')) || 7.0,
+      inflation: Number(formData.get('inflation')) || 2.5,
+    };
+  }
+
+  function updateResults() {
+    const input = getFormData();
+    const result = calculateBucketStrategy({
+      ...input,
+      simulationYears: 30,
+    });
+
+    // Warning
+    const warningEl = document.getElementById('rbs-warning');
+    const warningTextEl = document.getElementById('rbs-warning-text');
+    if (result.warningMessage) {
+      warningEl.classList.remove('hidden');
+      warningTextEl.textContent = result.warningMessage;
+    } else {
+      warningEl.classList.add('hidden');
+    }
+
+    // Initial allocation
+    document.getElementById('rbs-initialB1').textContent = formatCurrency(result.initialB1);
+    document.getElementById('rbs-initialB2').textContent = formatCurrency(result.initialB2);
+    document.getElementById('rbs-initialB3').textContent = formatCurrency(result.initialB3);
+
+    // KPI cards
+    const yearsLastedEl = document.getElementById('rbs-yearsLasted');
+    const totalReturnEl = document.getElementById('rbs-totalReturn');
+    const finalB3El = document.getElementById('rbs-finalB3');
+
+    yearsLastedEl.textContent = result.yearsLasted.toString();
+    // Color years lasted based on depletion
+    if (result.depleted && result.yearsLasted < 30) {
+      yearsLastedEl.className = 'text-2xl font-semibold tabular-nums text-error';
+    } else {
+      yearsLastedEl.className = 'text-2xl font-semibold tabular-nums text-success-deep';
+    }
+
+    totalReturnEl.textContent = formatCurrency(result.totalReturnGenerated);
+    finalB3El.textContent = formatCurrency(result.finalB3Size);
+
+    updateChart(result);
+  }
+
+  function updateChart(result) {
+    const ctx = document.getElementById('rbs-chart');
+    if (!ctx) return;
+    if (chart) chart.destroy();
+
+    const isDark = document.documentElement.classList.contains('dark');
+    const gridColor = isDark ? '#262626' : '#ebebeb';
+    const textColor = isDark ? '#737373' : '#888888';
+    const tooltipBg = isDark ? '#ededed' : '#171717';
+    const tooltipText = isDark ? '#171717' : '#ffffff';
+
+    // Bucket colors
+    const cashBg = isDark ? 'rgba(41, 188, 155, 0.3)' : 'rgba(41, 188, 155, 0.25)';
+    const cashBorder = isDark ? '#29bc9b' : '#1a9e82';
+    const bondsBg = isDark ? 'rgba(50, 145, 255, 0.3)' : 'rgba(50, 145, 255, 0.25)';
+    const bondsBorder = isDark ? '#3291ff' : '#0070f3';
+    const stocksBg = isDark ? 'rgba(168, 85, 247, 0.3)' : 'rgba(168, 85, 247, 0.25)';
+    const stocksBorder = isDark ? '#a855f7' : '#7c3aed';
+
+    const labels = result.timeline.map(function (d) {
+      return 'Year ' + d.year;
+    });
+
+    const cashData = result.timeline.map(function (d) {
+      return d.bucket1;
+    });
+    const bondsData = result.timeline.map(function (d) {
+      return d.bucket2;
+    });
+    const stocksData = result.timeline.map(function (d) {
+      return d.bucket3;
+    });
+
+    chart = new window.Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Bucket 3 — Stocks',
+            data: stocksData,
+            backgroundColor: stocksBg,
+            borderColor: stocksBorder,
+            borderWidth: 1.5,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            order: 3,
+          },
+          {
+            label: 'Bucket 2 — Bonds',
+            data: bondsData,
+            backgroundColor: bondsBg,
+            borderColor: bondsBorder,
+            borderWidth: 1.5,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            order: 2,
+          },
+          {
+            label: 'Bucket 1 — Cash',
+            data: cashData,
+            backgroundColor: cashBg,
+            borderColor: cashBorder,
+            borderWidth: 1.5,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            order: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 12,
+              usePointStyle: false,
+              padding: 16,
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: 500,
+            },
+            bodyFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+            },
+            callbacks: {
+              label: function (context) {
+                if (context.parsed.y !== null && context.parsed.y !== undefined) {
+                  return context.dataset.label + ': ' + formatCurrency(context.parsed.y);
+                }
+                return context.dataset.label + ': $0';
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            stacked: true,
+            grid: {
+              display: false,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              maxTicksLimit: 15,
+            },
+            border: {
+              display: false,
+            },
+          },
+          y: {
+            stacked: true,
+            grid: {
+              color: gridColor,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              callback: function (value) {
+                return formatCurrencyShort(value);
+              },
+            },
+            border: {
+              display: false,
+            },
+            min: 0,
+          },
+        },
+      },
+    });
+  }
+
+  function initSliders() {
+    const sliders = [
+      { id: 'rbs-b1Years', displayId: 'rbs-b1YearsValue', suffix: ' years' },
+      { id: 'rbs-b2Years', displayId: 'rbs-b2YearsValue', suffix: ' years' },
+      { id: 'rbs-b1Rate', displayId: 'rbs-b1RateValue', suffix: '%' },
+      { id: 'rbs-b2Rate', displayId: 'rbs-b2RateValue', suffix: '%' },
+      { id: 'rbs-b3Rate', displayId: 'rbs-b3RateValue', suffix: '%' },
+      { id: 'rbs-inflation', displayId: 'rbs-inflationValue', suffix: '%' },
+    ];
+
+    sliders.forEach(function (slider) {
+      var el = document.getElementById(slider.id);
+      var display = document.getElementById(slider.displayId);
+
+      if (el && display) {
+        el.addEventListener('input', function () {
+          display.textContent = el.value + slider.suffix;
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('rbs-form');
+    if (form) {
+      form.addEventListener('input', function () {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initSliders();
+    initFormListeners();
+    updateResults();
+
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', function () {
+        updateResults();
+      });
+
+    var observer = new MutationObserver(function () {
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>

@@ -1,0 +1,340 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import RetirementBucketCalculator from '../../components/calculator/RetirementBucketCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'How do you set up retirement buckets for early retirement?',
+    answerHtml:
+      'To set up a three-bucket strategy for early retirement:<br /><br />' +
+      '<b>Bucket 1 (Cash &amp; Money Market):</b> Keep 2–3 years of living expenses in high-yield savings, money market funds, or short-term Treasuries. This is your immediate spending buffer.<br /><br />' +
+      '<b>Bucket 2 (Bonds &amp; CDs):</b> Hold 3–7 years of expenses in intermediate-term bonds, CD ladders, or short-term bond funds. This bucket provides income and replenishes Bucket 1.<br /><br />' +
+      '<b>Bucket 3 (Equities):</b> The remainder goes into a diversified stock portfolio. This bucket grows over the long term and periodically replenishes Bucket 2.<br /><br />' +
+      'This structure protects against selling stocks during a downturn because you can spend from your cash and bond reserves for several years while waiting for equities to recover.',
+    answerText:
+      'Keep 2–3 years in cash (Bucket 1), 3–7 years in bonds (Bucket 2), and the remainder in stocks (Bucket 3). This protects against selling stocks during downturns.',
+  },
+  {
+    question: 'What is the optimal three bucket strategy retirement allocation?',
+    answerHtml:
+      'Unlike static age-based rules, the optimal allocation in a bucket strategy <b>shifts dynamically</b> based on your annual spending needs and total retirement net worth.<br /><br />' +
+      'The calculator determines targets by multiplying your annual spending by the buffer years you set for each bucket:<br /><br />' +
+      '<b>Bucket 1 target = Annual Spending &times; Cash Buffer Years</b><br />' +
+      '<b>Bucket 2 target = Annual Spending &times; Bond Buffer Years</b><br />' +
+      '<b>Bucket 3 = Remaining Portfolio (Max(0, Total &minus; Bucket 1 &minus; Bucket 2))</b><br /><br />' +
+      'For example, with $40,000 annual spending, 3 years in cash ($120,000), 5 years in bonds ($200,000), and the rest in stocks. As spending or portfolio value changes, these targets shift automatically.',
+    answerText:
+      'Allocation is dynamic based on annual spending and portfolio size. The calculator multiplies spending by buffer years: cash target = spending × cash years, bonds target = spending × bond years, remainder goes to stocks.',
+  },
+  {
+    question: 'How does the bucket strategy cash buffer combat sequence of returns risk?',
+    answerHtml:
+      'Sequence of returns risk (SRR) is the danger of retiring into a market downturn and being forced to sell stocks at depressed prices to fund living expenses. This can permanently damage portfolio longevity.<br /><br />' +
+      'The bucket strategy mitigates SRR by maintaining a <b>multi-year cash and bond buffer</b>. During a market crash:<br /><br />' +
+      '<ul class="list-disc pl-5 space-y-1">' +
+      '<li>You spend from Bucket 1 (Cash) for the first 2–3 years</li>' +
+      '<li>As cash runs low, you start spending from Bucket 2 (Bonds) while Bucket 1 is replenished</li>' +
+      '<li>This gives Bucket 3 (Stocks) 5–10 years to recover without any forced selling</li>' +
+      '</ul><br />' +
+      'By the time you need to draw from equities, the bear market has likely passed and your stock portfolio has recovered.',
+    answerText:
+      'During a market crash, you spend down cash and bond buffers for 5–10 years, allowing your equity portfolio to recover without selling stocks at depressed prices.',
+  },
+  {
+    question: 'How much should I keep in Bucket 1 vs Bucket 2 vs Bucket 3?',
+    answerHtml:
+      'The calculator defaults to <b>3 years in Cash (Bucket 1)</b> and <b>5 years in Bonds (Bucket 2)</b>, with the remainder in Stocks (Bucket 3). However, you can adjust these buffers based on your risk tolerance:<br /><br />' +
+      '<b>Conservative approach:</b> Increase cash to 4–5 years and bonds to 6–8 years. This provides more downside protection but reduces long-term growth potential.<br /><br />' +
+      '<b>Aggressive approach:</b> Reduce cash to 1–2 years and bonds to 3–4 years. This allocates more to equities for higher growth but increases sequence risk exposure.<br /><br />' +
+      '<b>Factors to consider:</b> Your retirement time horizon, other income sources (pensions, Social Security), total portfolio size, and your personal comfort with market volatility.',
+    answerText:
+      'Default is 3 years cash + 5 years bonds + remainder in stocks. Conservative retirees increase buffers for more safety. Aggressive retirees reduce buffers for more growth.',
+  },
+  {
+    question: 'What happens when Bucket 1 runs out in retirement?',
+    answerHtml:
+      'When Bucket 1 (Cash) is depleted, the <b>waterfall replenishment</b> mechanism kicks in automatically:<br /><br />' +
+      '<b>Step 1:</b> Bucket 2 (Bonds) transfers funds to refill Bucket 1 back to its target level. This is done by selling bonds and moving the proceeds to cash.<br /><br />' +
+      '<b>Step 2:</b> If Bucket 2 falls below its target, Bucket 3 (Stocks) sells shares to replenish Bucket 2.<br /><br />' +
+      'This cascading mechanism ensures that equities are only sold when bonds are insufficient, and bonds are only sold when cash needs to be refilled. It acts as an <b>automatic rebalancing system</b> that follows a disciplined, rules-based approach to selling assets.',
+    answerText:
+      'The waterfall replenishment kicks in: Bucket 2 transfers funds to refill Bucket 1, and Bucket 3 replenishes Bucket 2. This is the automatic rebalancing mechanism.',
+  },
+  {
+    question: 'Does the bucket strategy account for inflation?',
+    answerHtml:
+      'Yes, the calculator models <b>inflation-adjusted annual spending</b> that increases each year of retirement, ensuring your real purchasing power is maintained over time.<br /><br />' +
+      'As spending grows with inflation, the target sizes for Bucket 1 and Bucket 2 also grow proportionally. This means:<br /><br />' +
+      '<ul class="list-disc pl-5 space-y-1">' +
+      '<li>Your cash buffer automatically increases as cost of living rises</li>' +
+      '<li>Your bond buffer expands to cover higher future spending needs</li>' +
+      '<li>Equity growth must outpace inflation + spending growth for long-term sustainability</li>' +
+      '</ul><br />' +
+      'You can set the expected inflation rate in the calculator to match your personal long-term assumptions (typically 2–4%).',
+    answerText:
+      'Yes, the calculator models inflation-adjusted annual spending that increases each year, ensuring real purchasing power is maintained over time.',
+  },
+];
+---
+
+<PageLayout
+  title="Retirement Bucket Strategy Calculator — 3-Bucket Drawdown Planner"
+  description="Simulate your retirement cash flow using the 3-bucket strategy. Model how splitting your portfolio into Cash, Bonds, and Stocks shields you from sequence risk."
+  canonical="https://truefinancetools.com/retirement-bucket-strategy-calculator"
+  ogImage="https://truefinancetools.com/og-retirement-bucket-strategy-calculator.png"
+  ogImageAlt="Retirement Bucket Strategy Calculator — 3-Bucket Drawdown Planner"
+  pageType="website"
+  keywords="retirement bucket strategy calculator, three bucket retirement, bucket drawdown strategy, cash bonds stocks allocation, sequence of returns protection, retirement income buckets, bucket strategy FIRE, retirement cash buffer"
+>
+  <StructuredData
+    title="Retirement Bucket Strategy Calculator"
+    description="Free retirement bucket strategy calculator. Simulate a 3-bucket drawdown with Cash, Bonds, and Stocks to protect against sequence of returns risk."
+    url="https://truefinancetools.com/retirement-bucket-strategy-calculator"
+    toolName="Retirement Bucket Strategy Calculator"
+    toolDescription="Simulate a three-bucket retirement drawdown strategy showing how Cash, Bonds, and Stocks dynamically rebalance to protect against sequence of returns risk."
+    faqItems={toolFaqItems}
+    features={[
+      'Three-bucket drawdown simulation with waterfall replenishment',
+      'Inflation-adjusted spending projection over 30 years',
+      'Interactive stacked area chart showing bucket balances over time',
+      'Configurable buffer years and yield rates per bucket',
+      'Portfolio depletion risk detection',
+      'Shareable results and PDF-ready layout',
+    ]}
+  />
+
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Retirement Bucket Strategy Calculator
+      </h1>
+      <p class="text-lg text-body">Split your portfolio into Cash, Bonds, and Stocks. See how a multi-bucket drawdown shields you from market crashes.</p>
+    </div>
+  </section>
+
+  <RetirementBucketCalculator />
+
+  <HowItWorks title="How the Bucket Strategy Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Set Your Portfolio and Spending</h3>
+      <p class="text-sm text-body">Enter your total retirement portfolio and desired annual spending. The calculator allocates funds across three buckets.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Configure Bucket Buffers and Rates</h3>
+      <p class="text-sm text-body">Adjust how many years of spending to hold in Cash and Bonds, and set expected yield rates for each bucket.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Watch the 30-Year Simulation</h3>
+      <p class="text-sm text-body">See how spending drains Cash first, then Bonds, with Stocks growing in the background. Watch the automatic waterfall replenishment in action.</p>
+    </div>
+  </HowItWorks>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink">What Is the Retirement Bucket Strategy?</h2>
+      <div class="prose prose-gray max-w-none text-body">
+        <p>
+          <strong>The retirement bucket strategy</strong> is a drawdown approach that divides your portfolio into three time-based "buckets" — Cash, Bonds, and Stocks — each serving a specific purpose in your retirement income plan. Instead of selling a fixed percentage of your portfolio each year (like the 4% rule), the bucket strategy uses a <strong>waterfall replenishment</strong> system that protects your long-term investments from being sold during market downturns.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Bucket Strategy Formula</h3>
+        <p>Each bucket is sized based on your annual spending and the number of buffer years you want to maintain:</p>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Bucket 1 (Cash) = Annual Spending &times; Cash Buffer Years<br />
+          Bucket 2 (Bonds) = Annual Spending &times; Bond Buffer Years<br />
+          Bucket 3 (Stocks) = Max(0, Total Portfolio &minus; Bucket 1 &minus; Bucket 2)
+        </div>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Bucket Strategy vs. Simple 4% Withdrawal</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3">Metric</th>
+                <th class="p-3">Bucket Strategy</th>
+                <th class="p-3">Simple 4% Rule</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline">
+                <td class="p-3 font-medium text-ink">Sell discipline</td>
+                <td class="p-3">Spends cash &amp; bonds first; stocks last</td>
+                <td class="p-3">Sells proportional from entire portfolio</td>
+              </tr>
+              <tr class="border-b border-hairline">
+                <td class="p-3 font-medium text-ink">Sequence risk protection</td>
+                <td class="p-3">5–10 year buffer during downturns</td>
+                <td class="p-3">No buffer — sells at market prices</td>
+              </tr>
+              <tr class="border-b border-hairline">
+                <td class="p-3 font-medium text-ink">Rebalancing</td>
+                <td class="p-3">Automatic waterfall from stocks &rarr; bonds &rarr; cash</td>
+                <td class="p-3">Manual periodic rebalancing required</td>
+              </tr>
+              <tr class="border-b border-hairline">
+                <td class="p-3 font-medium text-ink">Withdrawal amount</td>
+                <td class="p-3">Inflation-adjusted spending (variable)</td>
+                <td class="p-3">Fixed percentage + inflation (4% rule)</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-medium text-ink">Portfolio longevity</td>
+                <td class="p-3">Potentially higher (avoids selling low)</td>
+                <td class="p-3">Historical 95% success over 30 years</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Who Should Choose the Bucket Strategy?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Early Retirees (FIRE)</h4>
+            <p class="text-sm text-body">Longer retirement horizons (30–50+ years) mean more exposure to sequence risk. A multi-year cash and bond buffer is essential for protecting a 50-year portfolio.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Risk-Aware Retirees</h4>
+            <p class="text-sm text-body">If market volatility keeps you up at night, knowing you have 5+ years of spending in safe assets provides emotional stability and prevents panic selling.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">DIY Portfolio Managers</h4>
+            <p class="text-sm text-body">The bucket strategy is simple to implement and maintain yourself. No complex algorithms or professional management required — just three accounts with clear rules.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Retirees with Multiple Income Streams</h4>
+            <p class="text-sm text-body">If you have pensions, Social Security, or rental income, the bucket strategy layers on top of those, with the cash buffer covering any gap between income and expenses.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Bucket Strategy Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Provides a cash buffer that protects against sequence of returns risk</li>
+              <li>• Simple to understand and implement without professional help</li>
+              <li>• Automatic waterfall replenishment ensures disciplined rebalancing</li>
+              <li>• Reduces emotional selling during market crashes</li>
+              <li>• Flexible — adjust bucket sizes based on risk tolerance</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Cash and bond buckets earn lower returns, potentially reducing overall growth</li>
+              <li>• Requires active monitoring and periodic rebalancing between buckets</li>
+              <li>• May need larger total portfolio to maintain multiple safety buffers</li>
+              <li>• Less tax-efficient if buckets span taxable and tax-advantaged accounts</li>
+              <li>• Overfunding cash/bonds can hurt long-term purchasing power</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About the Bucket Strategy
+      </h2>
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink">Complete Guide to Retirement Bucket Strategy Planning</h2>
+      <div class="prose prose-gray max-w-none text-body">
+        <p>
+          Our <strong>retirement bucket strategy calculator</strong> is a powerful tool for modeling how a multi-bucket drawdown approach can protect your portfolio from <strong><a href="/sequence-of-returns-calculator" class="text-link hover:underline">sequence of returns risk</a></strong>. By dividing your nest egg into cash, bonds, and stocks with a waterfall replenishment system, you create a structured withdrawal plan that avoids selling equities during market downturns.
+        </p>
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose the Bucket Strategy?</h3>
+        <p>
+          Traditional withdrawal strategies like the 4% rule require selling a fixed percentage of your portfolio annually, regardless of market conditions. This means you could be forced to sell stocks at a loss during a bear market, permanently damaging your portfolio's longevity. The bucket strategy solves this by maintaining a 5–10 year spending buffer in cash and bonds, giving your equities time to recover. For early retirees facing 40–50 year time horizons, this protection is invaluable. Pairing this approach with a <strong><a href="/cash-cushion-optimizer" class="text-link hover:underline">cash cushion optimizer</a></strong> can further refine how much liquidity you actually need.
+        </p>
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Retirement Bucket Strategy Calculator</h3>
+        <p>
+          This calculator simulates a full 30-year retirement using a three-bucket system. You can configure the number of years held in cash and bonds, set expected yield rates for each bucket, and adjust for inflation. The interactive stacked area chart shows how each bucket's balance evolves over time, while the waterfall replenishment logic automatically transfers funds down the hierarchy as each bucket depletes. Depletion alerts warn you if your portfolio is at risk of running out, and the results are shareable for deeper analysis.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink">Explore Other Retirement Drawdown Tools</h2>
+      <p class="mb-8 text-body">Compare and contrast different withdrawal strategies to find the right approach for your retirement.</p>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a
+          href="/retirement-bucket-strategy-calculator"
+          class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md"
+        >
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Retirement Bucket Strategy Calculator</h3>
+          <p class="text-xs text-body">Model a 3-bucket drawdown with cash, bonds, and stocks to protect against sequence risk.</p>
+        </a>
+        <a
+          href="/sequence-of-returns-calculator"
+          class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md"
+        >
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">SRR Stress Tester</h3>
+          <p class="text-xs text-body">Simulate how different market crash scenarios affect your retirement portfolio.</p>
+        </a>
+        <a
+          href="/cash-cushion-optimizer"
+          class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md"
+        >
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Cash Cushion Optimizer</h3>
+          <p class="text-xs text-body">Optimize how much cash to hold vs. invest for maximum yield efficiency.</p>
+        </a>
+        <a
+          href="/perpetual-swr-calculator"
+          class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md"
+        >
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Perpetual SWR Calculator</h3>
+          <p class="text-xs text-body">Find the withdrawal rate that preserves your principal indefinitely.</p>
+        </a>
+        <a
+          href="/vpw-calculator"
+          class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md"
+        >
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">VPW Withdrawal Calculator</h3>
+          <p class="text-xs text-body">Use the variable percentage withdrawal method for adaptive retirement income.</p>
+        </a>
+        <a
+          href="/guardrails-withdrawal-calculator"
+          class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md"
+        >
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Guardrails Withdrawal Calculator</h3>
+          <p class="text-xs text-body">Apply the Guyton-Klinger guardrails strategy with automatic spending adjustments.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
