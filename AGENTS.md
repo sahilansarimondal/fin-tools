@@ -49,6 +49,7 @@ fin-tools/
 │   │   │   ├── SEPPCalculator.astro                 # SEPP / 72(t) early withdrawal calculator
 │   │   │   ├── GuardrailsCalculator.astro            # Guyton-Klinger guardrails withdrawal calculator
 │   │   │   ├── TaxGainHarvestingCalculator.astro     # Tax gain harvesting simulator
+│   │   │   ├── RetirementBucketCalculator.astro      # 3-bucket drawdown strategy simulator
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -132,6 +133,7 @@ fin-tools/
 │       ├── rebalancer-calculations.ts     # Core-Satellite rebalancing engine
 │       ├── seppMath.ts                    # SEPP / 72(t) distribution engine
 │       ├── tax-gain-harvesting-calculations.ts # Tax gain harvesting calculation engine
+│       ├── retirement-bucket-calculations.ts    # 3-bucket drawdown strategy engine
 │       ├── faq-data.ts                    # FAQ types and shared FAQ data
 │       └── formatters.ts               # Currency/number formatting utilities
 ├── astro.config.mjs                    # Astro config (site URL, Tailwind vite plugin)
@@ -171,6 +173,7 @@ fin-tools/
 | `/sepp-calculator` | `src/pages/sepp-calculator/index.astro` | SEPP / 72(t) Early Distribution Calculator |
 | `/guardrails-withdrawal-calculator` | `src/pages/guardrails-withdrawal-calculator/index.astro` | Guardrails Withdrawal Strategy Calculator |
 | `/tax-gain-harvesting-calculator` | `src/pages/tax-gain-harvesting-calculator/index.astro` | Tax Gain Harvesting Calculator |
+| `/retirement-bucket-strategy-calculator` | `src/pages/retirement-bucket-strategy-calculator/index.astro` | 3-Bucket Retirement Drawdown Strategy Simulator |
 | `/tools` | `src/pages/tools/index.astro` | All tools overview |
 | `/about` | `src/pages/about/index.astro` | About page |
 | `/contact` | `src/pages/contact/index.astro` | Contact page |
@@ -397,6 +400,21 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 - Chart.js dual-line chart showing portfolio balance and annual withdrawals over time
 - Collapsible year-by-year projection table with guardrail action indicators
 - Depletion warning when portfolio hits zero before timeline end
+- Theme-aware chart colors via MutationObserver on `html` class
+
+### Retirement Bucket Strategy Simulator (3-Bucket Drawdown)
+
+- File: `src/components/calculator/RetirementBucketCalculator.astro` (~470 lines)
+- Uses `src/utils/retirement-bucket-calculations.ts` for math
+- Implements the classic Three-Bucket Retirement Strategy (Cash Buffer, Bonds/Income, Growth/Stocks)
+- Inputs: Total portfolio, annual spending, buffer years per bucket, yield rates, inflation
+- Initial allocation: Bucket 1 = Spend × Years, Bucket 2 = Spend × Years, Bucket 3 = remainder
+- Year-by-year simulation: waterfall spending (B1 → B2 → B3), yield application, waterfall replenishment (B2 → B1, B3 → B2)
+- Edge case: scales down safe buffer buckets if portfolio too small, shows warning
+- 3 KPI cards: Years Lasted, Total Return Generated, Final Growth Bucket
+- Chart.js stacked area line chart showing 3-bucket balances over 30 years
+- 3 color-coded initial allocation summary boxes (green Cash, blue Bonds, violet Stocks)
+- Disclaimer block about fixed-rate modeling limitations
 - Theme-aware chart colors via MutationObserver on `html` class
 
 ### Adding a New Tool
