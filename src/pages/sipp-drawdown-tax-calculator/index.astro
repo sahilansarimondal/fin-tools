@@ -1,0 +1,328 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import SippDrawdownCalculator from '../../components/calculator/SippDrawdownCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'How much can I withdraw from my SIPP tax-free?',
+    answerHtml: 'Under current UK tax rules, you can take up to <b>25% of your SIPP pension pot as a tax-free Pension Commencement Lump Sum (PCLS)</b>, commonly known as tax-free cash. This is capped at a lifetime maximum of <b>£268,275</b> regardless of the size of your pension pot. For example, if your SIPP is worth £400,000, 25% equals £100,000 — which is below the cap and fully tax-free. If your SIPP is worth £1,200,000, 25% would be £300,000, but you can only take £268,275 tax-free. <b>Important:</b> This cap applies to the total PCLS taken across all UK registered pension schemes. Transitional protection (e.g., Fixed Protection 2012, Individual Protection 2014) may allow a higher tax-free lump sum — check with HMRC or your pension provider.',
+    answerText: 'You can withdraw up to 25% of your SIPP pension pot tax-free as a Pension Commencement Lump Sum (PCLS), capped at £268,275 lifetime. This applies across all UK pension schemes. Transitional protection may allow higher amounts — check with HMRC.',
+  },
+  {
+    question: 'What is the difference between UFPLS and Flexi-Access Drawdown tax?',
+    answerHtml: '<b>Flexi-Access Drawdown (FAD)</b> and <b>Uncrystallised Funds Pension Lump Sum (UFPLS)</b> are two different ways to take income from your SIPP, and they are taxed differently:<br /><br /><b>FAD:</b> You first take your 25% tax-free cash (PCLS) as a lump sum. After that, any future withdrawals from the remaining crystallised pot are <b>100% taxable</b> as income. This is ideal if you want a large tax-free lump sum upfront for a specific purpose (e.g., paying off your mortgage).<br /><br /><b>UFPLS:</b> There is no separate tax-free lump sum. Instead, <b>every individual withdrawal</b> is treated as 25% tax-free and 75% taxable. So if you withdraw £20,000, you get £5,000 tax-free and £15,000 is added to your taxable income. This is better for spreading tax efficiency over multiple years.<br /><br /><b>Key difference:</b> FAD gives you one big tax-free chunk upfront, then taxes everything else. UFPLS gives you a tax-free slice of every withdrawal, which can be more efficient if you want to manage your tax bracket year by year.',
+    answerText: 'FAD lets you take 25% tax-free cash upfront, then all future withdrawals are fully taxable. UFPLS treats every withdrawal as 25% tax-free and 75% taxable. UFPLS is often more tax-efficient for managing your tax bracket across multiple years.',
+  },
+  {
+    question: 'How do I avoid emergency tax codes on my first SIPP drawdown?',
+    answerHtml: 'When you take your first withdrawal from a SIPP, <b>HMRC often applies a temporary emergency tax code</b> (usually 0T) because they do not yet have an updated tax code for you. This means the withdrawal is taxed at the basic rate (20%) on the entire amount — even if some or all of it should be tax-free.<br /><br /><b>How to avoid or fix this:</b><br /><ol><li><b>Complete a P45</b> — Your pension provider should ask you to complete a Pension Tax Form (P45). Ensure you provide accurate details of your other income and tax code so HMRC can issue the correct code.</li><li><b>Contact HMRC directly</b> — Call HMRC on 0300 200 3300 to request a correct tax code before your first drawdown. Provide your National Insurance number and details of your expected income.</li><li><b>Use the HMRC online service</b> — Log into your Personal Tax Account at gov.uk to update your income details and request a tax code change.</li><li><b>Claim a tax rebate</b> — If you have already been emergency-taxed, you can claim a refund by contacting HMRC or through your Self Assessment tax return.</li></ol><br /><b>Tip:</b> The emergency tax is usually corrected within a few weeks once your provider submits the correct information to HMRC. You will receive a refund for any overpayment.',
+    answerText: 'HMRC often applies an emergency 0T tax code on first SIPP withdrawal. Complete a P45 form via your provider, call HMRC on 0300 200 3300 before withdrawing, or update your Personal Tax Account online. Overpayments are refunded once the correct code is applied.',
+  },
+  {
+    question: 'At what age can I access my SIPP pension?',
+    answerHtml: 'Under current UK rules, the <b>minimum pension age (NMPA)</b> for accessing a SIPP is <b>55</b>. This is the earliest age at which you can start taking income from your pension, whether through UFPLS or Flexi-Access Drawdown.<br /><br /><b>Important change:</b> The NMPA is rising from 55 to <b>57 on 6 April 2028</b>. If you were born after 5 April 1971, you will need to wait until age 57 to access your pension. Those born before this date can still access their SIPP from age 55.<br /><br /><b>Exceptions:</b> You may be able to access your pension earlier if you have a <b>protected retirement age</b> (you were a member of a pension scheme before 6 April 2006 with a right to take benefits before 55), or if you are in <b>ill health</b> — in which case you can access your entire pension pot tax-free regardless of age.',
+    answerText: 'The current minimum pension age (NMPA) for SIPP access is 55. This rises to 57 from 6 April 2028 for those born after 5 April 1971. Exceptions exist for protected retirement ages and ill health.',
+  },
+  {
+    question: 'Should I use Flexi-Access Drawdown or UFPLS?',
+    answerHtml: 'The best method depends on your specific circumstances:<br /><br /><b>Choose Flexi-Access Drawdown if:</b><br /><ul><li>You need a <b>large tax-free lump sum upfront</b> (e.g., to pay off your mortgage, clear debts, or make a significant purchase)</li><li>You want to <b>crystallise once</b> and take regular taxable income afterwards</li><li>You expect your tax rate to be <b>lower in future years</b> than now</li><li>You want to leave the remaining pot invested and growing tax-free within the pension</li></ul><br /><b>Choose UFPLS if:</b><br /><ul><li>You want <b>tax-efficient regular withdrawals</b> — each withdrawal is 25% tax-free</li><li>You are in a <b>higher tax bracket now</b> and want to spread withdrawals over multiple years</li><li>You want to <b>avoid triggering the personal allowance taper</b> by keeping taxable income below £100,000</li><li>You don\'t need a large lump sum upfront</li></ul><br /><b>Rule of thumb:</b> If you have other income that already uses up your personal allowance, UFPLS tends to be more tax-efficient. If you have little other income, FAD lets you maximise the tax-free lump sum.',
+    answerText: 'Choose FAD if you need a large tax-free lump sum upfront (e.g., to pay off a mortgage). Choose UFPLS if you want tax-efficient regular withdrawals spread over years, especially if your other income is low and you want to stay within the personal allowance.',
+  },
+  {
+    question: 'Can I take my SIPP tax-free cash and still work?',
+    answerHtml: 'Yes, you can take your 25% tax-free cash (PCLS) from your SIPP and continue working. However, there are important tax implications to consider:<br /><br /><ul><li><b>Tax-free cash is always tax-free</b> — regardless of your employment income. You can take the full 25% (up to £268,275) without it affecting your tax code or National Insurance.</li><li><b>Any subsequent withdrawals are taxable</b> — if you use Flexi-Access Drawdown and take more than the 25% tax-free portion, those additional withdrawals are added to your employment income and taxed accordingly.</li><li><b>Personal allowance taper</b> — if your total income (employment + pension withdrawals) exceeds £100,000, your personal allowance is reduced by £1 for every £2 over £100,000. At £125,140, your personal allowance is zero.</li><li><b>National Insurance</b> — pension drawdown income does not attract National Insurance contributions, so there is no NI penalty for combining work and pension income.</li></ul><br /><b>Strategy:</b> Many people take their tax-free cash while working, then delay taxable withdrawals until they stop working or reduce their hours — keeping their marginal tax rate low.',
+    answerText: 'Yes, you can take your 25% tax-free cash while working. The PCLS is always tax-free regardless of employment income. However, any further withdrawals are taxable and stack on top of your salary. Watch the £100K personal allowance taper threshold.',
+  },
+];
+---
+
+<PageLayout
+  title="SIPP Drawdown Tax Calculator — UK Pension Withdrawals"
+  description="Calculate the income tax on your UK SIPP withdrawals. Compare Flexi-Access Drawdown and UFPLS options to maximise tax-free cash while minimising tax."
+  canonical="https://truefinancetools.com/sipp-drawdown-tax-calculator"
+  ogImage="https://truefinancetools.com/og-sipp-drawdown-tax-calculator.png"
+  ogImageAlt="SIPP Drawdown Tax Calculator — Compare UK Pension Withdrawal Methods"
+  pageType="website"
+  keywords="sipp drawdown tax calculator, uk pension tax calculator, sipp withdrawal tax, flexi-access drawdown calculator, ufpls calculator, uk pension drawdown, sipp tax free cash, pension commencement lump sum, uk pension income tax, sipp retirement calculator"
+>
+  <StructuredData
+    title="SIPP Drawdown Tax Calculator"
+    description="Calculate the income tax on your UK SIPP withdrawals. Compare Flexi-Access Drawdown and UFPLS options."
+    url="https://truefinancetools.com/sipp-drawdown-tax-calculator"
+    toolName="SIPP Drawdown Tax Calculator"
+    toolDescription="Interactive UK calculator comparing Flexi-Access Drawdown and UFPLS pension withdrawal tax efficiency."
+    faqItems={toolFaqItems}
+    features={[
+      'UK Income Tax calculation with Personal Allowance taper',
+      'Flexi-Access Drawdown vs UFPLS side-by-side comparison',
+      '2025/26 UK tax bands (0%/20%/40%/45%)',
+      'Tax breakdown visualisation',
+      'PCLS lifetime cap calculation',
+      'Real-time interactive sliders'
+    ]}
+  />
+
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        SIPP Drawdown Tax Calculator
+      </h1>
+      <p class="text-lg text-body">Calculate the income tax on your UK SIPP withdrawals. Compare Flexi-Access Drawdown and UFPLS to find the most tax-efficient method.</p>
+    </div>
+  </section>
+
+  <SippDrawdownCalculator />
+
+  <HowItWorks title="How the SIPP Drawdown Tax Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your SIPP Details</h3>
+      <p class="text-sm text-body">Input your total pension pot value, desired annual withdrawal, and any other taxable income.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Choose Your Method</h3>
+      <p class="text-sm text-body">Toggle between Flexi-Access Drawdown (tax-free cash upfront) and UFPLS (25% tax-free per withdrawal).</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Compare Tax Impact</h3>
+      <p class="text-sm text-body">See your income tax, effective rate, and net take-home. Compare both methods side by side in real time.</p>
+    </div>
+  </HowItWorks>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is SIPP Drawdown Taxation?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <!-- Definition -->
+        <p>
+          <strong>SIPP drawdown taxation</strong> refers to how the UK HMRC applies income tax to withdrawals from a Self-Invested Personal Pension. When you access your SIPP from age 55 (rising to 57 in April 2028), you can choose between two primary methods: <b>Flexi-Access Drawdown (FAD)</b>, where you take your 25% tax-free lump sum upfront, or <b>Uncrystallised Funds Pension Lump Sum (UFPLS)</b>, where every withdrawal is 25% tax-free and 75% taxable. Both methods are subject to UK income tax on the taxable portion, calculated using the standard Personal Allowance and tax bands.
+        </p>
+
+        <p>
+          The amount of tax you pay depends on your <b>total taxable income</b> — including State Pension, employment income, rental income, and your SIPP withdrawals. If your total income exceeds £100,000, the Personal Allowance tapers by £1 for every £2 over £100,000, reducing your tax-free threshold from £12,570 to zero at £125,140. Understanding these interactions is key to choosing the most tax-efficient withdrawal strategy for your retirement.
+        </p>
+
+        <!-- Formula -->
+        <h3 class="mb-3 text-lg font-semibold text-ink">The SIPP Tax Calculation Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          PCLS (Tax-Free Cash) = min(25% × SIPP Pot, £268,275)<br /><br />
+
+          Flexi-Access Drawdown:<br />
+          &nbsp;&nbsp;Taxable Income = Withdrawal + Other Income<br />
+          &nbsp;&nbsp;Net Income = Withdrawal − Income Tax(Taxable Income)<br /><br />
+
+          UFPLS:<br />
+          &nbsp;&nbsp;Tax-Free Portion = Withdrawal × 25%<br />
+          &nbsp;&nbsp;Taxable Portion = Withdrawal × 75%<br />
+          &nbsp;&nbsp;Tax = Income Tax(Taxable Portion + Other Income)<br />
+          &nbsp;&nbsp;Net Income = Tax-Free Portion + (Taxable Portion − Tax)<br /><br />
+
+          Personal Allowance Taper (income &gt; £100,000):<br />
+          &nbsp;&nbsp;PA = max(0, £12,570 − (Income − £100,000) / 2)
+        </div>
+
+        <!-- Comparison Table -->
+        <h3 class="mb-3 mt-6 text-lg font-semibold text-ink">Flexi-Access Drawdown vs UFPLS</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Feature</th>
+                <th class="p-3 font-medium text-ink">Flexi-Access Drawdown</th>
+                <th class="p-3 font-medium text-ink">UFPLS</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Tax-Free Cash</td>
+                <td class="p-3 text-ink">25% upfront (PCLS)</td>
+                <td class="p-3 text-ink">25% per withdrawal</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">PCLS Cap</td>
+                <td class="p-3 text-ink">£268,275 lifetime</td>
+                <td class="p-3 text-ink">No separate cap</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Taxable Portion</td>
+                <td class="p-3 text-ink">100% (after PCLS taken)</td>
+                <td class="p-3 text-ink">75% of each withdrawal</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Income Stacking</td>
+                <td class="p-3 text-ink">Full withdrawal + other income</td>
+                <td class="p-3 text-ink">75% withdrawal + other income</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">PA Taper Risk</td>
+                <td class="p-3 text-error">Higher (full withdrawal counts)</td>
+                <td class="p-3 text-success-deep">Lower (only 75% counts)</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">Best For</td>
+                <td class="p-3 text-ink">Large upfront lump sum needed</td>
+                <td class="p-3 text-ink">Tax-efficient spreading over years</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Who Should Choose -->
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose Each Method?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Choose Flexi-Access Drawdown</h4>
+            <p class="text-sm text-body">You need a large tax-free lump sum upfront — for example, to pay off your mortgage, clear debts, or fund a home renovation. You expect your future income to be significantly lower (e.g., you will stop working entirely) so the taxable withdrawals fall into lower bands.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Choose UFPLS</h4>
+            <p class="text-sm text-body">You want to spread tax-efficient withdrawals over many years. You have other income (State Pension, part-time work) and want to keep your total taxable income below the £100,000 personal allowance taper threshold. You prefer not to take a large lump sum upfront.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">UK FIRE Retirees</h4>
+            <p class="text-sm text-body">Early retirees with low other income can often withdraw under the personal allowance using UFPLS, paying zero tax. FAD may be better if you want the full 25% tax-free cash before the 2028 NMPA change.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">High-Income Earners</h4>
+            <p class="text-sm text-body">If your employment income already pushes you into the higher rate (40%) band, UFPLS can reduce the marginal tax rate on pension income by keeping 25% of each withdrawal tax-free.</p>
+          </div>
+        </div>
+
+        <!-- Pros and Cons -->
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">SIPP Drawdown Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• 25% tax-free cash (PCLS) up to £268,275</li>
+              <li>• Flexible income — withdraw what you need, when you need it</li>
+              <li>• Remainder stays invested and grows tax-free within the pension</li>
+              <li>• No National Insurance on pension drawdown income</li>
+              <li>• UFPLS allows spreading tax efficiency across multiple years</li>
+              <li>• Can combine with low income to stay within personal allowance</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Taxable withdrawals stack on top of other income</li>
+              <li>• Personal Allowance taper above £100,000 reduces tax-free threshold</li>
+              <li>• Emergency tax codes on first withdrawal until HMRC updates</li>
+              <li>• PCLS cap may limit tax-free cash for very large pots</li>
+              <li>• FAD: all withdrawals after PCLS are 100% taxable</li>
+              <li>• Risk of depleting pot if withdrawals exceed growth</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About SIPP Drawdown Tax
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        How SIPP Drawdown Taxation is Calculated
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          The tax you pay on SIPP withdrawals follows the <b>same UK Income Tax rules</b> as employment income. When you withdraw from your SIPP (beyond the 25% tax-free PCLS), that income is added to any other taxable income — such as State Pension, salary from part-time work, rental income, or savings interest — and taxed using the standard bands.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">UK Income Tax Bands (2025/26, England & Wales)</h3>
+        <p class="mb-4">
+          The <b>Personal Allowance</b> of £12,570 is your tax-free threshold. Income up to this amount is taxed at 0%. Between £12,571 and £50,270, you pay 20% (Basic Rate). Between £50,271 and £125,140, you pay 40% (Higher Rate). Anything above £125,140 is taxed at 45% (Additional Rate). These are England and Wales rates — Scottish taxpayers have different bands and rates.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The £100,000 Personal Allowance Taper</h3>
+        <p class="mb-4">
+          A critical detail for SIPP planning is the <b>Personal Allowance taper</b>. If your Adjusted Net Income exceeds £100,000, your Personal Allowance is reduced by £1 for every £2 of income above £100,000. This creates an effective 60% marginal tax rate on income between £100,000 and £125,140 (40% normal rate + 20% from the taper). At £125,140, the Personal Allowance reaches zero. This is particularly relevant for UK FIRE retirees who may have significant pension pots — withdrawing too much in a single year can push you into this high-marginal-rate zone.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">How Each Method Applies Tax</h3>
+        <p class="mb-4">
+          Under <b>Flexi-Access Drawdown</b>, you first take your tax-free cash (PCLS). Any subsequent withdrawal is fully taxable as income. So a £30,000 withdrawal adds £30,000 to your taxable income, on top of your other earnings. Under <b>UFPLS</b>, every withdrawal is split: 25% is tax-free, and only 75% is added to your taxable income. So a £30,000 UFPLS withdrawal only adds £22,500 to your taxable income. This means UFPLS can be more tax-efficient when you have other income, as the taxable portion is smaller.
+        </p>
+
+        <p class="mb-4">
+          Our <a href="/sepp-calculator" class="text-link underline">72(t) SEPP Calculator</a> provides a similar analysis for US retirement accounts, while our <a href="/coast-fire-number" class="text-link underline">Coast FIRE Number Calculator</a> helps UK and international savers plan their retirement timeline.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other UK Financial Tools
+      </h2>
+      <p class="mb-8 text-body">Optimise your UK finances with these complementary calculators.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/mortgage-overpayment-vs-investing-calculator-uk" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mortgage vs ISA (UK)</h3>
+          <p class="text-xs text-body">Compare overpaying your mortgage against investing in a UK ISA.</p>
+        </a>
+        <a href="/sepp-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">72(t) SEPP Calculator</h3>
+          <p class="text-xs text-body">Calculate penalty-free early retirement distributions from US accounts.</p>
+        </a>
+        <a href="/perpetual-swr-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Perpetual SWR Calculator</h3>
+          <p class="text-xs text-body">Find the safe withdrawal rate that preserves your portfolio indefinitely.</p>
+        </a>
+        <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+          <p class="text-xs text-body">Find your exact Coast FIRE target for early retirement planning.</p>
+        </a>
+        <a href="/vpw-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">VPW Withdrawal Calculator</h3>
+          <p class="text-xs text-body">Variable percentage withdrawal for sustainable retirement income.</p>
+        </a>
+        <a href="/guardrails-withdrawal-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Guardrails Withdrawal Calculator</h3>
+          <p class="text-xs text-body">Dynamic Guyton-Klinger guardrails with automatic spending adjustments.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
