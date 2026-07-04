@@ -1,0 +1,725 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+import Tooltip from '../ui/Tooltip.astro';
+---
+
+<div id="lisa-pension-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="lisa-pension-form" class="space-y-4">
+          <!-- 1. Gross Contribution (Slider + Input) -->
+          <div class="space-y-3">
+            <Slider
+              label="Gross Monthly Contribution"
+              name="grossContribution"
+              value={1000}
+              min={100}
+              max={4000}
+              step={50}
+              suffix=""
+              inputId="lisa-gross-slider"
+              displayId="lisa-gross-display"
+              tooltip="The amount you intend to contribute each month (pre-tax for pension, post-tax for LISA)"
+            />
+            <Input
+              label=""
+              name="grossContributionInput"
+              type="number"
+              value={1000}
+              min={100}
+              max={4000}
+              step={50}
+              suffix="£"
+              hideArrows
+            />
+          </div>
+
+          <!-- 2. UK Income Tax Band -->
+          <div class="flex flex-col gap-2">
+            <label for="lisa-tax-band" class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              UK Income Tax Band
+              <Tooltip content="Your marginal income tax band determines your tax relief rate. Basic rate = 20% income tax + 8% NI. Higher rate = 40% income tax + 2% NI. Additional rate = 45% income tax + 2% NI." />
+            </label>
+            <select
+              id="lisa-tax-band"
+              name="taxBand"
+              class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
+            >
+              <option value="basic">Basic Rate (20% Income Tax + 8% NI)</option>
+              <option value="higher">Higher Rate (40% Income Tax + 2% NI)</option>
+              <option value="additional">Additional Rate (45% Income Tax + 2% NI)</option>
+            </select>
+          </div>
+
+          <!-- 3. Salary Sacrifice Toggle -->
+          <div class="flex items-center justify-between rounded-lg border border-hairline p-4">
+            <div class="flex items-center gap-1.5">
+              <label class="text-sm font-medium text-ink">Salary Sacrifice Available?</label>
+              <Tooltip content="Salary sacrifice reduces both income tax AND National Insurance. If your employer offers salary sacrifice for pension contributions, it makes the pension significantly more attractive." />
+            </div>
+            <button
+              type="button"
+              id="salary-sacrifice-toggle"
+              class="relative inline-flex h-6 w-11 items-center rounded-full bg-hairline transition-colors"
+              aria-label="Toggle salary sacrifice"
+              role="switch"
+              aria-checked="false"
+            >
+              <span id="salary-sacrifice-knob" class="inline-block h-4 w-4 translate-x-1 rounded-full bg-white transition-transform"></span>
+            </button>
+            <input type="hidden" name="salarySacrifice" value="false" />
+          </div>
+
+          <!-- 4. Employer Match -->
+          <div class="flex flex-col gap-2">
+            <label for="lisa-employer-match" class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              Employer Match
+              <Tooltip content="Does your employer match your pension contributions? A 50% match adds 50% of your contribution (e.g., you pay £1,000, employer adds £500). A 100% match doubles your contribution." />
+            </label>
+            <select
+              id="lisa-employer-match"
+              name="employerMatch"
+              class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
+            >
+              <option value="none">No employer match</option>
+              <option value="50">50% employer match</option>
+              <option value="100">100% employer match (1-to-1)</option>
+            </select>
+          </div>
+
+          <!-- 5. Investment Horizon (Slider + Input) -->
+          <div class="space-y-3">
+            <Slider
+              label="Investment Horizon"
+              name="horizonYears"
+              value={25}
+              min={5}
+              max={40}
+              step={1}
+              suffix=" years"
+              inputId="lisa-horizon-slider"
+              displayId="lisa-horizon-display"
+              tooltip="Number of years until you plan to access the money (LISA: age 60+, Pension: from age 55/57)"
+            />
+            <Input
+              label=""
+              name="horizonYearsInput"
+              type="number"
+              value={25}
+              min={5}
+              max={40}
+              step={1}
+              suffix="years"
+              hideArrows
+            />
+          </div>
+
+          <!-- 6. Annual Growth Rate (Slider + Input) -->
+          <div class="space-y-3">
+            <Slider
+              label="Expected Annual Growth Rate"
+              name="growthRate"
+              value={7.0}
+              min={1.0}
+              max={12.0}
+              step={0.1}
+              suffix="%"
+              inputId="lisa-growth-slider"
+              displayId="lisa-growth-display"
+              tooltip="Expected average annual return of your investments (nominal, before inflation). Typical equity returns: 7-10%. Conservative: 4-6%."
+            />
+            <Input
+              label=""
+              name="growthRateInput"
+              type="number"
+              value={7.0}
+              min={1.0}
+              max={12.0}
+              step={0.1}
+              suffix="%"
+              hideArrows
+            />
+          </div>
+
+          <!-- 7. Retirement Income Tax Rate -->
+          <div class="flex flex-col gap-2">
+            <label for="lisa-retirement-tax" class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              Expected Retirement Income Tax Rate
+              <Tooltip content="The income tax rate you expect to pay in retirement. Most early retirees with a paid-off home can live within the personal allowance and pay 0%. Higher rate if you have significant pension income." />
+            </label>
+            <select
+              id="lisa-retirement-tax"
+              name="retirementTaxRate"
+              class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
+            >
+              <option value="0">0% (Within Personal Allowance)</option>
+              <option value="0.20" selected>Basic Rate (20%)</option>
+              <option value="0.40">Higher Rate (40%)</option>
+            </select>
+          </div>
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Winner callout banner -->
+      <div id="lisa-pension-winner-banner" class="hidden rounded-lg border-2 p-5">
+        <div class="flex items-start gap-3">
+          <div id="winner-icon" class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div>
+            <h3 id="winner-title" class="text-base font-semibold text-ink"></h3>
+            <p id="winner-description" class="mt-1 text-sm text-body"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI cards: Row 1 — LISA (2x2) -->
+      <div>
+        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wider text-link">Lifetime ISA Pathway</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <ResultCard
+            label="LISA Net Take-Home"
+            valueId="lisa-net-takehome"
+            value="—"
+            valueClass="text-link"
+            description="Tax-free withdrawal at age 60+"
+          />
+          <ResultCard
+            label="LISA Effective Principal"
+            valueId="lisa-effective-principal"
+            value="—"
+            valueClass="text-ink"
+            description="Post-tax contribution + 25% government bonus"
+          />
+          <ResultCard
+            label="LISA Ending Balance"
+            valueId="lisa-ending-balance"
+            value="—"
+            valueClass="text-ink"
+            description="Projected value at retirement"
+          />
+          <ResultCard
+            label="LISA Multiplier"
+            valueId="lisa-multiplier"
+            value="—"
+            valueClass="text-link"
+            description="Net take-home per £1 gross contributed"
+          />
+        </div>
+      </div>
+
+      <!-- KPI cards: Row 2 — Pension (2x2) -->
+      <div>
+        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wider text-success-deep">Workplace Pension Pathway</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <ResultCard
+            label="Pension Net Take-Home"
+            valueId="pension-net-takehome"
+            value="—"
+            valueClass="text-success-deep"
+            description="After 25% tax-free + taxed remainder + NI savings"
+          />
+          <ResultCard
+            label="Pension Starting Principal"
+            valueId="pension-starting-principal"
+            value="—"
+            valueClass="text-ink"
+            description="Gross contribution × employer match"
+          />
+          <ResultCard
+            label="Pension Ending Balance"
+            valueId="pension-ending-balance"
+            value="—"
+            valueClass="text-ink"
+            description="Projected value before tax"
+          />
+          <ResultCard
+            label="Pension Multiplier"
+            valueId="pension-multiplier"
+            value="—"
+            valueClass="text-success-deep"
+            description="Net take-home per £1 gross contributed"
+          />
+        </div>
+      </div>
+
+      <!-- Match Warning Card (conditional) -->
+      <div id="lisa-match-warning" class="hidden rounded-lg border border-warning/30 bg-warning/5 p-4">
+        <p class="text-sm font-medium text-warning-deep">⚠ Warning: Employer Match Consideration</p>
+        <p class="mt-1 text-xs text-body">
+          Choosing a LISA over a matched pension means turning down free employer money. 
+          A 100% pension match immediately doubles your starting contribution, which almost always outperforms a LISA bonus.
+        </p>
+      </div>
+
+      <!-- Chart -->
+      <Card padding="lg">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">LISA vs Pension Balance Over Time</h2>
+        </div>
+        <div class="relative h-64 sm:h-80">
+          <canvas
+            id="lisa-pension-chart"
+            role="img"
+            aria-label="Dual line chart showing LISA balance and pension balance growing over the investment horizon"
+          ></canvas>
+        </div>
+      </Card>
+
+      <!-- Year-by-year table (collapsible) -->
+      <Card padding="lg">
+        <details class="group">
+          <summary class="cursor-pointer py-2 text-sm font-medium text-ink">
+            Year-by-Year Projection
+            <svg class="ml-2 inline h-4 w-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M19 9l-7 7-7-7" />
+            </svg>
+          </summary>
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="border-b border-hairline bg-canvas-soft-2">
+                  <th class="p-2 font-medium text-ink">Year</th>
+                  <th class="p-2 font-medium text-ink">LISA Balance</th>
+                  <th class="p-2 font-medium text-ink">Pension Balance</th>
+                  <th class="p-2 font-medium text-ink">Difference</th>
+                </tr>
+              </thead>
+              <tbody id="lisa-pension-table-body" class="font-mono text-xs tabular-nums">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </Card>
+    </div>
+  </div>
+</div>
+
+<p class="mx-auto max-w-6xl px-4 pb-8 text-center text-xs text-mute sm:px-6">
+  Disclaimer: This calculator is based on current UK tax legislation for the 2026/2027 tax year. It assumes constant annual growth and tax bands. SIPP, LISA, and workplace pension rules are subject to change by HM Treasury. A penalty of 25% applies to LISA withdrawals made before age 60 for purposes other than purchasing a first home or terminal illness. This is not financial advice.
+</p>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+  import { calculateLisaVsPension } from '../../utils/lisa-vs-pension-calculations';
+
+  var gbpFormatter = new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'GBP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+
+  var gbpCompactFormatter = new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'GBP',
+    notation: 'compact',
+    compactDisplay: 'short',
+    maximumFractionDigits: 1,
+  });
+
+  function fmtGBP(value) {
+    return gbpFormatter.format(value);
+  }
+
+  function fmtGBPShort(value) {
+    if (Math.abs(value) >= 1000000) {
+      return '£' + (value / 1000000).toFixed(1) + 'M';
+    }
+    if (Math.abs(value) >= 1000) {
+      return '£' + (value / 1000).toFixed(0) + 'K';
+    }
+    return '£' + value.toFixed(0);
+  }
+
+  var chart = null;
+
+  function getFormData() {
+    var form = document.getElementById('lisa-pension-form');
+    var formData = new FormData(form);
+
+    return {
+      grossContribution: Number(formData.get('grossContribution')) || 1000,
+      taxBand: formData.get('taxBand') || 'basic',
+      salarySacrifice: formData.get('salarySacrifice') === 'true',
+      employerMatch: formData.get('employerMatch') || 'none',
+      horizonYears: Number(formData.get('horizonYears')) || 25,
+      growthRate: Number(formData.get('growthRate')) || 7.0,
+      retirementTaxRate: Number(formData.get('retirementTaxRate')) || 0.20,
+    };
+  }
+
+  function updateResults() {
+    var inputs = getFormData();
+    var results = calculateLisaVsPension(inputs);
+
+    // ──── Winner Callout Banner ────
+    var banner = document.getElementById('lisa-pension-winner-banner');
+    var winnerIcon = document.getElementById('winner-icon');
+    var winnerTitle = document.getElementById('winner-title');
+    var winnerDesc = document.getElementById('winner-description');
+
+    if (results.winner === 'pension') {
+      banner.className = 'rounded-lg border-2 border-success/50 bg-success/5 p-5';
+      winnerIcon.className = 'mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-success/20 text-success-deep';
+      winnerTitle.textContent = 'Workplace Pension Wins';
+      winnerTitle.className = 'text-base font-semibold text-success-deep';
+      winnerDesc.textContent = 'The workplace pension gives you £' + Math.round(results.advantageAmount).toLocaleString('en-GB') + ' more than a LISA over ' + inputs.horizonYears + ' years.';
+    } else {
+      banner.className = 'rounded-lg border-2 border-link/30 bg-link/5 p-5';
+      winnerIcon.className = 'mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-link/20 text-link';
+      winnerTitle.textContent = 'Lifetime ISA Wins';
+      winnerTitle.className = 'text-base font-semibold text-link';
+      winnerDesc.textContent = 'The Lifetime ISA gives you £' + Math.round(results.advantageAmount).toLocaleString('en-GB') + ' more than a workplace pension over ' + inputs.horizonYears + ' years.';
+    }
+    banner.classList.remove('hidden');
+
+    // ──── LISA KPI Cards ────
+    document.getElementById('lisa-net-takehome').textContent = fmtGBP(results.netTakeHomeLisa);
+    document.getElementById('lisa-effective-principal').textContent = fmtGBP(results.effectiveLisaPrincipal);
+    document.getElementById('lisa-ending-balance').textContent = fmtGBP(results.lisaEndingBalance);
+    document.getElementById('lisa-multiplier').textContent = '£' + results.lisaMultiplier.toFixed(2) + ' per £1';
+
+    // ──── Pension KPI Cards ────
+    document.getElementById('pension-net-takehome').textContent = fmtGBP(results.netTakeHomePension);
+    document.getElementById('pension-starting-principal').textContent = fmtGBP(results.pensionStartingPrincipal);
+    document.getElementById('pension-ending-balance').textContent = fmtGBP(results.pensionEndingBalance);
+    document.getElementById('pension-multiplier').textContent = '£' + results.pensionMultiplier.toFixed(2) + ' per £1';
+
+    // ──── Match Warning Card ────
+    var matchWarning = document.getElementById('lisa-match-warning');
+    var hasMatch = inputs.employerMatch !== 'none';
+    if (hasMatch && results.winner === 'lisa') {
+      matchWarning.classList.remove('hidden');
+    } else {
+      matchWarning.classList.add('hidden');
+    }
+
+    // ──── Year-by-year Table ────
+    var tbody = document.getElementById('lisa-pension-table-body');
+    tbody.innerHTML = results.yearByYear.map(function(row) {
+      var diff = row.pensionBalance - row.lisaBalance;
+      var diffClass = diff >= 0 ? 'text-success-deep' : 'text-error';
+      var diffLabel = (diff >= 0 ? '+' : '') + fmtGBP(diff);
+      return '<tr class="border-b border-hairline/50">' +
+        '<td class="p-2 text-ink">' + row.year + '</td>' +
+        '<td class="p-2 text-link">' + fmtGBP(row.lisaBalance) + '</td>' +
+        '<td class="p-2 text-success-deep">' + fmtGBP(row.pensionBalance) + '</td>' +
+        '<td class="p-2 ' + diffClass + '">' + diffLabel + '</td>' +
+        '</tr>';
+    }).join('');
+
+    // ──── Chart ────
+    updateChart(results);
+  }
+
+  function updateChart(results) {
+    var ctx = document.getElementById('lisa-pension-chart');
+    if (!ctx) return;
+
+    var isDark = document.documentElement.classList.contains('dark');
+    var gridColor = isDark ? '#262626' : '#ebebeb';
+    var textColor = isDark ? '#737373' : '#888888';
+    var tooltipBg = isDark ? '#ededed' : '#171717';
+    var tooltipText = isDark ? '#171717' : '#ffffff';
+    var lisaColor = isDark ? '#60a5fa' : '#2563eb';
+    var pensionColor = isDark ? '#34d399' : '#059669';
+
+    var years = results.yearByYear.map(function(r) { return 'Year ' + r.year; });
+    var lisaData = results.yearByYear.map(function(r) { return r.lisaBalance; });
+    var pensionData = results.yearByYear.map(function(r) { return r.pensionBalance; });
+
+    if (chart) {
+      chart.data.labels = years;
+      chart.data.datasets[0].data = lisaData;
+      chart.data.datasets[0].borderColor = lisaColor;
+      chart.data.datasets[0].backgroundColor = lisaColor + '10';
+      chart.data.datasets[1].data = pensionData;
+      chart.data.datasets[1].borderColor = pensionColor;
+      chart.data.datasets[1].backgroundColor = pensionColor + '10';
+      chart.options.scales.x.ticks.color = textColor;
+      chart.options.scales.y.ticks.color = textColor;
+      chart.options.scales.x.grid.color = gridColor;
+      chart.options.scales.y.grid.color = gridColor;
+      chart.options.plugins.legend.labels.color = textColor;
+      chart.update();
+      return;
+    }
+
+    chart = new window.Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: [
+          {
+            label: 'LISA Balance',
+            data: lisaData,
+            borderColor: lisaColor,
+            backgroundColor: lisaColor + '10',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            borderWidth: 2,
+          },
+          {
+            label: 'Pension Balance',
+            data: pensionData,
+            borderColor: pensionColor,
+            backgroundColor: pensionColor + '10',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            borderWidth: 2,
+            borderDash: [5, 5],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 12,
+              usePointStyle: true,
+              pointStyle: 'circle',
+              padding: 16,
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: 500,
+            },
+            bodyFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+            },
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': ' + fmtGBP(context.parsed.y);
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              maxTicksLimit: 10,
+            },
+            border: {
+              display: false,
+            },
+          },
+          y: {
+            grid: {
+              color: gridColor,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              callback: function(value) {
+                return fmtGBPShort(value);
+              },
+            },
+            border: {
+              display: false,
+            },
+            min: 0,
+          },
+        },
+      },
+    });
+  }
+
+  // ──── Input Sync: Slider ↔ Number Input ────
+  function initSliderInputSync() {
+    var pairs = [
+      { sliderId: 'lisa-gross-slider', inputName: 'grossContributionInput' },
+      { sliderId: 'lisa-horizon-slider', inputName: 'horizonYearsInput' },
+      { sliderId: 'lisa-growth-slider', inputName: 'growthRateInput' },
+    ];
+
+    pairs.forEach(function(pair) {
+      var slider = document.getElementById(pair.sliderId);
+      var input = document.querySelector('input[name="' + pair.inputName + '"]');
+
+      if (slider && input) {
+        // Slider changes → update input + display
+        slider.addEventListener('input', function() {
+          input.value = slider.value;
+          updateResults();
+        });
+
+        // Input changes → update slider
+        input.addEventListener('input', function() {
+          var val = parseFloat(input.value);
+          var min = parseFloat(input.min);
+          var max = parseFloat(input.max);
+          if (!isNaN(val) && val >= min && val <= max) {
+            slider.value = val;
+            updateResults();
+          }
+        });
+
+        // Also update slider display on input blur
+        input.addEventListener('blur', function() {
+          var val = parseFloat(input.value);
+          var min = parseFloat(input.min);
+          var max = parseFloat(input.max);
+          if (isNaN(val) || val < min) {
+            input.value = min;
+            slider.value = min;
+          } else if (val > max) {
+            input.value = max;
+            slider.value = max;
+          }
+          updateResults();
+        });
+      }
+    });
+  }
+
+  // ──── Salary Sacrifice Toggle ────
+  function initSalarySacrificeToggle() {
+    var toggle = document.getElementById('salary-sacrifice-toggle');
+    var knob = document.getElementById('salary-sacrifice-knob');
+    var hiddenInput = document.querySelector('input[name="salarySacrifice"]');
+
+    if (toggle && knob && hiddenInput) {
+      toggle.addEventListener('click', function() {
+        var isActive = hiddenInput.value === 'true';
+        if (isActive) {
+          hiddenInput.value = 'false';
+          toggle.classList.remove('bg-link');
+          toggle.classList.add('bg-hairline');
+          knob.classList.remove('translate-x-6');
+          knob.classList.add('translate-x-1');
+          toggle.setAttribute('aria-checked', 'false');
+        } else {
+          hiddenInput.value = 'true';
+          toggle.classList.remove('bg-hairline');
+          toggle.classList.add('bg-link');
+          knob.classList.remove('translate-x-1');
+          knob.classList.add('translate-x-6');
+          toggle.setAttribute('aria-checked', 'true');
+        }
+        updateResults();
+      });
+    }
+  }
+
+  // ──── Generic Select Listeners ────
+  function initSelectListeners() {
+    var selects = ['lisa-tax-band', 'lisa-employer-match', 'lisa-retirement-tax'];
+    selects.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('change', function() {
+          updateResults();
+        });
+      }
+    });
+  }
+
+  // ──── Slider Display Updates ────
+  function initSliderDisplays() {
+    var sliders = [
+      { id: 'lisa-gross-slider', displayId: 'lisa-gross-display', suffix: '' },
+      { id: 'lisa-horizon-slider', displayId: 'lisa-horizon-display', suffix: ' years' },
+      { id: 'lisa-growth-slider', displayId: 'lisa-growth-display', suffix: '%' },
+    ];
+
+    sliders.forEach(function(s) {
+      var el = document.getElementById(s.id);
+      var display = document.getElementById(s.displayId);
+      if (el && display) {
+        el.addEventListener('input', function() {
+          if (s.id === 'lisa-gross-slider') {
+            display.textContent = '£' + Number(el.value).toLocaleString('en-GB');
+          } else {
+            display.textContent = el.value + s.suffix;
+          }
+        });
+      }
+    });
+  }
+
+  // ──── Initialisation ────
+  document.addEventListener('DOMContentLoaded', function() {
+    // Set initial gross display
+    var grossDisplay = document.getElementById('lisa-gross-display');
+    if (grossDisplay) {
+      grossDisplay.textContent = '£1,000';
+    }
+
+    initSliderInputSync();
+    initSalarySacrificeToggle();
+    initSelectListeners();
+    initSliderDisplays();
+    updateResults();
+
+    // Dark mode detection
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', function() {
+        if (chart) {
+          chart.destroy();
+          chart = null;
+        }
+        updateResults();
+      });
+
+    var observer = new MutationObserver(function() {
+      if (chart) {
+        chart.destroy();
+        chart = null;
+      }
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
