@@ -52,6 +52,7 @@ fin-tools/
 │   │   │   ├── RetirementBucketCalculator.astro      # 3-bucket drawdown strategy simulator
 │   │   │   ├── BondTentCalculator.astro              # Bond tent / SRR glide path calculator
 │   │   │   ├── CoastFireByAgeCalculator.astro        # Coast FIRE by Age glide path calculator
+│   │   │   ├── HsaShoeboxStrategyCalculator.astro    # HSA Shoebox Strategy delayed reimbursement calculator
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -137,6 +138,7 @@ fin-tools/
 │       ├── tax-gain-harvesting-calculations.ts # Tax gain harvesting calculation engine
 │       ├── retirement-bucket-calculations.ts    # 3-bucket drawdown strategy engine
 │       ├── bond-tent-calculations.ts            # Bond tent / SRR glide path engine
+│       ├── hsa-shoebox-calculations.ts          # HSA Shoebox Strategy calculation engine
 │       ├── faq-data.ts                    # FAQ types and shared FAQ data
 │       └── formatters.ts               # Currency/number formatting utilities
 ├── astro.config.mjs                    # Astro config (site URL, Tailwind vite plugin)
@@ -179,6 +181,7 @@ fin-tools/
 | `/bond-tent-calculator` | `src/pages/bond-tent-calculator/index.astro` | Bond Tent / SRR Glide Path Calculator |
 | `/coast-fire-by-age-calculator` | `src/pages/coast-fire-by-age-calculator/index.astro` | Coast FIRE by Age Glide Path Calculator |
 | `/retirement-bucket-strategy-calculator` | `src/pages/retirement-bucket-strategy-calculator/index.astro` | 3-Bucket Retirement Drawdown Strategy Simulator |
+| `/hsa-shoebox-strategy-calculator` | `src/pages/hsa-shoebox-strategy-calculator/index.astro` | HSA Shoebox Strategy Calculator |
 | `/tools` | `src/pages/tools/index.astro` | All tools overview |
 | `/about` | `src/pages/about/index.astro` | About page |
 | `/contact` | `src/pages/contact/index.astro` | Contact page |
@@ -450,6 +453,19 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 - Age-by-age projection table with status indicators and progress bars
 - Edge case: warns when current age >= target retirement age
 - Theme-aware chart colors via MutationObserver on `html` class
+
+### HSA Shoebox Strategy Calculator
+
+- File: `src/components/calculator/HsaShoeboxStrategyCalculator.astro` (~400 lines)
+- Uses `src/utils/hsa-shoebox-calculations.ts` for math
+- Compares two parallel HSA growth paths: Immediate Reimbursement vs Delayed Reimbursement (Shoebox Strategy)
+- 5 slider inputs: Current HSA Balance, Annual Contribution, Annual Expenses, Delay Horizon, Growth Rate
+- 5 KPI cards: Immediate Reimbursement, Delayed Reimbursement, Shoebox Receipt Value, Shoebox Bonus, Net HSA After Reimbursement
+- Chart.js dual-line chart comparing both paths over time
+- Year-by-year projection table showing annual advantage
+- Excess warning when annual expenses exceed HSA capacity in year 1
+- Theme-aware chart colors via MutationObserver on `html` class
+- Targets US-based early retirees and FIRE community optimizing HSA tax-free growth
 
 ### Adding a New Tool
 
