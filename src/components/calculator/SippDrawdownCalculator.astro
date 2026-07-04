@@ -1,0 +1,364 @@
+---
+import Card from '../ui/Card.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="sipp-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="sipp-form" class="space-y-4">
+          <!-- 1. Total SIPP Pension Pot Value -->
+          <Slider
+            label="Total SIPP Pension Pot"
+            name="sippValue"
+            value={400000}
+            min={50000}
+            max={3000000}
+            step={10000}
+            suffix=""
+            inputId="sipp-pot-value"
+            displayId="sipp-pot-value-display"
+            tooltip="Total value of your Self-Invested Personal Pension"
+          />
+
+          <!-- 2. Annual SIPP Withdrawal Amount -->
+          <Slider
+            label="Annual SIPP Withdrawal"
+            name="annualWithdrawal"
+            value={25000}
+            min={5000}
+            max={150000}
+            step={1000}
+            suffix=""
+            inputId="sipp-annual-withdrawal"
+            displayId="sipp-annual-withdrawal-display"
+            tooltip="Amount you wish to withdraw from your SIPP each year"
+          />
+
+          <!-- 3. Other Taxable Annual Income -->
+          <Slider
+            label="Other Taxable Income"
+            name="otherIncome"
+            value={0}
+            min={0}
+            max={100000}
+            step={1000}
+            suffix=""
+            inputId="sipp-other-income"
+            displayId="sipp-other-income-display"
+            tooltip="State Pension, employment income, rental income, etc."
+          />
+
+          <!-- 4. Withdrawal Method -->
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-medium text-ink">Withdrawal Method</label>
+            <div class="flex gap-2">
+              <button type="button" id="method-fad" class="method-btn flex-1 rounded-lg border-2 border-ink bg-canvas px-3 py-2.5 text-xs font-semibold text-ink transition-colors">
+                Flexi-Access Drawdown
+              </button>
+              <button type="button" id="method-ufpls" class="method-btn flex-1 rounded-lg border border-hairline bg-canvas px-3 py-2.5 text-xs font-medium text-body transition-colors hover:text-ink">
+                UFPLS
+              </button>
+            </div>
+            <p id="method-description" class="text-xs text-mute">
+              Tax-free cash (25%) taken first. All subsequent withdrawals are fully taxable.
+            </p>
+          </div>
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- KPI cards row (4 cards in 2x2 grid) -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Income Tax Paid"
+          valueId="sipp-tax-paid"
+          value="£0"
+          valueClass="text-error"
+          description="Total tax on this withdrawal"
+        />
+        <ResultCard
+          label="Net Take-Home"
+          valueId="sipp-net-income"
+          value="£0"
+          valueClass="text-success-deep"
+          description="Amount you receive after tax"
+        />
+        <ResultCard
+          label="Effective Tax Rate"
+          valueId="sipp-effective-rate"
+          value="0.0%"
+          valueClass="text-ink"
+          description="Tax paid as % of gross withdrawal"
+        />
+        <ResultCard
+          label="Tax-Free Amount"
+          valueId="sipp-tax-free"
+          value="£0"
+          valueClass="text-link"
+          description="Pension commencement lump sum (PCLS)"
+        />
+      </div>
+
+      <!-- Tax Breakdown Bar -->
+      <div class="rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wider text-mute">Tax Breakdown</h3>
+        <div class="mb-2 h-6 w-full overflow-hidden rounded-full bg-canvas-soft-2">
+          <div id="sipp-bar-tax-free" class="h-full bg-link float-left transition-all duration-300" style="width: 100%"></div>
+          <div id="sipp-bar-tax" class="h-full bg-error float-left transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <div class="flex justify-between text-xs">
+          <div class="flex items-center gap-2">
+            <div class="h-2 w-2 rounded-full bg-link"></div>
+            <span class="text-mute">Tax-Free: <span id="sipp-bar-tax-free-label" class="font-mono text-ink">£0</span></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="h-2 w-2 rounded-full bg-error"></div>
+            <span class="text-mute">Tax Paid: <span id="sipp-bar-tax-label" class="font-mono text-ink">£0</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAD vs UFPLS Comparison -->
+      <div class="rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wider text-mute">Method Comparison</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-2 font-medium text-ink">Metric</th>
+                <th class="p-2 font-medium text-ink">Flexi-Access</th>
+                <th class="p-2 font-medium text-ink">UFPLS</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-2 text-body font-sans">Tax-Free Portion</td>
+                <td id="comp-fad-free" class="p-2 text-ink">£0</td>
+                <td id="comp-ufpls-free" class="p-2 text-ink">£0</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-2 text-body font-sans">Taxable Portion</td>
+                <td id="comp-fad-taxable" class="p-2 text-ink">£0</td>
+                <td id="comp-ufpls-taxable" class="p-2 text-ink">£0</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-2 text-body font-sans">Income Tax</td>
+                <td id="comp-fad-tax" class="p-2 text-error">£0</td>
+                <td id="comp-ufpls-tax" class="p-2 text-error">£0</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-2 font-sans font-semibold text-ink">Net Take-Home</td>
+                <td id="comp-fad-net" class="p-2 font-semibold text-ink">£0</td>
+                <td id="comp-ufpls-net" class="p-2 font-semibold text-ink">£0</td>
+              </tr>
+              <tr>
+                <td class="p-2 text-body font-sans">Effective Rate</td>
+                <td id="comp-fad-rate" class="p-2 text-ink">0%</td>
+                <td id="comp-ufpls-rate" class="p-2 text-ink">0%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="rounded-lg border border-error/20 bg-error/5 p-4">
+        <p class="text-xs leading-relaxed text-mute">
+          <strong class="text-error">Disclaimer:</strong> This calculator is for educational purposes and is based on English &amp; Welsh income tax rates (2025/26 tax year). Scottish income tax rates and bands differ. Tax rules and allowances can change at any time. This is not financial or tax advice. For personalised retirement planning, consult a regulated Independent Financial Adviser (IFA).
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ──── UK Tax Constants (2025/26) ────
+  const PERSONAL_ALLOWANCE = 12570;
+  const BASIC_RATE_LIMIT = 50270;
+  const HIGHER_RATE_LIMIT = 125140;
+  const PA_TAPER_THRESHOLD = 100000;
+  const PCLS_LIFETIME_CAP = 268275;
+
+  // ──── DOM References ────
+  const sippValueSlider = document.getElementById('sipp-pot-value');
+  const annualWithdrawalSlider = document.getElementById('sipp-annual-withdrawal');
+  const otherIncomeSlider = document.getElementById('sipp-other-income');
+  const methodFadBtn = document.getElementById('method-fad');
+  const methodUfplsBtn = document.getElementById('method-ufpls');
+  const methodDesc = document.getElementById('method-description');
+
+  // Display elements
+  const sippValueDisplay = document.getElementById('sipp-pot-value-display');
+  const annualWithdrawalDisplay = document.getElementById('sipp-annual-withdrawal-display');
+  const otherIncomeDisplay = document.getElementById('sipp-other-income-display');
+
+  // Result elements
+  const taxPaidEl = document.getElementById('sipp-tax-paid');
+  const netIncomeEl = document.getElementById('sipp-net-income');
+  const effectiveRateEl = document.getElementById('sipp-effective-rate');
+  const taxFreeEl = document.getElementById('sipp-tax-free');
+
+  // Bar elements
+  const barTaxFree = document.getElementById('sipp-bar-tax-free');
+  const barTax = document.getElementById('sipp-bar-tax');
+  const barTaxFreeLabel = document.getElementById('sipp-bar-tax-free-label');
+  const barTaxLabel = document.getElementById('sipp-bar-tax-label');
+
+  // Comparison elements
+  const compFadFree = document.getElementById('comp-fad-free');
+  const compFadTaxable = document.getElementById('comp-fad-taxable');
+  const compFadTax = document.getElementById('comp-fad-tax');
+  const compFadNet = document.getElementById('comp-fad-net');
+  const compFadRate = document.getElementById('comp-fad-rate');
+  const compUfplsFree = document.getElementById('comp-ufpls-free');
+  const compUfplsTaxable = document.getElementById('comp-ufpls-taxable');
+  const compUfplsTax = document.getElementById('comp-ufpls-tax');
+  const compUfplsNet = document.getElementById('comp-ufpls-net');
+  const compUfplsRate = document.getElementById('comp-ufpls-rate');
+
+  let selectedMethod = 'fad';
+
+  // ──── UK Currency Formatter ────
+  function fmtGBP(value) {
+    return '£' + Math.round(value).toLocaleString('en-GB');
+  }
+
+  // ──── Personal Allowance Taper ────
+  function calculatePersonalAllowance(taxableIncome) {
+    if (taxableIncome <= PA_TAPER_THRESHOLD) {
+      return PERSONAL_ALLOWANCE;
+    }
+    const reduction = Math.floor((taxableIncome - PA_TAPER_THRESHOLD) / 2);
+    return Math.max(0, PERSONAL_ALLOWANCE - reduction);
+  }
+
+  // ──── UK Income Tax Calculation ────
+  function calculateIncomeTax(income) {
+    const pa = calculatePersonalAllowance(income);
+    let tax = 0;
+    let remaining = Math.max(0, income - pa);
+
+    // Basic rate: 20% on income between PA and £50,270
+    const basicBand = Math.max(0, BASIC_RATE_LIMIT - pa);
+    const basicTax = Math.min(remaining, basicBand) * 0.20;
+    tax += basicTax;
+    remaining = Math.max(0, remaining - basicBand);
+
+    // Higher rate: 40% on income between £50,271 and £125,140
+    const higherBand = HIGHER_RATE_LIMIT - BASIC_RATE_LIMIT;
+    const higherTax = Math.min(remaining, higherBand) * 0.40;
+    tax += higherTax;
+    remaining = Math.max(0, remaining - higherBand);
+
+    // Additional rate: 45% on income over £125,140
+    const additionalTax = remaining * 0.45;
+    tax += additionalTax;
+
+    return tax;
+  }
+
+  // ──── Calculate Both Scenarios ────
+  function calculate() {
+    const sippValue = parseFloat(sippValueSlider.value) || 0;
+    const annualWithdrawal = parseFloat(annualWithdrawalSlider.value) || 0;
+    const otherIncome = parseFloat(otherIncomeSlider.value) || 0;
+
+    // Max tax-free lump sum (25% of pot, capped at £268,275)
+    const maxTaxFree = Math.min(sippValue * 0.25, PCLS_LIFETIME_CAP);
+
+    // ──── Scenario A: Flexi-Access Drawdown (tax-free cash already taken) ────
+    // All current withdrawals are 100% taxable
+    const fadTaxableIncome = annualWithdrawal + otherIncome;
+    const fadTax = calculateIncomeTax(fadTaxableIncome);
+    const fadNet = annualWithdrawal - fadTax;
+    const fadEffectiveRate = annualWithdrawal > 0 ? (fadTax / annualWithdrawal) * 100 : 0;
+
+    // ──── Scenario B: UFPLS (25% tax-free / 75% taxable per withdrawal) ────
+    const ufplsTaxFree = annualWithdrawal * 0.25;
+    const ufplsTaxable = annualWithdrawal * 0.75;
+    const ufplsTotalTaxableIncome = ufplsTaxable + otherIncome;
+    const ufplsTax = calculateIncomeTax(ufplsTotalTaxableIncome);
+    const ufplsNet = ufplsTaxFree + (ufplsTaxable - ufplsTax);
+    const ufplsEffectiveRate = annualWithdrawal > 0 ? (ufplsTax / annualWithdrawal) * 100 : 0;
+
+    // ──── Update Display Values ────
+    sippValueDisplay.textContent = fmtGBP(sippValue);
+    annualWithdrawalDisplay.textContent = fmtGBP(annualWithdrawal);
+    otherIncomeDisplay.textContent = fmtGBP(otherIncome);
+
+    // ──── Update Selected Method Results ────
+    if (selectedMethod === 'fad') {
+      taxPaidEl.textContent = fmtGBP(fadTax);
+      netIncomeEl.textContent = fmtGBP(fadNet);
+      effectiveRateEl.textContent = fadEffectiveRate.toFixed(1) + '%';
+      taxFreeEl.textContent = fmtGBP(maxTaxFree) + ' (taken)';
+
+      // Update bar
+      const fadTaxPct = annualWithdrawal > 0 ? (fadTax / annualWithdrawal) * 100 : 0;
+      const fadFreePct = 100 - fadTaxPct;
+      barTaxFree.style.width = fadFreePct + '%';
+      barTax.style.width = fadTaxPct + '%';
+      barTaxFreeLabel.textContent = fmtGBP(annualWithdrawal - fadTax);
+      barTaxLabel.textContent = fmtGBP(fadTax);
+    } else {
+      taxPaidEl.textContent = fmtGBP(ufplsTax);
+      netIncomeEl.textContent = fmtGBP(ufplsNet);
+      effectiveRateEl.textContent = ufplsEffectiveRate.toFixed(1) + '%';
+      taxFreeEl.textContent = fmtGBP(ufplsTaxFree) + ' (per withdrawal)';
+
+      // Update bar
+      const ufplsTaxPct = annualWithdrawal > 0 ? (ufplsTax / annualWithdrawal) * 100 : 0;
+      const ufplsFreePct = 100 - ufplsTaxPct;
+      barTaxFree.style.width = ufplsFreePct + '%';
+      barTax.style.width = ufplsTaxPct + '%';
+      barTaxFreeLabel.textContent = fmtGBP(ufplsTaxFree);
+      barTaxLabel.textContent = fmtGBP(ufplsTax);
+    }
+
+    // ──── Update Comparison Table ────
+    compFadFree.textContent = fmtGBP(annualWithdrawal);
+    compFadTaxable.textContent = fmtGBP(annualWithdrawal);
+    compFadTax.textContent = fmtGBP(fadTax);
+    compFadNet.textContent = fmtGBP(fadNet);
+    compFadRate.textContent = fadEffectiveRate.toFixed(1) + '%';
+
+    compUfplsFree.textContent = fmtGBP(ufplsTaxFree);
+    compUfplsTaxable.textContent = fmtGBP(ufplsTaxable);
+    compUfplsTax.textContent = fmtGBP(ufplsTax);
+    compUfplsNet.textContent = fmtGBP(ufplsNet);
+    compUfplsRate.textContent = ufplsEffectiveRate.toFixed(1) + '%';
+  }
+
+  // ──── Method Toggle ────
+  methodFadBtn.addEventListener('click', function() {
+    selectedMethod = 'fad';
+    this.className = 'method-btn flex-1 rounded-lg border-2 border-ink bg-canvas px-3 py-2.5 text-xs font-semibold text-ink transition-colors';
+    methodUfplsBtn.className = 'method-btn flex-1 rounded-lg border border-hairline bg-canvas px-3 py-2.5 text-xs font-medium text-body transition-colors hover:text-ink';
+    methodDesc.textContent = 'Tax-free cash (25%) taken first. All subsequent withdrawals are fully taxable.';
+    calculate();
+  });
+
+  methodUfplsBtn.addEventListener('click', function() {
+    selectedMethod = 'ufpls';
+    this.className = 'method-btn flex-1 rounded-lg border-2 border-ink bg-canvas px-3 py-2.5 text-xs font-semibold text-ink transition-colors';
+    methodFadBtn.className = 'method-btn flex-1 rounded-lg border border-hairline bg-canvas px-3 py-2.5 text-xs font-medium text-body transition-colors hover:text-ink';
+    methodDesc.textContent = 'Every withdrawal is 25% tax-free and 75% taxable. No upfront lump sum.';
+    calculate();
+  });
+
+  // ──── Event Listeners ────
+  sippValueSlider.addEventListener('input', calculate);
+  annualWithdrawalSlider.addEventListener('input', calculate);
+  otherIncomeSlider.addEventListener('input', calculate);
+
+  // ──── Initial Calculation ────
+  calculate();
+})();
+</script>
