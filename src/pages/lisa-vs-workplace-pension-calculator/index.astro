@@ -1,0 +1,253 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import LisaVsPensionCalculator from '../../components/calculator/LisaVsPensionCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'Is a Lifetime ISA better than a workplace pension for basic rate taxpayers?',
+    answerHtml: 'For <b>20% basic rate taxpayers</b>, the 25% LISA bonus provides a slightly better effective return than the 20% pension tax relief. However, LISA withdrawals are <b>100% tax-free</b> at age 60, while 75% of pension withdrawals are taxed at your retirement rate. If there is <b>no employer match</b> and <b>no salary sacrifice</b>, the LISA can be competitive or superior. But if your employer matches contributions (even 50%), the pension almost always wins because you are getting free money on top of the tax relief.',
+    answerText: 'For basic rate taxpayers, the 25% LISA bonus slightly beats 20% pension tax relief, and LISA withdrawals are fully tax-free. However, any employer match makes the pension superior because free employer money outweighs the LISA bonus advantage.',
+  },
+  {
+    question: 'How does salary sacrifice affect the LISA vs Pension comparison UK?',
+    answerHtml: 'Salary sacrifice reduces both your <b>income tax AND National Insurance contributions</b>. For a basic rate taxpayer, salary sacrifice saves <b>28% upfront</b> (20% tax + 8% NI), while a LISA only effectively boosts your contribution by <b>25%</b> from post-tax income. For higher rate taxpayers, salary sacrifice saves <b>42%</b> (40% tax + 2% NI), making the pension dramatically superior. The NI saving is particularly significant because LISA contributions <b>cannot save National Insurance</b> — they are always made from post-tax income. Our calculator models this by compounding the NI savings over the investment horizon.',
+    answerText: 'Salary sacrifice saves 28% upfront for basic rate taxpayers (20% tax + 8% NI) vs. 25% LISA bonus from post-tax income. For higher rate taxpayers, salary sacrifice saves 42%, making the pension dramatically superior because LISA contributions cannot save National Insurance.',
+  },
+  {
+    question: 'What happens if I withdraw money from my LISA before age 60?',
+    answerHtml: 'Withdrawing from a LISA before age 60 (for purposes other than buying your first home up to £450,000) triggers a <b>25% government penalty</b>. This penalty is applied to the entire withdrawal amount, including your own contributions. For example, if you withdraw £10,000, you receive only £7,500 — effectively losing the 25% bonus PLUS a penalty on your original capital. This makes the LISA <b>unsuitable for funds that may be needed before retirement</b>. A pension (accessible from age 55, rising to 57 in 2028) or a standard Stocks &amp; Shares ISA (accessible anytime) may be more appropriate for shorter time horizons.',
+    answerText: 'A 25% government penalty applies to LISA withdrawals before age 60 (except for first home purchase up to £450,000). This makes the LISA unsuitable for money needed before retirement. A pension at age 55/57 or a standard ISA (accessible anytime) may be better for shorter time horizons.',
+  },
+  {
+    question: 'Should I use a LISA or a SIPP for retirement saving in the UK?',
+    answerHtml: 'The choice between a <b>Lifetime ISA</b> and a <b>SIPP (Self-Invested Personal Pension)</b> depends on your goals:<br /><br /><b>Choose a LISA if:</b><br /><ul><li>You are a <b>basic rate taxpayer</b> with no employer match</li><li>You want <b>100% tax-free withdrawals</b> at age 60</li><li>You want the option to use the money for a <b>first home purchase</b> (up to £450,000)</li><li>You are concerned about <b>future pension tax rule changes</b></li><li>Your <b>employer doesn\'t offer salary sacrifice</b></li></ul><br /><b>Choose a SIPP/pension if:</b><br /><ul><li>Your employer offers a <b>match or salary sacrifice</b></li><li>You are a <b>higher or additional rate taxpayer</b></li><li>You want to access funds <b>before age 60</b> (pension access at 55/57)</li><li>You want to benefit from <b>National Insurance savings</b></li><li>Your total pension contributions exceed the LISA annual limit (£4,000)</li></ul><br />Many savers use <b>both</b>: contribute enough to a workplace pension to get the full employer match, then put additional savings into a LISA for the 25% bonus and tax-free withdrawals.',
+    answerText: 'Choose a LISA if you are a basic rate taxpayer with no employer match, want tax-free withdrawals at 60, or need first-home flexibility. Choose a SIPP/pension if you have an employer match, are a higher rate taxpayer, want NI savings, or need access before 60. Many use both for maximum benefit.',
+  },
+  {
+    question: 'What are the annual limits for LISA and pension contributions in the UK?',
+    answerHtml: 'For the <b>2026/2027 tax year</b>:<br /><br /><b>Lifetime ISA:</b><br /><ul><li>Annual contribution limit: <b>£4,000</b></li><li>Government bonus: 25% (up to <b>£1,000 per year</b>)</li><li>Lifetime limit on bonus: No explicit cap, but bonus limited by annual contributions</li><li>Age limit: You can open a LISA between ages <b>18 and 39</b>; contribute until age <b>50</b></li></ul><br /><b>Pension (all schemes):</b><br /><ul><li>Annual allowance: <b>£60,000</b> (or 100% of your earnings, whichever is lower)</li><li>Money Purchase Annual Allowance (MPAA): <b>£10,000</b> if you have flexibly accessed a pension</li><li>Tapered annual allowance: Applies if adjusted income exceeds <b>£260,000</b></li><li>Lifetime allowance: <b>Abolished</b> from April 2024</li></ul><br />This calculator models a single contribution of up to the LISA limit of £4,000 per month of gross salary allocation. For higher savings rates, a pension allows significantly larger contributions.',
+    answerText: 'LISA maximum: £4,000/year with 25% bonus (up to £1,000/year). Open between 18-39, contribute until 50. Pension annual allowance: £60,000. Lifetime allowance abolished. Pension allows much larger contributions for higher earners.',
+  },
+  {
+    question: 'Can I have both a Lifetime ISA and a workplace pension?',
+    answerHtml: '<b>Yes, absolutely.</b> You can contribute to both a Lifetime ISA and a workplace pension simultaneously. In fact, this is often the <b>optimal strategy</b>:<br /><br /><ol><li><b>First:</b> Contribute enough to your workplace pension to capture the <b>full employer match</b> — this is free money you should never leave on the table.</li><li><b>Second:</b> If you still have capacity to save, contribute to a <b>Lifetime ISA</b> up to the £4,000 annual limit.</li><li><b>Third:</b> If you want to save more, increase your workplace pension contributions or contribute to a Standard Stocks &amp; Shares ISA.</li></ol><br />This hybrid approach gives you: employer match + pension tax relief + LISA 25% bonus + tax-free LISA withdrawals. The combination is particularly powerful for basic rate taxpayers who can diversify their retirement tax risk — you have both taxable pension income and tax-free LISA income in retirement.',
+    answerText: 'Yes, you can have both. The optimal strategy is: 1) Contribute enough to your pension for full employer match, 2) Save up to £4,000/year in a LISA for the 25% bonus, 3) Save any additional amount in a pension or standard ISA. This diversifies your retirement tax exposure.',
+  },
+];
+---
+
+<PageLayout
+  title="LISA vs Pension Calculator UK | Compare Retirement Savings"
+  description="Lifetime ISA vs workplace pension. Calculate whether a LISA or a workplace pension is better for your UK tax bracket, employer match, and retirement goals."
+  canonical="https://truefinancetools.com/lisa-vs-workplace-pension-calculator"
+  ogImage="https://truefinancetools.com/og-lisa-vs-workplace-pension-calculator.png"
+  ogImageAlt="LISA vs Workplace Pension Calculator UK — Compare Retirement Savings"
+  pageType="website"
+  keywords="lisa vs pension calculator uk, lifetime isa vs workplace pension, lisa vs pension comparison uk, should i use a lisa or pension, uk retirement savings calculator, lisa vs pension basic rate taxpayer"
+>
+  <StructuredData
+    title="LISA vs Workplace Pension Calculator"
+    description="Lifetime ISA vs workplace pension. Calculate whether a LISA or a workplace pension is better for your UK tax bracket, employer match, and retirement goals."
+    url="https://truefinancetools.com/lisa-vs-workplace-pension-calculator"
+    toolName="LISA vs Workplace Pension Dilemma Tool"
+    toolDescription="Interactive UK calculator comparing Lifetime ISA and Workplace Pension net retirement values based on tax bracket, employer match, salary sacrifice, and investment horizon."
+    faqItems={toolFaqItems}
+    features={[
+      'LISA vs Pension net take-home comparison',
+      'UK tax band-aware calculations',
+      'Salary sacrifice NI savings modelling',
+      'Employer match impact analysis',
+      'Chart.js interactive projection',
+      'Year-by-year balance comparison'
+    ]}
+  />
+
+  <!-- Hero section -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        LISA vs Workplace Pension Dilemma Tool (UK)
+      </h1>
+      <p class="text-lg text-body">Compare the net retirement value of a Lifetime ISA against a workplace pension based on your UK tax bracket, employer match, and investment horizon.</p>
+    </div>
+  </section>
+
+  <!-- Introductory Context Block -->
+  <section class="border-t border-hairline bg-canvas-soft py-12">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <div class="prose prose-gray max-w-none text-body">
+        <p>
+          Choosing between a <strong>Lifetime ISA (LISA)</strong> and a <strong>workplace pension</strong> is one of the most common dilemmas for UK savers. Both offer powerful government incentives, but they work in fundamentally different ways — and the best choice depends on your specific tax situation, employer benefits, and retirement timeline.
+        </p>
+        <p>
+          A <strong>LISA</strong> takes your post-tax income (after income tax and National Insurance), adds a 25% government bonus, and grows tax-free — with <strong>completely tax-free withdrawals</strong> from age 60. A <strong>workplace pension</strong> uses pre-tax income (with tax relief added at source), often benefits from <strong>employer matching</strong>, and offers 25% tax-free at withdrawal, with the remainder taxed at your retirement income rate. If your employer offers <strong>salary sacrifice</strong>, the pension also saves National Insurance — a significant advantage that LISAs cannot match.
+        </p>
+        <p>
+          The outcome hinges on a few key variables: your <strong>current tax band</strong>, whether your employer <strong>matches contributions</strong>, whether you can use <strong>salary sacrifice</strong>, your <strong>expected retirement tax rate</strong>, and your <strong>investment horizon</strong>. This calculator models all of these factors to show you the net take-home value of each option after compounding growth, showing exactly which path leaves you with more money in retirement.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Component -->
+  <LisaVsPensionCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the LISA vs Workplace Pension Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Set Your Parameters</h3>
+      <p class="text-sm text-body">Enter your gross contribution amount, UK tax band, employer match, and investment assumptions.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Compare Both Pathways</h3>
+      <p class="text-sm text-body">See LISA and Pension net take-home values with compounding growth over your investment horizon.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Make an Informed Decision</h3>
+      <p class="text-sm text-body">Review the winner, multiplier effect, and year-by-year projection to choose the best retirement savings path.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- Methodology Section -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        How the LISA vs Workplace Pension Trade-Off is Calculated
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p>
+          The calculator compares two parallel investment paths using the same gross contribution amount, growth rate, and time horizon. The key differences lie in how each vehicle treats your money before, during, and after the investment period.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The LISA Path</h3>
+        <p>
+          Your gross contribution first pays income tax and National Insurance (the post-tax amount you actually have to invest). The government then adds a <b>25% bonus</b> on top of that post-tax amount. This money grows tax-free, and <b>all withdrawals are tax-free</b> after age 60. For a basic rate taxpayer, the 25% bonus effectively compensates for the 20% income tax you paid going in — but not the 8% NI that is lost. This is why salary sacrifice (which saves NI) makes the pension so much more attractive.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Pension Path</h3>
+        <p>
+          Your gross contribution is invested <b>before</b> income tax (with tax relief added at source). With salary sacrifice, even National Insurance is saved and invested. The employer match further boosts the starting principal. At withdrawal, you can take <b>25% tax-free</b>, and the remaining 75% is taxed at your retirement income tax rate. The compounded NI savings (from salary sacrifice) are also added back at withdrawal.
+        </p>
+
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          LISA Net Take-Home = G × (1 − Tc − NIc) × 1.25 × (1 + g)^Y<br /><br />
+          Pension Net Take-Home = [G × M × (1 + g)^Y] × (0.25 + 0.75 × (1 − Tr)) + G × NIc × (1 + g)^Y<br /><br />
+          Where: G = Gross Contribution, Tc = Income Tax Rate, NIc = NI Rate,<br />
+          M = Employer Match Factor, g = Growth Rate, Y = Horizon Years, Tr = Retirement Tax Rate
+        </div>
+
+        <h3 class="mb-3 mt-6 text-lg font-semibold text-ink">Key Insights</h3>
+        <p>
+          <b>For basic rate taxpayers:</b> The 25% LISA bonus (~25% boost on post-tax income) roughly equals the 20% pension tax relief. However, since LISA withdrawals are 100% tax-free while 75% of pension withdrawals are taxed, the LISA can win — but <b>only if there is no employer match</b>. A 50% employer match adds 50% to your starting pension principal immediately, which compounds over the full investment horizon.
+        </p>
+        <p>
+          <b>For higher rate taxpayers:</b> The 40%+2% tax relief on pension contributions (with salary sacrifice) far exceeds the LISA's 25% bonus. The pension almost always wins for higher and additional rate taxpayers, especially with salary sacrifice.
+        </p>
+        <p>
+          <b>The role of time:</b> Longer horizons amplify the advantage of higher starting principals (from employer matches) through compound growth. A 50% higher starting balance after 25 years at 7% growth becomes a 2.7× advantage — far outstripping the LISA's tax-free withdrawal benefit.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About LISA vs Workplace Pension
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to LISA vs Pension Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p>
+          Our <strong>LISA vs Workplace Pension calculator</strong> is designed to help UK savers navigate one of the most important retirement decisions they will face. The calculator models the full lifecycle of both savings vehicles — from contribution (with tax and NI treatment) through to withdrawal (with tax treatment) — accounting for employer matches, salary sacrifice, and compound growth.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose This Calculator?</h3>
+        <p>
+          Unlike basic comparison tools, this calculator accounts for the <b>full UK tax treatment</b> of both vehicles. It models the National Insurance savings from salary sacrifice (which most calculators ignore), the compounding of employer match contributions over the full investment horizon, and the retirement tax treatment of pension withdrawals. It also accounts for the LISA's unique feature: completely tax-free withdrawals, which can be a significant advantage if you expect to pay tax in retirement.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This LISA vs Pension Calculator</h3>
+        <p>
+          The calculator supports all three UK income tax bands (basic, higher, and additional), all common employer match scenarios (none, 50%, 100%), salary sacrifice modelling with compounded NI savings, flexible retirement tax rate assumptions (0%, 20%, 40%), and customisable growth rates and investment horizons. The interactive Chart.js chart shows the year-by-year balance growth for both pathways, and the year-by-year table provides detailed annual breakdowns. The winner callout banner and match warning card help you quickly identify the optimal choice and any trade-offs.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other UK Financial Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other UK Financial Tools
+      </h2>
+      <p class="mb-8 text-body">Optimise your UK finances with these complementary calculators and retirement planning tools.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/sipp-drawdown-tax-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">UK SIPP Drawdown Tax Calculator</h3>
+          <p class="text-xs text-body">Compare Flexi-Access Drawdown and UFPLS for tax-efficient SIPP withdrawals.</p>
+        </a>
+        <a href="/mortgage-overpayment-vs-investing-calculator-uk" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mortgage vs ISA (UK)</h3>
+          <p class="text-xs text-body">Decide whether to overpay your mortgage or invest in a UK ISA.</p>
+        </a>
+        <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+          <p class="text-xs text-body">Find how much you need to save now and let compound interest do the rest.</p>
+        </a>
+        <a href="/perpetual-swr-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Perpetual SWR Calculator</h3>
+          <p class="text-xs text-body">Find the safe withdrawal rate that preserves your portfolio indefinitely.</p>
+        </a>
+        <a href="/vpw-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">VPW Withdrawal Calculator</h3>
+          <p class="text-xs text-body">Variable percentage withdrawal for sustainable retirement income.</p>
+        </a>
+        <a href="/fire-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Calculate your FIRE number and retirement timeline with multiple strategies.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
