@@ -1,0 +1,257 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import CoastFireByAgeCalculator from '../../components/calculator/CoastFireByAgeCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is a normal Coast FIRE number by age?',
+    answerHtml: 'Your Coast FIRE number at any given age depends on three factors: your <b>target retirement expenses</b>, your <b>safe withdrawal rate</b>, and the <b>number of years</b> your portfolio has to compound before retirement.<br /><br />For example, with $40,000 in annual expenses and a 4% SWR ($1M FIRE target):<br /><ul><li><b>At age 30</b> (30 years to compound at 5% real return) → you need ~$231K saved today</li><li><b>At age 40</b> (20 years to compound) → you need ~$377K saved</li><li><b>At age 50</b> (10 years to compound) → you need ~$614K saved</li><li><b>At age 60</b> (retirement year) → you need the full $1M</li></ul><br />This exponential curve is why <b>starting early</b> is the most powerful lever in Coast FIRE planning. A 30-year-old needs dramatically less than a 50-year-old for the same retirement lifestyle, thanks to compounding.',
+    answerText: 'Your Coast FIRE number depends on expenses, SWR, and compounding timeline. With $40K expenses and 4% SWR: at age 30 you need ~$231K, at 40 you need ~$377K, at 50 you need ~$614K, at 60 you need the full $1M. Starting early dramatically reduces the required nest egg.',
+  },
+  {
+    question: 'What real investment return rate should I use in a Coast FIRE by age calculator?',
+    answerHtml: 'For Coast FIRE calculations, use a <b>conservative real return rate of 4-6%</b>. Real return means the return <i>after</i> inflation — this is critical because Coast FIRE projections span decades.<br /><br />Here are general guidelines:<br /><ul><li><b>Conservative (4%):</b> Suitable for bond-heavy portfolios or if you want a large safety margin. Historically, a 60/40 portfolio has delivered ~5% nominal, which is ~2.5% real — so 4% real implies significant equity exposure.</li><li><b>Moderate (5%):</b> A reasonable long-term estimate for a diversified equity-heavy portfolio. The S&P 500 has delivered ~6-7% real over very long periods, but accounting for fees, behavioral gaps, and sequence risk warrants a more conservative estimate.</li><li><b>Aggressive (6%):</b> Assumes strong equity market performance over the long term. Only appropriate if you are 80%+ in equities and can tolerate significant volatility without panic-selling.</li></ul><br />We recommend starting with <b>5% real return</b> as a baseline, then stress-testing with 4% to see how much more you would need to save.',
+    answerText: 'Use a conservative 4-6% real return rate. Conservative (4%) for bond-heavy portfolios or safety margin, moderate (5%) as a baseline for equity-heavy portfolios, aggressive (6%) for 80%+ equity allocations. Start with 5% and stress-test at 4%.',
+  },
+  {
+    question: 'Can I stop saving once I hit my Coast FIRE milestone?',
+    answerHtml: '<b>Mathematically, yes</b> — Coast FIRE means your current portfolio, compounding at expected returns with zero additional contributions, will reach your FIRE target by your target retirement age. This is the fundamental premise of Coast FIRE.<br /><br />However, in practice, consider these important factors:<br /><ul><li><b>Emergency fund:</b> Make sure you have 3-6 months of expenses in cash before "stopping" saving. Coast FIRE assumes your portfolio remains invested and untouched until retirement.</li><li><b>Lifestyle inflation:</b> Coast FIRE is calculated based on your current expense assumptions. If your lifestyle inflates over time, your target moves further away.</li><li><b>Healthcare costs:</b> These tend to rise faster than general inflation. Your Coast FIRE plan should account for healthcare expenses in retirement.</li><li><b>Sequence of returns risk:</b> Coast FIRE assumes constant real returns. In reality, early market downturns can significantly impact your compounding trajectory. Consider a bond tent or other sequence risk mitigation strategies as you approach retirement.</li></ul><br />The Coast FIRE calculator shows you the exact milestone — use it as a guidepost, not a guarantee. Most financial advisors recommend continuing to contribute even after hitting Coast FIRE to build a buffer against uncertainty.',
+    answerText: 'Mathematically yes, stopping saving is the whole point of Coast FIRE. But consider: maintain an emergency fund, guard against lifestyle inflation, plan for healthcare costs, and recognize that sequence of returns risk can impact your compounding trajectory. Most advisors recommend building a buffer beyond the minimum Coast FIRE number.',
+  },
+  {
+    question: 'How is Coast FIRE different from regular FIRE?',
+    answerHtml: '<b>Coast FIRE</b> and <b>regular FIRE</b> differ in their approach to saving and retirement timing:<br /><br /><div class="overflow-x-auto rounded-lg border border-hairline mt-2 mb-2"><table class="w-full text-left text-sm"><thead><tr class="border-b border-hairline bg-canvas-soft-2"><th class="p-2 font-medium text-ink">Aspect</th><th class="p-2 font-medium text-ink">Coast FIRE</th><th class="p-2 font-medium text-ink">Regular FIRE</th></tr></thead><tbody class="font-mono text-xs tabular-nums"><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Goal</td><td class="p-2 text-ink">Let compound interest do the work</td><td class="p-2 text-ink">Save aggressively until you reach 25× expenses</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Saving After Milestone</td><td class="p-2 text-success-deep">Can stop saving (only need to cover living expenses)</td><td class="p-2 text-ink">Must continue saving until retirement day</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Retirement Age</td><td class="p-2 text-ink">Delayed to traditional retirement age (65)</td><td class="p-2 text-success-deep">Can retire as early as 30-50</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Required Savings</td><td class="p-2 text-success-deep">Much lower (compounding does the heavy lifting)</td><td class="p-2 text-ink">Higher (need full 25× at retirement)</td></tr><tr class="border-b border-hairline/50"><td class="p-2 text-body font-sans">Lifestyle</td><td class="p-2 text-ink">Can work a lower-stress job to cover expenses</td><td class="p-2 text-ink">Can retire fully from all work</td></tr><tr class="bg-success/5"><td class="p-2 text-body font-sans">Best For</td><td class="p-2 text-ink font-semibold">Young professionals, career-changers</td><td class="p-2 text-ink font-semibold">High earners, aggressive savers</td></tr></tbody></table></div><br />The key insight: Coast FIRE trades a <b>decades-long accumulation phase</b> for a <b>decades-long coast phase</b> — you work less intensively but for longer. Regular FIRE front-loads the sacrifice for earlier full retirement.',
+    answerText: 'Coast FIRE lets compound interest do the work — you can stop saving aggressively once you hit your milestone, then work a lower-stress job to cover expenses until traditional retirement age. Regular FIRE requires aggressive saving until the day you retire, but allows full retirement much earlier. Coast trades lower savings for later retirement.',
+  },
+  {
+    question: 'What happens if my investments underperform the expected return?',
+    answerHtml: 'If your actual investment returns fall short of your assumed real return rate, your Coast FIRE plan will not work as projected. Here is what happens:<br /><br /><ul><li><b>Lower returns = later Coast FIRE date:</b> At a 4% real return instead of 5%, the same portfolio needs significantly more time to compound to your FIRE target. The gap widens exponentially the longer the timeline.</li><li><b>Your Coast milestone increases:</b> With lower expected returns, you need a larger portfolio today to be on track. For example, reaching a $1M target in 30 years at 5% requires ~$231K today; at 4% you need ~$308K — a 33% increase.</li><li><b>Consider using a range:</b> Run the calculator at 4%, 5%, and 6% real return to see how sensitive your plan is to return assumptions. If the difference is large (more than 2-3 years of extra work), you may need to save more or adjust expectations.</li></ul><br />This is why <b>conservative estimates are recommended</b> for Coast FIRE planning. Using a 5% real return as a baseline with a 4% stress test gives you a realistic range. If you can hit your Coast FIRE number even at 4%, your plan has a strong margin of safety.',
+    answerText: 'Lower real returns than expected mean you need more saved today or a longer timeline. The gap compounds exponentially. At 4% instead of 5% real return, a 30-year Coast FIRE target increases by ~33%. Use conservative estimates (4-5% real return) and stress-test your plan across multiple scenarios.',
+  },
+  {
+    question: 'At what age is it too late to start Coast FIRE?',
+    answerHtml: 'Coast FIRE becomes <b>less impactful</b> as you approach retirement age because there is less time for compounding to work its magic. However, it is never truly "too late" — the concept still applies mathematically.<br /><br />Here is how the benefit diminishes with age:<br /><ul><li><b>Under 35:</b> Coast FIRE is extremely powerful. With 25-30 years to compound, every dollar saved today does 4-7× the work of a dollar saved at 50. This is the sweet spot for Coast FIRE.</li><li><b>35-45:</b> Still very effective. 15-25 years of compounding means you still get significant leverage from early savings. Most Coast FIRE practitioners fall in this range.</li><li><b>45-55:</b> Modest benefit. With 10-20 years to compound, the leverage is reduced. You may find that Coast FIRE only shaves a few years off your savings timeline.</li><li><b>55+:</b> Minimal compounding leverage. At this point, you are close enough to retirement that you need most of your FIRE number saved anyway. Traditional FIRE planning becomes more relevant.</li></ul><br />The Coast FIRE by Age calculator shows this visually — watch how the gap between your current portfolio and the Coast milestone shrinks or grows as you adjust your age inputs.',
+    answerText: 'Coast FIRE is most powerful under 35 (25-30 years of compounding), still very effective at 35-45, modest at 45-55, and minimal over 55. It is never too late mathematically, but the compounding leverage diminishes as you approach retirement. The calculator shows this visually.',
+  },
+  {
+    question: 'Should I include my home equity in my Coast FIRE calculation?',
+    answerHtml: '<b>Generally, no</b> — you should exclude home equity from your Coast FIRE calculation for several important reasons:<br /><br /><ul><li><b>Illiquidity:</b> Your home is not a liquid investment that generates compounding returns you can spend in retirement. Equity in your primary residence does not produce income unless you sell or take out a reverse mortgage.</li><li><b>Compounding mismatch:</b> Coast FIRE relies on the assumption that your portfolio compounds at your expected real return rate. Home equity does not compound in the same way — it appreciates (or depreciates) based on local real estate markets, not investment returns.</li><li><b>You need a place to live:</b> Unless you plan to downsize or move to a lower-cost area, your home equity is not available for retirement spending. Even if you do downsize, the proceeds are a one-time event, not a compounding asset.</li></ul><br /><b>What to include instead:</b> Count only invested assets — 401(k)s, IRAs, taxable brokerage accounts, cash savings, and any other liquid investments that will compound over time. If you plan to use home equity in retirement (e.g., downsizing), you can model it as a separate scenario, but keep your primary Coast FIRE calculation based on invested assets alone.',
+    answerText: 'No, exclude home equity from Coast FIRE calculations. It is illiquid, does not compound like invested assets, and you need a place to live. Only count invested assets: 401(k)s, IRAs, taxable accounts, and cash savings. If you plan to downsize, model that as a separate scenario.',
+  },
+  {
+    question: 'What is the formula for calculating Coast FIRE by age?',
+    answerHtml: 'The Coast FIRE by age milestone uses the <b>reverse compound interest formula</b>:<br /><br /><div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink mt-2 mb-2">Coast Required at Age A = FIRE Target / (1 + r)^(T - A)</div><br />Where:<br /><ul><li><b>FIRE Target</b> = Annual Expenses / Safe Withdrawal Rate (e.g., $40,000 / 0.04 = $1,000,000)</li><li><b>r</b> = Expected annual real return (e.g., 5% = 0.05)</li><li><b>T</b> = Target retirement age (e.g., 60)</li><li><b>A</b> = Your current age (e.g., 30)</li><li><b>(T - A)</b> = Years remaining for compounding</li></ul><br /><b>Example:</b> To have $1,000,000 by age 60 with a 5% real return, a 30-year-old needs $1,000,000 / (1.05)^30 = <b>$231,377</b> today. At age 50 (only 10 years left), you would need $1,000,000 / (1.05)^10 = <b>$613,913</b>.<br /><br />The "Your Projected Portfolio" line uses the <b>forward compound interest formula</b>: Projected at Age A = Current Net Worth × (1 + r)^(A - Current Age). This shows how your existing savings grow with <b>zero additional contributions</b>.',
+    answerText: 'Coast Required at Age A = FIRE Target / (1 + r)^(T - A). Where FIRE Target = Annual Expenses / SWR, r = real return rate, T = target retirement age, A = current age. For $1M target at 5% return: a 30-year-old needs ~$231K, a 50-year-old needs ~$614K. Your projected portfolio = Current Net Worth × (1 + r)^(years from now).',
+  },
+];
+---
+
+<PageLayout
+  title="Coast FIRE by Age Calculator — Glide Path to Retirement"
+  description="Calculate your exact Coast FIRE milestone for every age. See if your current nest egg is compounding fast enough to retire without saving more."
+  canonical="https://truefinancetools.com/coast-fire-by-age-calculator"
+  ogImage="https://truefinancetools.com/og-coast-fire-by-age-calculator.png"
+  ogImageAlt="Coast FIRE by Age Calculator — See Your Retirement Glide Path"
+  pageType="website"
+  keywords="coast fire calculator, coast fire by age, coast fire number, FIRE glide path, compound interest retirement, coast FIRE milestone, early retirement calculator, financial independence calculator"
+>
+  <StructuredData
+    title="Coast FIRE by Age Calculator"
+    description="Free calculator to find your exact Coast FIRE milestone at every age with compound interest projections."
+    url="https://truefinancetools.com/coast-fire-by-age-calculator"
+    toolName="Coast FIRE by Age Calculator"
+    toolDescription="Calculate your Coast FIRE milestone across every age to see if your portfolio is on track for early retirement."
+    faqItems={toolFaqItems}
+    features={[
+      'Age-by-age Coast FIRE milestone grid',
+      'Interactive glide path projection chart',
+      'Real-time Coast FIRE status indicator',
+      'Compound interest growth visualization',
+      'Customizable return rate and withdrawal assumptions',
+      'Year-by-year comparison table'
+    ]}
+  />
+
+  <!-- Hero Section -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Coast FIRE by Age Glide Path Calculator
+      </h1>
+      <p class="text-lg text-body">See your exact Coast FIRE milestone at every age and whether your portfolio is compounding fast enough to retire comfortably.</p>
+    </div>
+  </section>
+
+  <!-- Introductory Context Block -->
+  <section class="border-t border-hairline bg-canvas-soft py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <div class="prose prose-gray max-w-none text-body">
+        <p><strong>Coast FIRE</strong> is the point where your current invested portfolio is large enough that, with no additional contributions, it will grow to your full FIRE target by your target retirement age through the power of compound interest alone. Once you reach Coast FIRE, you no longer need to save aggressively for retirement — you only need to earn enough to cover your current living expenses.</p>
+        <p>The <strong>Coast FIRE by Age Glide Path Calculator</strong> shows you the exact milestone you need at every age between now and retirement. This age-by-age view reveals the exponential power of compounding — the Coast FIRE number you need today is dramatically smaller than what you will need 10 or 20 years from now. By visualizing your portfolio's projected growth against the required Coast FIRE milestone at each age, you can see whether you are on track, ahead, or behind schedule.</p>
+        <p>This calculator is ideal for <strong>early-career professionals</strong> who want to know if they are saving enough, <strong>mid-career savers</strong> evaluating whether they can transition to lower-stress work, and <strong>anyone</strong> curious about how compound interest works for (or against) their retirement timeline.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <CoastFireByAgeCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Coast FIRE by Age Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Financial Profile</h3>
+      <p class="text-sm text-body">Set your current age, target retirement age, annual expenses, safe withdrawal rate, current net worth, and expected real return.</p>
+    </div>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. See Your Coast Milestones</h3>
+      <p class="text-sm text-body">The calculator instantly shows your FIRE target, Coast FIRE milestone for today, and your current status — achieved, on track, or behind.</p>
+    </div>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+          <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Review the Full Glide Path</h3>
+      <p class="text-sm text-body">Explore the interactive chart and age-by-age table showing the required Coast FIRE milestone versus your projected portfolio at every age along the way.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- Methodology Section -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        How the Coast FIRE by Age Milestone is Calculated
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p>The Coast FIRE by Age Calculator uses a <strong>reverse compound interest formula</strong> to determine the exact portfolio value you need at every age between now and retirement. The core insight is that money saved today has decades to grow, so you need far less now than you will later.</p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Calculation Steps</h3>
+
+        <p><strong>Step 1: Calculate your FIRE Target.</strong> This is the total portfolio value you need on the day you retire. It is derived from the classic 4% rule formula: FIRE Target = Annual Expenses / Safe Withdrawal Rate. For example, if you plan to spend $40,000 per year in retirement and use a 4% withdrawal rate, your FIRE Target is $40,000 / 0.04 = $1,000,000.</p>
+
+        <p><strong>Step 2: Calculate the Coast FIRE Milestone for Each Age.</strong> For every age between your current age and your target retirement age, we compute how much you would need to have saved at that age for it to grow to your FIRE Target by retirement. The formula is: <strong>Coast Required at Age A = FIRE Target / (1 + r)^(T - A)</strong>, where r is your expected real annual return, T is your target retirement age, and A is the age you are evaluating.</p>
+
+        <p><strong>Step 3: Project Your Portfolio Growth.</strong> Simultaneously, we project how your current net worth will grow over the same period with zero additional contributions: <strong>Projected Portfolio at Age A = Current Net Worth × (1 + r)^(A - Current Age)</strong>. This shows the power of compounding on your existing savings.</p>
+
+        <p><strong>Step 4: Compare Both Lines.</strong> When your projected portfolio line rises above the required Coast FIRE milestone line, you have achieved Coast FIRE. The age at which these lines cross is your Coast FIRE date — the moment you could stop saving and still retire comfortably. If your projected portfolio never crosses the milestone, you have not yet reached Coast FIRE and need to continue saving.</p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Assumptions</h3>
+        <ul>
+          <li><strong>Constant real returns:</strong> The model assumes your portfolio earns the same real return every year. In reality, markets fluctuate. Use a conservative return estimate and check the sensitivity by adjusting the real return slider.</li>
+          <li><strong>No additional contributions after today:</strong> The "Your Projected Portfolio" line assumes you add nothing more to your investments. If you continue saving, you will reach Coast FIRE faster than projected.</li>
+          <li><strong>Inflation is already accounted for:</strong> Because we use real (inflation-adjusted) returns, all values are in today's dollars. Your actual portfolio will be larger in nominal terms, but the purchasing power is what matters.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Coast FIRE by Age
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Coast FIRE by Age Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>Coast FIRE by Age Glide Path Calculator</strong> gives you a complete view of your retirement readiness at every stage of life. Unlike traditional Coast FIRE calculators that only show a single number (how much you need today), this tool reveals the entire trajectory — showing both the required milestone and your projected portfolio at every age between now and retirement.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose This Coast FIRE Calculator?</h3>
+
+        <p class="mb-4">
+          The <strong>age-by-age glide path view</strong> is the most important feature of this calculator. It transforms Coast FIRE from a single abstract number into a visual roadmap of your financial journey. You can see exactly how the required milestone decreases the further you are from retirement — and how your existing portfolio compounds over time. This visualization makes the exponential power of compound interest tangible and motivating.
+        </p>
+
+        <p class="mb-4">
+          <strong>Understanding your Coast FIRE status at every age</strong> helps you make better life decisions. If you are ahead of the curve at age 35, you might feel confident transitioning to a lower-stress job or starting a family. If you are behind at 45, you know you need to increase your savings rate or adjust your retirement expectations. The age-by-age grid in this calculator gives you that granular insight.
+        </p>
+
+        <p class="mb-4">
+          The calculator also helps you <strong>stress-test your assumptions</strong>. What if you want to retire earlier? What if your expenses are higher than expected? What if market returns are lower than historical averages? By adjusting the six input sliders, you can explore dozens of scenarios in seconds and understand how sensitive your Coast FIRE plan is to each variable.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Coast FIRE by Age Calculator</h3>
+
+        <p class="mb-4">
+          This calculator includes an <strong>interactive dual-line chart</strong> showing the required Coast FIRE milestone and your projected portfolio balance at every age. The <strong>status alert card</strong> provides an immediate snapshot — green if you are on track, with progress details if you are not. The <strong>age-by-age data table</strong> gives you the raw numbers for every year, with color-coded status indicators showing which ages you have "achieved" and which ages still have a gap.
+        </p>
+
+        <p class="mb-4">
+          All six inputs — current age, target retirement age, annual expenses, safe withdrawal rate, current net worth, and real annual return — are controlled by paired number inputs and sliders for maximum convenience. Every adjustment updates the chart, KPI cards, status alert, and data table in real time, with no page reload needed. All calculations run entirely in your browser, and no data is sent to any server.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Coast FIRE Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Coast &amp; FIRE Planning Tools
+      </h2>
+      <p class="mb-8 text-body">More calculators to help you plan your path to financial independence.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/coast-fire-number" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number Calculator</h3>
+          <p class="text-xs text-body">Find how much you need saved today to let compound interest do the rest.</p>
+        </a>
+        <a href="/coast-fire-shift-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Shift Calculator</h3>
+          <p class="text-xs text-body">Model the transition from full-time to part-time work on the path to retirement.</p>
+        </a>
+        <a href="/barista-fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Barista FIRE Calculator</h3>
+          <p class="text-xs text-body">See how part-time income can supplement your portfolio for early retirement.</p>
+        </a>
+        <a href="/fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Plan your path to financial independence with Lean, Regular, Fat, and Coast FIRE.</p>
+        </a>
+        <a href="/perpetual-swr-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Perpetual SWR Calculator</h3>
+          <p class="text-xs text-body">Calculate the withdrawal rate that preserves your portfolio forever.</p>
+        </a>
+        <a href="/die-with-zero-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Die with Zero Calculator</h3>
+          <p class="text-xs text-body">Optimize your retirement spending to use your portfolio fully by end of life.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

@@ -1,0 +1,505 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="cfba-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="cfba-form" class="space-y-4">
+          <Input
+            label="Current Age"
+            name="currentAge"
+            type="number"
+            value={30}
+            min={18}
+            max={70}
+            step={1}
+            suffix=" years"
+            hideArrows
+            required
+          />
+
+          <Slider
+            label="Target Retirement Age"
+            name="targetRetirementAge"
+            value={60}
+            min={35}
+            max={85}
+            step={1}
+            suffix=" years"
+            inputId="cfba-targetRetirementAge"
+            displayId="cfba-targetRetirementAgeValue"
+            tooltip="The age at which you plan to fully retire and start withdrawing from your portfolio"
+          />
+
+          <Slider
+            label="Annual Expenses in Retirement"
+            name="annualExpenses"
+            value={40000}
+            min={10000}
+            max={500000}
+            step={1000}
+            suffix="$"
+            inputId="cfba-annualExpenses"
+            displayId="cfba-annualExpensesValue"
+            tooltip="Your expected annual spending in retirement (today's dollars)"
+          />
+
+          <Slider
+            label="Safe Withdrawal Rate"
+            name="safeWithdrawalRate"
+            value={4.0}
+            min={2.0}
+            max={6.0}
+            step={0.1}
+            suffix="%"
+            inputId="cfba-safeWithdrawalRate"
+            displayId="cfba-safeWithdrawalRateValue"
+            tooltip="The percentage of your portfolio you plan to withdraw annually in retirement (traditional 4% rule)"
+          />
+
+          <Slider
+            label="Current Net Worth"
+            name="currentNetWorth"
+            value={100000}
+            min={0}
+            max={2000000}
+            step={5000}
+            suffix="$"
+            inputId="cfba-currentNetWorth"
+            displayId="cfba-currentNetWorthValue"
+            tooltip="Your total invested assets available for retirement (excluding home equity)"
+          />
+
+          <Slider
+            label="Real Annual Return"
+            name="realAnnualReturn"
+            value={5.0}
+            min={1.0}
+            max={10.0}
+            step={0.1}
+            suffix="%"
+            inputId="cfba-realAnnualReturn"
+            displayId="cfba-realAnnualReturnValue"
+            tooltip="Expected annual return after inflation (historical S&P 500 real return ~6-7%, conservative estimate 4-5%)"
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Age validation warning -->
+      <div id="cfba-age-warning" class="hidden rounded-lg border border-error/30 bg-error/5 p-4">
+        <p class="text-sm font-medium text-error">⚠ Age Conflict</p>
+        <p class="mt-1 text-xs text-body">Your current age must be less than your target retirement age for Coast FIRE calculations to work. Please adjust the sliders above.</p>
+      </div>
+
+      <!-- Status alert -->
+      <div id="cfba-status-alert" class="hidden rounded-lg border p-4">
+        <p id="cfba-status-title" class="text-sm font-medium"></p>
+        <p id="cfba-status-detail" class="mt-1 text-xs text-body"></p>
+      </div>
+
+      <!-- KPI cards row (4 cards in 2x2 grid) -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="FIRE Target"
+          valueId="cfba-fireTarget"
+          value="—"
+          valueClass="text-link"
+          description="Total portfolio needed at retirement"
+        />
+        <ResultCard
+          label="Current Coast Required"
+          valueId="cfba-currentCoastRequired"
+          value="—"
+          valueClass="text-ink"
+          description="Portfolio needed today to reach FIRE target"
+        />
+        <ResultCard
+          label="Your Net Worth"
+          valueId="cfba-netWorth"
+          value="—"
+          valueClass="text-success-deep"
+          description="Your current invested assets"
+        />
+        <ResultCard
+          label="Gap / Surplus"
+          valueId="cfba-gapSurplus"
+          value="—"
+          valueClass="text-ink"
+          description="Amount remaining or needed to reach Coast FIRE"
+        />
+      </div>
+
+      <!-- Chart -->
+      <Card padding="lg">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">Coast FIRE Glide Path by Age</h2>
+        </div>
+        <div class="relative h-64 sm:h-80">
+          <canvas
+            id="cfba-chart"
+            role="img"
+            aria-label="Line chart showing the required Coast FIRE milestone amount at each age versus your projected portfolio balance"
+          ></canvas>
+        </div>
+      </Card>
+
+      <!-- Year-by-year table (collapsible) -->
+      <Card padding="lg">
+        <details class="group">
+          <summary class="cursor-pointer py-2 text-sm font-medium text-ink">
+            Age-by-Age Projection
+            <svg class="ml-2 inline h-4 w-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M19 9l-7 7-7-7" />
+            </svg>
+          </summary>
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="border-b border-hairline bg-canvas-soft-2">
+                  <th class="p-2 font-medium text-ink">Age</th>
+                  <th class="p-2 font-medium text-ink">Required Coast FIRE Milestone</th>
+                  <th class="p-2 font-medium text-ink">Your Projected Portfolio</th>
+                  <th class="p-2 font-medium text-ink">Status</th>
+                </tr>
+              </thead>
+              <tbody id="cfba-table-body" class="font-mono text-xs tabular-nums">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </Card>
+    </div>
+  </div>
+</div>
+
+<p class="mx-auto max-w-6xl px-4 pb-8 text-center text-xs text-mute sm:px-6">
+  Disclaimer: This tool is for educational and illustrative purposes only. It does not constitute formal financial, investment, or tax advice. Coast FIRE calculations assume constant real returns and do not account for sequence of returns risk.
+</p>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+  import { calculateCoastFireByAge } from '../../utils/coast-fire-by-age-calculations';
+  import { formatCurrency, formatCurrencyShort } from '../../utils/formatters';
+
+  let chart = null;
+
+  function getFormData() {
+    var form = document.getElementById('cfba-form');
+    var formData = new FormData(form);
+
+    return {
+      currentAge: Number(formData.get('currentAge')) || 30,
+      targetRetirementAge: Number(formData.get('targetRetirementAge')) || 60,
+      annualExpenses: Number(formData.get('annualExpenses')) || 40000,
+      safeWithdrawalRate: Number(formData.get('safeWithdrawalRate')) || 4.0,
+      currentNetWorth: Number(formData.get('currentNetWorth')) || 100000,
+      realAnnualReturn: Number(formData.get('realAnnualReturn')) || 5.0,
+    };
+  }
+
+  function updateResults() {
+    var inputs = getFormData();
+    var ageWarning = document.getElementById('cfba-age-warning');
+    var statusAlert = document.getElementById('cfba-status-alert');
+
+    // Edge case: currentAge >= targetRetirementAge
+    if (inputs.currentAge >= inputs.targetRetirementAge) {
+      ageWarning.classList.remove('hidden');
+      statusAlert.classList.add('hidden');
+      if (chart) {
+        chart.destroy();
+        chart = null;
+      }
+      document.getElementById('cfba-table-body').innerHTML = '';
+      document.getElementById('cfba-fireTarget').textContent = '—';
+      document.getElementById('cfba-currentCoastRequired').textContent = '—';
+      document.getElementById('cfba-netWorth').textContent = '—';
+      document.getElementById('cfba-gapSurplus').textContent = '—';
+      return;
+    }
+
+    ageWarning.classList.add('hidden');
+
+    var results = calculateCoastFireByAge(inputs);
+
+    // Update KPI cards
+    document.getElementById('cfba-fireTarget').textContent = formatCurrency(results.fireTarget);
+    document.getElementById('cfba-currentCoastRequired').textContent = formatCurrency(results.currentCoastRequired);
+    document.getElementById('cfba-netWorth').textContent = formatCurrency(inputs.currentNetWorth);
+
+    var gapSurplusEl = document.getElementById('cfba-gapSurplus');
+    if (results.hasReachedCoast) {
+      gapSurplusEl.textContent = '+' + formatCurrency(results.surplus);
+      gapSurplusEl.className = 'text-2xl font-semibold tabular-nums text-success-deep';
+    } else {
+      gapSurplusEl.textContent = '-' + formatCurrency(results.gap);
+      gapSurplusEl.className = 'text-2xl font-semibold tabular-nums text-error';
+    }
+
+    // Update status alert
+    statusAlert.classList.remove('hidden');
+    var statusTitle = document.getElementById('cfba-status-title');
+    var statusDetail = document.getElementById('cfba-status-detail');
+
+    if (results.hasReachedCoast) {
+      statusAlert.className = 'rounded-lg border border-success/30 bg-success/5 p-4';
+      statusTitle.className = 'text-sm font-medium text-success-deep';
+      statusTitle.textContent = '✓ Coast FIRE Achieved!';
+      statusDetail.textContent = 'Your portfolio of ' + formatCurrency(inputs.currentNetWorth) + ' exceeds the Coast FIRE milestone of ' + formatCurrency(results.currentCoastRequired) + ' by ' + formatCurrency(results.surplus) + '. Your investments are on track to reach your FIRE target of ' + formatCurrency(results.fireTarget) + ' by age ' + inputs.targetRetirementAge + ' without any additional contributions.';
+    } else {
+      statusAlert.className = 'rounded-lg border border-warning/30 bg-warning/5 p-4';
+      statusTitle.className = 'text-sm font-medium text-warning';
+      statusTitle.textContent = 'Building Toward Coast FIRE';
+      var progressPct = Math.min(100, Math.round((inputs.currentNetWorth / results.currentCoastRequired) * 100));
+      statusDetail.innerHTML = 'You need ' + formatCurrency(results.gap) + ' more to reach your Coast FIRE milestone of ' + formatCurrency(results.currentCoastRequired) + '. Your current portfolio covers <strong>' + progressPct + '%</strong> of the Coast target. Keep investing — every dollar brings you closer to financial independence.';
+    }
+
+    // Update table
+    var tbody = document.getElementById('cfba-table-body');
+    tbody.innerHTML = results.ageGrid.map(function(row) {
+      var achieved = row.projectedPortfolio >= row.coastRequired;
+      var statusClass = achieved ? 'text-success-deep' : 'text-error';
+      var statusText = achieved ? '✓ Achieved' : 'Gap: ' + formatCurrency(row.coastRequired - row.projectedPortfolio);
+
+      var progressBar = '';
+      if (!achieved) {
+        var pct = Math.min(100, Math.round((row.projectedPortfolio / row.coastRequired) * 100));
+        progressBar = '<div class="mt-1 h-1 w-full rounded-full bg-canvas-soft-2"><div class="h-1 rounded-full bg-warning" style="width:' + pct + '%"></div></div>';
+      } else {
+        progressBar = '<div class="mt-1 h-1 w-full rounded-full bg-canvas-soft-2"><div class="h-1 rounded-full bg-success" style="width:100%"></div></div>';
+      }
+
+      return '<tr class="border-b border-hairline/50">' +
+        '<td class="p-2 text-ink">' + row.age + '</td>' +
+        '<td class="p-2 text-ink">' + formatCurrency(row.coastRequired) + '</td>' +
+        '<td class="p-2 text-ink">' + formatCurrency(row.projectedPortfolio) + '</td>' +
+        '<td class="p-2 ' + statusClass + '">' + statusText + progressBar + '</td>' +
+        '</tr>';
+    }).join('');
+
+    // Update chart
+    updateChart(results);
+  }
+
+  function updateChart(results) {
+    var ctx = document.getElementById('cfba-chart');
+    if (!ctx) return;
+
+    var isDark = document.documentElement.classList.contains('dark');
+    var gridColor = isDark ? '#262626' : '#ebebeb';
+    var textColor = isDark ? '#737373' : '#888888';
+    var tooltipBg = isDark ? '#ededed' : '#171717';
+    var tooltipText = isDark ? '#171717' : '#ffffff';
+    var coastColor = isDark ? '#60a5fa' : '#2563eb';
+    var portfolioColor = isDark ? '#34d399' : '#059669';
+
+    var labels = results.ageGrid.map(function(row) { return row.age.toString(); });
+    var coastData = results.ageGrid.map(function(row) { return row.coastRequired; });
+    var portfolioData = results.ageGrid.map(function(row) { return row.projectedPortfolio; });
+
+    if (chart) {
+      chart.data.labels = labels;
+      chart.data.datasets[0].data = coastData;
+      chart.data.datasets[0].borderColor = coastColor;
+      chart.data.datasets[0].backgroundColor = coastColor + '20';
+      chart.data.datasets[1].data = portfolioData;
+      chart.data.datasets[1].borderColor = portfolioColor;
+      chart.data.datasets[1].backgroundColor = portfolioColor + '20';
+      chart.options.scales.x.ticks.color = textColor;
+      chart.options.scales.y.ticks.color = textColor;
+      chart.options.scales.x.grid.color = gridColor;
+      chart.options.scales.y.grid.color = gridColor;
+      chart.options.plugins.legend.labels.color = textColor;
+      chart.update();
+      return;
+    }
+
+    chart = new window.Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Required Coast FIRE Milestone',
+            data: coastData,
+            borderColor: coastColor,
+            backgroundColor: coastColor + '20',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            borderWidth: 2,
+          },
+          {
+            label: 'Your Projected Portfolio',
+            data: portfolioData,
+            borderColor: portfolioColor,
+            backgroundColor: portfolioColor + '20',
+            borderDash: [5, 5],
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 12,
+              usePointStyle: true,
+              pointStyle: 'circle',
+              padding: 16,
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: 500,
+            },
+            bodyFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+            },
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': ' + formatCurrency(context.parsed.y);
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              maxTicksLimit: 15,
+            },
+            border: {
+              display: false,
+            },
+          },
+          y: {
+            grid: {
+              color: gridColor,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              callback: function(value) {
+                return formatCurrencyShort(value);
+              },
+            },
+            border: {
+              display: false,
+            },
+            min: 0,
+          },
+        },
+      },
+    });
+  }
+
+  function initSliders() {
+    var sliders = [
+      { id: 'cfba-targetRetirementAge', displayId: 'cfba-targetRetirementAgeValue', suffix: ' years' },
+      { id: 'cfba-annualExpenses', displayId: 'cfba-annualExpensesValue', suffix: '$' },
+      { id: 'cfba-safeWithdrawalRate', displayId: 'cfba-safeWithdrawalRateValue', suffix: '%' },
+      { id: 'cfba-currentNetWorth', displayId: 'cfba-currentNetWorthValue', suffix: '$' },
+      { id: 'cfba-realAnnualReturn', displayId: 'cfba-realAnnualReturnValue', suffix: '%' },
+    ];
+
+    sliders.forEach(function(slider) {
+      var el = document.getElementById(slider.id);
+      var display = document.getElementById(slider.displayId);
+
+      if (el && display) {
+        el.addEventListener('input', function() {
+          var val = Number(el.value);
+          if (slider.suffix === '$') {
+            display.textContent = formatCurrencyShort(val);
+          } else {
+            display.textContent = val + slider.suffix;
+          }
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('cfba-form');
+    if (form) {
+      form.addEventListener('input', function() {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    initSliders();
+    initFormListeners();
+    updateResults();
+
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', function() {
+        if (chart) {
+          chart.destroy();
+          chart = null;
+        }
+        updateResults();
+      });
+
+    var observer = new MutationObserver(function() {
+      if (chart) {
+        chart.destroy();
+        chart = null;
+      }
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
