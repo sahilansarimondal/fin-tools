@@ -51,6 +51,7 @@ fin-tools/
 │   │   │   ├── TaxGainHarvestingCalculator.astro     # Tax gain harvesting simulator
 │   │   │   ├── RetirementBucketCalculator.astro      # 3-bucket drawdown strategy simulator
 │   │   │   ├── BondTentCalculator.astro              # Bond tent / SRR glide path calculator
+│   │   │   ├── CoastFireByAgeCalculator.astro        # Coast FIRE by Age glide path calculator
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -176,6 +177,7 @@ fin-tools/
 | `/guardrails-withdrawal-calculator` | `src/pages/guardrails-withdrawal-calculator/index.astro` | Guardrails Withdrawal Strategy Calculator |
 | `/tax-gain-harvesting-calculator` | `src/pages/tax-gain-harvesting-calculator/index.astro` | Tax Gain Harvesting Calculator |
 | `/bond-tent-calculator` | `src/pages/bond-tent-calculator/index.astro` | Bond Tent / SRR Glide Path Calculator |
+| `/coast-fire-by-age-calculator` | `src/pages/coast-fire-by-age-calculator/index.astro` | Coast FIRE by Age Glide Path Calculator |
 | `/retirement-bucket-strategy-calculator` | `src/pages/retirement-bucket-strategy-calculator/index.astro` | 3-Bucket Retirement Drawdown Strategy Simulator |
 | `/tools` | `src/pages/tools/index.astro` | All tools overview |
 | `/about` | `src/pages/about/index.astro` | About page |
@@ -433,6 +435,20 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 - Summary banner showing dollar advantage
 - Chart.js dual-line chart comparing tent vs. static portfolio trajectories
 - Collapsible year-by-year projection table with bond allocation %
+- Theme-aware chart colors via MutationObserver on `html` class
+
+### Coast FIRE by Age Glide Path Calculator
+
+- File: `src/components/calculator/CoastFireByAgeCalculator.astro` (~505 lines)
+- Uses `src/utils/coast-fire-by-age-calculations.ts` for math
+- Shows Coast FIRE milestone at every age between current age and target retirement age
+- Uses reverse compound interest formula: Coast Required at Age A = FIRE Target / (1 + r)^(T - A)
+- 6 input controls: Current Age, Target Retirement Age, Annual Expenses, SWR, Current Net Worth, Real Annual Return
+- Status alert card: Green (achieved) or Orange (building toward) with progress percentage
+- 4 KPI cards: FIRE Target, Current Coast Required, Your Net Worth, Gap/Surplus
+- Chart.js dual-line chart: Required Coast FIRE Milestone (solid) vs Your Projected Portfolio (dashed)
+- Age-by-age projection table with status indicators and progress bars
+- Edge case: warns when current age >= target retirement age
 - Theme-aware chart colors via MutationObserver on `html` class
 
 ### Adding a New Tool
