@@ -1,0 +1,259 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import BondTentCalculator from '../../components/calculator/BondTentCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is a bond tent retirement strategy?',
+    answerHtml: '<b>A bond tent</b> is a tactical asset allocation strategy where an investor temporarily increases their bond and cash exposure as they approach retirement, peaking at their exact retirement date, then gradually shifting back to a higher equity allocation over the following 5-10 years.<br /><br />The idea is simple: during the 5 years before and after retirement — the "retirement red zone" — your portfolio is most vulnerable to sequence of returns risk. By holding 30-50% in bonds during this window, you create a safety buffer that prevents you from being forced to sell equities at a loss during a bear market.<br /><br />After the danger window passes, you spend down the bond buffer first (or gradually rebalance back to equities), allowing your stock allocation to rise back to its long-term target. This creates a "tent" shape in your bond allocation over time — rising to a peak at retirement, then falling back down.<br /><br /><b>Example:</b> A 55-year-old with a 90/10 stock/bond allocation might shift to 60/40 over 5 years before retirement, hold 60/40 for the first few years of retirement, then gradually return to 90/10 over the next 10 years. The temporary 40% bond allocation protects against a crash at age 60.',
+    answerText: 'A bond tent is a strategy where you temporarily increase bond exposure to peak at retirement, then gradually shift back to equities. It creates a safety buffer during the "retirement red zone" (5 years before and after retirement) to prevent selling stocks at a loss during bear markets.',
+  },
+  {
+    question: 'How does a rising equity glide path calculator mitigate sequence of returns risk?',
+    answerHtml: '<b>Sequence of returns risk (SRR)</b> is the danger that a market crash in the first few years of retirement permanently impairs your portfolio — even if average returns over 30 years are positive. A rising equity glide path mitigates this by mathematically reducing your exposure to equities during the highest-risk period.<br /><br />Here is how it works:<br /><br /><ul><li><b>Pre-retirement (Ramp-Up):</b> You gradually increase bond exposure from your baseline (e.g., 10%) to a peak (e.g., 40%) over 5 years before retirement. This "builds the tent" and reduces volatility as you approach the danger zone.</li><li><b>Early retirement (Peak Protection):</b> At retirement, your bond allocation is at its highest. If a crash occurs, you spend from the bond buffer first, avoiding selling equities at depressed prices. Your equity portion stays intact to recover.</li><li><b>Post-retirement (Ramp-Down):</b> Over 5-10 years, you gradually decrease bonds back to your baseline. As the market recovers, your rising equity allocation captures more of the upside.</li></ul><br />The mathematical protection is significant: a retiree with a 60/40 allocation at retirement who experiences a -30% stock crash loses 18% of their total portfolio (vs. 27% for a 90/10 investor). The bond buffer absorbs less damage, and the smaller equity position means less selling at the bottom.',
+    answerText: 'A rising equity glide path reduces equity exposure during the highest-risk period (retirement transition). By starting with more bonds and gradually increasing equities, you mathematically limit portfolio damage from early crashes. A 60/40 investor loses 18% in a -30% stock crash vs. 27% for a 90/10 investor.',
+  },
+  {
+    question: 'Why choose a bond tent over a permanent static asset allocation?',
+    answerHtml: '<b>A bond tent is more efficient than a permanent static allocation</b> because it provides targeted protection during the high-vulnerability retirement transition window while preserving the long-term growth power of equities.<br /><br /><b>Why a permanent 60/40 allocation is suboptimal:</b><br /><ul><li><b>Reduced long-term growth:</b> Holding 40% bonds permanently means your portfolio grows ~1% slower per year (bonds yield ~3.5% vs. stocks ~7%). Over 30 years, this compounds to hundreds of thousands less.</li><li><b>Inflation risk:</b> Bonds are poor long-term inflation hedges. A permanent bond allocation exposes you to purchasing power erosion over decades.</li><li><b>Missed recovery:</b> After the initial danger window (5-10 years), a permanent 60/40 investor misses the full equity recovery that a bond tent investor captures by gradually increasing their stock allocation.</li></ul><br /><b>Why a bond tent is superior:</b><br /><ul><li><b>Targeted protection:</b> The tent provides maximum safety exactly when you need it most — the retirement transition red zone — then gets out of the way.</li><li><b>Full growth capture:</b> Once the danger window passes, your equity allocation rises back to 90%, capturing the full long-term equity risk premium.</li><li><b>Flexibility:</b> You can adjust the tent width (ramp-up/down years) and height (peak bond %) to match your personal risk tolerance and timeline.</li><li><b>Mathematical evidence:</b> Research by Michael Kitces and Wade Pfau shows that a rising equity glide path produces higher median wealth AND lower failure rates than a declining or static glide path.</li></ul><br />The bond tent is essentially a "best of both worlds" approach: the safety of bonds during the danger zone, combined with the growth power of stocks for the long haul.',
+    answerText: 'A bond tent is superior to a permanent static allocation because it provides targeted protection during the high-risk retirement transition while preserving long-term equity growth. A permanent 60/40 allocation reduces long-term growth by ~1%/year and misses equity recovery after the danger window passes. A bond tent gives you safety when you need it and growth when you don\'t.',
+  },
+];
+---
+
+<PageLayout
+  title="Bond Tent Calculator — Sequence of Returns Risk Glide Path"
+  description="Simulate a bond tent retirement strategy. Map out a rising equity glide path to protect your portfolio from sequence of returns risk (SRR) during early retirement."
+  canonical="https://truefinancetools.com/bond-tent-calculator"
+  ogImage="https://truefinancetools.com/og-bond-tent-calculator.png"
+  ogImageAlt="Bond Tent Calculator — Protect Against Sequence of Returns Risk"
+  pageType="website"
+  keywords="bond tent calculator, sequence of returns risk calculator, rising equity glide path, bond tent retirement strategy, SRR protection, retirement allocation glide path, portfolio tent strategy, early retirement bond allocation"
+>
+  <StructuredData
+    title="Bond Tent Calculator"
+    description="Free bond tent retirement calculator for simulating rising equity glide paths and protecting against sequence of returns risk."
+    url="https://truefinancetools.com/bond-tent-calculator"
+    toolName="Bond Tent Calculator"
+    toolDescription="Simulate a bond tent retirement strategy to protect your portfolio from sequence of returns risk during early retirement."
+    faqItems={toolFaqItems}
+    features={[
+      'Dynamic bond tent glide path simulation',
+      'Rising equity post-retirement modeling',
+      'Sequence of returns risk stress testing',
+      'Side-by-side static vs. tent comparison',
+      'Interactive projection charts',
+      'Year-by-year allocation breakdown',
+    ]}
+  />
+
+  <!-- 1. Hero Section -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Bond Tent &amp; Sequence of Returns Risk Calculator
+      </h1>
+      <p class="text-lg text-body">Model a rising equity glide path to shield your portfolio from a poorly timed market crash at retirement.</p>
+    </div>
+  </section>
+
+  <!-- 2. Introductory Context Block -->
+  <section class="border-b border-hairline bg-canvas-soft py-12">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          A <strong>bond tent</strong> is one of the most effective strategies for protecting your retirement portfolio against <strong>sequence of returns risk (SRR)</strong> — the danger that a market crash in your first few years of retirement permanently impairs your portfolio. The strategy is elegant in its simplicity: you temporarily increase your bond allocation as you approach retirement, peaking on the day you retire, then gradually shift back to equities over the following decade.
+        </p>
+        <p class="mb-4">
+          This calculator models a <strong>rising equity glide path</strong> — the technical term for what happens after the bond tent peaks. You enter your portfolio size, annual spending, and choose how many years you want to spend building the tent (ramp-up) and dismantling it (ramp-down). Then you select a market crash scenario — severe (-30%), moderate (-15%), or flat (0% for 3 years) — and the calculator shows you exactly how much the bond tent preserves compared to a static allocation that never adjusts its bond exposure.
+        </p>
+        <p class="mb-4">
+          The math is compelling: a retiree who holds 40% bonds at retirement (60/40 portfolio) rather than 10% bonds (90/10 portfolio) loses only 18% of their total portfolio in a -30% stock crash, compared to 27% for the 90/10 investor. And because the tent allows your equity allocation to rise back to 90% over the subsequent 5-10 years, you capture the full recovery upside that a permanent 60/40 investor misses. This calculator lets you tune the ramp-up speed, ramp-down speed, and peak bond percentage to find the optimal tent for your specific timeline.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Calculator Component -->
+  <BondTentCalculator />
+
+  <!-- 4. How It Works -->
+  <HowItWorks title="How the Bond Tent Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Configure Your Timeline</h3>
+      <p class="text-sm text-body">Set your portfolio value, annual spending, and choose how many years to build up and spend down the bond tent.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25l3-3 2.148 2.148A12.061 12.061 0 0116.5 10.5" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Choose a Crash Scenario</h3>
+      <p class="text-sm text-body">Pick from Severe (-30%), Moderate (-15%), or Flat (0% for 3 years) to simulate the worst timing.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Compare the Outcomes</h3>
+      <p class="text-sm text-body">See exactly how much more your bond tent preserves vs. a static allocation in the year-by-year projection.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- 5. Methodology Section -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink">How the Bond Tent Strategy is Calculated</h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          The bond tent calculation runs a <strong>year-by-year simulation</strong> divided into three distinct phases. Each year, the calculator determines the bond allocation for the tent portfolio, subtracts inflation-adjusted spending (if in retirement), and applies stock and bond returns based on the selected crash scenario. A static portfolio using the baseline equity allocation is run in parallel for comparison.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Phase 1: Pre-Retirement Ramp-Up (Build the Tent)</h3>
+        <p class="mb-4">
+          During the ramp-up years (the 1-10 years before retirement), your bond allocation increases linearly from your baseline level to the peak level. For example, with a 10% baseline bond allocation (90/10), a 40% peak (60/40), and 5 ramp-up years, the allocation shifts by 6% per year: Year -5 = 10% bonds, Year -4 = 16%, Year -3 = 22%, Year -2 = 28%, Year -1 = 34%, Retirement = 40%. No spending occurs during this phase.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Phase 2: Post-Retirement Ramp-Down (Spend the Tent)</h3>
+        <p class="mb-4">
+          In the years following retirement, the bond allocation decreases linearly back to the baseline level over the ramp-down period (1-15 years). During this phase, the calculator subtracts inflation-adjusted annual spending <em>before</em> applying returns. If a crash scenario is selected, the stock return for year 1 (or years 1-3 in the flat scenario) is reduced, modeling the worst-case timing for the crash.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Phase 3: Post-Glide Path (Return to Baseline)</h3>
+        <p class="mb-4">
+          After the ramp-down is complete, both portfolios hold the baseline allocation for the remaining years (up to 5 more years). This phase demonstrates the long-term growth advantage of the bond tent: because the tent portfolio gradually increased its equity allocation during the ramp-down, it now grows faster than a portfolio that stayed at a lower equity allocation permanently.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Bond Tent Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Bond Allocation(t) = B<sub>start</sub> + (t / RampUp) × (B<sub>peak</sub> − B<sub>start</sub>) &emsp; (pre-retirement)<br /><br />
+          Bond Allocation(t) = B<sub>peak</sub> − (t / RampDown) × (B<sub>peak</sub> − B<sub>start</sub>) &emsp; (post-retirement)<br /><br />
+          Portfolio(t) = max(0, (Portfolio(t-1) − Spending(t)) × (1 + Weighted Return))
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Key Assumptions</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Standard Stock Return</h4>
+            <p class="text-sm text-body"><strong>7% annually</strong> — Long-term average of the S&P 500, roughly matching historical nominal returns.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Standard Bond Return</h4>
+            <p class="text-sm text-body"><strong>3.5% annually</strong> — Long-term average for investment-grade bonds and fixed income.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Inflation Rate</h4>
+            <p class="text-sm text-body"><strong>2.5% annually</strong> — Spending increases by this rate each year in retirement to maintain purchasing power.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Zero-Floor Rule</h4>
+            <p class="text-sm text-body">Portfolio values are capped at $0 minimum — once depleted, they stay at $0 for the remaining years.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink">Frequently Asked Questions About Bond Tent Strategies</h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Internal Links Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink">Complete Guide to Bond Tent &amp; Glide Path Planning</h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>bond tent calculator</strong> helps you model one of the most powerful tools in the retirement planner's toolkit. A bond tent — also known as a rising equity glide path — is the most evidence-backed way to protect your portfolio from a poorly timed market crash in the critical years surrounding retirement. Rather than holding a static allocation forever, the bond tent dynamically shifts your risk exposure to be most conservative when you are most vulnerable, then gradually returns to a growth-oriented allocation once the danger window passes.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Use a Bond Tent?</h3>
+
+        <p class="mb-4">
+          The traditional advice of "just use a 60/40 portfolio in retirement" ignores a crucial insight: your sequence of returns risk is not constant over your retirement — it is heavily concentrated in the first 5-10 years. If you survive the first decade without a major crash, your portfolio becomes remarkably resilient to everything the market can throw at it. A bond tent exploits this asymmetry by providing maximum protection exactly when you need it most, then getting out of the way so equities can drive long-term growth.
+        </p>
+
+        <p class="mb-4">
+          Research by <strong>Michael Kitces</strong> and <strong>Wade Pfau</strong> has shown that rising equity glide paths produce both higher median ending wealth and lower failure rates compared to static or declining glide paths. The mechanism is straightforward: by having more bonds at retirement, you reduce the damage from early crashes. By shifting back to equities over time, you capture the recovery that follows every bear market. The bond tent is not about timing the market — it is about structuring your portfolio to survive the market's inevitable downturns.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Bond Tent Calculator</h3>
+
+        <p class="mb-4">
+          This calculator simulates the full lifecycle of a bond tent strategy — from the pre-retirement ramp-up, through the retirement danger zone, to the post-retirement ramp-down and beyond. You can adjust the <strong>ramp-up speed</strong> (1-10 years), <strong>ramp-down speed</strong> (1-15 years), <strong>peak bond allocation</strong> (10-70%), and <strong>baseline equity allocation</strong> (50-100%) to find the optimal tent shape for your personal risk tolerance and timeline. Three crash scenarios let you stress-test your plan against different types of market downturns. The <strong>side-by-side comparison chart</strong> plots the bond tent portfolio against a static allocation, making the protection benefit instantly visible.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Related Tools -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink">Explore Related Retirement Tools</h2>
+      <p class="mb-8 text-body">Discover more calculators to optimize and stress-test your retirement plan.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/sequence-of-returns-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Sequence of Returns Risk</h3>
+          <p class="text-xs text-body">Stress-test your retirement against historical market crashes like 2008 and the Dot-Com bubble.</p>
+        </a>
+        <a href="/retirement-bucket-strategy-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Bucket Strategy Simulator</h3>
+          <p class="text-xs text-body">Simulate a 3-bucket drawdown with Cash, Bonds, and Stocks to shield against sequence risk.</p>
+        </a>
+        <a href="/guardrails-withdrawal-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Guardrails Withdrawal</h3>
+          <p class="text-xs text-body">Use Guyton-Klinger rules to dynamically adjust spending based on portfolio performance.</p>
+        </a>
+        <a href="/die-with-zero-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Die with Zero Calculator</h3>
+          <p class="text-xs text-body">Optimize decumulation to maximize lifetime spending without running out of money.</p>
+        </a>
+        <a href="/vpw-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">VPW Withdrawal Calculator</h3>
+          <p class="text-xs text-body">Compare Variable Percentage Withdrawal against the 4% rule across multiple market scenarios.</p>
+        </a>
+        <a href="/perpetual-swr-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Perpetual SWR Calculator</h3>
+          <p class="text-xs text-body">Find the withdrawal rate that preserves your portfolio's purchasing power forever.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. Disclaimer -->
+  <section class="border-t border-hairline bg-canvas-soft py-8">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <p class="text-center text-xs text-mute">
+        Disclaimer: This simulator models stylized growth rates and hypothetical market crash scenarios. It is designed solely for educational planning and sequence of returns risk analysis. Real-world market trajectories are unpredictable. This is not financial or investment advice.
+      </p>
+    </div>
+  </section>
+</PageLayout>

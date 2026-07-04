@@ -1,0 +1,481 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="bt-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <!-- Crash Scenario Dropdown -->
+        <div class="mb-6">
+          <label class="mb-2 block text-sm font-medium text-ink">Crash Scenario</label>
+          <select
+            id="bt-scenario"
+            name="crashScenario"
+            class="w-full rounded-md border border-hairline bg-canvas px-3 py-2.5 text-sm text-ink shadow-sm focus:border-link focus:outline-none focus:ring-1 focus:ring-link"
+          >
+            <option value="severe">Severe Crash (-30%)</option>
+            <option value="moderate">Moderate Crash (-15%)</option>
+            <option value="flat">Flat Market (0% for 3 Years)</option>
+          </select>
+        </div>
+
+        <form id="bt-form" class="space-y-4">
+          <Input
+            label="Portfolio Value at Retirement"
+            name="portfolioValue"
+            type="number"
+            value={1000000}
+            min={100000}
+            max={5000000}
+            step={10000}
+            suffix="$"
+            hideArrows
+            required
+          />
+          <Input
+            label="Annual Spending"
+            name="annualSpending"
+            type="number"
+            value={40000}
+            min={5000}
+            max={250000}
+            step={1000}
+            suffix="$"
+            hideArrows
+            required
+          />
+          <Slider
+            label="Ramp-Up Years (Tent Entry)"
+            name="rampUpYears"
+            value={5}
+            min={1}
+            max={10}
+            step={1}
+            suffix=" years"
+            inputId="bt-rampUp"
+            displayId="bt-rampUpValue"
+            tooltip="Years before retirement to build the bond tent"
+          />
+          <Slider
+            label="Ramp-Down Years (Tent Exit)"
+            name="rampDownYears"
+            value={10}
+            min={1}
+            max={15}
+            step={1}
+            suffix=" years"
+            inputId="bt-rampDown"
+            displayId="bt-rampDownValue"
+            tooltip="Years after retirement to spend down the bond tent"
+          />
+          <Slider
+            label="Baseline Equity Allocation"
+            name="baselineEquityPct"
+            value={90}
+            min={50}
+            max={100}
+            step={1}
+            suffix="%"
+            inputId="bt-baselineEquity"
+            displayId="bt-baselineEquityValue"
+            tooltip="Your long-term equity allocation after the tent is spent down"
+          />
+          <Slider
+            label="Peak Bond Allocation"
+            name="peakBondPct"
+            value={40}
+            min={10}
+            max={70}
+            step={1}
+            suffix="%"
+            inputId="bt-peakBond"
+            displayId="bt-peakBondValue"
+            tooltip="Maximum safe asset allocation at retirement (the tent peak)"
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Summary banner -->
+      <div id="bt-summary" class="rounded-lg border border-success/30 bg-success/5 p-4">
+        <p class="text-sm text-body">
+          By using a Bond Tent, your portfolio preserved
+          <strong id="bt-summary-amount">$0</strong> more than a static allocation
+          after the market crash.
+        </p>
+      </div>
+
+      <!-- KPI cards row (4 cards) -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Bond Tent Final"
+          valueId="bt-tent-final"
+          value="$0"
+          valueClass="text-link"
+          description="Tent portfolio ending balance"
+        />
+        <ResultCard
+          label="Static Final"
+          valueId="bt-static-final"
+          value="$0"
+          valueClass="text-ink"
+          description="Static allocation ending balance"
+        />
+        <ResultCard
+          label="Tent Advantage"
+          valueId="bt-advantage"
+          value="$0"
+          valueClass="text-success-deep"
+          description="Extra preserved by the bond tent"
+        />
+        <ResultCard
+          label="Max Drawdown Saved"
+          valueId="bt-drawdown"
+          value="$0"
+          valueClass="text-ink"
+          description="Less portfolio value lost during crash trough"
+        />
+      </div>
+
+      <!-- Chart -->
+      <Card padding="lg">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">Portfolio Projection: Tent vs. Static</h2>
+        </div>
+        <div class="relative h-64 sm:h-80">
+          <canvas
+            id="bt-chart"
+            role="img"
+            aria-label="Chart comparing bond tent portfolio vs static allocation portfolio over the simulation timeline"
+          ></canvas>
+        </div>
+      </Card>
+
+      <!-- Year-by-Year Table (collapsible) -->
+      <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+        <summary class="cursor-pointer py-2 text-sm font-medium text-ink">Year-by-Year Projection</summary>
+        <div class="mt-4 overflow-x-auto">
+          <table id="bt-table" class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-2 text-xs font-medium text-mute">Year</th>
+                <th class="p-2 text-xs font-medium text-mute">Bond %</th>
+                <th class="p-2 text-xs font-medium text-mute">Tent Portfolio</th>
+                <th class="p-2 text-xs font-medium text-mute">Static Portfolio</th>
+                <th class="p-2 text-xs font-medium text-mute">Spending</th>
+                <th class="p-2 text-xs font-medium text-mute">Stock Return</th>
+              </tr>
+            </thead>
+            <tbody id="bt-table-body" class="font-mono text-xs tabular-nums"></tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  </div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+  import { calculateBondTent } from '../../utils/bond-tent-calculations';
+  import { formatCurrency, formatCurrencyShort } from '../../utils/formatters';
+
+  let chart = null;
+
+  function getFormData() {
+    const form = document.getElementById('bt-form');
+    const formData = new FormData(form);
+    const scenario = document.getElementById('bt-scenario').value;
+
+    return {
+      portfolioValue: Number(formData.get('portfolioValue')) || 1000000,
+      annualSpending: Number(formData.get('annualSpending')) || 40000,
+      rampUpYears: Number(formData.get('rampUpYears')) || 5,
+      rampDownYears: Number(formData.get('rampDownYears')) || 10,
+      baselineEquityPct: Number(formData.get('baselineEquityPct')) || 90,
+      peakBondPct: Number(formData.get('peakBondPct')) || 40,
+      crashScenario: scenario,
+    };
+  }
+
+  function updateResults() {
+    const input = getFormData();
+    const result = calculateBondTent(input);
+
+    // Update summary banner
+    const summaryEl = document.getElementById('bt-summary-amount');
+    const advantage = result.tentAdvantage;
+    if (advantage >= 0) {
+      summaryEl.textContent = formatCurrency(advantage);
+      summaryEl.className = 'text-success-deep';
+    } else {
+      summaryEl.textContent = formatCurrency(Math.abs(advantage)) + ' less';
+      summaryEl.className = 'text-error';
+    }
+
+    // Update KPI cards
+    document.getElementById('bt-tent-final').textContent = formatCurrency(result.tentFinalBalance);
+    document.getElementById('bt-static-final').textContent = formatCurrency(result.staticFinalBalance);
+
+    const advEl = document.getElementById('bt-advantage');
+    advEl.textContent = (advantage >= 0 ? '+' : '') + formatCurrency(advantage);
+    advEl.className = advantage >= 0
+      ? 'text-2xl font-semibold tabular-nums text-success-deep'
+      : 'text-2xl font-semibold tabular-nums text-error';
+
+    const drawdownSaved = result.staticMinBalance - result.tentMinBalance;
+    const ddEl = document.getElementById('bt-drawdown');
+    ddEl.textContent = (drawdownSaved >= 0 ? '' : '-') + formatCurrency(Math.abs(drawdownSaved));
+    ddEl.className = drawdownSaved >= 0
+      ? 'text-2xl font-semibold tabular-nums text-success-deep'
+      : 'text-2xl font-semibold tabular-nums text-error';
+
+    updateChart(result);
+    updateTable(result);
+  }
+
+  function updateChart(result) {
+    const ctx = document.getElementById('bt-chart');
+    if (!ctx) return;
+    if (chart) chart.destroy();
+
+    const isDark = document.documentElement.classList.contains('dark');
+    const gridColor = isDark ? '#262626' : '#ebebeb';
+    const textColor = isDark ? '#737373' : '#888888';
+    const tooltipBg = isDark ? '#ededed' : '#171717';
+    const tooltipText = isDark ? '#171717' : '#ffffff';
+    const linkColor = isDark ? '#3291ff' : '#0070f3';
+    const errorColor = isDark ? '#ff4444' : '#ee0000';
+    const successColor = isDark ? '#22c55e' : '#16a34a';
+
+    const labels = result.years.map(function (d) {
+      if (d.year < 0) return 'Yr ' + d.year;
+      if (d.year === 0) return 'Retire';
+      return 'Yr ' + d.year;
+    });
+
+    const tentData = result.years.map(function (d) {
+      return d.tentPortfolio;
+    });
+
+    const staticData = result.years.map(function (d) {
+      return d.staticPortfolio;
+    });
+
+    chart = new window.Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Bond Tent',
+            data: tentData,
+            borderColor: linkColor,
+            backgroundColor: isDark
+              ? 'rgba(50,145,255,0.1)'
+              : 'rgba(0,112,243,0.1)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+          },
+          {
+            label: 'Static Allocation',
+            data: staticData,
+            borderColor: errorColor,
+            backgroundColor: isDark
+              ? 'rgba(255,68,68,0.1)'
+              : 'rgba(238,0,0,0.1)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+            borderDash: [5, 5],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 2,
+              usePointStyle: false,
+              padding: 16,
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: 500,
+            },
+            bodyFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+            },
+            callbacks: {
+              label: function (context) {
+                return (
+                  context.dataset.label +
+                  ': ' +
+                  formatCurrency(context.parsed.y)
+                );
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              maxTicksLimit: 10,
+            },
+            border: {
+              display: false,
+            },
+          },
+          y: {
+            grid: {
+              color: gridColor,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              callback: function (value) {
+                return formatCurrencyShort(value);
+              },
+            },
+            border: {
+              display: false,
+            },
+            min: 0,
+          },
+        },
+      },
+    });
+  }
+
+  function updateTable(result) {
+    const tbody = document.getElementById('bt-table-body');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    result.years.forEach(function (d) {
+      const row = document.createElement('tr');
+      row.className = 'border-b border-hairline/50';
+
+      const yearLabel = d.year < 0 ? 'Pre-' + Math.abs(d.year) : (d.year === 0 ? 'Retire' : 'Year ' + d.year);
+
+      row.innerHTML =
+        '<td class="p-2 text-body font-sans">' + yearLabel + '</td>' +
+        '<td class="p-2 text-mute">' + d.bondAllocPct.toFixed(0) + '%</td>' +
+        '<td class="p-2 text-link">' + formatCurrencyShort(d.tentPortfolio) + '</td>' +
+        '<td class="p-2 text-error">' + formatCurrencyShort(d.staticPortfolio) + '</td>' +
+        '<td class="p-2 text-ink">' + (d.year >= 0 ? formatCurrencyShort(d.spending) : '—') + '</td>' +
+        '<td class="p-2 ' + (d.stockReturn < 0 ? 'text-error' : 'text-success-deep') + '">' +
+          (d.stockReturn >= 0 ? '+' : '') + (d.stockReturn * 100).toFixed(1) + '%' +
+        '</td>';
+
+      tbody.appendChild(row);
+    });
+  }
+
+  function initScenarioDropdown() {
+    const dropdown = document.getElementById('bt-scenario');
+    dropdown.addEventListener('change', function () {
+      updateResults();
+    });
+  }
+
+  function initSliders() {
+    const sliders = [
+      { id: 'bt-rampUp', displayId: 'bt-rampUpValue', suffix: ' years' },
+      { id: 'bt-rampDown', displayId: 'bt-rampDownValue', suffix: ' years' },
+      { id: 'bt-baselineEquity', displayId: 'bt-baselineEquityValue', suffix: '%' },
+      { id: 'bt-peakBond', displayId: 'bt-peakBondValue', suffix: '%' },
+    ];
+
+    sliders.forEach(function (slider) {
+      var el = document.getElementById(slider.id);
+      var display = document.getElementById(slider.displayId);
+
+      if (el && display) {
+        el.addEventListener('input', function () {
+          display.textContent = el.value + slider.suffix;
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('bt-form');
+    if (form) {
+      form.addEventListener('input', function () {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initScenarioDropdown();
+    initSliders();
+    initFormListeners();
+    updateResults();
+
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', function () {
+        updateResults();
+      });
+
+    var observer = new MutationObserver(function () {
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
