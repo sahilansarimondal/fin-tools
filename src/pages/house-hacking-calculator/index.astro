@@ -1,0 +1,330 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import HouseHackingCalculator from '../../components/calculator/HouseHackingCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'Can I use an FHA loan for house hacking?',
+    answerHtml: '<b>Yes.</b> FHA loans are one of the most popular financing options for house hackers. They allow you to purchase a primary residence with as little as <b>3.5% down</b> and allow up to 4 units, as long as you live in one of them. This makes FHA financing ideal for buying a duplex, triplex, or fourplex as your first property. The key requirement is that you must occupy the property as your primary residence for at least 12 months. After that, you can move out and rent the unit you were living in, though this is not required.',
+    answerText: 'Yes. FHA loans allow as little as 3.5% down on a primary residence with up to 4 units. You must live in one unit for at least 12 months.',
+  },
+  {
+    question: 'What is a good cash flow for house hacking?',
+    answerHtml: 'A "good" cash flow depends on your goals. Here are the common benchmarks:<br /><br /><ul><li><b>Breaking even ($0/month)</b> — Your mortgage is fully covered by rental income. You live for free. This is the most common and realistic target for most house hackers.</li><li><b>Positive cash flow ($100–$500/month)</b> — You live for free AND earn a small monthly profit. This is excellent but harder to find in expensive markets.</li><li><b>Negative cash flow (-$200 to -$500/month)</b> — You pay a small amount out of pocket. In high-appreciation markets, this can still be a great deal because your tenants are paying down your mortgage while the property gains value.</li></ul>Most successful house hackers aim to <b>break even or better</b>. The real wealth building comes from equity growth and rental income over time, not just the monthly number.',
+    answerText: 'Breaking even ($0/month) is the most common target — you live for free. Positive cash flow ($100–$500/mo) is excellent. A small negative cash flow can still be worthwhile if the property appreciates.',
+  },
+  {
+    question: 'Does rental income count toward my mortgage qualification?',
+    answerHtml: '<b>Yes, but with conditions.</b> If you are buying a property with existing rental units (e.g., a duplex you will partially rent out), most lenders will count <b>75% of the projected rental income</b> toward your debt-to-income (DTI) ratio. The 25% discount accounts for vacancy, maintenance, and management costs. This is especially helpful for first-time buyers who may not qualify for a large mortgage on their salary alone.<br /><br />FHA and conventional lenders both allow this, though the exact rules vary. You will typically need a lease agreement or a market rent appraisal to document the expected income.',
+    answerText: 'Yes. Most lenders count 75% of projected rental income toward your DTI ratio when buying a multi-unit primary residence. This helps with qualification.',
+  },
+  {
+    question: 'Is house hacking worth it?',
+    answerHtml: 'House hacking is one of the most effective wealth-building strategies for first-time buyers and young professionals. Here is why:<br /><br /><ul><li><b>Lower barrier to entry</b> — FHA loans let you buy with 3.5% down. On a $400K duplex, that is just $14,000 instead of $80,000 for a conventional 20% down payment.</li><li><b>Tenant-paid mortgage</b> — Your tenants pay down your principal, build your equity, and cover a significant portion (or all) of your housing costs.</li><li><b>Forced savings</b> — Every mortgage payment is forced savings through principal paydown, unlike rent which is pure expense.</li><li><b>Multiple exit strategies</b> — You can sell for a profit, continue renting after moving out, or keep living there indefinitely.</li></ul>The trade-off is that you manage tenants, handle maintenance, and may have less privacy. For most house hackers, the financial benefits far outweigh these inconveniences.',
+    answerText: 'Yes. House hacking lets you buy with 3.5% down via FHA, have tenants pay your mortgage, build equity through forced savings, and maintain multiple exit strategies.',
+  },
+  {
+    question: 'How do I calculate if a multifamily property will cash flow?',
+    answerHtml: 'Use this formula to check if a property cash flows:<br /><br /><b>Net Cash Flow = Gross Rent − Vacancy − Maintenance − Mortgage (PITI)</b><br /><br /><b>Step-by-step:</b><br /><ol><li><b>Total Monthly Rent</b> — Add up rent from all units you will rent out (not your unit).</li><li><b>Subtract Vacancy</b> — Typically 5–8% of gross rent to account for empty months.</li><li><b>Subtract Maintenance</b> — Budget 10% of gross rent for repairs and CapEx.</li><li><b>Subtract Your Mortgage</b> — Include Principal, Interest, Taxes, Insurance, and PMI if applicable.</li></ol>Our <strong>house hacking calculator</strong> automates this entire process. Just enter your numbers and instantly see whether you will break even, profit, or pay out of pocket each month.',
+    answerText: 'Net Cash Flow = Gross Rent − Vacancy − Maintenance − Mortgage (PITI). Subtract vacancy (5-8%), maintenance (10%), and your full mortgage payment from total rent collected.',
+  },
+  {
+    question: 'What is the difference between house hacking and buying a rental property?',
+    answerHtml: 'The key difference is <b>owner occupancy</b>. When you house hack, you live in one unit of a multi-unit property (duplex, triplex, or fourplex) and rent out the other units. This gives you access to better loan terms:<br /><br /><ul><li><b>FHA loans</b> (3.5% down for primary residence vs. 15–25% for investment properties)</li><li><b>Lower interest rates</b> (owner-occupied rates are typically 0.5–1% lower than investment property rates)</li><li><b>Lower PMI</b> (PMI on a primary residence is significantly cheaper than on an investment property)</li></ul>With a traditional rental property, you do not live there and must put down at least 15–25% on a conventional loan. House hacking gives you the best of both worlds — an affordable entry point into real estate investing.',
+    answerText: 'House hacking means living in one unit of a multi-unit property (owner-occupied), giving you access to FHA loans (3.5% down) and lower rates. Traditional rental properties require 15-25% down and have higher rates.',
+  },
+  {
+    question: 'What are the tax benefits of house hacking?',
+    answerHtml: 'House hacking offers several tax advantages:<br /><br /><ul><li><b>Mortgage interest deduction</b> — Deduct mortgage interest on your primary residence (standard for all homeowners).</li><li><b>Depreciation</b> — For the units you rent out, you can depreciate the building (not land) over 27.5 years, reducing your taxable rental income.</li><li><b>Operating expense deductions</b> — Maintenance, insurance, property taxes, and management costs on the rental portions are deductible against rental income.</li><li><b>1031 Exchange option</b> — When you eventually sell, you can defer capital gains by rolling proceeds into another investment property.</li></ul>Consult a tax professional to understand how these benefits apply to your specific situation.',
+    answerText: 'House hackers benefit from mortgage interest deduction, depreciation on rental units (27.5 years), operating expense deductions against rental income, and the option for a 1031 exchange upon sale.',
+  },
+  {
+    question: 'What maintenance costs should I expect when house hacking?',
+    answerHtml: 'A common rule of thumb is to budget <b>8–12% of gross rent</b> for maintenance and capital expenditures (CapEx). This covers:<br /><br /><ul><li><b>Routine repairs</b> — Plumbing, electrical, appliances, HVAC servicing</li><li><b>Capital expenditures</b> — Roof replacement ($8,000–$15,000), HVAC replacement ($5,000–$10,000), water heater ($1,000–$3,000)</li><li><b>Turnover costs</b> — Cleaning, painting, and minor repairs between tenants</li></ul>As a house hacker, you can save money on some repairs by doing them yourself. However, for major systems (electrical, structural, HVAC), always hire a licensed professional. Setting aside a dedicated maintenance fund from day one prevents surprises from wrecking your cash flow.',
+    answerText: 'Budget 8-12% of gross rent for maintenance and CapEx. This covers routine repairs, major replacements (roof, HVAC, water heater), and tenant turnover costs.',
+  },
+];
+---
+
+<PageLayout
+  title="House Hacking Calculator — Cash Flow & Mortgage Estimator"
+  description="Calculate your true living costs and cash flow with our free house hacking calculator. Compare FHA loans, multifamily rental income, and monthly expenses."
+  canonical="https://truefinancetools.com/house-hacking-calculator"
+  ogImage="https://truefinancetools.com/og-house-hacking-calculator.png"
+  ogImageAlt="House Hacking Calculator - Cash Flow and Mortgage Estimator"
+  pageType="website"
+  keywords="house hacking calculator, house hacking cash flow calculator, multifamily house hacking calculator, fha house hacking calculator, owner occupied multi family calculator, duplex cash flow calculator, rental property calculator, house hacking ROI"
+>
+  <StructuredData
+    title="House Hacking Calculator"
+    description="Free house hacking calculator for multifamily cash flow analysis. Estimate PITI, rental income, PMI, and net monthly living cost."
+    url="https://truefinancetools.com/house-hacking-calculator"
+    toolName="House Hacking Calculator"
+    toolDescription="Calculate your true living costs with a multifamily property. Compare FHA loan options, rental income, and monthly expenses to see if your house hack cash flows."
+    faqItems={toolFaqItems}
+    features={[
+      'PITI and PMI calculation with FHA loan support',
+      'Rental income vs. mortgage breakdown',
+      'Vacancy and maintenance expense modeling',
+      'Net monthly cash flow analysis',
+      'Full monthly cost breakdown table'
+    ]}
+  />
+
+  <!-- Hero -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        House Hacking Cash Flow Calculator
+      </h1>
+      <p class="text-lg text-body">Find out if your multifamily deal actually cash flows. Calculate your true net monthly living cost.</p>
+    </div>
+  </section>
+
+  <!-- Calculator Component -->
+  <HouseHackingCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the House Hacking Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Property Details</h3>
+      <p class="text-sm text-body">Input the purchase price, down payment (FHA supports 3.5%), interest rate, and loan term.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Add Rental Income &amp; Expenses</h3>
+      <p class="text-sm text-body">Enter total tenant rent, set your vacancy rate (5% default), and maintenance budget (10% default).</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See Your Net Cash Flow</h3>
+      <p class="text-sm text-body">Instantly see your net monthly living cost — whether you break even, profit, or pay out of pocket.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is House Hacking? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is House Hacking?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>House hacking</strong> is a real estate strategy where you buy a multi-unit property (duplex, triplex, or fourplex), live in one unit, and rent out the others to offset your mortgage. The goal is simple: have your tenants pay for most or all of your housing costs while you build equity in a property you own. Unlike traditional landlords who buy investment properties with large down payments, house hackers leverage owner-occupied financing like <strong>FHA loans</strong> to get into properties with as little as 3.5% down.
+        </p>
+
+        <p class="mb-4">
+          This strategy is especially popular among first-time buyers, young professionals, and anyone pursuing financial independence. Instead of paying rent to a landlord every month — money that builds zero wealth for you — house hacking lets you redirect that money into mortgage principal paydown, property appreciation, and tax benefits. Over time, the rental income from your other units creates a powerful wealth-building engine.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The House Hacking Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Net Monthly Cost = (Gross Rent − Vacancy − Maintenance) − (P&I + Taxes + Insurance + PMI)
+        </div>
+
+        <p class="mb-4 mt-4">
+          If this number is <strong>negative</strong>, that is what you pay out of pocket each month. If it is <strong>zero or positive</strong>, you are living for free — or even making a profit — while your tenants pay down your mortgage and the property appreciates. This <strong>house hacking calculator</strong> automates this entire calculation so you can evaluate any deal in seconds.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">House Hacking vs Traditional Rental Investing</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Factor</th>
+                <th class="p-3 font-medium text-ink">House Hacking</th>
+                <th class="p-3 font-medium text-ink">Traditional Rental</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Down Payment</td>
+                <td class="p-3 text-success-deep">3.5% (FHA)</td>
+                <td class="p-3 text-body font-sans">15–25% (investment)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Interest Rate</td>
+                <td class="p-3 text-success-deep">Owner-occupied rate</td>
+                <td class="p-3 text-body font-sans">+0.5–1% investment premium</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">PMI</td>
+                <td class="p-3 text-success-deep">Lower (primary residence)</td>
+                <td class="p-3 text-body font-sans">Higher (investment property)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Cash Required to Close</td>
+                <td class="p-3 text-success-deep">$14K on $400K property</td>
+                <td class="p-3 text-body font-sans">$60K–$100K on $400K property</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">Wealth Building</td>
+                <td class="p-3 font-semibold text-success-deep">Equity + rental income</td>
+                <td class="p-3 font-semibold text-ink">Rental income only</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose House Hacking?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">First-Time Home Buyers</h4>
+            <p class="text-sm text-body">Get into homeownership with FHA financing at 3.5% down. Your tenants help pay the mortgage while you learn to be a landlord.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">FIRE and Financial Independence Seekers</h4>
+            <p class="text-sm text-body">Eliminate your biggest monthly expense — housing — to dramatically increase your savings rate and accelerate your path to early retirement.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Young Professionals</h4>
+            <p class="text-sm text-body">Build equity and real estate experience while your income is growing. Start with a duplex before moving up to larger multifamily properties.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Career Relocators</h4>
+            <p class="text-sm text-body">Move to a new city and buy a duplex. Live in one unit, rent the other, and avoid throwing money away on rent while you establish yourself.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">House Hacking Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Buy with as little as 3.5% down via FHA</li>
+              <li>• Tenants pay your mortgage and build your equity</li>
+              <li>• Significant tax benefits (depreciation, deductions)</li>
+              <li>• Force savings through principal paydown</li>
+              <li>• Lower housing costs while building wealth</li>
+              <li>• Real estate investing experience with less risk</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Tenant management and landlord responsibilities</li>
+              <li>• Less privacy living next to tenants</li>
+              <li>• Maintenance costs and emergency repairs</li>
+              <li>• PMI required with less than 20% down</li>
+              <li>• Must live in property for 12 months (FHA)</li>
+              <li>• Market-dependent — not every area cash flows</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        House Hacking FAQs
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to House Hacking Cash Flow
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>house hacking calculator</strong> is the most comprehensive free tool for evaluating whether a multifamily property will actually cash flow. Unlike generic mortgage calculators that only show your loan payment, this tool models the complete picture: your PITI (Principal, Interest, Taxes, Insurance), PMI when applicable, and the operating expenses that eat into your rental income — vacancy, maintenance, and CapEx reserves.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose This House Hacking Calculator?</h3>
+
+        <p class="mb-4">
+          The key difference between a successful house hack and a money pit is understanding your <strong>true net monthly cost</strong>. Most first-time buyers focus only on the mortgage payment and forget about the 5% vacancy loss (units sit empty about 2 weeks per year), the 10% maintenance reserve (roofs, HVAC, plumbing), and PMI costs that add up when you put less than 20% down. This calculator accounts for all of these, giving you the real number you will pay out of pocket each month — or the profit you will earn.
+        </p>
+
+        <p class="mb-4">
+          Whether you are evaluating a duplex with our <a href="/fire-calculator" class="text-link hover:underline">FIRE calculator</a> in mind, comparing properties in different markets, or simply want to know if house hacking makes financial sense for your situation, this tool gives you the clarity you need in seconds.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This House Hacking Calculator</h3>
+
+        <p class="mb-4">
+          The calculator supports <strong>FHA loan scenarios</strong> with as little as 3.5% down, automatically calculates PMI when your down payment is below 20%, and models a complete monthly cash flow breakdown. You can toggle between 15-year and 30-year loan terms, adjust property tax and insurance assumptions, and fine-tune vacancy and maintenance rates to match your market. The results update instantly as you move any slider or change any input, giving you a real-time view of how each variable affects your bottom line.
+        </p>
+
+        <p class="mb-4">
+          Pair this calculator with our <a href="/coast-fire-number" class="text-link hover:underline">Coast FIRE calculator</a> to see how eliminating your housing cost accelerates your path to financial independence, or use it alongside any of our <a href="/perpetual-swr-calculator" class="text-link hover:underline">withdrawal rate calculators</a> to model how house hacking savings compound over time.
+        </p>
+
+        <p class="mb-4">
+          Start evaluating your next house hack today — no signup required, completely free, and results in seconds. Adjust any input to see how it shifts your cash flow. The path to living for free while building real estate wealth is closer than you think.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Real Estate &amp; FIRE Tools
+      </h2>
+      <p class="mb-8 text-body">Run the numbers on your next investment with our free calculators.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/house-hacking-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">House Hacking Guide</h3>
+          <p class="text-xs text-body">Master the house hacking strategy with our complete guide and examples.</p>
+        </a>
+        <a href="/fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Calculate your Financial Independence number and retirement timeline.</p>
+        </a>
+        <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+          <p class="text-xs text-body">Find out how much you need saved to coast to retirement.</p>
+        </a>
+        <a href="/perpetual-swr-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Perpetual SWR Calculator</h3>
+          <p class="text-xs text-body">Calculate your safe withdrawal rate that lasts forever.</p>
+        </a>
+        <a href="/geographic-arbitrage-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Geographic Arbitrage</h3>
+          <p class="text-xs text-body">Compare housing costs between US cities and international destinations.</p>
+        </a>
+        <a href="/die-with-zero-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Die With Zero Calculator</h3>
+          <p class="text-xs text-body">Optimize your spending to enjoy life without leaving money on the table.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

@@ -1,0 +1,383 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="house-hacking-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="hh-form" class="space-y-4">
+          <Input
+            label="Purchase Price"
+            name="purchasePrice"
+            type="number"
+            value={400000}
+            min={50000}
+            max={5000000}
+            step={5000}
+            suffix="$"
+            hideArrows
+            required
+            tooltip="The total purchase price of the property."
+          />
+
+          <Slider
+            label="Down Payment"
+            name="downPayment"
+            value={5}
+            min={0}
+            max={100}
+            step={0.5}
+            suffix="%"
+            inputId="hh-downPayment"
+            displayId="hh-downPaymentValue"
+            tooltip="Standard FHA loans allow as little as 3.5% down for up to 4 units."
+          />
+
+          <Slider
+            label="Interest Rate"
+            name="interestRate"
+            value={7.0}
+            min={1}
+            max={15}
+            step={0.1}
+            suffix="%"
+            inputId="hh-interestRate"
+            displayId="hh-interestRateValue"
+            tooltip="Your expected annual mortgage interest rate."
+          />
+
+          <div class="flex flex-col gap-1.5">
+            <label for="hh-loanTerm" class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              Loan Term
+              <span class="group relative inline-flex shrink-0">
+                <span class="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full bg-hairline text-[10px] font-semibold leading-none text-mute transition-colors hover:bg-hairline-strong hover:text-ink" aria-label="The length of your mortgage in years.">?</span>
+                <span class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 rounded-lg border border-hairline bg-canvas px-3 py-2 text-xs leading-relaxed text-body opacity-0 shadow-lg transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100" role="tooltip">
+                  The length of your mortgage in years.
+                  <span class="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-hairline"></span>
+                </span>
+              </span>
+            </label>
+            <select
+              id="hh-loanTerm"
+              name="loanTerm"
+              class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
+            >
+              <option value="30" selected>30 Years</option>
+              <option value="15">15 Years</option>
+            </select>
+          </div>
+
+          <Slider
+            label="Property Tax (Annual)"
+            name="propertyTax"
+            value={1.2}
+            min={0}
+            max={5}
+            step={0.1}
+            suffix="%"
+            inputId="hh-propertyTax"
+            displayId="hh-propertyTaxValue"
+            tooltip="Annual property taxes as a percentage of property value."
+          />
+
+          <Input
+            label="Homeowners Insurance (Annual)"
+            name="annualInsurance"
+            type="number"
+            value={1200}
+            min={0}
+            max={10000}
+            step={100}
+            suffix="$"
+            hideArrows
+            required
+            tooltip="Estimated annual insurance cost."
+          />
+
+          <Input
+            label="Total Monthly Rent (From Tenants)"
+            name="monthlyRent"
+            type="number"
+            value={2000}
+            min={0}
+            max={20000}
+            step={100}
+            suffix="$"
+            hideArrows
+            required
+            tooltip="Total rent collected from all other units/rooms combined."
+          />
+
+          <Slider
+            label="Maintenance & CapEx"
+            name="maintenance"
+            value={10}
+            min={0}
+            max={30}
+            step={1}
+            suffix="%"
+            inputId="hh-maintenance"
+            displayId="hh-maintenanceValue"
+            tooltip="Money set aside for repairs and large capital expenditures (roof, HVAC). Default 10% of gross rent."
+          />
+
+          <Slider
+            label="Vacancy Rate"
+            name="vacancy"
+            value={5}
+            min={0}
+            max={20}
+            step={0.5}
+            suffix="%"
+            inputId="hh-vacancy"
+            displayId="hh-vacancyValue"
+            tooltip="Estimated time units sit empty. 5% equals roughly 2 weeks empty per year."
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Headline KPI -->
+      <div id="hh-headline-card" class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm text-center">
+        <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Your Net Monthly Living Cost</p>
+        <p id="hh-net-cost" class="text-3xl font-semibold tabular-nums text-ink sm:text-4xl">—</p>
+        <p id="hh-net-label" class="mt-1 text-sm text-mute">Adjust inputs to see your cash flow</p>
+      </div>
+
+      <!-- Breakdown KPI cards (4 cards) -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Gross Monthly Mortgage"
+          valueId="hh-gross-mortgage"
+          value="—"
+          valueClass="text-ink"
+          description="PITI + PMI"
+        />
+        <ResultCard
+          label="Net Rental Income"
+          valueId="hh-net-rental"
+          value="—"
+          valueClass="text-ink"
+          description="Rent minus vacancy & maintenance"
+        />
+        <ResultCard
+          label="Monthly P&I"
+          valueId="hh-monthly-pi"
+          value="—"
+          valueClass="text-ink"
+          description="Principal & interest payment"
+        />
+        <ResultCard
+          label="PMI"
+          valueId="hh-monthly-pmi"
+          value="—"
+          valueClass="text-ink"
+          description="Private mortgage insurance (if &lt; 20% down)"
+        />
+      </div>
+
+      <!-- Detailed Breakdown Table -->
+      <Card padding="lg">
+        <h2 class="mb-4 text-sm font-medium text-ink">Full Monthly Breakdown</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline">
+                <th class="pb-2 font-medium text-mute">Item</th>
+                <th class="pb-2 text-right font-medium text-mute">Monthly</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Principal & Interest</td>
+                <td id="tb-pi" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Property Taxes</td>
+                <td id="tb-taxes" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Homeowners Insurance</td>
+                <td id="tb-insurance" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">PMI</td>
+                <td id="tb-pmi" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline bg-canvas-soft">
+                <td class="py-2 font-sans font-semibold text-ink">Gross Mortgage (PITI)</td>
+                <td id="tb-gross" class="py-2 text-right font-semibold text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Gross Monthly Rent</td>
+                <td id="tb-gross-rent" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Vacancy Loss</td>
+                <td id="tb-vacancy" class="py-2 text-right text-error">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Maintenance & CapEx</td>
+                <td id="tb-maintenance" class="py-2 text-right text-error">—</td>
+              </tr>
+              <tr class="border-b border-hairline bg-canvas-soft">
+                <td class="py-2 font-sans font-semibold text-ink">Net Rental Income</td>
+                <td id="tb-net-rental" class="py-2 text-right font-semibold text-ink">—</td>
+              </tr>
+              <tr class="bg-canvas-soft">
+                <td class="py-2 font-sans font-semibold text-ink">Net Monthly Cash Flow</td>
+                <td id="tb-net-cost" class="py-2 text-right font-semibold text-ink">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <!-- PMI Warning -->
+      <div id="hh-pmi-warning" class="hidden rounded-lg border border-error/30 bg-error/5 p-4">
+        <p class="text-sm font-medium text-error">⚠ PMI Active</p>
+        <p class="mt-1 text-xs text-body">Your down payment is below 20%, so Private Mortgage Insurance (PMI) is added to your monthly payment. PMI can typically be removed once you reach 20% equity.</p>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="rounded-lg bg-canvas-soft p-4">
+        <p class="text-xs text-mute"><strong>Disclaimer:</strong> This calculator is for educational and planning purposes only. It does not constitute financial, tax, or investment advice. Actual costs may vary based on lender fees, HOA dues, special assessments, and local tax rates. Consult a licensed financial advisor or mortgage professional before making real estate decisions.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { calculateHouseHacking } from '../../utils/house-hacking-calculations';
+  import { formatCurrency } from '../../utils/formatters';
+
+  function getFormData() {
+    var form = document.getElementById('hh-form');
+    var formData = new FormData(form);
+
+    return {
+      purchasePrice: Number(formData.get('purchasePrice')) || 400000,
+      downPaymentPercent: Number(formData.get('downPayment')) || 5,
+      interestRate: Number(formData.get('interestRate')) || 7,
+      loanTermYears: Number(formData.get('loanTerm')) || 30,
+      propertyTaxPercent: Number(formData.get('propertyTax')) || 1.2,
+      annualInsurance: Number(formData.get('annualInsurance')) || 1200,
+      monthlyRent: Number(formData.get('monthlyRent')) || 2000,
+      maintenancePercent: Number(formData.get('maintenance')) || 10,
+      vacancyPercent: Number(formData.get('vacancy')) || 5,
+    };
+  }
+
+  function updateResults() {
+    var input = getFormData();
+    var r = calculateHouseHacking(input);
+
+    // Headline
+    var netCostEl = document.getElementById('hh-net-cost');
+    var netLabelEl = document.getElementById('hh-net-label');
+    var headlineCard = document.getElementById('hh-headline-card');
+
+    if (r.isCashFlowPositive) {
+      netCostEl.textContent = '+' + formatCurrency(r.netMonthlyCost);
+      netCostEl.className = 'text-3xl font-semibold tabular-nums text-success-deep sm:text-4xl';
+      netLabelEl.textContent = 'You are living for free and making a profit!';
+      headlineCard.className = 'rounded-lg border border-success/30 bg-success/5 p-6 shadow-sm text-center';
+    } else {
+      netCostEl.textContent = formatCurrency(r.netMonthlyCost);
+      netCostEl.className = 'text-3xl font-semibold tabular-nums text-ink sm:text-4xl';
+      netLabelEl.textContent = 'This is what you pay out of pocket to live there.';
+      headlineCard.className = 'rounded-lg border border-hairline bg-canvas p-6 shadow-sm text-center';
+    }
+
+    // KPI cards
+    var grossEl = document.getElementById('hh-gross-mortgage');
+    var netRentalEl = document.getElementById('hh-net-rental');
+    var piEl = document.getElementById('hh-monthly-pi');
+    var pmiEl = document.getElementById('hh-monthly-pmi');
+
+    grossEl.textContent = formatCurrency(r.grossMonthlyMortgage);
+    netRentalEl.textContent = formatCurrency(r.netRentalIncome);
+    piEl.textContent = formatCurrency(r.monthlyPI);
+    pmiEl.textContent = r.monthlyPMI > 0 ? formatCurrency(r.monthlyPMI) : '$0';
+
+    // Table
+    document.getElementById('tb-pi').textContent = formatCurrency(r.monthlyPI);
+    document.getElementById('tb-taxes').textContent = formatCurrency(r.monthlyTaxes);
+    document.getElementById('tb-insurance').textContent = formatCurrency(r.monthlyInsurance);
+    document.getElementById('tb-pmi').textContent = r.monthlyPMI > 0 ? formatCurrency(r.monthlyPMI) : '$0';
+    document.getElementById('tb-gross').textContent = formatCurrency(r.grossMonthlyMortgage);
+    document.getElementById('tb-gross-rent').textContent = formatCurrency(input.monthlyRent);
+    document.getElementById('tb-vacancy').textContent = '−' + formatCurrency(r.monthlyVacancyLoss);
+    document.getElementById('tb-maintenance').textContent = '−' + formatCurrency(r.monthlyMaintenance);
+    document.getElementById('tb-net-rental').textContent = formatCurrency(r.netRentalIncome);
+
+    var tbNetCost = document.getElementById('tb-net-cost');
+    if (r.isCashFlowPositive) {
+      tbNetCost.textContent = '+' + formatCurrency(r.netMonthlyCost);
+      tbNetCost.className = 'py-2 text-right font-semibold text-success-deep';
+    } else {
+      tbNetCost.textContent = formatCurrency(r.netMonthlyCost);
+      tbNetCost.className = 'py-2 text-right font-semibold text-ink';
+    }
+
+    // PMI warning
+    var pmiWarning = document.getElementById('hh-pmi-warning');
+    if (r.monthlyPMI > 0) {
+      pmiWarning.classList.remove('hidden');
+    } else {
+      pmiWarning.classList.add('hidden');
+    }
+  }
+
+  function initSliders() {
+    var sliders = [
+      { id: 'hh-downPayment', displayId: 'hh-downPaymentValue', suffix: '%' },
+      { id: 'hh-interestRate', displayId: 'hh-interestRateValue', suffix: '%' },
+      { id: 'hh-propertyTax', displayId: 'hh-propertyTaxValue', suffix: '%' },
+      { id: 'hh-maintenance', displayId: 'hh-maintenanceValue', suffix: '%' },
+      { id: 'hh-vacancy', displayId: 'hh-vacancyValue', suffix: '%' },
+    ];
+
+    sliders.forEach(function (s) {
+      var el = document.getElementById(s.id);
+      var display = document.getElementById(s.displayId);
+      if (el && display) {
+        el.addEventListener('input', function () {
+          display.textContent = el.value + s.suffix;
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('hh-form');
+    if (form) {
+      form.addEventListener('input', function () {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initSliders();
+    initFormListeners();
+    updateResults();
+
+    // Theme change observer
+    var observer = new MutationObserver(function () {
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
