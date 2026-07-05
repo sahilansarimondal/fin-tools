@@ -144,6 +144,131 @@ import HowItWorks from '../components/ui/HowItWorks.astro';
       </div>
     </section>
 
+    <!-- Popular Calculators Section -->
+    <section class="border-b border-hairline bg-canvas-soft py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6">
+        <div class="mb-12 text-center">
+          <p class="mb-2 font-mono text-xs uppercase tracking-wider text-mute">Calculators</p>
+          <h2 class="text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+            Popular Financial Calculators
+          </h2>
+        </div>
+
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <!-- FIRE Calculator -->
+          <a href="/fire-calculator" class="group rounded-xl border border-hairline bg-canvas p-6 shadow-sm transition-all hover:shadow-md">
+            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-canvas-soft-2 text-ink">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+              </svg>
+            </div>
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+            <p class="mb-3 text-xs text-body">Calculate your FIRE number with the 25x rule. Compare lean, fat, coast, and barista strategies.</p>
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-link">
+              Calculate
+              <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </span>
+          </a>
+
+          <!-- Coast FIRE Number -->
+          <a href="/coast-fire-number" class="group rounded-xl border border-hairline bg-canvas p-6 shadow-sm transition-all hover:shadow-md">
+            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-canvas-soft-2 text-ink">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+            <p class="mb-3 text-xs text-body">Find how much you need saved today to reach FIRE through compound interest alone.</p>
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-link">
+              Calculate
+              <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </span>
+          </a>
+
+          <!-- VPW Withdrawal -->
+          <a href="/vpw-calculator" class="group rounded-xl border border-hairline bg-canvas p-6 shadow-sm transition-all hover:shadow-md">
+            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-canvas-soft-2 text-ink">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">VPW Withdrawal</h3>
+            <p class="mb-3 text-xs text-body">Compare Variable Percentage Withdrawal against the 4% rule across scenarios.</p>
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-link">
+              Calculate
+              <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </span>
+          </a>
+
+          <!-- Die with Zero -->
+          <a href="/die-with-zero-calculator" class="group rounded-xl border border-hairline bg-canvas p-6 shadow-sm transition-all hover:shadow-md">
+            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-canvas-soft-2 text-ink">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Die with Zero</h3>
+            <p class="mb-3 text-xs text-body">Optimize your decumulation plan to use every dollar before the end.</p>
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-link">
+              Calculate
+              <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </span>
+          </a>
+
+          <!-- SRR Stress Test -->
+          <a href="/sequence-of-returns-calculator" class="group rounded-xl border border-hairline bg-canvas p-6 shadow-sm transition-all hover:shadow-md">
+            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-canvas-soft-2 text-ink">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+              </svg>
+            </div>
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">SRR Stress Test</h3>
+            <p class="mb-3 text-xs text-body">Stress test your retirement against historical market crashes.</p>
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-link">
+              Calculate
+              <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </span>
+          </a>
+
+          <!-- Bucket Strategy -->
+          <a href="/retirement-bucket-strategy-calculator" class="group rounded-xl border border-hairline bg-canvas p-6 shadow-sm transition-all hover:shadow-md">
+            <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-canvas-soft-2 text-ink">
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path d="M21 7.5l-2.25-1.313M21 7.5v2.25m0-2.25l-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3l2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75l2.25-1.313M12 21.75V19.5m0 2.25l-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25" />
+              </svg>
+            </div>
+            <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Bucket Strategy</h3>
+            <p class="mb-3 text-xs text-body">Simulate a 3-bucket drawdown with Cash, Bonds, and Stocks.</p>
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium text-link">
+              Calculate
+              <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </span>
+          </a>
+        </div>
+
+        <div class="mt-8 text-center">
+          <a href="/tools" class="inline-flex items-center gap-2 rounded-full border border-hairline bg-canvas px-6 py-3 text-sm font-medium text-ink transition-colors hover:bg-canvas-soft-2">
+            Browse All 25+ Tools
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
     <HowItWorks subtitle="How It Works" title="Simple Steps to Financial Independence">
       <div class="text-center">
         <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-ink font-mono text-lg font-semibold text-canvas">1</div>
