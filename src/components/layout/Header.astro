@@ -11,31 +11,57 @@ const navLinks = [
   { href: '/contact', label: 'Contact', match: 'exact' as const },
 ];
 
-const fireCalculators = [
-  { href: '/lean-fire-calculator', label: 'Lean FIRE' },
-  { href: '/fat-fire-calculator', label: 'Fat FIRE' },
-  { href: '/coast-fire-number', label: 'Coast FIRE Number' },
-  { href: '/coast-fire-by-age-calculator', label: 'Coast FIRE by Age' },
-  { href: '/barista-fire-calculator', label: 'Barista FIRE' },
-  { href: '/coast-fire-shift-calculator', label: 'Coast FIRE Shift' },
-  { href: '/owner-earnings-calculator', label: 'Owner Earnings' },
-  { href: '/vpw-calculator', label: 'VPW Withdrawal' },
-  { href: '/guardrails-withdrawal-calculator', label: 'Guardrails Withdrawal' },
-  { href: '/geographic-arbitrage-calculator', label: 'Geo Arbitrage' },
-  { href: '/die-with-zero-calculator', label: 'Die with Zero' },
-  { href: '/sequence-of-returns-calculator', label: 'SRR Stress Test' },
-  { href: '/one-more-year-calculator', label: 'OMY Syndrome' },
-  { href: '/cash-cushion-optimizer', label: 'Cash Cushion' },
-  { href: '/perpetual-swr-calculator', label: 'Perpetual SWR' },
-  { href: '/core-satellite-rebalancer', label: 'Core-Satellite Rebalancer' },
-  { href: '/sepp-calculator', label: '72(t) SEPP' },
-  { href: '/aca-subsidy-cliff-calculator', label: 'ACA Subsidy Cliff' },
-  { href: '/mortgage-overpayment-vs-investing-calculator-uk', label: 'Mortgage vs ISA (UK)' },
-  { href: '/sipp-drawdown-tax-calculator', label: 'SIPP Drawdown Tax (UK)' },
-  { href: '/retirement-bucket-strategy-calculator', label: 'Bucket Strategy' },
-  { href: '/bond-tent-calculator', label: 'Bond Tent Glide Path' },
-  { href: '/tax-gain-harvesting-calculator', label: 'US Gain Harvesting' },
-  { href: '/hsa-shoebox-strategy-calculator', label: 'HSA Shoebox Strategy' },
+const calculatorCategories = [
+  {
+    title: 'FIRE Strategies',
+    calculators: [
+      { href: '/fire-calculator', label: 'FIRE Calculator' },
+      { href: '/lean-fire-calculator', label: 'Lean FIRE' },
+      { href: '/fat-fire-calculator', label: 'Fat FIRE' },
+      { href: '/barista-fire-calculator', label: 'Barista FIRE' },
+      { href: '/coast-fire-number', label: 'Coast FIRE Number' },
+      { href: '/coast-fire-by-age-calculator', label: 'Coast FIRE by Age' },
+      { href: '/coast-fire-shift-calculator', label: 'Coast FIRE Shift' },
+      { href: '/geographic-arbitrage-calculator', label: 'Geo Arbitrage' },
+    ],
+  },
+  {
+    title: 'Withdrawal & Income',
+    calculators: [
+      { href: '/die-with-zero-calculator', label: 'Die with Zero' },
+      { href: '/vpw-calculator', label: 'VPW Withdrawal' },
+      { href: '/perpetual-swr-calculator', label: 'Perpetual SWR' },
+      { href: '/guardrails-withdrawal-calculator', label: 'Guardrails Withdrawal' },
+      { href: '/retirement-bucket-strategy-calculator', label: 'Bucket Strategy' },
+    ],
+  },
+  {
+    title: 'Risk & Analysis',
+    calculators: [
+      { href: '/sequence-of-returns-calculator', label: 'SRR Stress Test' },
+      { href: '/one-more-year-calculator', label: 'OMY Syndrome' },
+      { href: '/bond-tent-calculator', label: 'Bond Tent Glide Path' },
+      { href: '/cash-cushion-optimizer', label: 'Cash Cushion' },
+    ],
+  },
+  {
+    title: 'Portfolio & Tax',
+    calculators: [
+      { href: '/owner-earnings-calculator', label: 'Owner Earnings' },
+      { href: '/core-satellite-rebalancer', label: 'Core-Satellite Rebalancer' },
+      { href: '/tax-gain-harvesting-calculator', label: 'Tax Gain Harvesting' },
+      { href: '/hsa-shoebox-strategy-calculator', label: 'HSA Shoebox Strategy' },
+      { href: '/aca-subsidy-cliff-calculator', label: 'ACA Subsidy Cliff' },
+      { href: '/sepp-calculator', label: '72(t) SEPP' },
+    ],
+  },
+  {
+    title: 'UK Tools',
+    calculators: [
+      { href: '/mortgage-overpayment-vs-investing-calculator-uk', label: 'Mortgage vs ISA (UK)' },
+      { href: '/sipp-drawdown-tax-calculator', label: 'SIPP Drawdown Tax (UK)' },
+    ],
+  },
 ];
 
 function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boolean {
@@ -71,28 +97,42 @@ function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boo
             )}
           </a>
           {hasDropdown && (
-            <div class="calc-dropdown-menu invisible absolute left-0 top-full z-50 mt-1 w-48 rounded-lg border border-hairline bg-canvas py-1 shadow-lg opacity-0 transition-all duration-200">
-              <a
-                href="/tools"
-                class:list={[
-                  'block px-4 py-2 text-sm transition-colors',
-                  isActive('/tools', 'prefix') ? 'bg-canvas-soft-2 text-ink font-medium' : 'text-body hover:bg-canvas-soft hover:text-ink',
-                ]}
-              >
-                All Tools
-              </a>
-              <div class="my-1 border-t border-hairline"></div>
-              {fireCalculators.map((calc) => (
+            <div class="calc-dropdown-menu invisible absolute left-0 top-full z-50 mt-1 w-[720px] rounded-lg border border-hairline bg-canvas p-5 shadow-lg opacity-0 transition-all duration-200">
+              <div class="grid grid-cols-5 gap-4">
+                {calculatorCategories.map((category) => (
+                  <div>
+                    <p class="mb-2 truncate text-xs font-semibold uppercase tracking-wider text-mute">{category.title}</p>
+                    <div class="space-y-0.5">
+                      {category.calculators.map((calc) => (
+                        <a
+                          href={calc.href}
+                          class:list={[
+                            'block rounded-md px-3 py-1.5 text-sm transition-colors',
+                            isActive(calc.href, 'exact')
+                              ? 'bg-canvas-soft-2 font-medium text-ink'
+                              : 'text-body hover:bg-canvas-soft hover:text-ink',
+                          ]}
+                        >
+                          {calc.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div class="mt-4 border-t border-hairline pt-3">
                 <a
-                  href={calc.href}
+                  href="/tools"
                   class:list={[
-                    'block px-4 py-2 text-sm transition-colors',
-                    isActive(calc.href, 'exact') ? 'bg-canvas-soft-2 text-ink font-medium' : 'text-body hover:bg-canvas-soft hover:text-ink',
+                    'block rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                    isActive('/tools', 'prefix')
+                      ? 'bg-canvas-soft-2 text-ink'
+                      : 'text-link hover:bg-canvas-soft hover:text-link-deep',
                   ]}
                 >
-                  {calc.label}
+                  Browse All 25+ Tools &rarr;
                 </a>
-              ))}
+              </div>
             </div>
           )}
         </div>
@@ -124,51 +164,19 @@ function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boo
 
   <div id="mobile-menu" class="hidden border-t border-hairline bg-canvas transition-all duration-200 ease-in-out md:hidden" role="menu" aria-hidden="true">
     <nav class="flex flex-col gap-1 p-4">
-      {navLinks.map(({ href, label, match, hasDropdown }) => (
-        <>
-          <a
-            href={href}
-            class:list={[
-              'rounded-lg px-3 py-3 text-sm font-medium transition-colors',
-              isActive(href, match)
-                ? 'bg-canvas-soft-2 text-ink font-semibold'
-                : 'text-body hover:bg-canvas-soft-2 hover:text-ink',
-            ]}
-            role="menuitem"
-          >
-            {label}
-          </a>
-          {hasDropdown && (
-            <div class="ml-4 flex flex-col gap-1">
-              <a
-                href="/tools"
-                class:list={[
-                  'rounded-lg px-3 py-2 text-sm transition-colors',
-                  isActive('/tools', 'prefix')
-                    ? 'bg-canvas-soft-2 text-ink font-medium'
-                    : 'text-body hover:bg-canvas-soft-2 hover:text-ink',
-                ]}
-                role="menuitem"
-              >
-                All Tools
-              </a>
-              {fireCalculators.map((calc) => (
-                <a
-                  href={calc.href}
-                  class:list={[
-                    'rounded-lg px-3 py-2 text-sm transition-colors',
-                    isActive(calc.href, 'exact')
-                      ? 'bg-canvas-soft-2 text-ink font-medium'
-                      : 'text-body hover:bg-canvas-soft-2 hover:text-ink',
-                  ]}
-                  role="menuitem"
-                >
-                  {calc.label}
-                </a>
-              ))}
-            </div>
-          )}
-        </>
+      {navLinks.map(({ href, label, match }) => (
+        <a
+          href={href}
+          class:list={[
+            'rounded-lg px-3 py-3 text-sm font-medium transition-colors',
+            isActive(href, match)
+              ? 'bg-canvas-soft-2 font-semibold text-ink'
+              : 'text-body hover:bg-canvas-soft-2 hover:text-ink',
+          ]}
+          role="menuitem"
+        >
+          {label}
+        </a>
       ))}
     </nav>
   </div>
@@ -217,33 +225,33 @@ function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boo
     }
   });
 
-  const fireDropdown = document.querySelector('[data-nav-item="calc-dropdown"]');
-  const fireDropdownMenu = document.querySelector('.calc-dropdown-menu') as HTMLElement;
+  const calcDropdown = document.querySelector('[data-nav-item="calc-dropdown"]');
+  const calcDropdownMenu = document.querySelector('.calc-dropdown-menu') as HTMLElement;
 
-  if (fireDropdown && fireDropdownMenu) {
+  if (calcDropdown && calcDropdownMenu) {
     let timeout: ReturnType<typeof setTimeout>;
 
-    fireDropdown.addEventListener('mouseenter', () => {
+    calcDropdown.addEventListener('mouseenter', () => {
       clearTimeout(timeout);
-      fireDropdownMenu.classList.remove('invisible', 'opacity-0');
-      fireDropdownMenu.classList.add('opacity-100');
+      calcDropdownMenu.classList.remove('invisible', 'opacity-0');
+      calcDropdownMenu.classList.add('opacity-100');
     });
 
-    fireDropdown.addEventListener('mouseleave', () => {
+    calcDropdown.addEventListener('mouseleave', () => {
       timeout = setTimeout(() => {
-        fireDropdownMenu.classList.add('invisible', 'opacity-0');
-        fireDropdownMenu.classList.remove('opacity-100');
+        calcDropdownMenu.classList.add('invisible', 'opacity-0');
+        calcDropdownMenu.classList.remove('opacity-100');
       }, 150);
     });
 
-    fireDropdownMenu.addEventListener('mouseenter', () => {
+    calcDropdownMenu.addEventListener('mouseenter', () => {
       clearTimeout(timeout);
     });
 
-    fireDropdownMenu.addEventListener('mouseleave', () => {
+    calcDropdownMenu.addEventListener('mouseleave', () => {
       timeout = setTimeout(() => {
-        fireDropdownMenu.classList.add('invisible', 'opacity-0');
-        fireDropdownMenu.classList.remove('opacity-100');
+        calcDropdownMenu.classList.add('invisible', 'opacity-0');
+        calcDropdownMenu.classList.remove('opacity-100');
       }, 150);
     });
   }
