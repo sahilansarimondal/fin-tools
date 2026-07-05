@@ -7,36 +7,6 @@ const linkClass = 'text-sm text-body transition-colors hover:text-ink py-2.5 inl
 
 const footerSections = [
   {
-    title: 'Calculators',
-    links: [
-      { href: '/tools', label: 'All Tools' },
-      { href: '/lean-fire-calculator', label: 'Lean FIRE' },
-      { href: '/fat-fire-calculator', label: 'Fat FIRE' },
-      { href: '/coast-fire-number', label: 'Coast FIRE Number' },
-      { href: '/coast-fire-by-age-calculator', label: 'Coast FIRE by Age' },
-      { href: '/barista-fire-calculator', label: 'Barista FIRE' },
-      { href: '/coast-fire-shift-calculator', label: 'Coast FIRE Shift' },
-      { href: '/owner-earnings-calculator', label: 'Owner Earnings' },
-      { href: '/vpw-calculator', label: 'VPW Withdrawal' },
-      { href: '/guardrails-withdrawal-calculator', label: 'Guardrails Withdrawal' },
-      { href: '/geographic-arbitrage-calculator', label: 'Geo Arbitrage' },
-      { href: '/die-with-zero-calculator', label: 'Die with Zero' },
-      { href: '/sequence-of-returns-calculator', label: 'SRR Stress Test' },
-      { href: '/one-more-year-calculator', label: 'OMY Syndrome' },
-      { href: '/cash-cushion-optimizer', label: 'Cash Cushion' },
-      { href: '/perpetual-swr-calculator', label: 'Perpetual SWR' },
-      { href: '/core-satellite-rebalancer', label: 'Core-Satellite Rebalancer' },
-      { href: '/sepp-calculator', label: '72(t) SEPP' },
-      { href: '/aca-subsidy-cliff-calculator', label: 'ACA Subsidy Cliff' },
-      { href: '/mortgage-overpayment-vs-investing-calculator-uk', label: 'Mortgage vs ISA (UK)' },
-      { href: '/sipp-drawdown-tax-calculator', label: 'SIPP Drawdown Tax (UK)' },
-      { href: '/retirement-bucket-strategy-calculator', label: 'Bucket Strategy' },
-      { href: '/bond-tent-calculator', label: 'Bond Tent Glide Path' },
-      { href: '/tax-gain-harvesting-calculator', label: 'US Tax Gain Harvesting' },
-      { href: '/hsa-shoebox-strategy-calculator', label: 'HSA Shoebox Strategy' },
-    ],
-  },
-  {
     title: 'Learn',
     links: [
       { href: '/learn/what-is-fire', label: 'What is FIRE?' },
@@ -73,6 +43,38 @@ const footerSections = [
         <p class="mt-3 text-sm text-mute">
           Free tools to calculate your path to financial independence and early retirement.
         </p>
+      </div>
+
+      <!-- Calculators (categorized) -->
+      <div>
+        <h3 class="mb-3 text-xs font-semibold uppercase tracking-wider text-mute">Calculators</h3>
+        <ul class="space-y-2">
+          <li><a href="/tools" class={linkClass + ' font-medium'}>All Tools</a></li>
+        </ul>
+
+        <p class="mt-3 mb-1 text-[10px] font-semibold uppercase tracking-wider text-mute">FIRE</p>
+        <ul class="space-y-2">
+          <li><a href="/fire-calculator" class={linkClass}>FIRE Calculator</a></li>
+          <li><a href="/lean-fire-calculator" class={linkClass}>Lean FIRE</a></li>
+          <li><a href="/fat-fire-calculator" class={linkClass}>Fat FIRE</a></li>
+          <li><a href="/barista-fire-calculator" class={linkClass}>Barista FIRE</a></li>
+          <li><a href="/coast-fire-number" class={linkClass}>Coast FIRE Number</a></li>
+        </ul>
+
+        <p class="mt-3 mb-1 text-[10px] font-semibold uppercase tracking-wider text-mute">Income & Analysis</p>
+        <ul class="space-y-2">
+          <li><a href="/vpw-calculator" class={linkClass}>VPW Withdrawal</a></li>
+          <li><a href="/die-with-zero-calculator" class={linkClass}>Die with Zero</a></li>
+          <li><a href="/perpetual-swr-calculator" class={linkClass}>Perpetual SWR</a></li>
+          <li><a href="/sequence-of-returns-calculator" class={linkClass}>SRR Stress Test</a></li>
+        </ul>
+
+        <p class="mt-3 mb-1 text-[10px] font-semibold uppercase tracking-wider text-mute">Tax & Strategy</p>
+        <ul class="space-y-2">
+          <li><a href="/tax-gain-harvesting-calculator" class={linkClass}>Tax Gain Harvesting</a></li>
+          <li><a href="/hsa-shoebox-strategy-calculator" class={linkClass}>HSA Shoebox</a></li>
+          <li><a href="/owner-earnings-calculator" class={linkClass}>Owner Earnings</a></li>
+        </ul>
       </div>
 
       {footerSections.map((section) => (
