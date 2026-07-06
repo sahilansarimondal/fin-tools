@@ -1,0 +1,317 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import Plan5StudentLoanCalculator from '../../components/calculator/Plan5StudentLoanCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'When do Plan 5 student loan repayments start?',
+    answerHtml: '<b>Plan 5 repayments begin in April 2026.</b> If you started your English university course on or after 1 August 2023, you are on Plan 5. Your first repayment will be deducted automatically through PAYE (Pay As You Earn) once you start earning above the £25,000 annual threshold. Your employer handles the deduction — you do not need to take any action.',
+    answerText: 'Plan 5 repayments start in April 2026. If you started your course on or after 1 August 2023, repayments are deducted automatically via PAYE once you earn above £25,000.',
+  },
+  {
+    question: 'What is the Plan 5 repayment threshold for 2026?',
+    answerHtml: 'The Plan 5 repayment threshold is <b>£25,000 per year</b>, which equates to approximately <b>£2,083 per month</b> or <b>£481 per week</b>. This threshold is fixed — unlike Plan 2 where the threshold has historically risen with inflation, the Plan 5 threshold is set by legislation and does not automatically increase. You only repay 9% of earnings above this amount.',
+    answerText: 'The Plan 5 threshold is £25,000 per year (£2,083/month, £481/week). It is a fixed threshold that does not automatically increase with inflation.',
+  },
+  {
+    question: 'How is Plan 5 different from Plan 2?',
+    answerHtml: 'The key differences between Plan 5 and Plan 2 are:<br /><br /><ul><li><b>Threshold:</b> Plan 5 has a lower threshold of £25,000 vs Plan 2\'s £27,295 (2025/26).</li><li><b>Repayment rate:</b> Both plans charge 9% of earnings above the threshold.</li><li><b>Write-off period:</b> Plan 5 writes off after 40 years (vs Plan 2\'s 30 years).</li><li><b>Interest rate:</b> Plan 5 uses RPI + 0% (up to threshold) to RPI + 3% (high earners), while Plan 2 uses RPI + up to 3%.</li><li><b>When it applies:</b> Plan 2 applies to students who started courses between 1 September 1998 and 31 July 2023. Plan 5 applies to those starting from 1 August 2023 onwards.</li></ul>Use our calculator to compare your specific repayment under both plans.',
+    answerText: 'Plan 5 has a lower threshold (£25,000 vs £27,295), a longer write-off period (40 years vs 30), and applies to students starting from August 2023. Both charge 9% above the threshold.',
+  },
+  {
+    question: 'Does Plan 5 affect my mortgage application?',
+    answerHtml: '<b>Yes, student loan repayments can affect your mortgage affordability.</b> When you apply for a mortgage, lenders assess your disposable income — the money left after all committed expenditure, including student loan repayments. A Plan 5 repayment reduces your take-home pay, which can reduce the amount a lender is willing to offer.<br /><br />For example, earning £35,000 with a Plan 5 loan means you repay approximately £900 per year (£75/month). While this is relatively modest, at higher salaries the impact grows. A £60,000 salary produces roughly £3,150 per year in Plan 5 repayments (£262.50/month), which a lender will factor into their affordability calculation.',
+    answerText: 'Yes. Student loan repayments reduce your take-home pay, which lenders factor into mortgage affordability calculations. The impact grows with salary.',
+  },
+  {
+    question: 'Will Plan 5 student loans ever be written off?',
+    answerHtml: '<b>Yes.</b> Plan 5 student loans are written off <b>40 years</b> after the first repayment was due (which for most borrowers will be April 2026). Any remaining balance — including accrued interest — is cancelled at that point. Given the lower threshold and 9% repayment rate, many borrowers on moderate salaries may repay a significant portion of their loan, but those on higher salaries or with larger loan balances will likely have a balance written off. The 40-year term is significantly longer than Plan 2\'s 30-year write-off, meaning borrowers may be repaying for a decade longer.',
+    answerText: 'Yes. Plan 5 loans are written off 40 years after the first repayment date. Any remaining balance, including interest, is cancelled at that point.',
+  },
+  {
+    question: 'Can I overpay or early-repay my Plan 5 student loan?',
+    answerHtml: '<b>Yes, you can make voluntary overpayments at any time.</b> There are no early repayment charges or penalties for Plan 5 student loans. You can overpay through your employer (by arrangement with your payroll department) or directly to the Student Loans Company (SLC). Overpaying reduces your outstanding balance and the total interest you pay over the life of the loan. However, given the 40-year write-off period, it is worth running the numbers — if your balance is likely to be written off anyway, overpaying may not be financially optimal. Use our calculator to understand your repayment trajectory.',
+    answerText: 'Yes, you can overpay at any time with no penalties. You can pay through your employer or directly to the Student Loans Company. Consider whether overpaying is optimal given the 40-year write-off.',
+  },
+  {
+    question: 'How does Plan 5 interest work?',
+    answerHtml: 'Plan 5 interest is based on the Retail Prices Index (RPI). The interest rate applied depends on your income:<br /><br /><ul><li><b>Earning up to the threshold (£25,000):</b> RPI + 0% (you pay no interest while below threshold)</li><li><b>Earning above the threshold:</b> RPI + up to 3% on a sliding scale</li></ul>However, a key difference from Plan 2 is that Plan 5 interest accrues at RPI (which is typically higher than CPI) but with a lower maximum supplement. The interest is applied monthly to your outstanding balance. If you are below the threshold, interest still accrues but your balance does not grow beyond what RPI adds.',
+    answerText: 'Plan 5 interest is based on RPI. Below the threshold, you pay RPI + 0% interest. Above the threshold, RPI + up to 3% on a sliding scale. Interest accrues monthly.',
+  },
+];
+---
+
+<PageLayout
+  title="Plan 5 Student Loan Repayment Calculator (UK 2026)"
+  description="Calculate your exact UK Plan 5 student loan repayments. Find out how much of your salary goes towards your student loan using the new £25,000 threshold."
+  canonical="https://truefinancetools.com/plan-5-student-loan-repayment-calculator"
+  ogImage="https://truefinancetools.com/og-plan-5-student-loan-repayment-calculator.png"
+  ogImageAlt="Plan 5 Student Loan Repayment Calculator — Calculate Your UK Repayments"
+  pageType="website"
+  keywords="plan 5 student loan repayment calculator, plan 5 student loan calculator, plan 5 repayment threshold 2026, uk plan 5 student loan repayment, plan 5 vs plan 2 calculator, student loan calculator uk, plan 5 repayment calculator"
+>
+  <StructuredData
+    title="Plan 5 Student Loan Repayment Calculator"
+    description="Free UK Plan 5 student loan repayment calculator. Calculate your monthly, weekly, or annual repayments based on the £25,000 threshold."
+    url="https://truefinancetools.com/plan-5-student-loan-repayment-calculator"
+    toolName="Plan 5 Student Loan Repayment Calculator"
+    toolDescription="Calculate your exact UK Plan 5 student loan repayments. Find out how much of your salary goes towards your student loan using the new £25,000 threshold."
+    faqItems={toolFaqItems}
+    features={[
+      'Plan 5 repayment calculation with £25,000 threshold',
+      'Monthly, weekly, and annual repayment breakdown',
+      'Below-threshold detection and guidance',
+      'Gross salary impact analysis',
+      'UK PAYE-compliant calculation logic',
+    ]}
+  />
+
+  <!-- Hero -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Plan 5 Student Loan Repayment Calculator
+      </h1>
+      <p class="text-lg text-body">Calculate your exact UK Plan 5 student loan repayments using the new £25,000 threshold.</p>
+    </div>
+  </section>
+
+  <!-- Calculator Component -->
+  <Plan5StudentLoanCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Plan 5 Student Loan Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Salary</h3>
+      <p class="text-sm text-body">Input your gross annual salary before tax and select how often you get paid.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V13.5zm0 2.25h.008v.008H8.25v-.008zm0 2.25h.008v.008H8.25V18zm2.498-6.75h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V13.5zm0 2.25h.007v.008h-.007v-.008zm0 2.25h.007v.008h-.007V18zm2.504-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zm0 2.25h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V18zm2.498-6.75h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V13.5zM8.25 6h7.5v2.25h-7.5V6zM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 002.25 2.25h10.5a2.25 2.25 0 002.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0012 2.25z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Check Your Threshold</h3>
+      <p class="text-sm text-body">The calculator checks if you earn above the £25,000 Plan 5 threshold. Below it, you pay nothing.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See Your Repayment</h3>
+      <p class="text-sm text-body">View your exact repayment amount based on 9% of earnings above the threshold, broken down by pay period.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- How Plan 5 Repayments are Calculated -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        How Plan 5 Repayments are Calculated
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Plan 5 student loan repayments</strong> are calculated using a straightforward formula: you pay <strong>9% of everything you earn above the £25,000 annual threshold</strong>. The threshold translates to approximately £2,083 per month or £481 per week. If your earnings fall below this threshold in any pay period, no repayment is due for that period.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Plan 5 Repayment Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Annual Repayment = (Annual Salary &minus; &pound;25,000) &times; 0.09
+        </div>
+
+        <p class="mb-4 mt-4">
+          For example, if you earn <strong>£30,000 per year</strong>, the amount subject to the 9% deduction is £30,000 − £25,000 = <strong>£5,000</strong>. Your annual repayment would be £5,000 × 0.09 = <strong>£450</strong>, which works out to <strong>£37.50 per month</strong>. The repayment is deducted automatically by your employer through the PAYE (Pay As You Earn) system — you do not need to make manual payments.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Plan 5 vs Plan 2: Key Differences</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Feature</th>
+                <th class="p-3 font-medium text-ink">Plan 5</th>
+                <th class="p-3 font-medium text-ink">Plan 2</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Threshold (2025/26)</td>
+                <td class="p-3 text-link font-semibold font-sans">£25,000</td>
+                <td class="p-3 text-body font-sans">£27,295</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Repayment Rate</td>
+                <td class="p-3 text-body font-sans">9%</td>
+                <td class="p-3 text-body font-sans">9%</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Write-Off Period</td>
+                <td class="p-3 text-body font-sans">40 years</td>
+                <td class="p-3 text-link font-semibold font-sans">30 years</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Interest Rate</td>
+                <td class="p-3 text-body font-sans">RPI + 0% to 3%</td>
+                <td class="p-3 text-body font-sans">RPI + 0% to 3%</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">Applies To</td>
+                <td class="p-3 font-semibold text-link font-sans">Courses from Aug 2023</td>
+                <td class="p-3 font-semibold text-ink font-sans">Courses Sep 1998 &ndash; Jul 2023</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Use This Calculator?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Current Students (Post-2023)</h4>
+            <p class="text-sm text-body">If you started your English university course on or after 1 August 2023, you are automatically on Plan 5. Use this calculator to understand what your repayments will look like once you start earning.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Recent Graduates</h4>
+            <p class="text-sm text-body">Starting your career? See exactly how much of your take-home pay goes to student loan repayments under Plan 5, and how it compares to what you might have paid under Plan 2.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Parents Planning for Children</h4>
+            <p class="text-sm text-body">If your child will attend university from 2023 onwards, Plan 5 will apply to their student loan. Understanding the repayment obligations helps with long-term financial planning.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Financial Advisers</h4>
+            <p class="text-sm text-body">Quickly model Plan 5 repayment scenarios for clients. Compare take-home pay under different salary levels and assess the impact on mortgage affordability and financial plans.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Plan 5 Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>&bull; 9% repayment rate is the same as Plan 2</li>
+              <li>&bull; Lower threshold means you start repaying sooner (clearer obligation)</li>
+              <li>&bull; Interest rates are capped at RPI + 3%</li>
+              <li>&bull; Automatic PAYE deduction &mdash; no manual payments needed</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>&bull; Lower threshold (&pound;25,000 vs &pound;27,295) means repaying sooner</li>
+              <li>&bull; 40-year write-off is significantly longer than Plan 2's 30 years</li>
+              <li>&bull; Higher earners may repay more total over the longer term</li>
+              <li>&bull; Threshold does not automatically increase with inflation</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Plan 5 Student Loan FAQs
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Plan 5 Student Loan Repayments
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>Plan 5 student loan repayment calculator</strong> is the simplest way to understand exactly how much of your salary goes towards repaying your student loan under the new UK Plan 5 system. Whether you are a current student, a recent graduate starting your career, or a parent planning for your child's university education, this tool gives you a clear, instant picture of your repayment obligations.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Use This Calculator?</h3>
+
+        <p class="mb-4">
+          The Plan 5 student loan system, which applies to all English students who started their university course on or after 1 August 2023, represents a significant shift from the previous Plan 2 system. While the 9% repayment rate remains the same, the lower £25,000 threshold means more graduates will begin repaying sooner, and the extended 40-year write-off period means repayments continue for a decade longer than under Plan 2. Understanding these differences is essential for accurate financial planning.
+        </p>
+
+        <p class="mb-4">
+          Whether you are evaluating your take-home pay alongside our <a href="/mortgage-overpayment-vs-investing-calculator-uk" class="text-link hover:underline">Mortgage vs ISA (UK) calculator</a> for UK borrowers, or comparing your retirement options with our <a href="/sipp-drawdown-tax-calculator" class="text-link hover:underline">SIPP drawdown tax calculator</a>, knowing your student loan commitment helps paint the complete financial picture.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Plan 5 Calculator</h3>
+
+        <p class="mb-4">
+          The calculator supports annual, monthly, and weekly pay frequencies, automatically detecting whether you fall below the £25,000 threshold. Results update instantly as you change your salary or frequency, with a clean breakdown showing your gross salary, the threshold, the amount subject to the 9% deduction, and your final repayment. All amounts are formatted in UK pounds (£) using proper British locale formatting.
+        </p>
+
+        <p class="mb-4">
+          For borrowers who want to understand the full scope of their student loan, this calculator pairs well with our broader suite of UK financial tools. Use it alongside the <a href="/mortgage-overpayment-vs-investing-calculator-uk" class="text-link hover:underline">Mortgage vs ISA Calculator</a> to see how student loan repayments affect your ability to overpay a mortgage or invest, or with the <a href="/sipp-drawdown-tax-calculator" class="text-link hover:underline">SIPP Drawdown Tax Calculator</a> to model your complete retirement income picture including student loan obligations.
+        </p>
+
+        <p class="mb-4">
+          Start calculating your Plan 5 repayments today &mdash; no signup required, completely free, and results in seconds. Adjust your salary to see how repayments scale at different income levels and understand the true cost of your student loan over time.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other UK Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other UK Financial Tools
+      </h2>
+      <p class="mb-8 text-body">Plan your complete UK financial strategy with our free calculators.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/plan-5-student-loan-repayment-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Plan 5 Calculator Guide</h3>
+          <p class="text-xs text-body">Understand how Plan 5 student loan repayments work with our complete guide.</p>
+        </a>
+        <a href="/mortgage-overpayment-vs-investing-calculator-uk" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mortgage vs ISA (UK)</h3>
+          <p class="text-xs text-body">Compare overpaying your mortgage against investing in a stocks &amp; shares ISA.</p>
+        </a>
+        <a href="/sipp-drawdown-tax-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">SIPP Drawdown Tax (UK)</h3>
+          <p class="text-xs text-body">Model your SIPP drawdown strategy with UK tax bands and 25% tax-free cash.</p>
+        </a>
+        <a href="/lisa-vs-workplace-pension-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">LISA vs Workplace Pension (UK)</h3>
+          <p class="text-xs text-body">Compare a Lifetime ISA against a workplace pension for retirement savings.</p>
+        </a>
+        <a href="/fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Calculate your Financial Independence number and retirement timeline.</p>
+        </a>
+        <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+          <p class="text-xs text-body">Find out how much you need saved to coast to retirement.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

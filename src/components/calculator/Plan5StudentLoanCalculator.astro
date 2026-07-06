@@ -1,0 +1,193 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="plan5-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="plan5-form" class="space-y-4">
+          <Input
+            label="Annual Salary (Before Tax)"
+            name="annualSalary"
+            type="number"
+            value={30000}
+            min={0}
+            max={500000}
+            step={1000}
+            suffix="£"
+            hideArrows
+            required
+            tooltip="Your total gross annual income before any tax or National Insurance deductions."
+          />
+
+          <div class="flex flex-col gap-1.5">
+            <label for="plan5-frequency" class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              Payment Frequency
+              <span class="group relative inline-flex shrink-0">
+                <span class="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full bg-hairline text-[10px] font-semibold leading-none text-mute transition-colors hover:bg-hairline-strong hover:text-ink" aria-label="How often you get paid. Repayments are usually taken automatically via PAYE each pay period.">?</span>
+                <span class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 rounded-lg border border-hairline bg-canvas px-3 py-2 text-xs leading-relaxed text-body opacity-0 shadow-lg transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100" role="tooltip">
+                  How often you get paid. Repayments are usually taken automatically via PAYE each pay period.
+                  <span class="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-hairline"></span>
+                </span>
+              </span>
+            </label>
+            <select
+              id="plan5-frequency"
+              name="frequency"
+              class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
+            >
+              <option value="monthly" selected>Monthly</option>
+              <option value="annually">Annually</option>
+              <option value="weekly">Weekly</option>
+            </select>
+          </div>
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="lg:col-span-7">
+      <!-- Below threshold message (hidden by default) -->
+      <div id="plan5-below-threshold" class="mb-6 hidden rounded-lg border border-success/30 bg-success/5 p-4">
+        <div class="flex items-start gap-3">
+          <svg class="mt-0.5 h-5 w-5 shrink-0 text-success-deep" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <p class="text-sm font-semibold text-success-deep">No Repayment Required</p>
+            <p class="mt-1 text-sm text-body">You earn below the £25,000 threshold. You do not have to make any Plan 5 student loan repayments.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Headline result -->
+      <Card padding="lg" class="mb-6">
+        <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Your Estimated Plan 5 Repayment</p>
+        <p id="plan5-headline-value" class="text-3xl font-semibold tabular-nums text-ink">£37.50</p>
+        <p id="plan5-headline-period" class="mt-1 text-sm text-mute">per month</p>
+      </Card>
+
+      <!-- Breakdown cards -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Gross Salary"
+          valueId="plan5-gross-salary"
+          value="£30,000"
+          description="Your annual salary before tax"
+        />
+        <ResultCard
+          label="Plan 5 Threshold"
+          valueId="plan5-threshold"
+          value="£25,000"
+          description="Fixed annual repayment threshold"
+        />
+        <ResultCard
+          label="Amount Subject to 9%"
+          valueId="plan5-deductible"
+          value="£5,000"
+          description="Earnings above the threshold"
+        />
+        <ResultCard
+          label="Annual Repayment"
+          valueId="plan5-annual-repayment"
+          value="£450.00"
+          description="9% of amount above threshold"
+        />
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="mt-6 rounded-lg border border-hairline bg-canvas-soft p-4">
+        <p class="text-xs text-mute">
+          <strong>Disclaimer:</strong> This calculator provides estimates only based on the published Plan 5 student loan rules. It does not constitute financial or tax advice. Actual repayments may vary based on your specific circumstances, employer PAYE processes, and HMRC updates. Consult a financial advisor for personalised advice.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Format as GBP with 2 decimal places
+  function formatGBP(value: number): string {
+    return new Intl.NumberFormat('en-GB', {
+      style: 'currency',
+      currency: 'GBP',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value);
+  }
+
+  // Format as GBP whole number
+  function formatGBPWhole(value: number): string {
+    return new Intl.NumberFormat('en-GB', {
+      style: 'currency',
+      currency: 'GBP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  }
+
+  const THRESHOLD = 25000;
+  const RATE = 0.09;
+
+  function calculate() {
+    var salaryInput = document.querySelector<HTMLInputElement>('#plan5-form input[name="annualSalary"]');
+    var freqSelect = document.querySelector<HTMLSelectElement>('#plan5-frequency');
+
+    if (!salaryInput || !freqSelect) return;
+
+    var salary = Math.max(0, parseFloat(salaryInput.value) || 0);
+    var frequency = freqSelect.value;
+
+    var belowThreshold = salary <= THRESHOLD;
+    var deductibleIncome = belowThreshold ? 0 : salary - THRESHOLD;
+    var annualRepayment = deductibleIncome * RATE;
+
+    var periodicRepayment;
+    var periodLabel;
+
+    switch (frequency) {
+      case 'annually':
+        periodicRepayment = annualRepayment;
+        periodLabel = 'per year';
+        break;
+      case 'monthly':
+        periodicRepayment = annualRepayment / 12;
+        periodLabel = 'per month';
+        break;
+      case 'weekly':
+        periodicRepayment = annualRepayment / 52;
+        periodLabel = 'per week';
+        break;
+    }
+
+    // Update DOM
+    var belowThresholdEl = document.getElementById('plan5-below-threshold');
+    var headlineValue = document.getElementById('plan5-headline-value');
+    var headlinePeriod = document.getElementById('plan5-headline-period');
+    var grossSalary = document.getElementById('plan5-gross-salary');
+    var thresholdEl = document.getElementById('plan5-threshold');
+    var deductibleEl = document.getElementById('plan5-deductible');
+    var annualRepaymentEl = document.getElementById('plan5-annual-repayment');
+
+    if (belowThresholdEl) belowThresholdEl.classList.toggle('hidden', !belowThreshold);
+    if (headlineValue) headlineValue.textContent = formatGBP(periodicRepayment);
+    if (headlinePeriod) headlinePeriod.textContent = periodLabel;
+    if (grossSalary) grossSalary.textContent = formatGBPWhole(salary);
+    if (thresholdEl) thresholdEl.textContent = formatGBPWhole(THRESHOLD);
+    if (deductibleEl) deductibleEl.textContent = formatGBPWhole(deductibleIncome);
+    if (annualRepaymentEl) annualRepaymentEl.textContent = formatGBP(annualRepayment);
+  }
+
+  // Attach listeners
+  document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('plan5-form');
+    if (form) {
+      form.addEventListener('input', calculate);
+      calculate(); // Initial calculation
+    }
+  });
+</script>
