@@ -1,0 +1,312 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+---
+
+<div id="sepp-roth-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <!-- ──── INPUT PANEL ──── -->
+  <div class="mb-8">
+    <Card padding="lg">
+      <div class="mb-4">
+        <h2 class="text-sm font-semibold text-ink">Your Financial Details</h2>
+      </div>
+
+      <form id="comparison-form" class="space-y-4">
+        <Input
+          label="Current Age"
+          name="currentAge"
+          type="number"
+          value={50}
+          min={40}
+          max={58}
+          required
+          tooltip="Your age when you plan to start taking early withdrawals."
+        />
+
+        <Slider
+          label="Pre-Tax Retirement Balance (IRA/401k)"
+          name="preTaxBalance"
+          value={1000000}
+          min={50000}
+          max={10000000}
+          step={50000}
+          suffix=""
+          inputId="preTaxBalance"
+          displayId="preTaxBalanceValue"
+          formatValue={(v: number) => '$' + v.toLocaleString()}
+          tooltip="Total balance in traditional, pre-tax retirement accounts."
+        />
+
+        <Slider
+          label="72(t) Interest Rate"
+          name="interestRate"
+          value={5.0}
+          min={0.1}
+          max={5.0}
+          step={0.1}
+          suffix="%"
+          inputId="interestRate"
+          displayId="interestRateValue"
+          formatValue={(v: number) => v.toFixed(1)}
+          tooltip="IRS Notice 2022-6 allows up to 5% or 120% of the Federal Mid-Term rate, whichever is greater. 5% maximizes your payout."
+        />
+
+        <Slider
+          label="Taxable Bridge Account Balance"
+          name="bridgeBalance"
+          value={250000}
+          min={0}
+          max={5000000}
+          step={10000}
+          suffix=""
+          inputId="bridgeBalance"
+          displayId="bridgeBalanceValue"
+          formatValue={(v: number) => '$' + v.toLocaleString()}
+          tooltip="Cash or standard brokerage funds available to live on while waiting out the Roth Ladder 5-year rule."
+        />
+      </form>
+    </Card>
+  </div>
+
+  <!-- ──── SIDE-BY-SIDE RESULTS ──── -->
+  <div class="grid gap-6 lg:grid-cols-2">
+    <!-- ──── 72(t) SEPP STRATEGY ──── -->
+    <div class="rounded-lg border border-hairline bg-canvas shadow-sm">
+      <div class="border-b border-hairline p-5">
+        <div class="flex items-center gap-2">
+          <div class="h-2.5 w-2.5 rounded-full bg-link"></div>
+          <h3 class="text-base font-semibold text-ink">72(t) SEPP Strategy</h3>
+        </div>
+        <p class="mt-1 text-xs text-body">Fixed Amortization Method — IRS §72(t)(2)(A)(iv)</p>
+      </div>
+
+      <div class="p-5">
+        <!-- Headline Metric -->
+        <div class="mb-4">
+          <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Maximum Annual Payout</p>
+          <p id="sepp-annual-payout" class="font-mono text-3xl font-semibold text-ink tabular-nums">$0</p>
+        </div>
+
+        <!-- Data Points -->
+        <div class="mb-4 space-y-2 rounded-lg bg-canvas-soft-2 p-4">
+          <div class="flex justify-between font-mono text-xs tabular-nums">
+            <span class="text-body">IRS Life Expectancy Factor</span>
+            <span id="sepp-life-expectancy" class="text-ink">—</span>
+          </div>
+          <div class="flex justify-between font-mono text-xs tabular-nums">
+            <span class="text-body">PVAF (Annuity Factor)</span>
+            <span id="sepp-pvaf" class="text-ink">—</span>
+          </div>
+          <div class="flex justify-between font-mono text-xs tabular-nums">
+            <span class="text-body">Lock-up Period</span>
+            <span id="sepp-lockup-years" class="text-ink font-semibold">—</span>
+          </div>
+          <div class="flex justify-between font-mono text-xs tabular-nums">
+            <span class="text-body">Lock-up Ends at Age</span>
+            <span id="sepp-lockup-age" class="text-link font-semibold">—</span>
+          </div>
+        </div>
+
+        <!-- Pros/Cons -->
+        <div class="space-y-2">
+          <div class="rounded-md border border-success/30 bg-success/5 p-3">
+            <p class="mb-1 text-xs font-semibold text-success-deep">Advantages</p>
+            <ul class="space-y-0.5 text-xs text-body">
+              <li>&bull; No bridge cash required</li>
+              <li>&bull; Immediate income from day one</li>
+              <li>&bull; Fixed, predictable payments</li>
+            </ul>
+          </div>
+          <div class="rounded-md border border-error/30 bg-error/5 p-3">
+            <p class="mb-1 text-xs font-semibold text-error">Trade-offs</p>
+            <ul class="space-y-0.5 text-xs text-body">
+              <li>&bull; Inflexible — cannot change payment amount</li>
+              <li>&bull; 10% IRS penalty if broken early</li>
+              <li>&bull; Locks up funds until age 59&frac12;</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──── ROTH CONVERSION LADDER ──── -->
+    <div class="rounded-lg border border-hairline bg-canvas shadow-sm">
+      <div class="border-b border-hairline p-5">
+        <div class="flex items-center gap-2">
+          <div class="h-2.5 w-2.5 rounded-full bg-success-deep"></div>
+          <h3 class="text-base font-semibold text-ink">Roth Conversion Ladder</h3>
+        </div>
+        <p class="mt-1 text-xs text-body">5-Year Rule Strategy — IRC §408A(d)(3)(F)</p>
+      </div>
+
+      <div class="p-5">
+        <!-- Headline Metric -->
+        <div class="mb-4">
+          <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Bridge Cash Required (5 Years)</p>
+          <p id="roth-bridge-requirement" class="font-mono text-3xl font-semibold text-ink tabular-nums">$0</p>
+        </div>
+
+        <!-- Bridge Status -->
+        <div id="roth-bridge-status" class="mb-4 rounded-lg p-4">
+          <div class="flex items-center gap-2">
+            <span id="roth-status-icon" class="text-lg"></span>
+            <span id="roth-status-text" class="text-sm font-semibold"></span>
+          </div>
+          <p id="roth-status-detail" class="mt-1 font-mono text-xs tabular-nums"></p>
+        </div>
+
+        <!-- Data Points -->
+        <div class="mb-4 space-y-2 rounded-lg bg-canvas-soft-2 p-4">
+          <div class="flex justify-between font-mono text-xs tabular-nums">
+            <span class="text-body">Target Annual Income</span>
+            <span id="roth-target-income" class="text-ink">—</span>
+          </div>
+          <div class="flex justify-between font-mono text-xs tabular-nums">
+            <span class="text-body">Your Bridge Balance</span>
+            <span id="roth-your-balance" class="text-ink">—</span>
+          </div>
+          <div class="flex justify-between font-mono text-xs tabular-nums">
+            <span class="text-body">Your Bridge Coverage</span>
+            <span id="roth-coverage-years" class="text-ink font-semibold">—</span>
+          </div>
+        </div>
+
+        <!-- Pros/Cons -->
+        <div class="space-y-2">
+          <div class="rounded-md border border-success/30 bg-success/5 p-3">
+            <p class="mb-1 text-xs font-semibold text-success-deep">Advantages</p>
+            <ul class="space-y-0.5 text-xs text-body">
+              <li>&bull; Ultimate flexibility — withdraw any amount</li>
+              <li>&bull; Lowers lifetime RMDs on pre-tax accounts</li>
+              <li>&bull; Tax-free growth and withdrawals in Roth</li>
+            </ul>
+          </div>
+          <div class="rounded-md border border-error/30 bg-error/5 p-3">
+            <p class="mb-1 text-xs font-semibold text-error">Trade-offs</p>
+            <ul class="space-y-0.5 text-xs text-body">
+              <li>&bull; Requires 5 years of outside cash to start</li>
+              <li>&bull; Conversion taxed as ordinary income</li>
+              <li>&bull; Must plan conversions years in advance</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── DISCLAIMER ──── -->
+  <div class="mt-6 rounded-lg border border-hairline bg-canvas-soft p-4">
+    <p class="text-xs text-mute">
+      <strong>Disclaimer:</strong> This calculator is for educational and informational purposes only and does not constitute financial or tax advice.
+      Consult a qualified financial advisor or tax professional before making any decisions about early retirement withdrawals.
+      IRS rules and life expectancy tables are subject to change. Past performance does not guarantee future results.
+    </p>
+  </div>
+</div>
+
+<script>
+  import {
+    calculateComparison,
+    formatDollar,
+    formatDollarDetailed,
+  } from '../../utils/sepp-vs-roth-calculations';
+
+  function getFormData() {
+    const form = document.getElementById('comparison-form') as HTMLFormElement;
+    const formData = new FormData(form);
+    return {
+      currentAge: Number(formData.get('currentAge')) || 50,
+      preTaxBalance: Number(formData.get('preTaxBalance')) || 1000000,
+      interestRate: Number(formData.get('interestRate')) || 5.0,
+      bridgeBalance: Number(formData.get('bridgeBalance')) || 250000,
+    };
+  }
+
+  function updateSliderDisplays(input: ReturnType<typeof getFormData>) {
+    const balanceDisplay = document.getElementById('preTaxBalanceValue');
+    if (balanceDisplay) {
+      balanceDisplay.textContent = formatDollar(input.preTaxBalance);
+    }
+
+    const interestDisplay = document.getElementById('interestRateValue');
+    if (interestDisplay) {
+      interestDisplay.textContent = `${input.interestRate.toFixed(1)}%`;
+    }
+
+    const bridgeDisplay = document.getElementById('bridgeBalanceValue');
+    if (bridgeDisplay) {
+      bridgeDisplay.textContent = formatDollar(input.bridgeBalance);
+    }
+  }
+
+  function updateAll() {
+    const input = getFormData();
+
+    const result = calculateComparison({
+      currentAge: input.currentAge,
+      preTaxBalance: input.preTaxBalance,
+      interestRate: input.interestRate / 100,
+      bridgeBalance: input.bridgeBalance,
+    });
+
+    updateSliderDisplays(input);
+
+    // 72(t) SEPP column
+    document.getElementById('sepp-annual-payout')!.textContent =
+      formatDollar(result.sepp.annualPayout);
+    document.getElementById('sepp-life-expectancy')!.textContent =
+      result.sepp.lifeExpectancy.toFixed(1);
+    document.getElementById('sepp-pvaf')!.textContent =
+      result.sepp.pvaf.toFixed(4);
+    document.getElementById('sepp-lockup-years')!.textContent =
+      `${result.sepp.lockupYears.toFixed(1)} years`;
+    document.getElementById('sepp-lockup-age')!.textContent =
+      result.sepp.lockupAge.toFixed(1);
+
+    // Roth Conversion Ladder column
+    document.getElementById('roth-bridge-requirement')!.textContent =
+      formatDollar(result.roth.bridgeRequirement);
+    document.getElementById('roth-target-income')!.textContent =
+      formatDollar(result.roth.targetAnnualIncome);
+    document.getElementById('roth-your-balance')!.textContent =
+      formatDollar(input.bridgeBalance);
+
+    // Bridge coverage years
+    const coverageYears = result.roth.targetAnnualIncome > 0
+      ? input.bridgeBalance / result.roth.targetAnnualIncome
+      : 0;
+    document.getElementById('roth-coverage-years')!.textContent =
+      `${coverageYears.toFixed(1)} years`;
+
+    // Bridge status
+    const statusContainer = document.getElementById('roth-bridge-status')!;
+    const statusIcon = document.getElementById('roth-status-icon')!;
+    const statusText = document.getElementById('roth-status-text')!;
+    const statusDetail = document.getElementById('roth-status-detail')!;
+
+    if (result.roth.hasSurplus) {
+      statusContainer.className = 'mb-4 rounded-lg border border-success/30 bg-success/5 p-4';
+      statusIcon.textContent = '\u2714'; // checkmark
+      statusText.className = 'text-sm font-semibold text-success-deep';
+      statusText.textContent = 'Surplus';
+      statusDetail.className = 'mt-1 font-mono text-xs tabular-nums text-success-deep';
+      statusDetail.textContent = `+$${Math.abs(result.roth.bridgeShortfall).toLocaleString()} beyond 5-year requirement`;
+    } else {
+      statusContainer.className = 'mb-4 rounded-lg border border-error/30 bg-error/5 p-4';
+      statusIcon.textContent = '\u2718'; // X mark
+      statusText.className = 'text-sm font-semibold text-error';
+      statusText.textContent = 'Shortfall';
+      statusDetail.className = 'mt-1 font-mono text-xs tabular-nums text-error';
+      statusDetail.textContent = `-$${Math.abs(result.roth.bridgeShortfall).toLocaleString()} below 5-year requirement`;
+    }
+  }
+
+  // ───────── Initialization ─────────
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('comparison-form') as HTMLFormElement;
+    form?.addEventListener('input', updateAll);
+    updateAll();
+  });
+</script>

@@ -1,0 +1,265 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import SeppVsRothLadderCalculator from '../../components/calculator/SeppVsRothLadderCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is a 72(t) SEPP plan?',
+    answerHtml: 'A <b>72(t) SEPP plan</b> (Substantially Equal Periodic Payments) is an IRS-approved strategy that lets you withdraw money from your traditional IRA or 401(k) before age 59&frac12; without the 10% early withdrawal penalty. Under IRC Section 72(t), you commit to a series of substantially equal periodic payments based on your life expectancy and an IRS-approved interest rate. Once started, you must continue payments for at least 5 years or until you reach age 59&frac12;, whichever is longer. IRS Notice 2022-6 allows you to use an interest rate of up to 5.0% (or 120% of the Federal Mid-Term rate, whichever is greater), which maximizes your annual payout.',
+    answerText: 'A 72(t) SEPP plan lets you withdraw from traditional IRA/401(k) before 59½ without the 10% penalty. You commit to equal periodic payments based on life expectancy and an IRS-approved rate (up to 5%). Must continue for 5+ years or until 59½, whichever is longer.',
+  },
+  {
+    question: 'How much cash do I need for a Roth Conversion Ladder?',
+    answerHtml: 'The amount of bridge cash you need for a Roth Conversion Ladder depends on your target annual income. The formula is:<br /><br /><b>Bridge Cash Required = Annual Living Expenses &times; 5</b><br /><br />This is because the Roth Conversion 5-Year Rule requires you to wait 5 years after each conversion before you can withdraw the converted amount penalty-free. During that 5-year waiting period, you need cash from a taxable brokerage account or savings to cover living expenses.<br /><br /><b>Example:</b> If you need $60,000/year, you need $60,000 &times; 5 = <b>$300,000</b> in bridge cash. If you have $250,000, you have a <b>$50,000 shortfall</b> and would need to supplement with other income sources.',
+    answerText: 'Bridge cash required = Annual expenses × 5. Example: $60K/year needs $300K in taxable savings to cover the 5-year waiting period. If you have less, you have a shortfall that must be covered by other income.',
+  },
+  {
+    question: 'Can I stop a 72(t) payment early?',
+    answerHtml: 'You <b>can</b> stop a 72(t) payment early, but there are significant consequences. If you modify or discontinue your SEPP schedule before the end of the lock-up period (5 years or age 59&frac12;, whichever is later), you will owe:<br /><br /><ul><li>The <b>10% early withdrawal penalty</b> on all amounts withdrawn under the SEPP</li><li><b>Interest charges</b> on the underpayment from the date each distribution was made</li></ul>There are limited exceptions to this rule, including death, disability, or a one-time switch to the RMD method. This is why the 72(t) calculator shows the exact lock-up period — you must be committed to the full duration.',
+    answerText: 'Yes, but you will owe the 10% early withdrawal penalty on ALL prior SEPP distributions plus interest charges. The only exceptions are death, disability, or switching to the RMD method once. Commit to the full lock-up period.',
+  },
+  {
+    question: 'Which is better for early retirement: 72(t) or Roth ladder?',
+    answerHtml: 'Neither strategy is universally "better" — it depends on your financial situation:<br /><br /><b>Choose 72(t) SEPP if:</b><br /><ul><li>You need income immediately and cannot wait 5 years</li><li>You do not have significant taxable bridge savings</li><li>You prefer fixed, predictable payments</li><li>You are comfortable with the lock-up commitment</li></ul><br /><b>Choose Roth Conversion Ladder if:</b><br /><ul><li>You have 5+ years of expenses in taxable accounts</li><li>You want flexibility to adjust withdrawal amounts</li><li>You want to reduce future RMDs on pre-tax accounts</li><li>You can plan conversions years in advance</li></ul><br />Many early retirees use a <b>combination of both</b>: start 72(t) for immediate income, then switch to the Roth ladder after the lock-up period ends.',
+    answerText: 'Neither is universally better. Choose 72(t) if you need immediate income and lack bridge savings. Choose Roth Ladder if you have 5+ years of cash saved and want flexibility. Many retirees use both: start 72(t) for immediate income, then switch to Roth ladder after lock-up ends.',
+  },
+  {
+    question: 'What is the 5-year rule for Roth conversions?',
+    answerHtml: 'The <b>Roth Conversion 5-Year Rule</b> (IRC &sect;408A(d)(3)(F)) requires that each Roth conversion amount must remain in the Roth IRA for at least 5 tax years before it can be withdrawn penalty-free if you are under age 59&frac12;. The clock starts on January 1st of the year you make the conversion.<br /><br /><b>Example:</b> If you convert $100,000 in 2024, that money is accessible penalty-free starting January 1, 2029. During the 5-year waiting period, you must cover living expenses from other sources (like a taxable brokerage account).<br /><br />Note: This rule applies separately to each conversion. If you make annual conversions, each has its own 5-year clock. After age 59&frac12;, the 5-year rule still applies for converted amounts, but regular Roth contributions can always be withdrawn tax-free.',
+    answerText: 'The Roth Conversion 5-Year Rule requires each converted amount to stay in the Roth IRA for 5 tax years before penalty-free withdrawal if under 59½. Clock starts January 1st of the conversion year. Each conversion has its own separate clock.',
+  },
+  {
+    question: 'What is the present value annuity factor (PVAF) in 72(t) calculations?',
+    answerHtml: 'The <b>Present Value Annuity Factor (PVAF)</b> is the multiplier used to convert a lump sum into a series of equal annual payments. In 72(t) SEPP calculations, it determines your annual payout:<br /><br /><b>PVAF = (1 &minus; (1 + i)<sup>&minus;n</sup>) / i</b><br /><br />Where:<br /><ul><li><b>i</b> = interest rate (e.g., 5.0% = 0.05)</li><li><b>n</b> = IRS life expectancy factor for your age</li></ul><br /><b>Example:</b> Age 50, 5.0% rate, n = 36.2:<br />PVAF = (1 &minus; 1.05<sup>&minus;36.2</sup>) / 0.05 = (1 &minus; 0.1709) / 0.05 = <b>16.582</b><br />Annual Payment = $1,000,000 / 16.582 = <b>$60,313</b>',
+    answerText: 'PVAF = (1 − (1+i)^-n) / i, where i is the interest rate and n is the IRS life expectancy factor. It converts a lump sum into equal annual payments. Example: Age 50, 5% rate, n=36.2 → PVAF=16.582 → $1M / 16.582 = $60,313/year.',
+  },
+  {
+    question: 'How does the IRS life expectancy table affect 72(t) payments?',
+    answerHtml: 'The IRS life expectancy table directly determines the size of your 72(t) payments. A <b>higher life expectancy factor</b> means a lower annual payout (spread over more years), while a <b>lower factor</b> means a higher payout.<br /><br />The IRS publishes the Uniform Lifetime Table in Publication 590-B. For the Fixed Amortization method, you use the factor for your starting age. For the RMD method, the factor recalculates each year based on your attained age.<br /><br /><b>Key ages and factors:</b><br /><ul><li>Age 45: 41.0 years &rarr; lower payout</li><li>Age 50: 36.2 years &rarr; moderate payout</li><li>Age 55: 31.6 years &rarr; higher payout</li></ul><br />The younger you start, the more years of payments the IRS expects, resulting in smaller annual distributions.',
+    answerText: 'Higher life expectancy = lower annual payout (spread over more years). Age 45 uses factor 41.0, age 50 uses 36.2, age 55 uses 31.6. Younger starting age means smaller annual distributions spread over more years.',
+  },
+  {
+    question: 'Can I use both 72(t) and a Roth Conversion Ladder at the same time?',
+    answerHtml: 'Yes, many early retirees use <b>both strategies simultaneously</b> or in sequence. Here are common approaches:<br /><br /><b>Sequential approach:</b> Start 72(t) for immediate income while your Roth conversions are still in the 5-year waiting period. Once conversions become accessible, switch to the Roth ladder and discontinue 72(t) (after the minimum 5-year commitment).<br /><br /><b>Parallel approach:</b> Use 72(t) to cover essential expenses while converting a smaller amount each year to Roth. The 72(t) income covers your bridge, and the Roth conversions build your future tax-free bucket.<br /><br /><b>Important:</b> If you discontinue 72(t) before the lock-up period ends, you owe penalties on ALL prior distributions. Plan carefully and consult a tax professional before combining strategies.',
+    answerText: 'Yes. Common approaches: Sequential — use 72(t) during the 5-year Roth wait, then switch. Parallel — use 72(t) for essentials while making smaller Roth conversions each year. Be careful: discontinuing 72(t) early triggers penalties on ALL prior distributions.',
+  },
+];
+---
+
+<PageLayout
+  title="72(t) vs Roth Conversion Ladder Calculator — Early FIRE Withdrawals"
+  description="Compare the Rule 72(t) SEPP against a Roth Conversion Ladder. Calculate your maximum early withdrawal payments, bridge cash needs, and penalty-free FIRE timeline."
+  canonical="https://truefinancetools.com/72t-vs-roth-conversion-ladder-calculator"
+  ogImage="https://truefinancetools.com/og-72t-vs-roth-conversion-ladder-calculator.png"
+  ogImageAlt="72(t) vs Roth Conversion Ladder Calculator - Compare Early Withdrawal Strategies"
+  pageType="website"
+  keywords="72t vs roth conversion ladder calculator, rule 72t calculator comparison, sepp vs roth ladder, 72t early withdrawal options, 72t sepp calculator, roth conversion ladder calculator, early retirement withdrawal calculator, fire early withdrawal strategy"
+>
+  <StructuredData
+    title="72(t) vs Roth Conversion Ladder Calculator"
+    description="Compare the Rule 72(t) SEPP against a Roth Conversion Ladder. Calculate your maximum early withdrawal payments, bridge cash needs, and penalty-free FIRE timeline."
+    url="https://truefinancetools.com/72t-vs-roth-conversion-ladder-calculator"
+    toolName="72(t) vs Roth Conversion Ladder Calculator"
+    toolDescription="Compare IRS-approved early withdrawal strategies: 72(t) SEPP vs Roth Conversion Ladder. Calculate annual payments, bridge cash requirements, and lock-up periods."
+    faqItems={toolFaqItems}
+    features={[
+      'Side-by-side 72(t) SEPP vs Roth Ladder comparison',
+      'IRS life expectancy table integration',
+      'PVAF annuity factor calculation',
+      '5-year bridge cash shortfall analysis',
+      'Penalty-free early retirement timeline',
+      'Interactive real-time results',
+    ]}
+  />
+
+  <!-- Hero Section -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        72(t) vs Roth Conversion Ladder Calculator
+      </h1>
+      <p class="mx-auto max-w-2xl text-lg text-body">
+        Compare the two IRS-approved strategies for accessing retirement funds before age 59&frac12; — no 10% penalty required.
+      </p>
+    </div>
+  </section>
+
+  <!-- Intro Content -->
+  <section class="border-b border-hairline bg-canvas py-10 sm:py-12">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <div class="prose prose-gray max-w-none text-body">
+        <p>
+          One of the biggest challenges in early retirement is accessing your pre-tax retirement funds before age 59&frac12; without triggering the IRS's 10% early withdrawal penalty. The two most powerful solutions are the <strong>72(t) SEPP (Substantially Equal Periodic Payments)</strong> strategy and the <strong>Roth Conversion Ladder</strong>. Each has distinct advantages, trade-offs, and IRS requirements — and choosing the right one (or a combination of both) can save you tens of thousands of dollars.
+        </p>
+        <p>
+          This calculator does the exact math for both strategies side by side. Enter your age, pre-tax retirement balance, the IRS-approved interest rate, and your taxable bridge account balance. Instantly see how much you can withdraw annually via 72(t), whether you have enough bridge cash for the Roth ladder's 5-year rule, and which strategy fits your FIRE timeline best.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Calculator Component -->
+  <SeppVsRothLadderCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the 72(t) vs Roth Ladder Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Details</h3>
+      <p class="text-sm text-body">Input your age, pre-tax retirement balance, the 72(t) interest rate, and your taxable bridge account cash.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Compare Strategies</h3>
+      <p class="text-sm text-body">See the 72(t) annual payout alongside the Roth Ladder's 5-year bridge requirement in a clear side-by-side view.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Choose Your Path</h3>
+      <p class="text-sm text-body">Decide which strategy — or combination — best fits your early retirement plan based on lock-up periods and cash needs.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- How We Calculate (Methodology) — bg-canvas-soft -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        How We Calculate Early Withdrawals
+      </h2>
+      <div class="prose prose-gray max-w-none text-body">
+        <p>
+          Our calculator uses two distinct IRS-approved methodologies to give you an accurate, apples-to-apples comparison of early retirement withdrawal strategies.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">72(t) SEPP: Fixed Amortization Method</h3>
+        <p>
+          The 72(t) calculation uses the <strong>Fixed Amortization method</strong> under IRC Section 72(t)(2)(A)(iv). First, we look up the IRS Single Life Expectancy factor for your age from the Uniform Lifetime Table (Publication 590-B). For example, age 50 maps to a factor of 36.2 years.
+        </p>
+        <p>
+          Next, we calculate the <strong>Present Value Annuity Factor (PVAF)</strong> using the formula: <code>PVAF = (1 - (1 + i)^-n) / i</code>, where <code>i</code> is the interest rate and <code>n</code> is the life expectancy factor. Your annual payout is then your pre-tax balance divided by the PVAF. Under <strong>IRS Notice 2022-6</strong>, the maximum permitted interest rate is the greater of 5.0% or 120% of the Federal Mid-Term rate — our calculator defaults to 5.0% to maximize your payout.
+        </p>
+        <p>
+          The lock-up period is the <strong>longer of 5 years or until age 59&frac12;</strong>. For example, if you start at age 50, you are locked in for 9.5 years until age 59&frac12;. Breaking the SEPP schedule early triggers a 10% penalty on all prior distributions plus interest.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Roth Conversion Ladder: 5-Year Bridge Rule</h3>
+        <p>
+          The Roth Conversion Ladder strategy converts pre-tax retirement funds to a Roth IRA, then waits the mandatory <strong>5-year waiting period</strong> (IRC &sect;408A(d)(3)(F)) before withdrawing penalty-free. Each conversion has its own separate 5-year clock, starting January 1st of the conversion year.
+        </p>
+        <p>
+          During this 5-year waiting period, you need <strong>bridge cash</strong> — money in a taxable brokerage account, savings, or other accessible funds — to cover living expenses. Our calculator determines the exact bridge amount by multiplying your target annual income (set equal to the 72(t) payout for fair comparison) by 5 years. The result shows whether your current bridge balance has a surplus or shortfall.
+        </p>
+        <p>
+          The Roth Conversion Ladder is particularly powerful for those who can plan years in advance, as it produces <strong>tax-free income</strong> in retirement and reduces future Required Minimum Distributions (RMDs) on pre-tax accounts. However, it requires discipline and significant taxable savings to bridge the 5-year gap.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section — bg-canvas -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Early Retirement Withdrawal FAQs
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide — bg-canvas-soft -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Early Withdrawal Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p>
+          Our <strong>72(t) vs Roth Conversion Ladder calculator</strong> is the most comprehensive free tool for comparing the two primary IRS-approved strategies for accessing retirement funds before age 59&frac12;. Unlike calculators that only show one method, this tool gives you a side-by-side view with exact dollar amounts, lock-up periods, and bridge cash analysis.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Compare 72(t) vs Roth Ladder?</h3>
+
+        <p>
+          The choice between 72(t) SEPP and a Roth Conversion Ladder is one of the most important decisions in early retirement planning. A wrong choice can cost you thousands in penalties or leave you unable to access your money when you need it. Our calculator eliminates the guesswork by showing exactly how each strategy performs with your specific numbers.
+        </p>
+
+        <p>
+          The <strong>72(t) SEPP</strong> is ideal for retirees who need immediate income and do not have years of bridge cash saved. The <strong>Roth Conversion Ladder</strong> is ideal for those who can plan ahead, have substantial taxable savings, and want tax-free income in retirement. Many savvy early retirees use both strategies in combination — starting 72(t) for immediate income while simultaneously building their Roth conversion pipeline.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Calculator</h3>
+
+        <p>
+          This tool uses the exact IRS formulas: the Fixed Amortization method with PVAF calculation for 72(t), and the 5-year bridge requirement for Roth conversions. It integrates the official IRS life expectancy table (ages 40-59) and respects the maximum 5.0% interest rate per IRS Notice 2022-6. All calculations happen in your browser — no data is stored on our servers.
+        </p>
+
+        <p>
+          For a deeper dive into Coast FIRE strategies that complement early withdrawal planning, see our <a href="/coast-fire-number" class="text-link underline">Coast FIRE Number calculator</a>. To model how sequence of returns risk affects your withdrawal strategy, explore our <a href="/sequence-of-returns-calculator" class="text-link underline">Sequence of Returns Risk Stress Tester</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Tools — bg-canvas -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Retirement Calculators
+      </h2>
+      <p class="mb-8 text-body">Free tools to plan every phase of your early retirement journey.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/sepp-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">SEPP / 72(t) Calculator</h3>
+          <p class="text-xs text-body">Compare all three IRS-approved SEPP methods: RMD, Fixed Amortization, and Fixed Annuitization.</p>
+        </a>
+        <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+          <p class="text-xs text-body">Find how much you need saved today to coast to retirement with compound interest alone.</p>
+        </a>
+        <a href="/sequence-of-returns-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Sequence of Returns Risk</h3>
+          <p class="text-xs text-body">Stress test your withdrawal strategy against historical market crashes.</p>
+        </a>
+        <a href="/die-with-zero-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Die with Zero Calculator</h3>
+          <p class="text-xs text-body">Optimize your withdrawal rate to use every dollar while alive.</p>
+        </a>
+        <a href="/vpw-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">VPW Calculator</h3>
+          <p class="text-xs text-body">Variable Percentage Withdrawal with mathematical zero-ruin guarantee.</p>
+        </a>
+        <a href="/72t-vs-roth-conversion-ladder-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">72(t) vs Roth Ladder Guide</h3>
+          <p class="text-xs text-body">This calculator — compare early withdrawal strategies side by side.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

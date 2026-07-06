@@ -54,6 +54,7 @@ fin-tools/
 │   │   │   ├── CoastFireByAgeCalculator.astro        # Coast FIRE by Age glide path calculator
 │   │   │   ├── HsaShoeboxStrategyCalculator.astro    # HSA Shoebox Strategy delayed reimbursement calculator
 │   │   │   ├── HouseHackingCalculator.astro          # House hacking cash flow calculator
+│   │   │   ├── SeppVsRothLadderCalculator.astro      # 72(t) SEPP vs Roth Conversion Ladder comparison
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -108,6 +109,8 @@ fin-tools/
 │   │   │   └── index.astro             # Tax Gain Harvesting Calculator page
 │   │   ├── house-hacking-calculator/
 │   │   │   └── index.astro             # House Hacking Cash Flow Calculator page
+│   │   ├── 72t-vs-roth-conversion-ladder-calculator/
+│   │   │   └── index.astro             # 72(t) SEPP vs Roth Conversion Ladder Calculator page
 │   │   ├── learn/
 │   │   │   ├── what-is-fire.astro      # Learn: What is FIRE?
 │   │   │   ├── fire-strategies.astro   # Learn: FIRE Strategies
@@ -143,6 +146,7 @@ fin-tools/
 │       ├── bond-tent-calculations.ts            # Bond tent / SRR glide path engine
 │       ├── hsa-shoebox-calculations.ts          # HSA Shoebox Strategy calculation engine
 │       ├── house-hacking-calculations.ts         # House hacking cash flow calculation engine
+│       ├── sepp-vs-roth-calculations.ts          # 72(t) SEPP vs Roth Ladder comparison engine
 │       ├── faq-data.ts                    # FAQ types and shared FAQ data
 │       └── formatters.ts               # Currency/number formatting utilities
 ├── astro.config.mjs                    # Astro config (site URL, Tailwind vite plugin)
@@ -187,6 +191,7 @@ fin-tools/
 | `/retirement-bucket-strategy-calculator` | `src/pages/retirement-bucket-strategy-calculator/index.astro` | 3-Bucket Retirement Drawdown Strategy Simulator |
 | `/hsa-shoebox-strategy-calculator` | `src/pages/hsa-shoebox-strategy-calculator/index.astro` | HSA Shoebox Strategy Calculator |
 | `/house-hacking-calculator` | `src/pages/house-hacking-calculator/index.astro` | House Hacking Cash Flow Calculator |
+| `/72t-vs-roth-conversion-ladder-calculator` | `src/pages/72t-vs-roth-conversion-ladder-calculator/index.astro` | 72(t) SEPP vs Roth Conversion Ladder Calculator |
 | `/tools` | `src/pages/tools/index.astro` | All tools overview |
 | `/about` | `src/pages/about/index.astro` | About page |
 | `/contact` | `src/pages/contact/index.astro` | Contact page |
