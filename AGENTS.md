@@ -53,6 +53,7 @@ fin-tools/
 │   │   │   ├── BondTentCalculator.astro              # Bond tent / SRR glide path calculator
 │   │   │   ├── CoastFireByAgeCalculator.astro        # Coast FIRE by Age glide path calculator
 │   │   │   ├── HsaShoeboxStrategyCalculator.astro    # HSA Shoebox Strategy delayed reimbursement calculator
+│   │   │   ├── HouseHackingCalculator.astro          # House hacking cash flow calculator
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -105,6 +106,8 @@ fin-tools/
 │   │   │   └── index.astro             # SEPP / 72(t) calculator page
 │   │   ├── tax-gain-harvesting-calculator/
 │   │   │   └── index.astro             # Tax Gain Harvesting Calculator page
+│   │   ├── house-hacking-calculator/
+│   │   │   └── index.astro             # House Hacking Cash Flow Calculator page
 │   │   ├── learn/
 │   │   │   ├── what-is-fire.astro      # Learn: What is FIRE?
 │   │   │   ├── fire-strategies.astro   # Learn: FIRE Strategies
@@ -139,6 +142,7 @@ fin-tools/
 │       ├── retirement-bucket-calculations.ts    # 3-bucket drawdown strategy engine
 │       ├── bond-tent-calculations.ts            # Bond tent / SRR glide path engine
 │       ├── hsa-shoebox-calculations.ts          # HSA Shoebox Strategy calculation engine
+│       ├── house-hacking-calculations.ts         # House hacking cash flow calculation engine
 │       ├── faq-data.ts                    # FAQ types and shared FAQ data
 │       └── formatters.ts               # Currency/number formatting utilities
 ├── astro.config.mjs                    # Astro config (site URL, Tailwind vite plugin)
@@ -182,6 +186,7 @@ fin-tools/
 | `/coast-fire-by-age-calculator` | `src/pages/coast-fire-by-age-calculator/index.astro` | Coast FIRE by Age Glide Path Calculator |
 | `/retirement-bucket-strategy-calculator` | `src/pages/retirement-bucket-strategy-calculator/index.astro` | 3-Bucket Retirement Drawdown Strategy Simulator |
 | `/hsa-shoebox-strategy-calculator` | `src/pages/hsa-shoebox-strategy-calculator/index.astro` | HSA Shoebox Strategy Calculator |
+| `/house-hacking-calculator` | `src/pages/house-hacking-calculator/index.astro` | House Hacking Cash Flow Calculator |
 | `/tools` | `src/pages/tools/index.astro` | All tools overview |
 | `/about` | `src/pages/about/index.astro` | About page |
 | `/contact` | `src/pages/contact/index.astro` | Contact page |
@@ -466,6 +471,19 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 - Excess warning when annual expenses exceed HSA capacity in year 1
 - Theme-aware chart colors via MutationObserver on `html` class
 - Targets US-based early retirees and FIRE community optimizing HSA tax-free growth
+
+### House Hacking Cash Flow Calculator
+
+- File: `src/components/calculator/HouseHackingCalculator.astro` (~290 lines)
+- Uses `src/utils/house-hacking-calculations.ts` for math
+- Calculates PITI (Principal, Interest, Taxes, Insurance) + PMI for FHA and conventional loans
+- Models operating expenses: vacancy loss, maintenance & CapEx reserves
+- 9 inputs: purchase price, down payment, interest rate, loan term, property tax, insurance, rent, maintenance, vacancy
+- 4 KPI cards: Gross Mortgage, Net Rental Income, Monthly P&I, PMI
+- Full monthly breakdown table with color-coded positive/negative cash flow
+- PMI warning when down payment is below 20%
+- No Chart.js — focused on the core cash flow number
+- Theme-aware via CSS variable tokens
 
 ### Adding a New Tool
 
