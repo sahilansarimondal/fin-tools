@@ -1,0 +1,306 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="uk-redundancy-tax-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="rdf-form" class="space-y-4">
+          <Input
+            label="Total Gross Redundancy Package"
+            name="totalGrossPackage"
+            type="number"
+            value={50000}
+            min={0}
+            max={2000000}
+            step={1000}
+            suffix="£"
+            hideArrows
+            required
+            tooltip="The total gross value of everything your employer is paying you upon termination."
+          />
+
+          <Input
+            label="Non-Qualifying Compensation"
+            name="nonQualifyingCompensation"
+            type="number"
+            value={5000}
+            min={0}
+            max={2000000}
+            step={1000}
+            suffix="£"
+            hideArrows
+            required
+            tooltip="Payments like Notice Pay (PILON), accrued holiday pay, final salary, or bonuses. These are fully taxable as normal earnings and do not qualify for the £30k exemption."
+          />
+
+          <Input
+            label="Current Taxable Income Earned This Year"
+            name="currentYearIncome"
+            type="number"
+            value={30000}
+            min={0}
+            max={2000000}
+            step={1000}
+            suffix="£"
+            hideArrows
+            required
+            tooltip="Your total taxable earnings received from the start of the current tax year up until your redundancy date."
+          />
+
+          <div class="flex flex-col gap-1.5">
+            <label for="rdf-region" class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              Tax Region
+              <span class="group relative inline-flex shrink-0">
+                <span
+                  class="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full bg-hairline text-[10px] font-semibold leading-none text-mute transition-colors hover:bg-hairline-strong hover:text-ink"
+                  aria-label="Select your region to apply the correct HMRC income tax bands."
+                >?</span>
+                <span
+                  class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 rounded-lg border border-hairline bg-canvas px-3 py-2 text-xs leading-relaxed text-body opacity-0 shadow-lg transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100"
+                  role="tooltip"
+                >
+                  Select your region to apply the correct HMRC income tax bands.
+                  <span class="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-hairline"></span>
+                </span>
+              </span>
+            </label>
+            <select
+              id="rdf-region"
+              name="region"
+              class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
+            >
+              <option value="england" selected>England, Wales &amp; Northern Ireland</option>
+              <option value="scotland">Scotland</option>
+            </select>
+          </div>
+        </form>
+
+        <!-- Validation alert -->
+        <div id="rdf-validation" class="mt-4 hidden rounded-lg border border-error/30 bg-error/5 p-4">
+          <p id="rdf-validation-text" class="text-sm text-body"></p>
+        </div>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Headline KPI -->
+      <div id="rdf-headline-card" class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm text-center">
+        <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Estimated Net Take-Home Pay</p>
+        <p id="rdf-net-takehome" class="text-3xl font-semibold tabular-nums text-ink sm:text-4xl">—</p>
+        <p class="mt-1 text-sm text-mute">Adjust inputs to see your estimated take-home pay</p>
+      </div>
+
+      <!-- Summary KPI cards -->
+      <div class="grid gap-4 sm:grid-cols-3">
+        <ResultCard
+          label="Total Tax-Free Amount"
+          valueId="rdf-tax-free"
+          value="—"
+          valueClass="text-success-deep"
+          description="£30,000 exempt from income tax"
+        />
+        <ResultCard
+          label="Total Income Tax Deducted"
+          valueId="rdf-income-tax"
+          value="—"
+          valueClass="text-error"
+          description="Taxed at your marginal rates"
+        />
+        <ResultCard
+          label="Total Employee NI Deducted"
+          valueId="rdf-ni"
+          value="—"
+          valueClass="text-error"
+          description="On non-qualifying portion only"
+        />
+      </div>
+
+      <!-- Itemized Breakdown Table -->
+      <Card padding="lg">
+        <h2 class="mb-4 text-sm font-medium text-ink">Itemized Tax Breakdown</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline">
+                <th class="pb-2 font-medium text-mute">Item</th>
+                <th class="pb-2 text-right font-medium text-mute">Amount</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Total Gross Redundancy Package</td>
+                <td id="tb-gross-package" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Qualifying Redundancy Pay</td>
+                <td id="tb-qualifying" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Non-Qualifying Compensation</td>
+                <td id="tb-non-qualifying" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body text-success-deep">Less: £30,000 Tax-Free Exemption</td>
+                <td id="tb-tax-free" class="py-2 text-right text-success-deep">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Taxable Excess (over £30k)</td>
+                <td id="tb-taxable-excess" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline bg-canvas-soft">
+                <td class="py-2 font-sans text-body">Total Additional Taxable Income</td>
+                <td id="tb-total-taxable" class="py-2 text-right font-semibold text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body text-error">Income Tax on Package</td>
+                <td id="tb-income-tax" class="py-2 text-right text-error">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body text-error">Employee NI on Non-Qualifying</td>
+                <td id="tb-ni" class="py-2 text-right text-error">—</td>
+              </tr>
+              <tr class="bg-canvas-soft">
+                <td class="py-2 font-sans font-semibold text-ink">Net Take-Home Pay</td>
+                <td id="tb-net" class="py-2 text-right font-semibold text-ink">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tax band breakdown (shown when there's taxable income) -->
+        <div id="rdf-band-breakdown" class="mt-6 hidden">
+          <h3 class="mb-3 text-sm font-medium text-ink">Marginal Tax Rates Applied</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="border-b border-hairline">
+                  <th class="pb-2 font-medium text-mute">Tax Band</th>
+                  <th class="pb-2 text-right font-medium text-mute">Rate</th>
+                  <th class="pb-2 text-right font-medium text-mute">Amount Taxed</th>
+                  <th class="pb-2 text-right font-medium text-mute">Tax Paid</th>
+                </tr>
+              </thead>
+              <tbody id="rdf-band-rows" class="font-mono text-xs tabular-nums">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </Card>
+
+      <!-- Employer NI Note -->
+      <div class="rounded-lg bg-canvas-soft p-4">
+        <p class="text-xs text-mute">
+          <strong>Employer NI Note:</strong> Your employer pays 15% Class 1A National Insurance on any qualifying redundancy payment exceeding £30,000. This is paid by your employer and does not affect your take-home pay.
+        </p>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="rounded-lg bg-canvas-soft p-4">
+        <p class="text-xs text-mute">
+          <strong>Disclaimer:</strong> These calculations are estimates based on HMRC 2026/2027 tax year rules and do not constitute formal tax or employment law advice. Your actual tax liability may differ based on individual circumstances. Consult a qualified tax adviser for personal guidance.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { calculateRedundancyTax } from '../../utils/uk-redundancy-tax-calculations';
+  import { formatGBP } from '../../utils/formatters';
+
+  function getFormData() {
+    var form = document.getElementById('rdf-form');
+    var formData = new FormData(form);
+
+    return {
+      totalGrossPackage: Number(formData.get('totalGrossPackage')) || 50000,
+      nonQualifyingCompensation: Number(formData.get('nonQualifyingCompensation')) || 5000,
+      currentYearIncome: Number(formData.get('currentYearIncome')) || 30000,
+      region: formData.get('region') || 'england',
+    };
+  }
+
+  function updateResults() {
+    var input = getFormData();
+    var r = calculateRedundancyTax(input);
+
+    // Validation alert
+    var validationEl = document.getElementById('rdf-validation');
+    var validationText = document.getElementById('rdf-validation-text');
+    if (r.validationAlert) {
+      validationEl.classList.remove('hidden');
+      validationText.textContent = r.validationAlert;
+    } else {
+      validationEl.classList.add('hidden');
+    }
+
+    // Headline
+    var netEl = document.getElementById('rdf-net-takehome');
+    netEl.textContent = formatGBP(r.netTakeHome);
+
+    // KPI cards
+    document.getElementById('rdf-tax-free').textContent = formatGBP(r.taxFreePortion);
+    document.getElementById('rdf-income-tax').textContent = formatGBP(r.totalIncomeTax);
+    document.getElementById('rdf-ni').textContent = formatGBP(r.employeeNI);
+
+    // Table
+    document.getElementById('tb-gross-package').textContent = formatGBP(r.qualifyingRedundancy + r.nonQualifyingCompensation);
+    document.getElementById('tb-qualifying').textContent = formatGBP(r.qualifyingRedundancy);
+    document.getElementById('tb-non-qualifying').textContent = formatGBP(r.nonQualifyingCompensation);
+    document.getElementById('tb-tax-free').textContent = '−' + formatGBP(r.taxFreePortion);
+    document.getElementById('tb-taxable-excess').textContent = formatGBP(r.taxableExcess);
+    document.getElementById('tb-total-taxable').textContent = formatGBP(r.totalAdditionalTaxable);
+    document.getElementById('tb-income-tax').textContent = '−' + formatGBP(r.totalIncomeTax);
+    document.getElementById('tb-ni').textContent = '−' + formatGBP(r.employeeNI);
+    document.getElementById('tb-net').textContent = formatGBP(r.netTakeHome);
+
+    // Tax band breakdown
+    var bandBreakdown = document.getElementById('rdf-band-breakdown');
+    var bandRows = document.getElementById('rdf-band-rows');
+
+    // Show band breakdown only if there's taxable income
+    var hasTaxableIncome = r.totalAdditionalTaxable > 0 && r.totalIncomeTax > 0;
+    if (hasTaxableIncome) {
+      bandBreakdown.classList.remove('hidden');
+      // Filter to only bands with actual amounts
+      var visibleBands = r.incomeTaxBreakdown.filter(function (b) { return b.amountInBand > 0; });
+      bandRows.innerHTML = visibleBands.map(function (b) {
+        return '<tr class="border-b border-hairline/50">' +
+          '<td class="py-1.5 font-sans text-body">' + b.bandName + '</td>' +
+          '<td class="py-1.5 text-right text-ink">' + (b.rate * 100).toFixed(0) + '%</td>' +
+          '<td class="py-1.5 text-right text-ink">' + formatGBP(b.amountInBand) + '</td>' +
+          '<td class="py-1.5 text-right text-ink">' + formatGBP(b.taxPaid) + '</td>' +
+          '</tr>';
+      }).join('');
+    } else {
+      bandBreakdown.classList.add('hidden');
+    }
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('rdf-form');
+    if (form) {
+      form.addEventListener('input', function () {
+        updateResults();
+      });
+    }
+
+    var regionSelect = document.getElementById('rdf-region');
+    if (regionSelect) {
+      regionSelect.addEventListener('change', function () {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initFormListeners();
+    updateResults();
+  });
+</script>
