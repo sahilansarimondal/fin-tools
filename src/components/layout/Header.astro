@@ -45,6 +45,12 @@ const calculatorCategories = [
     ],
   },
   {
+    title: 'Real Estate',
+    calculators: [
+      { href: '/house-hacking-calculator', label: 'House Hacking' },
+    ],
+  },
+  {
     title: 'Portfolio & Tax',
     calculators: [
       { href: '/owner-earnings-calculator', label: 'Owner Earnings' },
@@ -98,7 +104,7 @@ function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boo
           </a>
           {hasDropdown && (
             <div class="calc-dropdown-menu invisible absolute left-0 top-full z-50 mt-1 w-[720px] rounded-lg border border-hairline bg-canvas p-5 shadow-lg opacity-0 transition-all duration-200">
-              <div class="grid grid-cols-5 gap-4">
+              <div class="grid grid-cols-6 gap-4">
                 {calculatorCategories.map((category) => (
                   <div>
                     <p class="mb-2 truncate text-xs font-semibold uppercase tracking-wider text-mute">{category.title}</p>
