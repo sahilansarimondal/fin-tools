@@ -494,10 +494,13 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 
 1. Create `src/pages/{tool-name}/index.astro`
 2. Create component in `src/components/calculator/{ToolName}Calculator.astro`
-3. Add nav link in `Header.astro`
+3. Add nav link in `Header.astro` — add to the `calculatorCategories` array in `src/components/layout/Header.astro` under the appropriate category
 4. Add footer link in `Footer.astro`
 5. Add to `StructuredData.astro` if needed
-6. Follow the [Calculator Page Template](#calculator-page-template-based-on-barista-fire-page) and run through the [Page Creation Checklist](#page-creation-checklist) before merging
+6. Add to the Tools overview page — add a card to the appropriate category section in `src/pages/tools/index.astro` and update the calculator count in the hero badge
+7. Follow the [Calculator Page Template](#calculator-page-template-based-on-barista-fire-page) and run through the [Page Creation Checklist](#page-creation-checklist) before merging
+
+**⚠️ CRITICAL: Steps 3 and 6 are mandatory for every new calculator.** The Builder must NEVER skip these. The Header dropdown (`calculatorCategories` in `src/components/layout/Header.astro`) and the Tools overview page (`src/pages/tools/index.astro`) must be updated as part of every calculator build. If these are forgotten, the tool will be invisible to users from navigation and the tools directory.
 
 ### Adding Dark Mode to New Components
 
