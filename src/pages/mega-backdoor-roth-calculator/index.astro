@@ -1,0 +1,326 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import MegaBackdoorRothCalculator from '../../components/calculator/MegaBackdoorRothCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is the maximum after-tax 401k contribution limit for 2026?',
+    answerHtml: 'For 2026, the overall Section 415(c) limit — which includes all sources (employee elective deferrals + employer match/profit sharing + after-tax contributions) — is:<br /><br /><ul><li><b>$72,000</b> for those under age 50</li><li><b>$80,000</b> for ages 50–59 and 64+ (includes $8,000 catch-up)</li><li><b>$83,250</b> for ages 60–63 (includes $11,250 super catch-up)</li></ul><br />The regular elective deferral limit (pre-tax or Roth 401(k)) is <b>$24,500</b> for those under 50. Any remaining space after your deferral and employer contributions can be filled with after-tax contributions and converted to Roth via the mega backdoor strategy.',
+    answerText: 'The 2026 Section 415(c) total limit is $72,000 for under 50, $80,000 for 50-59 and 64+, and $83,250 for 60-63. This includes employee deferrals, employer contributions, and after-tax contributions.',
+  },
+  {
+    question: 'Does a mega backdoor Roth impact my regular Roth IRA limit?',
+    answerHtml: 'No — they are completely separate. The <b>$7,000 Roth IRA limit</b> (2026, or $8,000 if age 50+) is independent of your 401(k) contributions. The mega backdoor Roth uses your 401(k) plan\'s after-tax contribution space, not your IRA space.<br /><br />However, the mega backdoor Roth is especially valuable for high earners who are <b>phased out</b> of direct Roth IRA contributions. For 2026, Roth IRA contributions phase out between $240,000–$250,000 (married filing jointly) and $155,000–$170,000 (single). The mega backdoor Roth has no income limit.',
+    answerText: 'No. The mega backdoor Roth uses your 401(k) after-tax space, not your Roth IRA limit. They are separate. This makes it especially valuable for high earners phased out of direct Roth IRA contributions.',
+  },
+  {
+    question: 'What plan features do I need for a mega backdoor Roth?',
+    answerHtml: 'You need <b>two specific plan features</b> to execute a mega backdoor Roth:<br /><br /><ol><li><b>After-tax (non-Roth) contributions</b> — Your 401(k) plan must allow contributions beyond the $24,500 elective deferral limit. These are after-tax contributions, not Roth contributions. About 40% of plans offer this.</li><li><b>In-service distributions or in-plan Roth conversions</b> — Your plan must permit either in-service withdrawals of after-tax funds (to roll over to a Roth IRA) or in-plan Roth conversions (to convert to Roth 401(k) within the plan). About 30% of plans that allow after-tax contributions also allow in-service conversions.</li></ol><br />Check with your HR department or plan administrator to confirm both features are available. If your plan supports auto-conversion of after-tax contributions to Roth, even better — this is known as an <b>automatic mega backdoor Roth</b>.',
+    answerText: 'You need (1) after-tax (non-Roth) contribution capability beyond the $24,500 elective deferral limit, and (2) in-service distributions or in-plan Roth conversions. Check with your plan administrator.',
+  },
+  {
+    question: 'Are mega backdoor Roth conversions taxable?',
+    answerHtml: 'The conversion of after-tax contributions to Roth is <b>generally tax-free</b> because after-tax contributions were made with post-tax dollars — you have already paid income tax on them. However, there is an important nuance:<br /><br /><ul><li><b>After-tax contributions:</b> Tax-free to convert (no additional tax owed)</li><li><b>Investment earnings:</b> Any gains accumulated BEFORE the conversion ARE taxable as ordinary income</li></ul><br />This is why the optimal strategy is to convert frequently — <b>ideally every paycheck</b> — so that there is minimal or no earnings before conversion. Many plans that support this feature can be set up for automatic conversion, minimizing any taxable gain.',
+    answerText: 'After-tax contributions convert to Roth tax-free since they were made with post-tax dollars. However, any investment gains before the conversion ARE taxable as ordinary income. Convert frequently to minimize taxable gains.',
+  },
+  {
+    question: 'What is the difference between a backdoor Roth and a mega backdoor Roth?',
+    answerHtml: 'The key difference is the <b>source and amount</b> of the contribution:<br /><br /><ul><li><b>Regular Backdoor Roth:</b> Converts a non-deductible <b>traditional IRA</b> contribution (limit: $7,000 in 2026, or $8,000 if 50+) to Roth. Available to anyone regardless of income, but limited to the IRA contribution cap.</li><li><b>Mega Backdoor Roth:</b> Uses your <b>401(k) plan\'s</b> after-tax contribution space (potentially <b>$40,000+</b> depending on your elective deferral and employer match) and converts that to Roth. Far more powerful in terms of annual Roth space.</li></ul><br />The mega backdoor Roth can add <b>10x or more</b> Roth capacity compared to a regular backdoor Roth, making it one of the most powerful tax-optimization strategies available to high earners.',
+    answerText: 'A regular backdoor Roth converts a $7,000 traditional IRA contribution to Roth. A mega backdoor Roth uses your 401(k) after-tax space (potentially $40,000+) — far more powerful with 10x+ the Roth capacity.',
+  },
+  {
+    question: 'Can I do a mega backdoor Roth if I\'m self-employed?',
+    answerHtml: '<b>Yes.</b> If you have a solo 401(k) (individual 401(k)) plan, you can set it up to allow after-tax contributions and in-plan Roth conversions. The limits are the same as for employer-sponsored plans:<br /><br /><ul><li>Your <b>elective deferral</b> as an employee: $24,500 (under 50)</li><li>Your <b>employer contribution</b> as the business owner: up to 25% of compensation</li><li><b>After-tax mega space:</b> The remainder up to the 415(c) limit</li></ul><br />Many solo 401(k) providers explicitly support the mega backdoor Roth, including <b>Fidelity, Schwab, Vanguard, and Employee Fiduciary</b>. When setting up the plan, ensure you opt for the ability to make after-tax contributions and to process in-plan Roth conversions.',
+    answerText: 'Yes. Set up a solo 401(k) that allows after-tax contributions and in-plan Roth conversions. Many providers like Fidelity, Schwab, and Vanguard support this. Limits are the same as employer plans.',
+  },
+  {
+    question: 'What happens if my total 401(k) contributions exceed the 415(c) limit?',
+    answerHtml: 'If your combined <b>employee elective deferral + employer match + after-tax contributions</b> exceed the annual Section 415(c) limit, you must correct the excess to avoid IRS penalties. Here is how:<br /><br /><ol><li>The excess contributions (plus earnings) must be distributed to you by <b>April 15 of the following year</b>.</li><li>Distributed excess after-tax contributions are <b>tax-free</b> (post-tax dollars), but distributed earnings are <b>taxable as ordinary income</b> in the year distributed.</li><li>If not corrected by the deadline, the excess is subject to a <b>6% excise tax</b> each year until corrected.</li></ol><br />This is why our calculator is so important — it helps you plan exactly how much after-tax space you have available so you can avoid over-contributing. If you have multiple 401(k) plans (e.g., from multiple jobs), the limits apply <b>per person, not per plan</b>.',
+    answerText: 'Excess contributions must be distributed by April 15 of the following year to avoid a 6% excise tax. Distributed after-tax contributions are tax-free, but earnings on them are taxable as ordinary income.',
+  },
+  {
+    question: 'Should I prioritize the mega backdoor Roth over a taxable brokerage account?',
+    answerHtml: 'In almost all cases, <b>yes</b> — the mega backdoor Roth is superior to a taxable brokerage account for long-term retirement savings. Here is why:<br /><br /><ul><li><b>Tax-free growth:</b> All investment gains in a Roth account grow tax-free forever. In a taxable account, you pay capital gains tax on withdrawals.</li><li><b>Tax-free withdrawals:</b> Qualified Roth withdrawals (after 59½ and 5-year rule) are completely tax-free. Taxable account withdrawals incur capital gains tax.</li><li><b>No RMDs:</b> Roth accounts have no Required Minimum Distributions, unlike traditional 401(k)s and IRAs.</li><li><b>Flexibility:</b> Your original after-tax contributions (not earnings) can be withdrawn from a Roth IRA at any time, tax-free and penalty-free — similar to a taxable account.</li></ul><br />The only downsides are that you must have a 401(k) plan that supports the strategy, and the converted funds are generally locked until 59½ (though contributions can be withdrawn earlier). Use our <a href="/tax-gain-harvesting-calculator" class="text-link hover:underline">Tax Gain Harvesting Calculator</a> to compare the tax implications of taxable vs. Roth investing.',
+    answerText: 'Yes. The mega backdoor Roth offers tax-free growth and withdrawals, no RMDs, and contribution flexibility. It is almost always superior to a taxable brokerage account for long-term retirement savings.',
+  },
+];
+---
+
+<PageLayout
+  title="Mega Backdoor Roth Calculator — Max After-Tax 401(k) Space"
+  description="Calculate your maximum 2026 Mega Backdoor Roth 401(k) contribution space. Optimize after-tax contributions using the updated $72,000 IRS limits."
+  canonical="https://truefinancetools.com/mega-backdoor-roth-calculator"
+  ogImage="https://truefinancetools.com/og-mega-backdoor-roth-calculator.png"
+  ogImageAlt="Mega Backdoor Roth Calculator - Max After-Tax 401(k) Contribution Space"
+  pageType="website"
+  keywords="mega backdoor roth calculator, mega backdoor roth limits 2026, after tax 401k contribution calculator, mega backdoor roth rules, section 415(c) calculator, after-tax 401k limit, mega roth conversion calculator"
+>
+  <StructuredData
+    title="Mega Backdoor Roth Calculator"
+    description="Free mega backdoor Roth calculator for 2026. Calculate your maximum after-tax 401(k) contribution space using IRS Section 415(c) limits."
+    url="https://truefinancetools.com/mega-backdoor-roth-calculator"
+    toolName="Mega Backdoor Roth Calculator"
+    toolDescription="Calculate your maximum 2026 Mega Backdoor Roth 401(k) contribution space. Optimize after-tax contributions using the updated $72,000 IRS limits."
+    faqItems={toolFaqItems}
+    features={[
+      '2026 IRS Section 415(c) limit calculation',
+      'SECURE 2.0 catch-up contribution support',
+      'Visual 415(c) cap breakdown bar',
+      'Employer match percentage and fixed amount modes',
+      'Age-based limit auto-detection'
+    ]}
+  />
+
+  <!-- Hero -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Mega Backdoor Roth Calculator
+      </h1>
+      <p class="text-lg text-body">Calculate your maximum after-tax 401(k) contribution space under 2026 IRS limits.</p>
+    </div>
+  </section>
+
+  <!-- Calculator Component -->
+  <MegaBackdoorRothCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Mega Backdoor Roth Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Details</h3>
+      <p class="text-sm text-body">Input your age, salary, regular 401(k) contribution, and employer match to determine your 2026 IRS limits.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. See Your Limit Breakdown</h3>
+      <p class="text-sm text-body">The calculator separates your elective deferral from the overall Section 415(c) cap to reveal hidden after-tax space.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Optimize Your Strategy</h3>
+      <p class="text-sm text-body">Use the remaining capacity for mega backdoor Roth contributions and accelerate your path to financial independence.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is a Mega Backdoor Roth? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is a Mega Backdoor Roth?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          A <strong>Mega Backdoor Roth</strong> is a powerful retirement tax strategy that allows you to contribute far more to Roth accounts than the standard limits would otherwise allow. While regular Roth IRAs are capped at $7,000 per year (2026), the mega backdoor Roth leverages your employer's 401(k) plan to potentially put <strong>$40,000 or more</strong> into a Roth account annually.
+        </p>
+
+        <p class="mb-4">
+          The strategy works in three steps: First, you contribute the maximum regular elective deferral to your 401(k) ($24,500 for those under 50 in 2026). Then, after you receive your employer match, you contribute any remaining space up to the <strong>Section 415(c) overall limit</strong> ($72,000 for under 50) as <strong>after-tax (non-Roth) contributions</strong>. Finally, you convert those after-tax contributions to Roth — either through an in-plan Roth conversion or an in-service rollover to a Roth IRA. This combined approach can dramatically accelerate your Roth savings and long-term tax-free wealth.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Mega Backdoor Roth Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Mega Roth Space = 415(c) Limit − Employee Elective Deferral − Employer Contributions
+        </div>
+
+        <p class="mb-4 mt-4">
+          For example, if you earn $150,000, contribute $24,500 to your traditional 401(k), and receive a $6,000 employer match, your total used is $30,500. With the under-50 415(c) limit of $72,000, you have <strong>$41,500 in after-tax mega backdoor Roth space</strong> remaining. This <strong>mega backdoor Roth calculator</strong> automatically computes these numbers so you can plan your strategy with precision.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Regular Backdoor Roth vs Mega Backdoor Roth</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Factor</th>
+                <th class="p-3 font-medium text-ink">Regular Backdoor Roth</th>
+                <th class="p-3 font-medium text-ink">Mega Backdoor Roth</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Source Account</td>
+                <td class="p-3 text-body font-sans">Traditional IRA</td>
+                <td class="p-3 text-success-deep">401(k) after-tax</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Annual Limit</td>
+                <td class="p-3 text-body font-sans">$7,000</td>
+                <td class="p-3 text-success-deep">Up to $47,500+</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Income Phase-Out</td>
+                <td class="p-3 text-error">Yes (limits apply)</td>
+                <td class="p-3 text-success-deep">No income limit</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Employer Required</td>
+                <td class="p-3 text-success-deep">No</td>
+                <td class="p-3 text-body font-sans">Yes (401(k) plan)</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">Max Roth Space</td>
+                <td class="p-3 text-body font-sans">$7,000/year</td>
+                <td class="p-3 font-semibold text-success-deep">$40,000+/year</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose a Mega Backdoor Roth?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">High Earners ($150K+)</h4>
+            <p class="text-sm text-body">Phase out of direct Roth IRA contributions quickly. The mega backdoor Roth has no income limit, making it the only way to grow Roth space for high-income professionals.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">FIRE Pursuers</h4>
+            <p class="text-sm text-body">Maximizing Roth space is critical for early retirees who need a mix of taxable, tax-deferred, and tax-free accounts to manage their income in early retirement and optimize ACA subsidies.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Self-Employed with Solo 401(k)</h4>
+            <p class="text-sm text-body">Solo 401(k) plans can be set up to support after-tax contributions and in-plan Roth conversions, giving self-employed individuals access to the same mega backdoor strategy as corporate employees.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Early Retirees (Roth Ladder Users)</h4>
+            <p class="text-sm text-body">Building a large Roth balance early allows you to access contributions (not earnings) at any time, and provides a tax-free income source during the 5-year waiting period for Roth conversion ladders.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Mega Backdoor Roth Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Tax-free growth on $40,000+ per year</li>
+              <li>• No income limits (unlike regular Roth IRA)</li>
+              <li>• Contributions accessible anytime (tax/penalty-free)</li>
+              <li>• No RMDs on Roth accounts</li>
+              <li>• Complements the Roth conversion ladder strategy</li>
+              <li>• Can dramatically reduce lifetime tax burden</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Requires employer 401(k) plan support</li>
+              <li>• Earnings before conversion are taxable</li>
+              <li>• Must convert frequently to avoid taxable gains</li>
+              <li>• Employer may have waiting periods for conversions</li>
+              <li>• Admin complexity — not all plans support it</li>
+              <li>• Cannot exceed 415(c) overall limit (penalties apply)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Mega Backdoor Roth
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Mega Backdoor Roth Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>mega backdoor Roth calculator</strong> helps you unlock the single most powerful retirement tax strategy available to high earners. By leveraging the difference between the Section 415(c) overall limit and your combined employee deferral and employer match, you can contribute tens of thousands of dollars annually to a Roth account that grows completely tax-free.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose This Mega Backdoor Roth Calculator?</h3>
+
+        <p class="mb-4">
+          Unlike generic contribution limit tables, this calculator takes your <strong>personal situation</strong> — age, salary, contribution amounts, and employer match structure — and computes exactly how much after-tax space is available. It handles the SECURE 2.0 super catch-up rules (ages 60-63), the $360,000 compensation cap, and can switch between percentage-based and fixed-dollar employer matching. The visual 415(c) breakdown bar shows you at a glance how your contributions, employer match, and mega Roth space stack up against the overall limit.
+        </p>
+
+        <p class="mb-4">
+          Pair this tool with our <a href="/tax-gain-harvesting-calculator" class="text-link hover:underline">Tax Gain Harvesting Calculator</a> to compare the tax efficiency of different account types, or combine it with our <a href="/coast-fire-number" class="text-link hover:underline">Coast FIRE Number Calculator</a> to see how maximizing your Roth space accelerates your journey to financial independence.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Mega Backdoor Roth Calculator</h3>
+
+        <p class="mb-4">
+          The calculator automatically adjusts for your <strong>age</strong> using the 2026 IRS limits, including the SECURE 2.0 super catch-up for participants aged 60-63. It supports both <strong>percentage-based</strong> and <strong>fixed-dollar</strong> employer matching, shows a real-time <strong>visual breakdown</strong> of how your total contribution space is allocated, and alerts you if you exceed the elective deferral limit. Results update instantly as you adjust any input, making it easy to explore different scenarios and optimize your contribution strategy.
+        </p>
+
+        <p class="mb-4">
+          Use this tool alongside our <a href="/retirement-bucket-strategy-calculator" class="text-link hover:underline">Retirement Bucket Strategy Simulator</a> to model how your Roth accounts fit into a comprehensive distribution strategy. Start planning your mega backdoor Roth today — no signup required, completely free, and results in seconds.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Tax &amp; Retirement Tools
+      </h2>
+      <p class="mb-8 text-body">Optimize your retirement savings strategy with our free calculators.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/mega-backdoor-roth-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mega Backdoor Roth</h3>
+          <p class="text-xs text-body">Calculate your maximum after-tax 401(k) contribution space for 2026.</p>
+        </a>
+        <a href="/tax-gain-harvesting-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Tax Gain Harvesting</h3>
+          <p class="text-xs text-body">Model the long-term benefit of harvesting capital gains at the 0% rate.</p>
+        </a>
+        <a href="/hsa-shoebox-strategy-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">HSA Shoebox Strategy</h3>
+          <p class="text-xs text-body">Delay HSA reimbursements to maximize tax-free compound growth.</p>
+        </a>
+        <a href="/sepp-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">72(t) SEPP</h3>
+          <p class="text-xs text-body">Compare IRS-approved SEPP methods for penalty-free early IRA withdrawals.</p>
+        </a>
+        <a href="/72t-vs-roth-conversion-ladder-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">72(t) vs Roth Ladder</h3>
+          <p class="text-xs text-body">Compare 72(t) SEPP against a Roth Conversion Ladder strategy.</p>
+        </a>
+        <a href="/owner-earnings-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Owner Earnings</h3>
+          <p class="text-xs text-body">Warren Buffett's intrinsic value method using owner earnings.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

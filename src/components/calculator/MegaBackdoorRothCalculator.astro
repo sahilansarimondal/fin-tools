@@ -1,0 +1,375 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="mega-roth-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="mbr-form" class="space-y-4">
+          <Input
+            label="Your Age"
+            name="age"
+            type="number"
+            value={35}
+            min={18}
+            max={100}
+            step={1}
+            required
+            tooltip="Your age determines your eligibility for standard and super catch-up contributions under SECURE 2.0 rules."
+          />
+
+          <Input
+            label="Annual Salary"
+            name="salary"
+            type="number"
+            value={175000}
+            min={0}
+            max={2000000}
+            step={1000}
+            suffix="$"
+            hideArrows
+            required
+            tooltip="Your gross base income, used to compute percentage-based employer matching."
+          />
+
+          <div class="flex flex-col gap-1.5">
+            <Input
+              label="Your Regular 401(k) Contribution"
+              name="regular401k"
+              type="number"
+              value={24500}
+              min={0}
+              max={50000}
+              step={500}
+              suffix="$"
+              hideArrows
+              required
+              tooltip="Your standard pre-tax or traditional Roth 401(k) elective deferral."
+            />
+            <button
+              type="button"
+              id="mbr-max-deferral-btn"
+              class="mt-1 rounded-md bg-canvas-soft-2 px-3 py-1 text-xs font-medium text-ink transition-colors hover:bg-hairline"
+            >
+              Max It Out
+            </button>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              Employer Matching / Profit Sharing
+            </label>
+            <div class="flex gap-2">
+              <button
+                type="button"
+                id="mbr-pct-btn"
+                class="flex-1 rounded-md bg-ink px-3 py-1.5 text-xs font-medium text-canvas transition-colors"
+              >
+                % of Salary
+              </button>
+              <button
+                type="button"
+                id="mbr-fixed-btn"
+                class="flex-1 rounded-md bg-canvas-soft-2 px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-hairline"
+              >
+                Fixed $
+              </button>
+            </div>
+            <div id="mbr-employer-pct-wrapper">
+              <Slider
+                label="Employer Match"
+                name="employerMatchPct"
+                value={4}
+                min={0}
+                max={50}
+                step={0.5}
+                suffix="%"
+                inputId="mbr-employerPct"
+                displayId="mbr-employerPctValue"
+                tooltip="The total amount your company contributes via matching or non-elective profit sharing."
+              />
+            </div>
+            <div id="mbr-employer-fixed-wrapper" class="hidden">
+              <Input
+                label="Employer Match (Fixed $)"
+                name="employerMatchFixed"
+                type="number"
+                value={6000}
+                min={0}
+                max={500000}
+                step={500}
+                suffix="$"
+                hideArrows
+                tooltip="The total fixed dollar amount your company contributes."
+              />
+            </div>
+          </div>
+
+          <!-- Validation Alert -->
+          <div id="mbr-validation-alert" class="hidden rounded-lg border border-error/30 bg-error/5 p-4">
+            <p class="text-sm font-medium text-error">⚠ Contribution Exceeds Limit</p>
+            <p id="mbr-validation-message" class="mt-1 text-xs text-body"></p>
+          </div>
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Headline KPI -->
+      <div id="mbr-headline-card" class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm text-center">
+        <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Your Available Mega Backdoor Roth Capacity</p>
+        <p id="mbr-mega-space" class="text-3xl font-semibold tabular-nums text-ink sm:text-4xl">—</p>
+        <p id="mbr-mega-label" class="mt-1 text-sm text-mute">Adjust inputs to see your after-tax space</p>
+      </div>
+
+      <!-- Breakdown KPI cards (4 cards) -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Max Elective Deferral"
+          valueId="mbr-elective-deferral"
+          value="—"
+          valueClass="text-ink"
+          description="Age-based employee limit"
+        />
+        <ResultCard
+          label="Employer Contribution"
+          valueId="mbr-employer-contrib"
+          value="—"
+          valueClass="text-ink"
+          description="Match + profit sharing"
+        />
+        <ResultCard
+          label="Total Used"
+          valueId="mbr-total-used"
+          value="—"
+          valueClass="text-ink"
+          description="Employee + employer"
+        />
+        <ResultCard
+          label="Section 415(c) Limit"
+          valueId="mbr-415c-limit"
+          value="—"
+          valueClass="text-ink"
+          description="Overall 2026 cap"
+        />
+      </div>
+
+      <!-- Visual Breakdown Bar -->
+      <div class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm">
+        <h2 class="mb-4 text-sm font-medium text-ink">415(c) Limit Breakdown</h2>
+        <div class="mb-3 h-6 w-full overflow-hidden rounded-full bg-canvas-soft-2 flex">
+          <div id="mbr-bar-regular" class="h-full bg-link transition-all duration-300" style="width: 0%"></div>
+          <div id="mbr-bar-employer" class="h-full bg-success transition-all duration-300" style="width: 0%"></div>
+          <div id="mbr-bar-mega" class="h-full bg-violet transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <div class="flex flex-wrap gap-4 text-xs">
+          <span class="inline-flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 rounded-full bg-link"></span> Your Regular (<span id="mbr-bar-regular-label">0</span>)</span>
+          <span class="inline-flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 rounded-full bg-success"></span> Employer (<span id="mbr-bar-employer-label">0</span>)</span>
+          <span class="inline-flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 rounded-full bg-violet"></span> Mega Roth (<span id="mbr-bar-mega-label">0</span>)</span>
+        </div>
+      </div>
+
+      <!-- 2026 Limits Reference Table -->
+      <Card padding="lg">
+        <h2 class="mb-4 text-sm font-medium text-ink">2026 IRS Contribution Limits</h2>
+        <div id="mbr-limits-info" class="rounded-lg bg-canvas-soft p-3 text-xs text-body">
+          <p>Age-based limit: <span id="mbr-age-limit" class="font-semibold text-ink">—</span></p>
+          <p>415(c) overall cap: <span id="mbr-415c-info" class="font-semibold text-ink">—</span></p>
+          <p id="mbr-catchup-info" class="mt-1 text-mute"></p>
+          <p id="mbr-compensation-info" class="mt-1 hidden text-error"></p>
+        </div>
+      </Card>
+
+      <!-- Disclaimer -->
+      <div class="rounded-lg bg-canvas-soft p-4">
+        <p class="text-xs text-mute"><strong>Disclaimer:</strong> This calculator provides estimates based on 2026 IRS guidelines and is for educational purposes only. It does not constitute financial, tax, or investment advice. Contribution limits, eligibility rules, and tax implications vary by employer plan. Consult a qualified financial advisor or tax professional before making retirement planning decisions.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { calculateMegaBackdoorRoth, getLimitsForAge } from '../../utils/mega-backdoor-roth-calculations';
+  import { formatCurrency } from '../../utils/formatters';
+
+  var isPercentMode = true;
+
+  function getFormData() {
+    var form = document.getElementById('mbr-form');
+    var formData = new FormData(form);
+
+    var age = Number(formData.get('age')) || 35;
+    var salary = Number(formData.get('salary')) || 175000;
+    var regular401k = Number(formData.get('regular401k')) || 24500;
+
+    var employerMatchPercent = 0;
+    var employerMatchFixed = 0;
+
+    if (isPercentMode) {
+      employerMatchPercent = Number(formData.get('employerMatchPct')) || 4;
+    } else {
+      employerMatchFixed = Number(formData.get('employerMatchFixed')) || 6000;
+    }
+
+    return {
+      age: age,
+      salary: salary,
+      regular401kContribution: regular401k,
+      employerMatchPercent: employerMatchPercent,
+      employerMatchFixed: employerMatchFixed,
+      employerMatchIsPercent: isPercentMode,
+    };
+  }
+
+  function updateResults() {
+    var input = getFormData();
+    var r = calculateMegaBackdoorRoth(input);
+
+    // Headline KPI
+    var megaSpaceEl = document.getElementById('mbr-mega-space');
+    var megaLabelEl = document.getElementById('mbr-mega-label');
+    var headlineCard = document.getElementById('mbr-headline-card');
+
+    if (r.megaSpace > 0) {
+      megaSpaceEl.textContent = formatCurrency(r.megaSpace);
+      megaSpaceEl.className = 'text-3xl font-semibold tabular-nums text-success-deep sm:text-4xl';
+      megaLabelEl.textContent = 'After-tax space available for mega backdoor Roth contributions';
+      headlineCard.className = 'rounded-lg border border-success/30 bg-success/5 p-6 shadow-sm text-center';
+    } else {
+      megaSpaceEl.textContent = '$0';
+      megaSpaceEl.className = 'text-3xl font-semibold tabular-nums text-error sm:text-4xl';
+      megaLabelEl.textContent = 'No remaining after-tax capacity';
+      headlineCard.className = 'rounded-lg border border-error/30 bg-error/5 p-6 shadow-sm text-center';
+    }
+
+    // KPI cards
+    document.getElementById('mbr-elective-deferral').textContent = formatCurrency(r.maxElectiveDeferral);
+    document.getElementById('mbr-employer-contrib').textContent = formatCurrency(r.employerContribution);
+    document.getElementById('mbr-total-used').textContent = formatCurrency(r.totalUsed);
+    document.getElementById('mbr-415c-limit').textContent = formatCurrency(r.maxOverallLimit);
+
+    // Stacked bar
+    document.getElementById('mbr-bar-regular').style.width = r.regularPctOfCap + '%';
+    document.getElementById('mbr-bar-employer').style.width = r.employerPctOfCap + '%';
+    document.getElementById('mbr-bar-mega').style.width = r.megaPctOfCap + '%';
+
+    document.getElementById('mbr-bar-regular-label').textContent = formatCurrency(r.maxElectiveDeferral);
+    document.getElementById('mbr-bar-employer-label').textContent = formatCurrency(r.employerContribution);
+    document.getElementById('mbr-bar-mega-label').textContent = formatCurrency(r.megaSpace);
+
+    // Validation alert
+    var alertEl = document.getElementById('mbr-validation-alert');
+    var alertMsgEl = document.getElementById('mbr-validation-message');
+
+    if (r.isOverElectiveDeferral) {
+      alertEl.classList.remove('hidden');
+      alertMsgEl.textContent = 'Your regular 401(k) contribution (' + formatCurrency(input.regular401kContribution) + ') exceeds the age-based maximum elective deferral (' + formatCurrency(r.maxElectiveDeferral) + ').';
+    } else {
+      alertEl.classList.add('hidden');
+    }
+
+    // Limits info
+    document.getElementById('mbr-age-limit').textContent = formatCurrency(r.maxElectiveDeferral);
+    document.getElementById('mbr-415c-info').textContent = formatCurrency(r.maxOverallLimit);
+    document.getElementById('mbr-catchup-info').textContent = r.catchUpLabel !== 'None' ? 'Catch-up: ' + r.catchUpLabel : 'No catch-up contributions available at this age.';
+
+    // Compensation cap warning
+    var compInfo = document.getElementById('mbr-compensation-info');
+    if (r.compensationCapped) {
+      compInfo.classList.remove('hidden');
+      compInfo.textContent = '⚠ Compensation capped at $360,000 (2026 IRS limit). Percentage-based match is calculated on the capped amount.';
+    } else {
+      compInfo.classList.add('hidden');
+    }
+  }
+
+  function setupToggle() {
+    var pctBtn = document.getElementById('mbr-pct-btn');
+    var fixedBtn = document.getElementById('mbr-fixed-btn');
+    var pctWrapper = document.getElementById('mbr-employer-pct-wrapper');
+    var fixedWrapper = document.getElementById('mbr-employer-fixed-wrapper');
+
+    function setPercentMode() {
+      isPercentMode = true;
+      pctBtn.className = 'flex-1 rounded-md bg-ink px-3 py-1.5 text-xs font-medium text-canvas transition-colors';
+      fixedBtn.className = 'flex-1 rounded-md bg-canvas-soft-2 px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-hairline';
+      pctWrapper.classList.remove('hidden');
+      fixedWrapper.classList.add('hidden');
+      updateResults();
+    }
+
+    function setFixedMode() {
+      isPercentMode = false;
+      fixedBtn.className = 'flex-1 rounded-md bg-ink px-3 py-1.5 text-xs font-medium text-canvas transition-colors';
+      pctBtn.className = 'flex-1 rounded-md bg-canvas-soft-2 px-3 py-1.5 text-xs font-medium text-ink transition-colors hover:bg-hairline';
+      fixedWrapper.classList.remove('hidden');
+      pctWrapper.classList.add('hidden');
+      updateResults();
+    }
+
+    pctBtn.addEventListener('click', setPercentMode);
+    fixedBtn.addEventListener('click', setFixedMode);
+  }
+
+  function setupMaxDeferral() {
+    var btn = document.getElementById('mbr-max-deferral-btn');
+    var ageInput = document.querySelector('[name="age"]');
+
+    btn.addEventListener('click', function () {
+      var age = Number(ageInput.value) || 35;
+      var limits = getLimitsForAge(age);
+      var regInput = document.querySelector('[name="regular401k"]');
+      regInput.value = limits.electiveDeferral;
+      regInput.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('mbr-form');
+    if (form) {
+      form.addEventListener('input', function () {
+        updateResults();
+      });
+    }
+  }
+
+  function initSliders() {
+    var sliders = [
+      { id: 'mbr-employerPct', displayId: 'mbr-employerPctValue', suffix: '%' },
+    ];
+
+    sliders.forEach(function (s) {
+      var el = document.getElementById(s.id);
+      var display = document.getElementById(s.displayId);
+      if (el && display) {
+        el.addEventListener('input', function () {
+          display.textContent = el.value + s.suffix;
+          updateResults();
+        });
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    setupToggle();
+    setupMaxDeferral();
+    initSliders();
+    initFormListeners();
+    updateResults();
+
+    // Theme change observer
+    var observer = new MutationObserver(function () {
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
