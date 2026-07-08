@@ -1,0 +1,323 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import JisaVsBareTrustCalculator from '../../components/calculator/JisaVsBareTrustCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is the £100 rule for Bare Trusts?',
+    answerHtml: '<b>The £100 parent settlement rule</b> is an HMRC anti-avoidance measure. If a parent sets up a bare trust for their child and the annual dividend income exceeds <b>£100</b>, the <b>entire</b> dividend (not just the amount above £100) is taxed at the parent\'s marginal dividend rate:<br /><br /><ul><li><b>Basic rate (20%):</b> 8.75% dividend tax</li><li><b>Higher rate (40%):</b> 33.75% dividend tax</li><li><b>Additional rate (45%):</b> 39.35% dividend tax</li></ul><br />This is sometimes called the "parental settlement settlement" or "settlor interested" rule. It exists to prevent parents shifting investment income to children who pay less tax.',
+    answerText: 'If parents fund a bare trust and annual dividend income exceeds £100, the entire dividend is taxed at the parent\'s marginal rate (basic 8.75%, higher 33.75%, additional 39.35%). This is the "parent settlement" anti-avoidance rule.',
+  },
+  {
+    question: 'Can grandparents bypass the £100 rule?',
+    answerHtml: '<b>Yes, absolutely.</b> Gifts from grandparents (or anyone other than parents) are <b>not subject</b> to the £100 rule. Dividend income in a grandparent-funded bare trust is taxed at the <b>child\'s rate</b>, which is usually <b>0%</b> since children have their own personal allowance of £12,570.<br /><br />This is the key advantage of grandparent-funded bare trusts — the child\'s own tax-free allowances are used instead of the parent\'s. For most families, this means all dividend income is completely tax-free.',
+    answerText: 'Yes. Gifts from grandparents are not subject to the £100 rule. Dividend income is taxed at the child\'s rate, which is usually 0% (children have their own £12,570 personal allowance). This is the key advantage of grandparent-funded bare trusts.',
+  },
+  {
+    question: 'Which is better for school fees?',
+    answerHtml: '<b>Bare trusts are generally better for school fees</b> because they offer flexible access at any time. JISAs <b>cannot be accessed before age 18</b> — the money is locked away until the child\'s 18th birthday.<br /><br />Bare trusts allow trustees to withdraw funds at any time for the child\'s benefit, making them ideal for:<br /><ul><li>Private school fees (prep school through sixth form)</li><li>University costs</li><li>Extracurricular activities</li><li>Any childhood expense</li></ul><br />However, if the parent is the funder and dividends exceed £100/year, the tax drag may outweigh the flexibility benefit.',
+    answerText: 'Bare trusts are better for school fees because JISAs cannot be accessed before age 18. Bare trusts offer flexible access at any time for school fees, university costs, or other childhood expenses.',
+  },
+  {
+    question: 'What is the JISA annual contribution limit?',
+    answerHtml: 'The Junior ISA annual allowance is <b>£9,000</b> for the 2024/25 and 2025/26 tax years. This includes both Cash JISA and Stocks & Shares JISA combined — you cannot contribute £9,000 to each type.<br /><br />Key points:<br /><ul><li>Contributions above £9,000 will not count toward the tax-free wrapper</li><li>Each parent can contribute up to £9,000 — but the total across all JISAs for one child must stay under £9,000</li><li>The limit resets each tax year (6 April to 5 April)</li><li>Unused allowance does <b>not</b> carry over to the next year</li></ul>',
+    answerText: 'The JISA annual limit is £9,000 for 2024/25 and 2025/26. This covers both Cash JISA and Stocks & Shares JISA combined. Unused allowance does not carry over.',
+  },
+  {
+    question: 'How does dividend tax drag affect Bare Trust growth?',
+    answerHtml: 'When a parent-funded bare trust generates dividends above £100/year, the <b>entire dividend</b> is taxed at the parent\'s marginal rate. Over 18 years, this creates significant <b>"tax drag"</b> — reducing compound growth.<br /><br /><b>Example at Higher Rate (33.75%):</b><br />• 2% dividend yield on £100,000 = £2,000 dividends<br />• Tax: £2,000 × 33.75% = <b>£675/year</b> lost to HMRC<br />• Over 18 years at 7% growth: <b>£20,000+</b> in lost compound growth<br /><br />Meanwhile, the same investment in a JISA would generate <b>zero</b> tax. This is why the tax drag calculation is critical for long-term planning.',
+    answerText: 'When dividends exceed £100/year in a parent-funded bare trust, the entire dividend is taxed at the parent\'s marginal rate. Over 18 years, this creates significant tax drag. At 33.75%, a 2% yield on £100K loses £675/year, compounding to £20K+ in lost growth.',
+  },
+  {
+    question: 'What happens when the child turns 18?',
+    answerHtml: '<b>With a JISA:</b> The child gains full control at 18. They can withdraw the money, transfer it to an adult ISA, or leave it invested. It becomes their money with no restrictions.<br /><br /><b>With a Bare Trust:</b> The child also gains full control at 18 (the "beneficiary\'s vesting age"). They can demand the trustees transfer the assets to them. The bare trust effectively ends — the child owns everything outright.<br /><br /><b>Both</b> are effectively the child\'s money from age 18. The difference is in <b>what happens before 18</b>: JISAs are locked, bare trusts are accessible.',
+    answerText: 'With a JISA, the child gains full control at 18 and can withdraw or continue the ISA. With a Bare Trust, the child can demand the assets be transferred to them. Both are effectively the child\'s money from age 18.',
+  },
+];
+---
+
+<PageLayout
+  title="JISA vs Bare Trust Calculator — UK Tax & Growth Comparison"
+  description="Compare a Junior ISA vs Bare Trust for UK families. Calculate the impact of the £100 parent settlement rule, dividend drag, and the £9,000 JISA limit on your child's wealth."
+  canonical="https://truefinancetools.com/jisa-vs-bare-trust-calculator"
+  ogImage="https://truefinancetools.com/og-jisa-vs-bare-trust-calculator.png"
+  ogImageAlt="JISA vs Bare Trust Calculator — UK Tax & Growth Comparison"
+  pageType="website"
+  keywords="jisa calculator, bare trust calculator, junior isa vs bare trust, uk child savings, £100 parent rule, hmrc dividend tax, jisa vs bare trust uk, child investment account uk"
+>
+  <StructuredData
+    title="JISA vs Bare Trust Calculator"
+    description="Compare a Junior ISA vs Bare Trust for UK families. Calculate the impact of the £100 parent settlement rule, dividend drag, and the £9,000 JISA limit on your child's wealth."
+    url="https://truefinancetools.com/jisa-vs-bare-trust-calculator"
+    toolName="JISA vs Bare Trust Calculator"
+    toolDescription="Compare tax-free Junior ISA growth against Bare Trust dividends taxed at your rate. See exactly how much the £100 parent rule costs you."
+    faqItems={toolFaqItems}
+    features={[
+      'JISA vs Bare Trust side-by-side projection',
+      '£100 parent settlement rule tax impact',
+      'Dividend tax drag modelling',
+      'Interactive growth comparison chart',
+      'Parent vs grandparent funder comparison',
+      'Annual JISA limit tracking'
+    ]}
+  />
+
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        JISA vs Bare Trust Calculator
+      </h1>
+      <p class="text-lg text-body">Compare tax-free Junior ISA growth against Bare Trust dividends taxed at your rate. See exactly how much the £100 parent rule costs you.</p>
+    </div>
+  </section>
+
+  <JisaVsBareTrustCalculator />
+
+  <HowItWorks title="How the JISA vs Bare Trust Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Investment Details</h3>
+      <p class="text-sm text-body">Input your initial lump sum, monthly contributions, expected growth rate, and dividend yield.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Select Funder & Tax Bracket</h3>
+      <p class="text-sm text-body">Choose whether a parent or grandparent is funding, and select the appropriate income tax band.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See the Tax Impact</h3>
+      <p class="text-sm text-body">Instantly compare final values, dividend tax lost, and see the growth divergence on an interactive chart.</p>
+    </div>
+  </HowItWorks>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is JISA vs Bare Trust?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          A <strong>JISA (Junior Individual Savings Account)</strong> is a UK tax-free savings wrapper for children with a £9,000 annual limit. All growth, dividends, and interest inside a JISA are completely free from UK tax. The money is locked until the child turns 18.
+        </p>
+
+        <p class="mb-4">
+          A <strong>Bare Trust</strong> is a simple legal arrangement where investments are held by trustees for a child's benefit. There is no contribution limit, but dividend income may be taxed — and this is where the critical difference lies.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Parent Settlement Rule Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          If Parent Funder AND Dividend &gt; £100:<br />
+          Tax = ENTIRE Dividend × Parent's Dividend Tax Rate<br />
+          <br />
+          Dividend Tax Rates: Basic 8.75% | Higher 33.75% | Additional 39.35%
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">JISA vs Bare Trust Comparison</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Feature</th>
+                <th class="p-3 font-medium text-ink">JISA</th>
+                <th class="p-3 font-medium text-ink">Bare Trust</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 font-sans text-body">Annual contribution limit</td>
+                <td class="p-3 text-ink">£9,000</td>
+                <td class="p-3 text-ink">None</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 font-sans text-body">Dividend tax</td>
+                <td class="p-3 text-success-deep">£0</td>
+                <td class="p-3 text-ink">0%–39.35% (depends on funder)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 font-sans text-body">Access before 18</td>
+                <td class="p-3 text-ink">Locked</td>
+                <td class="p-3 text-success-deep">Flexible</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 font-sans text-body">Parent funding restricted</td>
+                <td class="p-3 text-ink">No</td>
+                <td class="p-3 text-error">Yes (£100 rule)</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">Best for</td>
+                <td class="p-3 text-success-deep font-semibold">Long-term tax-free growth</td>
+                <td class="p-3 text-ink font-semibold">School fees / early access</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose Which?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Parents Wanting Tax-Free Growth</h4>
+            <p class="text-sm text-body">If you can stay within the £9,000 limit and don't need the money before 18, the JISA is unbeatable — zero tax on all growth and dividends.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Grandparents Funding</h4>
+            <p class="text-sm text-body">Grandparent-funded bare trusts avoid the £100 rule entirely. Dividends are taxed at the child's rate (usually 0%), making bare trusts just as tax-efficient as JISAs.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Need Access Before 18</h4>
+            <p class="text-sm text-body">If you may need funds for school fees, university, or other childhood expenses, a bare trust provides flexible access. JISAs are completely locked until age 18.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Maximising Long-Term Growth</h4>
+            <p class="text-sm text-body">For pure wealth accumulation, a JISA with higher contributions (up to £9,000/year) and zero tax drag will generally outperform a parent-funded bare trust over 18 years.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">JISA vs Bare Trust Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">JISA Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Completely tax-free growth and dividends</li>
+              <li>• No reporting requirements for parents</li>
+              <li>• Simple to set up with most banks</li>
+              <li>• Up to £9,000/year in tax-free contributions</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">JISA Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Locked until age 18 — no early access</li>
+              <li>• £9,000 annual contribution limit</li>
+              <li>• Child gains full control at 18</li>
+              <li>• Cannot be used for school fees</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Bare Trust Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• No contribution limit</li>
+              <li>• Flexible access for school fees and expenses</li>
+              <li>• Grandparent funding = 0% dividend tax</li>
+              <li>• Simple legal structure</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Bare Trust Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Parent-funded dividends over £100 taxed</li>
+              <li>• Requires self-assessment if dividend &gt; £100</li>
+              <li>• Child owns assets outright at 18</li>
+              <li>• Dividend tax drag reduces compound growth</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About JISA vs Bare Trust
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to JISA vs Bare Trust Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>JISA vs Bare Trust calculator</strong> is the most comprehensive free tool available for UK families comparing these two child savings strategies. Unlike generic savings calculators, this tool specifically models the £100 parent settlement rule, dividend tax drag, and the £9,000 JISA contribution limit — giving you a true side-by-side comparison.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Compare JISA vs Bare Trust?</h3>
+
+        <p class="mb-4">
+          The choice between a JISA and a Bare Trust is one of the most important financial decisions UK parents make for their children. The right answer depends on who is funding, how much you want to contribute, whether you need access before 18, and your income tax bracket. A parent at the higher rate (40%) funding a bare trust with a 2% dividend yield on £100,000 loses £675 per year in dividend tax — compounding to over £20,000 in lost growth over 18 years. Meanwhile, a grandparent funding the same bare trust would pay zero tax on those dividends.
+        </p>
+
+        <p class="mb-4">
+          This <strong>UK child savings calculator</strong> makes these trade-offs visible instantly. Adjust the funder type, tax bracket, and contribution amounts to see exactly how the numbers shift. The interactive chart shows the divergence between JISA and Bare Trust growth over time, making the tax drag effect unmistakable.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Calculator</h3>
+
+        <p class="mb-4">
+          Unlike other <strong>UK child savings calculators</strong> that treat all accounts equally, our tool specifically models the HMRC parent settlement rule. The calculation engine applies dividend tax to the entire dividend amount (not just the portion above £100) when a parent funds a bare trust, matching actual HMRC treatment. The JISA projection is capped at the £9,000 annual limit, while the bare trust accepts unlimited contributions — giving you an accurate comparison of both vehicles.
+        </p>
+
+        <p class="mb-4">
+          Toggle between parent and grandparent funding to see the dramatic impact on bare trust tax efficiency. Switch tax brackets to model different income scenarios. The chart updates in real-time as you adjust any input, showing you the crossover points and divergence between the two strategies. No signup required, completely private, and results in seconds.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other UK Tools
+      </h2>
+      <p class="mb-8 text-body">UK-specific calculators for tax planning, pensions, and student loans.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/jisa-vs-bare-trust-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">JISA vs Bare Trust</h3>
+          <p class="text-xs text-body">Compare a Junior ISA against a Bare Trust with UK dividend tax rules and the £100 parent settlement rule.</p>
+        </a>
+        <a href="/mortgage-overpayment-vs-investing-calculator-uk" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mortgage Overpayment vs ISA (UK)</h3>
+          <p class="text-xs text-body">Compare overpaying your mortgage against investing in a stocks &amp; shares ISA.</p>
+        </a>
+        <a href="/lisa-vs-workplace-pension-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">LISA vs Workplace Pension (UK)</h3>
+          <p class="text-xs text-body">Compare a Lifetime ISA against a workplace pension for retirement savings.</p>
+        </a>
+        <a href="/sipp-drawdown-tax-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">SIPP Drawdown Tax (UK)</h3>
+          <p class="text-xs text-body">Model your SIPP drawdown strategy with UK tax bands and 25% tax-free cash.</p>
+        </a>
+        <a href="/uk-redundancy-tax-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">UK Redundancy Tax</h3>
+          <p class="text-xs text-body">Calculate your net take-home pay after redundancy with the £30,000 tax-free exemption.</p>
+        </a>
+        <a href="/plan-5-student-loan-repayment-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Plan 5 Student Loan (UK)</h3>
+          <p class="text-xs text-body">Calculate your UK Plan 5 student loan repayments using the new £25,000 threshold.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

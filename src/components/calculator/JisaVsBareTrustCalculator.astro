@@ -1,0 +1,375 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="jbt-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="jbt-form" class="space-y-4">
+          <Input
+            label="Initial Investment"
+            name="initialInvestment"
+            type="number"
+            value={5000}
+            min={0}
+            max={1000000}
+            step={500}
+            suffix="£"
+            hideArrows
+            required
+            tooltip="The lump sum you are starting with."
+          />
+
+          <Input
+            label="Monthly Contribution"
+            name="monthlyContribution"
+            type="number"
+            value={200}
+            min={0}
+            max={10000}
+            step={50}
+            suffix="£"
+            hideArrows
+            required
+            tooltip="How much you plan to add every month."
+          />
+
+          <Slider
+            label="Annual Growth Rate"
+            name="annualGrowthRate"
+            value={5}
+            min={1}
+            max={15}
+            step={0.5}
+            suffix="%"
+            inputId="jbt-annualGrowthRate"
+            displayId="jbt-annualGrowthRateValue"
+            tooltip="Expected annual capital growth."
+          />
+
+          <Slider
+            label="Dividend Yield"
+            name="dividendYield"
+            value={2}
+            min={0}
+            max={10}
+            step={0.5}
+            suffix="%"
+            inputId="jbt-dividendYield"
+            displayId="jbt-dividendYieldValue"
+            tooltip="Expected annual dividend payout (crucial for tax calculations)."
+          />
+
+          <div class="flex flex-col gap-1.5">
+            <label class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              Who is funding this?
+              <span class="group relative inline-flex shrink-0">
+                <span class="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full bg-hairline text-[10px] font-semibold leading-none text-mute transition-colors hover:bg-hairline-strong hover:text-ink" aria-label="HMRC applies strict tax rules if parents fund the account.">?</span>
+                <span class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 rounded-lg border border-hairline bg-canvas px-3 py-2 text-xs leading-relaxed text-body opacity-0 shadow-lg transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100" role="tooltip">
+                  HMRC applies strict tax rules if parents fund the account.
+                  <span class="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-hairline"></span>
+                </span>
+              </span>
+            </label>
+            <div class="flex gap-3">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="funder" value="parent" checked class="accent-ink" />
+                <span class="text-sm text-ink">Parent</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="radio" name="funder" value="grandparent" class="accent-ink" />
+                <span class="text-sm text-ink">Grandparent / Other Relative</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="jbt-tax-bracket-group" class="flex flex-col gap-1.5">
+            <label class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              Funder's Tax Bracket
+              <span class="group relative inline-flex shrink-0">
+                <span class="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full bg-hairline text-[10px] font-semibold leading-none text-mute transition-colors hover:bg-hairline-strong hover:text-ink" aria-label="Your income tax band determines the dividend tax rate on Bare Trust income above £100.">?</span>
+                <span class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 rounded-lg border border-hairline bg-canvas px-3 py-2 text-xs leading-relaxed text-body opacity-0 shadow-lg transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100" role="tooltip">
+                  Your income tax band determines the dividend tax rate on Bare Trust income above £100.
+                  <span class="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-hairline"></span>
+                </span>
+              </span>
+            </label>
+            <select
+              id="jbt-parentTaxBracket"
+              name="parentTaxBracket"
+              class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
+            >
+              <option value="basic">Basic Rate (20%)</option>
+              <option value="higher" selected>Higher Rate (40%)</option>
+              <option value="additional">Additional Rate (45%)</option>
+            </select>
+          </div>
+
+          <Slider
+            label="Years to Grow"
+            name="yearsToGrow"
+            value={18}
+            min={1}
+            max={18}
+            step={1}
+            suffix=" years"
+            inputId="jbt-yearsToGrow"
+            displayId="jbt-yearsToGrowValue"
+            tooltip="How many years until the child reaches 18."
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Warning banner -->
+      <div id="jbt-limit-warning" class="hidden rounded-lg border border-error/30 bg-error/5 p-4">
+        <p class="text-sm font-medium text-error">Exceeds JISA Limit</p>
+        <p class="mt-1 text-xs text-body">Your contributions exceed the £9,000 annual JISA limit. The JISA projection is capped, while the Bare Trust projection includes your full investment.</p>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="grid gap-4 sm:grid-cols-3">
+        <ResultCard
+          label="Final JISA Value"
+          valueId="jbt-jisa-value"
+          value="—"
+          valueClass="text-success-deep"
+          description="Tax-free at age 18"
+        />
+        <ResultCard
+          label="Final Bare Trust Value"
+          valueId="jbt-bare-trust-value"
+          value="—"
+          valueClass="text-ink"
+          description="After dividend tax"
+        />
+        <ResultCard
+          label="Total Tax Lost to HMRC"
+          valueId="jbt-tax-lost"
+          value="—"
+          valueClass="text-error"
+          description="Dividend tax drag"
+        />
+      </div>
+
+      <!-- Chart -->
+      <Card padding="lg">
+        <h2 class="mb-4 text-sm font-medium text-ink">Growth Comparison Over Time</h2>
+        <div class="relative h-64 sm:h-80">
+          <canvas id="jbt-chart"></canvas>
+        </div>
+      </Card>
+    </div>
+  </div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+<script>
+  import { calculateJisaVsBareTrust } from '../../utils/jisa-bare-trust-calculations';
+  import { formatGBP } from '../../utils/formatters';
+
+  var chartInstance: any = null;
+
+  function getFormData() {
+    var form = document.getElementById('jbt-form') as HTMLFormElement;
+    var formData = new FormData(form);
+
+    return {
+      initialInvestment: Number(formData.get('initialInvestment')) || 5000,
+      monthlyContribution: Number(formData.get('monthlyContribution')) || 200,
+      annualGrowthRate: Number(formData.get('annualGrowthRate')) || 5,
+      dividendYield: Number(formData.get('dividendYield')) || 2,
+      funder: (formData.get('funder') as string) || 'parent',
+      parentTaxBracket: (formData.get('parentTaxBracket') as string) || 'higher',
+      yearsToGrow: Number(formData.get('yearsToGrow')) || 18,
+    };
+  }
+
+  function updateChart(yearData: any[]) {
+    var isDark = document.documentElement.classList.contains('dark');
+    var labels = yearData.map(function (d) { return 'Year ' + d.year; });
+    var jisaData = yearData.map(function (d) { return d.jisaBalance; });
+    var bareTrustData = yearData.map(function (d) { return d.bareTrustBalance; });
+
+    var jisaColor = isDark ? '#22c55e' : '#16a34a';
+    var bareTrustColor = isDark ? '#3b82f6' : '#2563eb';
+    var gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+    var textColor = isDark ? '#a1a1aa' : '#71717a';
+
+    var canvas = document.getElementById('jbt-chart') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    if (chartInstance) {
+      chartInstance.destroy();
+    }
+
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    chartInstance = new (window as any).Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'JISA Balance',
+            data: jisaData,
+            borderColor: jisaColor,
+            backgroundColor: jisaColor + '18',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            borderWidth: 2.5,
+          },
+          {
+            label: 'Bare Trust Balance',
+            data: bareTrustData,
+            borderColor: bareTrustColor,
+            backgroundColor: bareTrustColor + '18',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            borderWidth: 2.5,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              color: textColor,
+              font: { family: 'Inter, sans-serif', size: 12 },
+              usePointStyle: true,
+              padding: 16,
+            },
+          },
+          tooltip: {
+            backgroundColor: isDark ? '#27272a' : '#ffffff',
+            titleColor: isDark ? '#fafafa' : '#18181b',
+            bodyColor: isDark ? '#a1a1aa' : '#71717a',
+            borderColor: isDark ? '#3f3f46' : '#e4e4e7',
+            borderWidth: 1,
+            padding: 12,
+            displayColors: true,
+            callbacks: {
+              label: function (context: any) {
+                return context.dataset.label + ': ' + formatGBP(context.parsed.y);
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            ticks: { color: textColor, font: { size: 10 }, maxRotation: 45 },
+            grid: { color: gridColor },
+          },
+          y: {
+            ticks: {
+              color: textColor,
+              font: { size: 10 },
+              callback: function (value: any) {
+                return formatGBP(value);
+              },
+            },
+            grid: { color: gridColor },
+          },
+        },
+      },
+    });
+  }
+
+  function updateResults() {
+    var input = getFormData();
+    var r = calculateJisaVsBareTrust(input);
+
+    document.getElementById('jbt-jisa-value')!.textContent = formatGBP(r.finalJisaValue);
+    document.getElementById('jbt-bare-trust-value')!.textContent = formatGBP(r.finalBareTrustValue);
+    document.getElementById('jbt-tax-lost')!.textContent = formatGBP(r.totalTaxLost);
+
+    var warning = document.getElementById('jbt-limit-warning')!;
+    if (r.exceedsJisaLimit) {
+      warning.classList.remove('hidden');
+    } else {
+      warning.classList.add('hidden');
+    }
+
+    updateChart(r.yearData);
+  }
+
+  function initSliders() {
+    var sliders = [
+      { id: 'jbt-annualGrowthRate', displayId: 'jbt-annualGrowthRateValue', suffix: '%' },
+      { id: 'jbt-dividendYield', displayId: 'jbt-dividendYieldValue', suffix: '%' },
+      { id: 'jbt-yearsToGrow', displayId: 'jbt-yearsToGrowValue', suffix: ' years' },
+    ];
+
+    sliders.forEach(function (s) {
+      var el = document.getElementById(s.id) as HTMLInputElement;
+      var display = document.getElementById(s.displayId);
+      if (el && display) {
+        el.addEventListener('input', function () {
+          display.textContent = el.value + s.suffix;
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFunderToggle() {
+    var radios = document.querySelectorAll('input[name="funder"]');
+    var taxGroup = document.getElementById('jbt-tax-bracket-group')!;
+
+    radios.forEach(function (radio) {
+      radio.addEventListener('change', function () {
+        var val = (radio as HTMLInputElement).value;
+        if (val === 'grandparent') {
+          taxGroup.classList.add('hidden');
+        } else {
+          taxGroup.classList.remove('hidden');
+        }
+        updateResults();
+      });
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('jbt-form');
+    if (form) {
+      form.addEventListener('input', function () {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initSliders();
+    initFunderToggle();
+    initFormListeners();
+    updateResults();
+
+    var observer = new MutationObserver(function () {
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
