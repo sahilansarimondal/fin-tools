@@ -1,0 +1,300 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import RsuSellToCoverCalculator from '../../components/calculator/RsuSellToCoverCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'Does the sell-to-cover method trigger capital gains tax?',
+    answerHtml: '<b>No.</b> At vesting, the value of your RSUs is taxed as <b>ordinary income</b> (W-2 wages), not capital gains. Capital gains tax only applies to any growth that occurs <b>after</b> the vesting date. For example, if your RSUs vest at $150/share and you later sell them at $180/share, you owe capital gains on the $30 gain. But the initial $150 is taxed as regular income at your marginal rate.',
+    answerText: 'No. At vesting, RSU value is taxed as ordinary income. Capital gains only apply to growth after the vesting date.',
+  },
+  {
+    question: 'Why do I owe more taxes at the end of the year on my RSUs?',
+    answerHtml: 'Employers typically withhold RSU income at a <b>flat 22% federal rate</b> (or 37% if over $1M). However, if your total household income pushes you into a <b>24%, 32%, or higher marginal tax bracket</b>, that 22% withholding was not enough. The difference between the flat 22% and your actual marginal rate is what you owe in April. For example, if your marginal rate is 32%, you may owe an additional ~10% on the RSU value at tax time.',
+    answerText: 'Employers withhold at a flat 22% federal rate. If your marginal bracket is higher (24%, 32%, 35%), you owe the difference at tax time.',
+  },
+  {
+    question: 'What happens to the fractional shares?',
+    answerHtml: 'Brokerages can only sell <b>whole shares</b> to cover taxes. If your tax bill requires selling 34.7 shares, the broker rounds up and sells <b>35 whole shares</b>. The difference between the tax owed and the sale price of that extra share is refunded to you as cash — either in your brokerage account or as a cash payment. This calculator shows you exactly how much that fractional cash refund will be.',
+    answerText: 'Brokers round up to the nearest whole share. The excess cash from rounding up is refunded to you.',
+  },
+  {
+    question: 'How is Social Security tax calculated on RSU vests?',
+    answerHtml: 'Social Security (FICA) tax is <b>6.2%</b> on wages up to the annual Social Security wage base (approximately $168,600 for 2024). If your base salary plus bonuses and this RSU vest already exceed that cap, you owe <b>0% additional Social Security tax</b> on the RSU income. If you have not hit the cap yet, the full 6.2% applies. Use the toggle in this calculator to reflect your situation.',
+    answerText: '6.2% applies if you haven\'t hit the annual SS wage cap (~$168,600). If you have, no additional SS tax on RSU income.',
+  },
+  {
+    question: 'Is the 0.9% Additional Medicare Tax included?',
+    answerHtml: 'This calculator uses the <b>standard 1.45% Medicare tax</b> and does not include the 0.9% Additional Medicare Tax surcharge. The surcharge applies to individuals earning over $200,000 (single) or $250,000 (married filing jointly) and is calculated on your total earned income for the year, not just the RSU vest. For most employees, this calculator provides a good estimate, but high earners should consult a tax professional.',
+    answerText: 'No. This calculator uses the standard 1.45% Medicare rate. The 0.9% surcharge applies to high earners ($200K+ single) and is calculated on total annual income.',
+  },
+  {
+    question: 'Can I choose not to sell shares to cover taxes?',
+    answerHtml: 'In most cases, <b>no</b>. When RSUs vest, your employer is legally required to withhold taxes. The default and most common mechanism is <b>sell-to-cover</b>, where the broker automatically sells shares. Some employers offer a <b>same-day sale</b> (sell all shares) or allow you to pay the withholding in cash from an external account, but this is less common. Check with your payroll or equity compensation department for your specific options.',
+    answerText: 'Usually no. Employers must withhold taxes on vesting. Most default to sell-to-cover. Some allow cash payment, but this is uncommon.',
+  },
+];
+---
+
+<PageLayout
+  title="RSU Sell-to-Cover Tax Calculator — Equity Withholding Estimator"
+  description="Calculate how many RSU shares your employer will sell to cover taxes upon vesting. Free sell-to-cover calculator for federal, state, and FICA withholding."
+  canonical="https://truefinancetools.com/rsu-sell-to-cover-tax-calculator"
+  ogImage="https://truefinancetools.com/og-rsu-sell-to-cover-tax-calculator.png"
+  ogImageAlt="RSU Sell-to-Cover Tax Calculator — See How Many Shares You Actually Keep"
+  pageType="website"
+  keywords="RSU calculator, RSU sell to cover, restricted stock units tax, RSU withholding calculator, equity compensation tax, stock vesting tax, RSU tax estimator, sell to cover RSU"
+>
+
+  <StructuredData
+    title="RSU Sell-to-Cover Tax Calculator"
+    description="Free RSU sell-to-cover tax calculator for US equity compensation. Estimate federal, state, and FICA withholding on RSU vesting."
+    url="https://truefinancetools.com/rsu-sell-to-cover-tax-calculator"
+    toolName="RSU Sell-to-Cover Tax Calculator"
+    toolDescription="Estimate how many RSU shares your brokerage will sell to cover taxes when your restricted stock units vest. See your net shares and cash refund."
+    faqItems={toolFaqItems}
+    features={[
+      'Federal, state, and FICA tax withholding calculation',
+      'Sell-to-cover whole-share rounding logic',
+      'Fractional cash refund estimation',
+      'Social Security wage cap toggle',
+      'Detailed tax breakdown table'
+    ]}
+  />
+
+  <!-- Hero -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        RSU Sell-to-Cover Tax Calculator
+      </h1>
+      <p class="text-lg text-body">See exactly how many shares you keep after your employer sells to cover federal, state, and FICA taxes.</p>
+    </div>
+  </section>
+
+  <!-- Calculator Component -->
+  <RsuSellToCoverCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the RSU Sell-to-Cover Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Vest Details</h3>
+      <p class="text-sm text-body">Input the number of RSUs vesting, the share price on vest date, and your federal and state withholding rates.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125V9M7.5 12h6m-6 3h6" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Apply Tax Withholding</h3>
+      <p class="text-sm text-body">The calculator applies the IRS flat supplemental rate (22% or 37%), plus state tax, Social Security (6.2%), and Medicare (1.45%).</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See Your Net Shares</h3>
+      <p class="text-sm text-body">View how many whole shares the broker sells, your fractional cash refund, and the net shares delivered to your account.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is RSU Sell-to-Cover? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is RSU Sell-to-Cover?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>RSU sell-to-cover</strong> is the default tax withholding mechanism used by most public companies when Restricted Stock Units (RSUs) vest. When your RSUs vest, the value is taxed as ordinary income — even if you never sell a single share. Because the IRS requires your employer to withhold taxes immediately, the brokerage automatically sells enough whole shares to cover the federal, state, and FICA tax bill, then delivers the remaining shares to your account.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The RSU Sell-to-Cover Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Gross Income = Shares Vesting × Share Price<br />
+          Total Withholding = Federal + State + Social Security + Medicare<br />
+          Shares Sold = ⌈Total Withholding ÷ Share Price⌉  (rounded up to whole share)<br />
+          Net Shares = Shares Vesting − Shares Sold
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">RSU Sell-to-Cover vs Same-Day Sale</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Factor</th>
+                <th class="p-3 font-medium text-ink">Sell-to-Cover</th>
+                <th class="p-3 font-medium text-ink">Same-Day Sale</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Default Method</td>
+                <td class="p-3 text-success-deep">Yes (most common)</td>
+                <td class="p-3 text-body font-sans">Optional</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Shares Retained</td>
+                <td class="p-3 text-success-deep">Yes — net shares stay in account</td>
+                <td class="p-3 text-body font-sans">No — all shares sold</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Cash Out of Pocket</td>
+                <td class="p-3 text-success-deep">None</td>
+                <td class="p-3 text-body font-sans">You receive full cash value</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Tax Timing</td>
+                <td class="p-3 text-body font-sans">Same (ordinary income at vest)</td>
+                <td class="p-3 text-body font-sans">Same (ordinary income at vest)</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">Best For</td>
+                <td class="p-3 font-semibold text-success-deep">Long-term holders</td>
+                <td class="p-3 font-semibold text-ink">Those wanting immediate cash</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose Sell-to-Cover?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Long-Term Equity Holders</h4>
+            <p class="text-sm text-body">You want to keep as many shares as possible and let them appreciate. Sell-to-cover lets you retain the maximum number of shares while meeting your tax obligation.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Employees at High-Growth Companies</h4>
+            <p class="text-sm text-body">If you believe your company's stock will appreciate significantly, keeping net shares instead of selling all of them lets you capture that upside.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">FIRE Community &amp; Early Retirees</h4>
+            <p class="text-sm text-body">RSU vests are a wealth-building event. Pair this calculator with our FIRE tools to see how your equity compensation accelerates your path to financial independence.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Anyone Wanting Clarity</h4>
+            <p class="text-sm text-body">Not sure how many shares you'll actually receive? This calculator removes the guesswork so you can plan around your real take-home equity.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">RSU Sell-to-Cover Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• No out-of-pocket cash needed for taxes</li>
+              <li>• Maximum shares retained for future growth</li>
+              <li>• Automatic — handled by your broker</li>
+              <li>• Simple and predictable process</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Brokerage sells whole shares (may overshoot tax bill slightly)</li>
+              <li>• Does not account for your actual marginal tax rate</li>
+              <li>• No control over which specific shares are sold</li>
+              <li>• Cash refund may take a few business days</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About RSU Sell-to-Cover
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to RSU Sell-to-Cover Tax Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>RSU sell-to-cover tax calculator</strong> is the most straightforward way to understand what happens when your restricted stock units vest. Unlike generic stock calculators, this tool models the exact sell-to-cover mechanics that brokerages use — including the whole-share rounding rule that most employees do not realize exists.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose Sell-to-Cover?</h3>
+
+        <p class="mb-4">
+          The sell-to-cover method is the default for a reason: it requires zero action from you. Your employer handles the tax withholding, the broker executes the share sale, and you receive the net shares in your account. This calculator gives you full transparency into that process, showing you exactly how many shares will be sold, how much tax each category absorbs, and what you actually walk away with.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This RSU Sell-to-Cover Calculator</h3>
+
+        <p class="mb-4">
+          This calculator handles the most common US tax withholding scenario: federal supplemental rate (22% or 37%), state withholding (0–15%), Social Security (6.2% with wage cap toggle), and Medicare (1.45%). It models the critical whole-share rounding that brokerages must follow, and shows the fractional cash refund from overshooting the tax bill.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Tax & Equity Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Tax &amp; Equity Tools
+      </h2>
+      <p class="mb-8 text-body">Optimize your equity compensation and tax strategy with our free calculators.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/rsu-sell-to-cover-tax-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">RSU Sell-to-Cover</h3>
+          <p class="text-xs text-body">Understand exactly how many shares you keep after your employer withholds taxes.</p>
+        </a>
+        <a href="/tax-gain-harvesting-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Tax Gain Harvesting</h3>
+          <p class="text-xs text-body">Harvest capital gains at the 0% federal rate to reduce your tax bill.</p>
+        </a>
+        <a href="/dividend-tax-drag-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Dividend Tax Drag</h3>
+          <p class="text-xs text-body">Model how taxes on dividend income erode your portfolio growth over time.</p>
+        </a>
+        <a href="/owner-earnings-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Owner Earnings</h3>
+          <p class="text-xs text-body">Calculate Warren Buffett's intrinsic value using owner earnings and the 10-cap rate.</p>
+        </a>
+        <a href="/mega-backdoor-roth-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mega Backdoor Roth</h3>
+          <p class="text-xs text-body">Maximize your Roth savings with after-tax 401(k) contributions and in-plan conversions.</p>
+        </a>
+        <a href="/aca-subsidy-cliff-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">ACA Subsidy Cliff</h3>
+          <p class="text-xs text-body">Find the MAGI sweet spot for ACA premium tax credit eligibility.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

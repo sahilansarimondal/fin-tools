@@ -1,0 +1,294 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="rsu-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="rsu-form" class="space-y-4">
+          <Input
+            label="Shares Vesting"
+            name="sharesVesting"
+            type="number"
+            value={100}
+            min={1}
+            max={100000}
+            step={1}
+            suffix=""
+            hideArrows
+            required
+            tooltip="The gross number of Restricted Stock Units vesting in this tranche."
+          />
+
+          <Input
+            label="Share Price on Vest Date"
+            name="sharePrice"
+            type="number"
+            value={150}
+            min={0.01}
+            max={10000}
+            step={0.01}
+            suffix="$"
+            hideArrows
+            required
+            tooltip="The Fair Market Value (FMV) of the stock on the day it vests."
+          />
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-medium text-ink">Federal Withholding Rate</label>
+            <span class="group relative inline-flex shrink-0 self-start">
+              <span class="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full bg-hairline text-[10px] font-semibold leading-none text-mute transition-colors hover:bg-hairline-strong hover:text-ink" aria-label="RSUs are taxed as supplemental wage income. The IRS mandates a flat 22% withholding up to $1M, and 37% above that.">?</span>
+              <span class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 rounded-lg border border-hairline bg-canvas px-3 py-2 text-xs leading-relaxed text-body opacity-0 shadow-lg transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100" role="tooltip">
+                RSUs are taxed as supplemental wage income. The IRS mandates a flat 22% withholding up to $1M, and 37% above that.
+                <span class="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-hairline"></span>
+              </span>
+            </span>
+            <div class="flex flex-col gap-2">
+              <label class="flex cursor-pointer items-center gap-3 rounded-md border border-hairline bg-canvas px-3 py-2.5 transition-colors has-[:checked]:border-link has-[:checked]:bg-link/5">
+                <input type="radio" name="federalRate" value="22" checked class="h-4 w-4 accent-ink" />
+                <span class="text-sm text-ink">22% (Supplemental under $1M)</span>
+              </label>
+              <label class="flex cursor-pointer items-center gap-3 rounded-md border border-hairline bg-canvas px-3 py-2.5 transition-colors has-[:checked]:border-link has-[:checked]:bg-link/5">
+                <input type="radio" name="federalRate" value="37" class="h-4 w-4 accent-ink" />
+                <span class="text-sm text-ink">37% (Supplemental over $1M)</span>
+              </label>
+            </div>
+          </div>
+
+          <Slider
+            label="State Withholding Rate"
+            name="stateRate"
+            value={5}
+            min={0}
+            max={15}
+            step={0.1}
+            suffix="%"
+            inputId="rsu-stateRate"
+            displayId="rsu-stateRateValue"
+            tooltip="Enter your state's supplemental withholding rate (e.g., California is usually 10.23% or 13.3%, Texas is 0%)."
+          />
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-sm font-medium text-ink">Hit Social Security Wage Cap?</label>
+            <span class="group relative inline-flex shrink-0 self-start">
+              <span class="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full bg-hairline text-[10px] font-semibold leading-none text-mute transition-colors hover:bg-hairline-strong hover:text-ink" aria-label="If your base salary plus bonuses prior to this vest already exceeds the annual SS wage base (approx $168,600 for 2024), select Yes.">?</span>
+              <span class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 rounded-lg border border-hairline bg-canvas px-3 py-2 text-xs leading-relaxed text-body opacity-0 shadow-lg transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100" role="tooltip">
+                If your base salary plus bonuses prior to this vest already exceeds the annual SS wage base (approx $168,600 for 2024), select Yes.
+                <span class="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-hairline"></span>
+              </span>
+            </span>
+            <div class="flex flex-col gap-2">
+              <label class="flex cursor-pointer items-center gap-3 rounded-md border border-hairline bg-canvas px-3 py-2.5 transition-colors has-[:checked]:border-link has-[:checked]:bg-link/5">
+                <input type="radio" name="hitSSCap" value="no" checked class="h-4 w-4 accent-ink" />
+                <span class="text-sm text-ink">No (Add 6.2% tax)</span>
+              </label>
+              <label class="flex cursor-pointer items-center gap-3 rounded-md border border-hairline bg-canvas px-3 py-2.5 transition-colors has-[:checked]:border-link has-[:checked]:bg-link/5">
+                <input type="radio" name="hitSSCap" value="yes" class="h-4 w-4 accent-ink" />
+                <span class="text-sm text-ink">Yes (0% tax)</span>
+              </label>
+            </div>
+          </div>
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Headline KPI -->
+      <div id="rsu-headline-card" class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm text-center">
+        <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Net Shares You Keep</p>
+        <p id="rsu-net-shares-headline" class="text-3xl font-semibold tabular-nums text-ink sm:text-4xl">—</p>
+        <p id="rsu-net-label" class="mt-1 text-sm text-mute">Adjust inputs to see your results</p>
+      </div>
+
+      <!-- KPI ResultCards (4 cards) -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Net Shares Received"
+          valueId="rsu-net-shares"
+          value="—"
+          description="Shares delivered to your account"
+        />
+        <ResultCard
+          label="Shares Sold for Taxes"
+          valueId="rsu-shares-sold"
+          value="—"
+          description="Whole shares sold by broker"
+        />
+        <ResultCard
+          label="Fractional Cash Refunded"
+          valueId="rsu-excess-cash"
+          value="—"
+          valueClass="text-success-deep"
+          description="Excess from rounding up"
+        />
+        <ResultCard
+          label="Estimated Total Withholding"
+          valueId="rsu-total-withholding"
+          value="—"
+          description="All taxes combined"
+        />
+      </div>
+
+      <!-- Detailed Breakdown Table -->
+      <Card padding="lg">
+        <h2 class="mb-4 text-sm font-medium text-ink">Detailed Tax Breakdown</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline">
+                <th class="pb-2 font-medium text-mute">Item</th>
+                <th class="pb-2 text-right font-medium text-mute">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="rsu-breakdown-table" class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Gross Vest Value</td>
+                <td id="tb-gross" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td id="tb-federal-label" class="py-2 font-sans text-body">Federal Withholding (22%)</td>
+                <td id="tb-federal" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td id="tb-state-label" class="py-2 font-sans text-body">State Withholding (5%)</td>
+                <td id="tb-state" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Social Security (6.2%)</td>
+                <td id="tb-ss" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Medicare (1.45%)</td>
+                <td id="tb-medicare" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline bg-canvas-soft">
+                <td class="py-2 font-sans font-semibold text-ink">Total Estimated Withholding</td>
+                <td id="tb-total" class="py-2 text-right font-semibold text-ink">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <!-- Warning Banner -->
+      <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+        <p class="text-sm font-medium text-error">⚠ Withholding Is Not Your Final Tax Bill</p>
+        <p class="mt-1 text-xs text-body">Withholding is not your final tax liability. Since RSUs are withheld at a flat supplemental rate (22%), high earners often owe additional taxes at tax season because their actual marginal tax bracket is higher (e.g., 24%, 32%, or 35%).</p>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="rounded-lg bg-canvas-soft p-4">
+        <p class="text-xs text-mute"><strong>Disclaimer:</strong> This calculator is for educational and planning purposes only. It estimates withholding based on IRS supplemental wage rules but does not account for the 0.9% Additional Medicare Tax surcharge, state-specific adjustments, or your actual tax bracket. Consult a licensed tax professional for personalized advice.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { calculateRsuSellToCover } from '../../utils/rsu-sell-to-cover-calculations';
+  import { formatCurrency } from '../../utils/formatters';
+
+  function getFormData() {
+    var form = document.getElementById('rsu-form');
+    var formData = new FormData(form);
+
+    var federalRadio = form.querySelector('input[name="federalRate"]:checked');
+    var ssRadio = form.querySelector('input[name="hitSSCap"]:checked');
+
+    return {
+      sharesVesting: Number(formData.get('sharesVesting')) || 100,
+      sharePrice: Number(formData.get('sharePrice')) || 150,
+      federalRate: Number(federalRadio?.value) || 22,
+      stateRate: Number(formData.get('stateRate')) || 5,
+      hitSSCap: ssRadio?.value === 'yes',
+    };
+  }
+
+  function updateResults() {
+    var input = getFormData();
+    var r = calculateRsuSellToCover(input);
+
+    // Headline
+    var netHeadline = document.getElementById('rsu-net-shares-headline');
+    var netLabel = document.getElementById('rsu-net-label');
+    var headlineCard = document.getElementById('rsu-headline-card');
+
+    netHeadline.textContent = r.netSharesDelivered.toLocaleString();
+
+    if (r.netSharesDelivered <= 0) {
+      netLabel.textContent = 'All shares sold to cover taxes';
+      headlineCard.className = 'rounded-lg border border-error/30 bg-error/5 p-6 shadow-sm text-center';
+    } else {
+      netLabel.textContent = 'Worth ' + formatCurrency(r.netSharesValue) + ' at vest price';
+      headlineCard.className = 'rounded-lg border border-success/30 bg-success/5 p-6 shadow-sm text-center';
+    }
+
+    // KPI cards
+    document.getElementById('rsu-net-shares').textContent = r.netSharesDelivered.toLocaleString();
+    document.getElementById('rsu-shares-sold').textContent = r.sharesSoldToCover.toLocaleString();
+    document.getElementById('rsu-excess-cash').textContent = formatCurrency(r.excessCashRefund);
+    document.getElementById('rsu-total-withholding').textContent = formatCurrency(r.totalWithholding);
+
+    // Table
+    document.getElementById('tb-gross').textContent = formatCurrency(r.grossIncome);
+    document.getElementById('tb-federal').textContent = formatCurrency(r.federalTax);
+    document.getElementById('tb-state').textContent = formatCurrency(r.stateTax);
+    document.getElementById('tb-ss').textContent = formatCurrency(r.socialSecurityTax);
+    document.getElementById('tb-medicare').textContent = formatCurrency(r.medicareTax);
+    document.getElementById('tb-total').textContent = formatCurrency(r.totalWithholding);
+
+    // Update percentage labels
+    document.getElementById('tb-federal-label').textContent = 'Federal Withholding (' + input.federalRate + '%)';
+    document.getElementById('tb-state-label').textContent = 'State Withholding (' + input.stateRate + '%)';
+  }
+
+  function initSliders() {
+    var sliders = [
+      { id: 'rsu-stateRate', displayId: 'rsu-stateRateValue', suffix: '%' },
+    ];
+
+    sliders.forEach(function (s) {
+      var el = document.getElementById(s.id);
+      var display = document.getElementById(s.displayId);
+      if (el && display) {
+        el.addEventListener('input', function () {
+          display.textContent = el.value + s.suffix;
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('rsu-form');
+    if (form) {
+      form.addEventListener('input', function () {
+        updateResults();
+      });
+      form.addEventListener('change', function () {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initSliders();
+    initFormListeners();
+    updateResults();
+
+    // Theme change observer
+    var observer = new MutationObserver(function () {
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
