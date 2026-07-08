@@ -1,0 +1,244 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="ssb-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="ssb-form" class="space-y-4">
+          <Slider
+            label="Early Retirement Age"
+            name="earlyRetirementAge"
+            value={60}
+            min={50}
+            max={69}
+            step={1}
+            suffix=" years"
+            inputId="ssb-earlyRetirementAge"
+            displayId="ssb-earlyRetirementAgeValue"
+            tooltip="The age you intend to stop working completely and enter early retirement."
+          />
+
+          <Input
+            label="Target Annual Income (Desired Spend)"
+            name="targetAnnualIncome"
+            type="number"
+            value={80000}
+            min={10000}
+            max={500000}
+            step={1000}
+            suffix="$"
+            hideArrows
+            required
+            tooltip="Your desired net annual spending budget (inflation-adjusted lifestyle cost) during retirement."
+          />
+
+          <Slider
+            label="Delayed Social Security Age"
+            name="delayedClaimingAge"
+            value={70}
+            min={62}
+            max={70}
+            step={1}
+            suffix=" years"
+            inputId="ssb-delayedClaimingAge"
+            displayId="ssb-delayedClaimingAgeValue"
+            tooltip="The age you plan to finally claim your Social Security benefits. Delaying past Full Retirement Age up to age 70 maximizes your guaranteed payout."
+          />
+
+          <Input
+            label="Estimated Annual Social Security Benefit"
+            name="estimatedAnnualSSBenefit"
+            type="number"
+            value={40000}
+            min={0}
+            max={70000}
+            step={500}
+            suffix="$"
+            hideArrows
+            required
+            tooltip="Your projected annual Social Security payout at your chosen delayed claiming age (look up your estimate on ssa.gov)."
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Validation Warning -->
+      <div id="ssb-validation-warning" class="hidden rounded-lg border border-error/30 bg-error/5 p-4">
+        <p id="ssb-validation-message" class="text-sm font-medium text-error"></p>
+      </div>
+
+      <!-- Headline KPI -->
+      <div id="ssb-headline-card" class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm text-center">
+        <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Total Dedicated Bridge Fund Required</p>
+        <p id="ssb-total-bridge" class="text-3xl font-semibold tabular-nums text-ink sm:text-4xl">—</p>
+        <p id="ssb-headline-label" class="mt-1 text-sm text-mute">Adjust inputs to see your bridge fund</p>
+      </div>
+
+      <!-- Summary KPI cards (2 cards) -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Bridge Duration"
+          valueId="ssb-bridge-years"
+          value="—"
+          valueClass="text-ink"
+          description="Years between early retirement and claiming Social Security"
+        />
+        <ResultCard
+          label="Post-Claiming Annual Saved Drawdown"
+          valueId="ssb-post-drawdown"
+          value="—"
+          valueClass="text-success-deep"
+          description="Annual portfolio withdrawal after Social Security begins"
+        />
+      </div>
+
+      <!-- Drawdown Schedule Table -->
+      <Card padding="lg">
+        <h2 class="mb-4 text-sm font-medium text-ink">Year-by-Year Drawdown Schedule</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline">
+                <th class="pb-2 font-medium text-mute">Age</th>
+                <th class="pb-2 font-medium text-mute">Phase</th>
+                <th class="pb-2 text-right font-medium text-mute">Social Security Income</th>
+                <th class="pb-2 text-right font-medium text-mute">Required Portfolio Withdrawal</th>
+              </tr>
+            </thead>
+            <tbody id="ssb-table-body" class="font-mono text-xs tabular-nums">
+              <!-- Populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <!-- Disclaimer -->
+      <div class="rounded-lg bg-canvas-soft p-4">
+        <p class="text-xs text-mute"><strong>Disclaimer:</strong> This calculator is for educational and planning purposes only. It does not constitute financial, tax, or investment advice. Actual Social Security benefits depend on your lifetime earnings, claiming age, and future legislative changes. The bridge fund calculation assumes nominal spending with no portfolio growth. Consult a licensed financial advisor before making retirement decisions.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { calculateSocialSecurityBridge } from '../../utils/social-security-bridge-calculations';
+  import { formatCurrency } from '../../utils/formatters';
+
+  function getFormData() {
+    var form = document.getElementById('ssb-form');
+    var formData = new FormData(form);
+
+    return {
+      earlyRetirementAge: Number(formData.get('earlyRetirementAge')) || 60,
+      targetAnnualIncome: Number(formData.get('targetAnnualIncome')) || 80000,
+      delayedClaimingAge: Number(formData.get('delayedClaimingAge')) || 70,
+      estimatedAnnualSSBenefit: Number(formData.get('estimatedAnnualSSBenefit')) || 40000,
+    };
+  }
+
+  function updateResults() {
+    var input = getFormData();
+    var r = calculateSocialSecurityBridge(input);
+
+    var validationWarning = document.getElementById('ssb-validation-warning');
+    var validationMessage = document.getElementById('ssb-validation-message');
+
+    if (!r.isValid) {
+      validationWarning.classList.remove('hidden');
+      validationMessage.textContent = r.validationMessage;
+      document.getElementById('ssb-headline-card').classList.add('hidden');
+      document.getElementById('ssb-bridge-years').parentElement.parentElement.classList.add('hidden');
+      document.getElementById('ssb-post-drawdown').parentElement.parentElement.classList.add('hidden');
+      document.getElementById('ssb-table-body').innerHTML = '';
+      return;
+    }
+
+    validationWarning.classList.add('hidden');
+    document.getElementById('ssb-headline-card').classList.remove('hidden');
+    document.getElementById('ssb-bridge-years').parentElement.parentElement.classList.remove('hidden');
+    document.getElementById('ssb-post-drawdown').parentElement.parentElement.classList.remove('hidden');
+
+    // Headline KPI
+    document.getElementById('ssb-total-bridge').textContent = formatCurrency(r.totalBridgeFundRequired);
+    document.getElementById('ssb-headline-label').textContent = 'Set aside this amount in a dedicated bridge fund (cash / bonds)';
+
+    // Summary KPIs
+    document.getElementById('ssb-bridge-years').textContent = r.bridgeYears.toString();
+    document.getElementById('ssb-post-drawdown').textContent = formatCurrency(r.postClaimingAnnualDrawdown);
+
+    // Drawdown Schedule Table
+    var tbody = document.getElementById('ssb-table-body');
+    tbody.innerHTML = '';
+
+    r.yearlyData.forEach(function (row, index) {
+      var tr = document.createElement('tr');
+
+      // Alternate background and phase tinting
+      if (row.phase === 'Bridge') {
+        tr.className = 'border-b border-hairline/50 ' + (index % 2 === 1 ? 'bg-error/5' : '');
+      } else {
+        tr.className = 'border-b border-hairline/50 ' + (index % 2 === 1 ? 'bg-success/5' : '');
+      }
+
+      var phaseColor = row.phase === 'Bridge' ? 'text-error' : 'text-success-deep';
+
+      tr.innerHTML =
+        '<td class="py-2 font-sans text-ink">' + row.age + '</td>' +
+        '<td class="py-2 font-sans ' + phaseColor + '">' + row.phase + '</td>' +
+        '<td class="py-2 text-right text-ink">' + (row.socialSecurityIncome > 0 ? formatCurrency(row.socialSecurityIncome) : '$0') + '</td>' +
+        '<td class="py-2 text-right text-ink">' + formatCurrency(row.portfolioWithdrawal) + '</td>';
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  function initSliders() {
+    var sliders = [
+      { id: 'ssb-earlyRetirementAge', displayId: 'ssb-earlyRetirementAgeValue', suffix: ' years' },
+      { id: 'ssb-delayedClaimingAge', displayId: 'ssb-delayedClaimingAgeValue', suffix: ' years' },
+    ];
+
+    sliders.forEach(function (s) {
+      var el = document.getElementById(s.id);
+      var display = document.getElementById(s.displayId);
+      if (el && display) {
+        el.addEventListener('input', function () {
+          display.textContent = el.value + s.suffix;
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('ssb-form');
+    if (form) {
+      form.addEventListener('input', function () {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initSliders();
+    initFormListeners();
+    updateResults();
+
+    // Theme change observer
+    var observer = new MutationObserver(function () {
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>

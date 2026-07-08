@@ -1,0 +1,330 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import SocialSecurityBridgeCalculator from '../../components/calculator/SocialSecurityBridgeCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is a Social Security bridge strategy?',
+    answerHtml: 'A <b>Social Security bridge strategy</b> is a retirement planning approach where you set aside a dedicated pool of capital—called a "bridge fund"—to cover your living expenses between early retirement and the age you begin claiming Social Security benefits. Instead of claiming Social Security early at 62 (which permanently reduces your benefit by up to 30%), you delay claiming until age 70 to maximize your guaranteed, inflation-adjusted income. The bridge fund fills the spending gap during those years, allowing your Social Security benefit to grow by approximately 8% per year via delayed retirement credits.',
+    answerText: 'A Social Security bridge strategy sets aside a dedicated capital pool to cover living expenses between early retirement and when you claim Social Security. Instead of claiming early at 62 (reducing benefits by up to 30%), you delay to age 70 to maximize guaranteed income. The bridge fund fills the spending gap, letting benefits grow ~8% per year.',
+  },
+  {
+    question: 'How do you calculate a retirement bridge fund?',
+    answerHtml: 'The bridge fund calculation is straightforward:<br /><br /><b>Bridge Fund = Annual Spending × (Claiming Age − Retirement Age)</b><br /><br /><b>Example:</b> If you retire at 60, plan to claim Social Security at 70, and spend $80,000/year:<br />• Bridge Years: 70 − 60 = <b>10 years</b><br />• Bridge Fund Required: $80,000 × 10 = <b>$800,000</b><br /><br />This represents the total nominal capital needed to cover 100% of living expenses before Social Security activates. Once benefits begin at age 70, your portfolio drawdown drops from $80,000/year to just the gap between spending and your Social Security benefit.',
+    answerText: 'Bridge Fund = Annual Spending × (Claiming Age − Retirement Age). Example: Retire at 60, claim at 70, spend $80K/year → 10 years × $80K = $800,000 bridge fund needed. This covers all expenses until Social Security kicks in.',
+  },
+  {
+    question: 'Is delaying Social Security to age 70 worth it for early retirement?',
+    answerHtml: 'For most early retirees, <b>yes</b>—delaying to age 70 is worth it. Here is why:<br /><br /><ul><li><b>8% annual increase:</b> Each year you delay past Full Retirement Age (66-67), your benefit grows by ~8% via delayed retirement credits. From 62 to 70, that is a <b>76% larger check</b>.</li><li><b>Inflation protection:</b> Social Security benefits receive annual COLA adjustments. A larger base benefit means bigger inflation-adjusted raises every year.</li><li><b>Longevity insurance:</b> The larger benefit protects you against outliving your money. If you live to 90+, the cumulative difference can exceed $200,000+.</li><li><b>Tax efficiency:</b> Delaying lets you draw from taxable accounts first (at lower income), then shift to tax-advantaged Social Security income later.</li></ul><br />The trade-off is that you need a larger bridge fund. Our calculator shows you exactly how much you need to set aside.',
+    answerText: 'Yes, for most early retirees. Delaying from 62 to 70 increases your benefit by ~76% (8% per year). Benefits receive annual COLA adjustments, providing inflation protection. The larger benefit acts as longevity insurance against outliving your money. The trade-off is needing a larger bridge fund, which this calculator quantifies.',
+  },
+  {
+    question: 'How does a bridge fund protect against sequence of returns risk?',
+    answerHtml: 'A bridge fund protects against <b>sequence of returns risk (SRR)</b> by creating a spending buffer that keeps your core portfolio intact during vulnerable early retirement years.<br /><br /><b>How it works:</b><br /><ol><li><b>Ring-fenced spending:</b> Your bridge fund (in cash, bonds, or short-term treasuries) covers living expenses for the first 5-10 years. This capital is intentionally "burned down."</li><li><b>Portfolio isolation:</b> Your core equity nest egg is NOT touched during the bridge period. It continues growing undisturbed.</li><li><b>Crash protection:</b> If a market crash occurs in your first years of retirement, you draw from the stable bridge fund instead of selling equities at a loss.</li><li><b>Recovery time:</b> By the time you start drawing from your portfolio (at age 70+), the market has likely recovered, and your portfolio is larger than when you retired.</li></ol><br />This is similar to the <a href="/retirement-bucket-strategy-calculator" class="text-link transition-colors hover:text-link-deep">3-Bucket Retirement Strategy</a>, which also segments spending into time-segregated buckets.',
+    answerText: 'A bridge fund protects against sequence of returns risk by covering early retirement expenses from a stable buffer (cash/bonds), keeping your core equity portfolio untouched during vulnerable years. If a market crash occurs, you draw from the bridge fund instead of selling equities at a loss, giving your portfolio time to recover.',
+  },
+  {
+    question: 'What age should I retire early if I want to delay Social Security?',
+    answerHtml: 'The optimal early retirement age depends on your bridge fund size and spending needs. Common scenarios:<br /><br /><ul><li><b>Retire at 55, claim at 70:</b> 15-year bridge. At $60K/year spending = $900,000 bridge fund needed.</li><li><b>Retire at 60, claim at 70:</b> 10-year bridge. At $80K/year spending = $800,000 bridge fund needed.</li><li><b>Retire at 62, claim at 70:</b> 8-year bridge. At $80K/year spending = $640,000 bridge fund needed.</li></ul><br />The earlier you retire, the larger your bridge fund must be. Use our calculator to model your specific scenario and see how different retirement ages affect the required bridge fund size.',
+    answerText: 'The optimal age depends on your bridge fund size. Retiring at 55 with $60K/year spending needs a $900K bridge fund (15 years). Retiring at 60 with $80K/year needs $800K (10 years). The earlier you retire, the larger the bridge fund required.',
+  },
+  {
+    question: 'Should I keep my bridge fund in cash or invest it?',
+    answerHtml: 'Your bridge fund should be in <b>conservative, liquid assets</b> since you will be spending it down steadily. Recommended allocations:<br /><br /><ul><li><b>Cash / Money Market:</b> 1-2 years of expenses for immediate liquidity</li><li><b>Short-term Treasuries / CDs:</b> 3-5 years of expenses for slightly higher yield</li><li><b>Intermediate Bonds:</b> Remaining bridge years for modest growth</li></ul><br /><b>Avoid equities</b> in your bridge fund—the whole point is to avoid selling stocks during a downturn. The bridge fund is your "safe" bucket while your core portfolio (in equities) grows untouched for the long term.<br /><br />This approach mirrors the <a href="/retirement-bucket-strategy-calculator" class="text-link transition-colors hover:text-link-deep">Bucket Strategy</a> where Bucket 1 (cash) covers near-term expenses.',
+    answerText: 'Keep your bridge fund in conservative, liquid assets: cash/money market for 1-2 years of expenses, short-term treasuries/CDs for 3-5 years, and intermediate bonds for the rest. Avoid equities—the purpose is to have stable spending money that won\'t drop during market downturns.',
+  },
+  {
+    question: 'What happens if Social Security benefits are reduced in the future?',
+    answerHtml: 'The Social Security Trust Fund is projected to be depleted by 2035, after which incoming payroll taxes would cover only about <b>75-80% of scheduled benefits</b>. However, this does not mean benefits disappear:<br /><br /><ul><li><b>Partial benefits:</b> Even in worst-case projections, 75-80% of benefits continue</li><li><b>Political likelihood:</b> Congress has historically always acted to preserve Social Security before trust fund depletion</li><li><b>Planning buffer:</b> Our calculator lets you model a reduced benefit scenario—simply lower your estimated annual benefit to account for potential cuts</li></ul><br />For conservative planning, consider using 80% of your estimated benefit in the calculator to build in a safety margin.',
+    answerText: 'Even if the Trust Fund depletes by 2035, incoming taxes would cover ~75-80% of scheduled benefits. Congress has historically always acted to preserve Social Security. For conservative planning, use 80% of your estimated benefit in the calculator to build in a safety margin.',
+  },
+  {
+    question: 'How does the bridge strategy compare to the 4% rule?',
+    answerHtml: 'The bridge strategy and the 4% rule serve different purposes:<br /><br /><b>4% Rule:</b> Withdraw 4% of your total portfolio annually, adjusted for inflation, designed to last 30+ years. Requires a portfolio of 25× expenses.<br /><br /><b>Bridge Strategy:</b> Segregate a specific capital amount to cover expenses for a fixed period (e.g., 10 years), then rely on Social Security for a guaranteed income floor.<br /><br /><b>Key Difference:</b> The bridge strategy <b>reduces your total portfolio requirement</b> because Social Security covers a significant portion of later expenses. Instead of needing 25× all expenses, you only need enough for the bridge period PLUS a smaller portfolio for supplemental income after age 70.<br /><br /><b>Example comparison on $80K/year spending:</b><br />• 4% Rule: Need $2,000,000 portfolio<br />• Bridge to 70 with $40K SS: Need $800K bridge + smaller portfolio for the gap = potentially <b>$400K less total</b>',
+    answerText: 'The 4% rule requires a portfolio of 25× all expenses ($2M on $80K spending). The bridge strategy requires only enough for the bridge period ($800K for 10 years at $80K), plus a smaller portfolio for the post-70 gap. The bridge strategy can reduce total required savings by $400K+.',
+  },
+];
+---
+
+<PageLayout
+  title="Social Security Bridge Calculator: Early Retirement Funding"
+  description="Calculate the exact size of the cash or brokerage bridge fund needed to retire early while safely delaying your Social Security benefits to age 70."
+  canonical="https://truefinancetools.com/social-security-bridge-calculator"
+  ogImage="https://truefinancetools.com/og-social-security-bridge-calculator.png"
+  ogImageAlt="Social Security Bridge Calculator - Plan Your Early Retirement Funding Strategy"
+  pageType="website"
+  keywords="social security bridge calculator, social security bridge strategy, delaying social security calculator, retirement bridge fund calculator, fire social security bridge, early retirement social security, bridge fund retirement, social security delay strategy"
+>
+  <StructuredData
+    title="Social Security Bridge Calculator"
+    description="Calculate the exact size of the cash or brokerage bridge fund needed to retire early while safely delaying your Social Security benefits to age 70."
+    url="https://truefinancetools.com/social-security-bridge-calculator"
+    toolName="Social Security Bridge Calculator"
+    toolDescription="Calculate how much you need in a dedicated bridge fund to retire early while delaying Social Security benefits to age 70 for maximum guaranteed income."
+    faqItems={toolFaqItems}
+    features={[
+      'Bridge fund size calculator',
+      'Year-by-year drawdown schedule',
+      'Bridge vs. Stabilized phase visualization',
+      'Social Security delay benefit analysis',
+      'Early retirement income planning'
+    ]}
+  />
+
+  <!-- Hero -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Social Security Bridge Strategy Calculator
+      </h1>
+      <p class="text-lg text-body">Calculate the exact fund needed to retire early while safely delaying Social Security to age 70.</p>
+    </div>
+  </section>
+
+  <!-- Calculator Component -->
+  <SocialSecurityBridgeCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Social Security Bridge Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Set Your Timeline</h3>
+      <p class="text-sm text-body">Enter your early retirement age and the age you plan to claim Social Security benefits.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Enter Spending & Benefit</h3>
+      <p class="text-sm text-body">Input your desired annual spending and estimated Social Security benefit at your claiming age.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See Your Bridge Fund</h3>
+      <p class="text-sm text-body">View the exact amount needed, plus a year-by-year drawdown schedule through age 85.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is a Social Security Bridge Strategy? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is a Social Security Bridge Strategy?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>A Social Security Bridge Strategy</strong> is a retirement planning technique where you intentionally delay claiming Social Security benefits—often until age 70—while using a dedicated pool of saved capital to cover living expenses during the gap years. This approach is especially popular in the <a href="/fire-calculator" class="text-link transition-colors hover:text-link-deep">FIRE (Financial Independence, Retire Early)</a> community, where early retirees need a reliable income source before Social Security activates.
+        </p>
+
+        <p class="mb-4">
+          The physics are elegant: by "burning" a ring-fenced capital bucket between your early retirement age and age 70, you allow your guaranteed Social Security benefit to compound by roughly <strong>8% per year</strong> via delayed retirement credits. This secures a massive, inflation-protected income floor for the rest of your life—something no private annuity can match at comparable cost.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Bridge Fund Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Bridge Fund = Annual Spending × (Claiming Age − Retirement Age)
+        </div>
+
+        <p class="mb-4 mt-4">
+          For example, if you retire at 60, spend $80,000/year, and delay Social Security to age 70: 10 years × $80,000 = <strong>$800,000</strong> in a dedicated bridge fund. Once benefits begin at 70, your portfolio drawdown drops from $80,000/year to just $40,000/year (the gap between spending and your Social Security benefit).
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Bridge Strategy vs. Claiming at 62</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Metric</th>
+                <th class="p-3 font-medium text-ink">Claim at 62</th>
+                <th class="p-3 font-medium text-ink">Delay to 70</th>
+                <th class="p-3 font-medium text-ink">Difference</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Annual benefit (on $50K PIA)</td>
+                <td class="p-3 text-ink">$21,000</td>
+                <td class="p-3 text-ink">$40,000</td>
+                <td class="p-3 text-success-deep">+$19,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Benefit increase from delaying</td>
+                <td class="p-3 text-ink">—</td>
+                <td class="p-3 text-ink">+76%</td>
+                <td class="p-3 text-success-deep">+76%</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Portfolio drawdown (at $80K spend)</td>
+                <td class="p-3 text-ink">$59,000/yr</td>
+                <td class="p-3 text-ink">$40,000/yr</td>
+                <td class="p-3 text-success-deep">−$19,000/yr</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">Cumulative benefit by age 85</td>
+                <td class="p-3 text-ink">$462,000</td>
+                <td class="p-3 font-semibold text-success-deep">$680,000</td>
+                <td class="p-3 font-semibold text-success-deep">+$218,000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Use a Bridge Strategy?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">FIRE Early Retirees</h4>
+            <p class="text-sm text-body">Those who retire before 62 and need income bridging. A bridge fund lets you delay Social Security to 70 for maximum guaranteed income, rather than claiming early at a reduced rate.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">High-Income Earners</h4>
+            <p class="text-sm text-body">Professionals with large savings who want to optimize lifetime Social Security income. The 8% annual delay credit often outperforms portfolio returns on a risk-adjusted basis.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Longevity Optimizers</h4>
+            <p class="text-sm text-body">Those with family longevity who expect to live well past 85. The break-even point for delaying to 70 is typically around age 78-80—after that, delaying wins decisively.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Sequence Risk Avoiders</h4>
+            <p class="text-sm text-body">Retirees who want to protect their core portfolio from early drawdowns. A bridge fund isolates spending from equity exposure during vulnerable early retirement years.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Social Security Bridge Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Maximizes guaranteed lifetime income (76% larger benefit)</li>
+              <li>• Inflation-protected income floor via COLA adjustments</li>
+              <li>• Reduces long-term portfolio withdrawal pressure</li>
+              <li>• Acts as longevity insurance against outliving savings</li>
+              <li>• Protects core portfolio from sequence of returns risk</li>
+              <li>• Tax-efficient: draw from taxable accounts first, shift to SS later</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Requires larger upfront capital pool ($600K-$1M+)</li>
+              <li>• Break-even age ~78-80; loses if you pass away early</li>
+              <li>• Bridge fund assets may earn low returns (cash/bonds)</li>
+              <li>• Less flexibility—capital is earmarked for specific years</li>
+              <li>• Does not account for future SS benefit changes</li>
+              <li>• Requires discipline to not tap bridge fund early</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Social Security Bridge Strategy FAQs
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Social Security Bridge Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>Social Security bridge calculator</strong> is the most comprehensive free tool available for planning an early retirement funded by a dedicated bridge fund. Unlike generic calculators that assume you claim Social Security immediately, this tool specifically models the two-phase income strategy used by savvy early retirees who want to maximize their guaranteed lifetime income.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose a Bridge Strategy Over Claiming Early?</h3>
+
+        <p class="mb-4">
+          The single biggest financial mistake most early retirees make is claiming Social Security at 62. While it provides immediate income, the permanent benefit reduction of up to 30% costs hundreds of thousands of dollars over a 20-30 year retirement. By setting aside a dedicated bridge fund and delaying to age 70, you lock in a 76% larger monthly check that adjusts for inflation every year. For someone with a $40,000/year benefit at 70, claiming at 62 would permanently reduce that to roughly $21,000/year—a $19,000 annual loss for life.
+        </p>
+
+        <p class="mb-4">
+          This <strong>retirement bridge fund calculator</strong> is designed for the millions of Americans who have substantial savings but want to optimize their Social Security strategy. Whether you are part of the FIRE movement, taking an early retirement buyout, or simply planning a gap career, this tool shows you exactly how much capital you need to bridge the gap and how your drawdown changes once benefits begin.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Social Security Bridge Calculator</h3>
+
+        <p class="mb-4">
+          Unlike other <strong>Social Security delay calculators</strong> that only show a single number, our calculator provides a complete year-by-year drawdown schedule from your early retirement age through age 85. You can see exactly how much your portfolio is being drawn down during the Bridge Phase versus the Stabilized Phase, giving you a clear picture of your retirement income timeline.
+        </p>
+
+        <p class="mb-4">
+          The calculator clearly distinguishes between the two phases of your retirement: the <strong>Bridge Phase</strong> (heavy portfolio drawdown) and the <strong>Stabilized Phase</strong> (reduced drawdown with Social Security income). This visual separation helps you understand the exact moment your financial pressure eases and your guaranteed income floor activates.
+        </p>
+
+        <p class="mb-4">
+          Start planning your Social Security bridge strategy today—no signup required, completely free, and results in seconds. Adjust any input to see how it shifts your required bridge fund, and compare scenarios to find the optimal claiming age for your specific situation.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Retirement Tools
+      </h2>
+      <p class="mb-8 text-body">Compare different withdrawal strategies and retirement planning approaches.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/retirement-bucket-strategy-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Bucket Strategy Simulator</h3>
+          <p class="text-xs text-body">Simulate a 3-bucket drawdown with Cash, Bonds, and Stocks over 30 years.</p>
+        </a>
+        <a href="/coast-fire-by-age-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE by Age</h3>
+          <p class="text-xs text-body">See your Coast FIRE milestone at every age with an interactive glide path.</p>
+        </a>
+        <a href="/perpetual-swr-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Perpetual SWR Calculator</h3>
+          <p class="text-xs text-body">Calculate the withdrawal rate that preserves purchasing power forever.</p>
+        </a>
+        <a href="/vpw-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">VPW Withdrawal</h3>
+          <p class="text-xs text-body">Compare Variable Percentage Withdrawal against the 4% rule across scenarios.</p>
+        </a>
+        <a href="/sequence-of-returns-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">SRR Stress Test</h3>
+          <p class="text-xs text-body">Stress test your retirement against historical market crashes.</p>
+        </a>
+        <a href="/die-with-zero-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Die with Zero Calculator</h3>
+          <p class="text-xs text-body">Optimize your decumulation plan to use every dollar before the end.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
