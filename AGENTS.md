@@ -162,10 +162,6 @@ fin-tools/
 |---|---|---|
 | `/` | `src/pages/index.astro` | Homepage |
 | `/fire-calculator` | `src/pages/fire-calculator/index.astro` | FIRE calculator |
-| `/fire-calculator?fireType=lean` | (query params) | Pre-selected Lean FIRE |
-| `/fire-calculator?fireType=fat` | (query params) | Pre-selected Fat FIRE |
-| `/fire-calculator?fireType=coast` | (query params) | Pre-selected Coast FIRE |
-| `/fire-calculator?age=...&retire=...` | (query params) | Shared state via URL |
 | `/lean-fire-calculator` | `src/pages/lean-fire-calculator/index.astro` | Lean FIRE dedicated page (standalone) |
 | `/fat-fire-calculator` | `src/pages/fat-fire-calculator/index.astro` | Fat FIRE dedicated page (standalone) |
 | `/barista-fire-calculator` | `src/pages/barista-fire-calculator/index.astro` | Barista FIRE dedicated page (standalone) |
@@ -246,249 +242,28 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 
 ## Key Implementation Details
 
-### FIRE Calculator
-
-- File: `src/components/calculator/FIRECalculatorBase.astro` (~700 lines)
-- Contains form, results, chart, scenario comparison, export, share
-- Uses `src/utils/calculations.ts` for math
-- URL-based state sharing via query params
-- Chart.js rendered on `<canvas id="projection-chart">`
-- Theme-aware chart colors via MutationObserver on `html` class
-- Supports four FIRE types via `fireType` query param: regular (25x), lean (20x), fat (30x), coast (variable)
-
-### Geographic Arbitrage Calculator
-
-- File: `src/components/calculator/GeoArbitrageCalculator.astro`
-- Uses `src/utils/geo-arbitrage-calculations.ts` for math
-- Chart.js line chart comparing home vs. target country portfolio projections
-- 30-year runway projection with inflation-adjusted spending
-- Preset buttons for common scenarios (US → India)
-- PPP (Purchasing Power Parity) adjustment for cost of living differences
-
-### Die with Zero Calculator
-
-- File: `src/components/calculator/DieWithZeroCalculator.astro`
-- Uses `src/utils/decumulation-calculations.ts` for math
-- Chart.js line chart showing portfolio declining to buffer amount
-- TVM annuity PMT formula for optimal withdrawal calculation
-- Supports linear (constant) and front-loaded (Go-Go Years) spending curves
-- 4% rule comparison showing money left on the table
-- Theme-aware chart colors via MutationObserver on `html` class
-
-### Sequence of Returns Risk (SRR) Stress Tester
-
-- File: `src/components/calculator/SequenceOfReturnsCalculator.astro`
-- Uses `src/utils/srr-calculations.ts` for math
-- Chart.js dual-line chart comparing steady vs. crashed portfolio projections
-- 30-year retirement simulation with inflation-adjusted withdrawals
-- 3 preset historical crash scenarios (Dot-Com, GFC, Stagflation) + custom
-- Zero-floor rule: portfolio stays at $0 once depleted
-- Theme-aware chart colors via MutationObserver on `html` class
-
-### One More Year (OMY) Syndrome Calculator
-
-- File: `src/components/calculator/OneMoreYearCalculator.astro`
-- Uses `src/utils/omy-calculations.ts` for math
-- Chart.js dual-line chart comparing retire today vs. wait portfolio projections
-- 30-year projection showing portfolio divergence over time
-- Emphasized "Extra Years to Work" slider (1-5 years)
-- Lifestyle converters: translates income boost into vacations and cars per year
-- Time cost display: hours of healthy life traded for additional income
-- Theme-aware chart colors via MutationObserver on `html` class
-
-### Cash Cushion vs. Equity Yield Optimizer
-
-- File: `src/components/calculator/CashCushionOptimizer.astro`
-- Uses `src/utils/cash-cushion-calculations.ts` for math
-- Chart.js stacked bar chart showing dividend vs. cash-funded expenses
-- Annuity factor (PMT-like) formula for optimized cash calculation
-- 3 KPI cards: Naive Cash (red), Optimized Cash (green), Capital Freed (blue)
-- Year-by-year breakdown showing how expenses are funded during a crash
-- Theme-aware chart colors via MutationObserver on `html` class
-
-### Perpetual Safe Withdrawal Rate (PSWR) Calculator
-
-- File: `src/components/calculator/PerpetualSWRCalculator.astro`
-- Uses `src/utils/pswr-calculations.ts` for math
-- Chart.js dual-line chart comparing real purchasing power (flat) vs. nominal account balance (exponential)
-- Fisher Equation for exact real return calculation: ((1 + nominal) / (1 + inflation)) - 1
-- PSWR = Real Return - Investment Fees
-- 50–100 year projection with inflation-adjusted spending
-- 3 KPI cards: Perpetual SWR (green), Annual Safe Spend (ink), Nominal Legacy (blue)
-- Unsustainable warning when PSWR ≤ 0
-- Theme-aware chart colors via MutationObserver on `html` class
-- Target audience: FatFIRE individuals, estate planners, generational wealth builders, endowment managers
-
-### Coast FIRE Number Calculator
-
-- File: `src/components/calculator/CoastFireNumber.astro` (~558 lines)
-- Uses `src/utils/coast-fire-calculations.ts` for math
-- Determines how much you need saved today to reach a target retirement number through compound interest alone (no further contributions needed)
-- 4 KPI cards: Coast FIRE Number, Current Savings, FIRE Number, Projected at Retirement
-- 3 secondary cards: Coast Age, Projected Income, Gap to Coast
-- Coast status badge with progress bar showing % of Coast Number achieved
-- Chart.js line/bar chart toggler showing portfolio growth projection
-- Year-by-year projection table (collapsible)
-- PDF export and share functionality
-
-### Coast FIRE Shift Calculator (Part-Time Transition)
-
-- File: `src/components/calculator/CoastFireShiftCalculator.astro` (~943 lines)
-- Uses `src/utils/coast-fire-shift-calculations.ts` for math
-- Models a two-phase retirement: full-time → part-time (Coast FIRE shift) → full retirement
-- Inputs include current age, transition age, retirement age, part-time income and expenses
-- 4 KPI cards: Nest Egg Target, Required at Transition, Projected at Transition, Real Rate of Return
-- Surplus/Deficit card with color-coded status
-- "One More Year" Cost Index card showing impact of working one more year
-- Chart.js dual-line chart showing portfolio projection with and without the shift
-- Year-by-year projection table
-
-### Owner Earnings Calculator (Buffett Intrinsic Value)
-
-- File: `src/components/calculator/OwnerEarningsCalculator.astro` (~976 lines)
-- Uses `src/utils/owner-earnings.ts` for math
-- Implements Warren Buffett's Owner Earnings formula: Net Income + Depreciation + Non-Cash Charges - Maintenance CapEx
-- Two maintenance CapEx methods:
-  - **Basic Mode:** Direct maintenance CapEx input
-  - **Advanced (Greenwald) Mode:** 5-year PP&E and revenue trend analysis
-- Per-share intrinsic value using Buffett's "Ten-Cap" discount rate
-- 4 KPI cards: Owner Earnings, Maintenance CapEx, Earnings Power Value, Per-Share Intrinsic Value
-- Margin of Safety indicator (green/yellow/red based on current price vs intrinsic value)
-- Fully interactive with 15+ financial inputs matching 10-K line items
-
-### VPW (Variable Percentage Withdrawal) Calculator
-
-- File: `src/components/calculator/VPWCalculator.astro` (~844 lines)
-- Uses `src/utils/vpw-calculations.ts` for math
-- Implements the actuarial VPW method (Bogleheads) vs. constant-dollar 4% rule comparison
-- Multi-scenario simulation: Steady Returns, Sequence Risk, GFC Crash, Lost Decade
-- Ruin risk badge (mathematical guarantee: 0% ruin for VPW)
-- 4 KPI cards: VPW Withdrawal, 4% Rule Withdrawal, VPW Total, 4% Rule Total
-- Chart.js dual-line chart comparing VPW vs 4% rule portfolio balance over time
-- Pension/Social Security bridge toggle with start age
-- Asset allocation inputs (equity/bond split with expected returns)
-- Year-by-year comparison table
-
-### Core-Satellite Portfolio Rebalancer
-
-- File: `src/components/calculator/CoreSatelliteRebalancer.astro` (~698 lines)
-- Uses `src/utils/rebalancer-calculations.ts` for math
-- Dynamic portfolio management with add/remove holdings (core or satellite classification)
-- Cash-first tax-aware optimization for buy/sell order generation
-- 3 KPI cards: Total Portfolio Value, Trade Orders (buys/sells), Estimated Tax Impact
-- Per-holding rebalancing table showing current % vs target %, deviation, action (buy/sell/hold), amount, shares, tax impact
-- Weight normalization warning when target weights don't sum to 100%
-- Tax impact warning when estimated capital gains exceed threshold
-
-### Dividend Tax Drag Modeler
-
-- File: `src/components/calculator/DividendTaxDragCalculator.astro` (~996 lines)
-- All calculation logic inline (no separate utility file)
-- Compares growth of dividend-paying investments in Taxable vs Tax-Advantaged accounts
-- Preset scenarios: High-Yield ETF, Growth Stock, Balanced Portfolio, S&P 500 Index
-- 6 KPI cards: Taxable Final Balance, Tax-Free Final Balance, Tax Drag ($), Tax Drag (%), Effective Tax Rate, Total Taxes Paid
-- Chart.js dual-line chart showing account balance growth over time for both account types
-- Interactive sliders for: initial investment, annual contribution, horizon, capital appreciation rate, dividend yield, tax rates, capital gains rate
-
-### SEPP / 72(t) Early Distribution Calculator
-
-- File: `src/components/calculator/SEPPCalculator.astro` (~580 lines)
-- Uses `src/utils/seppMath.ts` for math
-- Compares all three IRS-approved SEPP methods side by side:
-  - **RMD Method:** Required Minimum Distribution (age-based life expectancy factor)
-  - **Fixed Amortization:** Level payment using PMT annuity formula
-  - **Fixed Annuitization:** Level payment using IRS annuity factor
-- 3 method cards showing Year 1 payment, total distributions, and payment formula
-- Summary row: Total RMD, Total Amortization, Total Annuitization distributions + SEPP duration
-- Tabbed interface: Comparison → Schedule → Chart
-- SVG chart (not Chart.js) showing balance drawdown for all three methods
-- Annual schedule table with starting balance, payment, ending balance for each method
-- Interest rate validation (IRS §7520 federal mid-term rate)
-- Single Modifications and multiple SEPP segments supported
-
-### Guardrails Withdrawal Strategy Calculator (Guyton-Klinger)
-
-- File: `src/components/calculator/GuardrailsCalculator.astro` (~437 lines)
-- Uses `src/utils/guardrails-calculations.ts` for math
-- Implements the Guyton-Klinger guardrails withdrawal strategy with automatic spending adjustments
-- Year-by-year simulation: calculates test rate, compares against upper (120%) and lower (80%) guardrails
-- Capital Preservation Rule: 10% spending cut when test rate exceeds upper guardrail
-- Prosperity Rule: 10% spending increase when test rate falls below lower guardrail
-- 4 KPI cards: Final Portfolio, Total Withdrawn, Avg. Annual Withdrawal, Guardrail Triggers
-- Chart.js dual-line chart showing portfolio balance and annual withdrawals over time
-- Collapsible year-by-year projection table with guardrail action indicators
-- Depletion warning when portfolio hits zero before timeline end
-- Theme-aware chart colors via MutationObserver on `html` class
-
-### Retirement Bucket Strategy Simulator (3-Bucket Drawdown)
-
-- File: `src/components/calculator/RetirementBucketCalculator.astro` (~470 lines)
-- Uses `src/utils/retirement-bucket-calculations.ts` for math
-- Implements the classic Three-Bucket Retirement Strategy (Cash Buffer, Bonds/Income, Growth/Stocks)
-- Inputs: Total portfolio, annual spending, buffer years per bucket, yield rates, inflation
-- Initial allocation: Bucket 1 = Spend × Years, Bucket 2 = Spend × Years, Bucket 3 = remainder
-- Year-by-year simulation: waterfall spending (B1 → B2 → B3), yield application, waterfall replenishment (B2 → B1, B3 → B2)
-- Edge case: scales down safe buffer buckets if portfolio too small, shows warning
-- 3 KPI cards: Years Lasted, Total Return Generated, Final Growth Bucket
-- Chart.js stacked area line chart showing 3-bucket balances over 30 years
-- 3 color-coded initial allocation summary boxes (green Cash, blue Bonds, violet Stocks)
-- Disclaimer block about fixed-rate modeling limitations
-- Theme-aware chart colors via MutationObserver on `html` class
-
-### Bond Tent / SRR Glide Path Calculator
-
-- File: `src/components/calculator/BondTentCalculator.astro` (~481 lines)
-- Uses `src/utils/bond-tent-calculations.ts` for math
-- Simulates a rising equity glide path (bond tent) to protect against sequence of returns risk
-- 3-phase simulation: pre-retirement ramp-up, post-retirement ramp-down, post-glide path
-- 3 crash scenarios: Severe (-30%), Moderate (-15%), Flat (0% for 3 years)
-- Compares dynamic tent portfolio vs. static baseline allocation
-- Inputs: Portfolio value, annual spending, ramp-up years, ramp-down years, baseline equity %, peak bond %
-- 4 KPI cards: Bond Tent Final, Static Final, Tent Advantage, Max Drawdown Saved
-- Summary banner showing dollar advantage
-- Chart.js dual-line chart comparing tent vs. static portfolio trajectories
-- Collapsible year-by-year projection table with bond allocation %
-- Theme-aware chart colors via MutationObserver on `html` class
-
-### Coast FIRE by Age Glide Path Calculator
-
-- File: `src/components/calculator/CoastFireByAgeCalculator.astro` (~505 lines)
-- Uses `src/utils/coast-fire-by-age-calculations.ts` for math
-- Shows Coast FIRE milestone at every age between current age and target retirement age
-- Uses reverse compound interest formula: Coast Required at Age A = FIRE Target / (1 + r)^(T - A)
-- 6 input controls: Current Age, Target Retirement Age, Annual Expenses, SWR, Current Net Worth, Real Annual Return
-- Status alert card: Green (achieved) or Orange (building toward) with progress percentage
-- 4 KPI cards: FIRE Target, Current Coast Required, Your Net Worth, Gap/Surplus
-- Chart.js dual-line chart: Required Coast FIRE Milestone (solid) vs Your Projected Portfolio (dashed)
-- Age-by-age projection table with status indicators and progress bars
-- Edge case: warns when current age >= target retirement age
-- Theme-aware chart colors via MutationObserver on `html` class
-
-### HSA Shoebox Strategy Calculator
-
-- File: `src/components/calculator/HsaShoeboxStrategyCalculator.astro` (~400 lines)
-- Uses `src/utils/hsa-shoebox-calculations.ts` for math
-- Compares two parallel HSA growth paths: Immediate Reimbursement vs Delayed Reimbursement (Shoebox Strategy)
-- 5 slider inputs: Current HSA Balance, Annual Contribution, Annual Expenses, Delay Horizon, Growth Rate
-- 5 KPI cards: Immediate Reimbursement, Delayed Reimbursement, Shoebox Receipt Value, Shoebox Bonus, Net HSA After Reimbursement
-- Chart.js dual-line chart comparing both paths over time
-- Year-by-year projection table showing annual advantage
-- Excess warning when annual expenses exceed HSA capacity in year 1
-- Theme-aware chart colors via MutationObserver on `html` class
-- Targets US-based early retirees and FIRE community optimizing HSA tax-free growth
-
-### House Hacking Cash Flow Calculator
-
-- File: `src/components/calculator/HouseHackingCalculator.astro` (~290 lines)
-- Uses `src/utils/house-hacking-calculations.ts` for math
-- Calculates PITI (Principal, Interest, Taxes, Insurance) + PMI for FHA and conventional loans
-- Models operating expenses: vacancy loss, maintenance & CapEx reserves
-- 9 inputs: purchase price, down payment, interest rate, loan term, property tax, insurance, rent, maintenance, vacancy
-- 4 KPI cards: Gross Mortgage, Net Rental Income, Monthly P&I, PMI
-- Full monthly breakdown table with color-coded positive/negative cash flow
-- PMI warning when down payment is below 20%
-- No Chart.js — focused on the core cash flow number
-- Theme-aware via CSS variable tokens
+| Calculator | File | Lines | Utils | Chart | Key Features |
+|---|---|---|---|---|---|
+| FIRE | FIRECalculatorBase.astro | ~700 | calculations.ts | Chart.js | URL state sharing via query params, 4 FIRE types (regular/lean/fat/coast), scenario comparison, export & share, theme-aware via MutationObserver |
+| Geo Arbitrage | GeoArbitrageCalculator.astro | — | geo-arbitrage-calculations.ts | Chart.js line | PPP adjustment, 30-year inflation-adjusted projection, home vs target country comparison, US→India presets |
+| Die with Zero | DieWithZeroCalculator.astro | — | decumulation-calculations.ts | Chart.js line | TVM annuity PMT formula, linear and front-loaded (Go-Go Years) spending curves, portfolio declining to buffer, 4% rule comparison (money left on table), theme-aware via MutationObserver |
+| SRR Stress Tester | SequenceOfReturnsCalculator.astro | — | srr-calculations.ts | Chart.js dual-line | Steady vs crashed projections, 30-year inflation-adjusted simulation, 3 crash scenarios (Dot-Com, GFC, Stagflation) + custom, Zero-floor rule, theme-aware via MutationObserver |
+| OMY Syndrome | OneMoreYearCalculator.astro | — | omy-calculations.ts | Chart.js dual-line | Retire today vs wait projections, 30-year portfolio divergence, "Extra Years to Work" slider (1-5), lifestyle converters (vacations/cars per year), time cost display (hours of healthy life traded), theme-aware via MutationObserver |
+| Cash Cushion Optimizer | CashCushionOptimizer.astro | — | cash-cushion-calculations.ts | Chart.js stacked bar | Dividend vs cash-funded expenses, PMT-like annuity factor formula, 3 KPI cards (Naive Cash red, Optimized Cash green, Capital Freed blue), year-by-year crash breakdown, theme-aware via MutationObserver |
+| Perpetual SWR | PerpetualSWRCalculator.astro | — | pswr-calculations.ts | Chart.js dual-line | Fisher Equation, PSWR = Real Return - Fees, real vs nominal projection, 50-100 year inflation-adjusted projection, 3 KPI cards (PSWR green, Annual Safe Spend ink, Nominal Legacy blue), unsustainable warning (PSWR ≤ 0), targets FatFIRE/estate planners/endowments, theme-aware via MutationObserver |
+| Coast FIRE Number | CoastFireNumber.astro | ~558 | coast-fire-calculations.ts | Chart.js line/bar toggler | Compound interest target determination, 4 primary + 3 secondary KPI cards, Coast status badge with progress bar, collapsible year-by-year table, PDF export & share |
+| Coast FIRE Shift | CoastFireShiftCalculator.astro | ~943 | coast-fire-shift-calculations.ts | Chart.js dual-line | Two-phase retirement (full-time → part-time → full retirement), 4 KPI cards, Surplus/Deficit color-coded card, "One More Year" Cost Index card, year-by-year table |
+| Owner Earnings | OwnerEarningsCalculator.astro | ~976 | owner-earnings.ts | None | Buffett Owner Earnings formula, two CapEx methods (Basic/Greenwald 5-year PP&E), Ten-Cap discount rate, 4 KPI cards, Margin of Safety indicator (green/yellow/red), 15+ 10-K financial inputs |
+| VPW | VPWCalculator.astro | ~844 | vpw-calculations.ts | Chart.js dual-line | Bogleheads VPW vs 4% rule comparison, multi-scenario (Steady, Sequence Risk, GFC, Lost Decade), 0% ruin badge, 4 KPI cards, Pension/Social Security bridge toggle, asset allocation inputs, year-by-year table |
+| Core-Satellite Rebalancer | CoreSatelliteRebalancer.astro | ~698 | rebalancer-calculations.ts | None | Dynamic portfolio with add/remove holdings, cash-first tax-aware buy/sell optimization, 3 KPI cards, per-holding rebalancing table, weight normalization warning, tax impact warning |
+| Dividend Tax Drag | DividendTaxDragCalculator.astro | ~996 | Inline (none) | Chart.js dual-line | Taxable vs Tax-Advantaged comparison, 4 presets (High-Yield ETF, Growth Stock, Balanced, S&P 500), 6 KPI cards, interactive sliders for all inputs |
+| SEPP / 72(t) | SEPPCalculator.astro | ~580 | seppMath.ts | SVG chart | 3 IRS methods (RMD, Fixed Amortization, Fixed Annuitization), 3 method cards with payment/totals, tabbed interface (Comparison/Schedule/Chart), SVG balance drawdown, annual schedule, IRS §7520 rate validation, Single Modifications & multiple segments |
+| Guardrails | GuardrailsCalculator.astro | ~437 | guardrails-calculations.ts | Chart.js dual-line | Guyton-Klinger strategy, upper (120%)/lower (80%) guardrails, Capital Preservation Rule (10% cut), Prosperity Rule (10% increase), 4 KPI cards, collapsible year-by-year table with guardrail indicators, depletion warning, theme-aware via MutationObserver |
+| Retirement Bucket | RetirementBucketCalculator.astro | ~470 | retirement-bucket-calculations.ts | Chart.js stacked area line | 3-bucket strategy (Cash/Bonds/Growth), waterfall spending (B1→B2→B3), yield & replenishment (B2→B1, B3→B2), edge case scaling, 3 KPI cards, 3 color-coded allocation boxes, disclaimer, theme-aware via MutationObserver |
+| Bond Tent | BondTentCalculator.astro | ~481 | bond-tent-calculations.ts | Chart.js dual-line | Rising equity glide path (bond tent), 3-phase simulation (pre/post/post-glide), 3 crash scenarios (Severe -30%, Moderate -15%, Flat 3yr), tent vs static comparison, 4 KPI cards, summary dollar advantage banner, collapsible year-by-year table with bond %, theme-aware via MutationObserver |
+| Coast FIRE by Age | CoastFireByAgeCalculator.astro | ~505 | coast-fire-by-age-calculations.ts | Chart.js dual-line | Milestone at every age, reverse compound interest formula, 6 input controls, status alert card (Green/Orange), 4 KPI cards, required (solid) vs projected (dashed) chart, age-by-age table with progress bars, edge case warning, theme-aware via MutationObserver |
+| HSA Shoebox | HsaShoeboxStrategyCalculator.astro | ~400 | hsa-shoebox-calculations.ts | Chart.js dual-line | Immediate vs Delayed Reimbursement comparison, 5 slider inputs, 5 KPI cards, year-by-year advantage table, excess warning (expenses > HSA capacity Y1), theme-aware via MutationObserver, targets US-based early retirees/FIRE community |
+| House Hacking | HouseHackingCalculator.astro | ~290 | house-hacking-calculations.ts | None | PITI + PMI for FHA and conventional loans, operating expenses (vacancy, maintenance, CapEx), 9 inputs, 4 KPI cards (Gross Mortgage, Net Rental Income, Monthly P&I, PMI), monthly breakdown table with color-coded cash flow, PMI warning (< 20% down), theme-aware via CSS tokens |
 
 ### Adding a New Tool
 
@@ -535,11 +310,6 @@ git checkout -b {branch-name}
 | Medium (component refactor) | `refactor/{description}` | Multi-file, related changes |
 | Large (feature, major refactor) | `feat/{description}` | Complex changes across codebase |
 
-**Examples:**
-- `quick-fix/remove-dead-code`
-- `refactor/consolidate-ui-components`
-- `feat/add-mortgage-calculator`
-
 #### After Completion — Push to GitHub
 
 Once the build passes and the task is complete, the Builder must push the branch:
@@ -548,8 +318,6 @@ git add -A
 git commit -m "{descriptive commit message}"
 git push origin {branch-name}
 ```
-
-This allows the user to preview the changes via GitHub's preview deployment or create a PR for review.
 
 ## DRY Policy — Don't Repeat Yourself
 
@@ -595,171 +363,18 @@ When creating a new tool page, first verify it follows the [Calculator Page Temp
 
 Every standalone calculator page follows this exact section order and structure:
 
-```astro
----
-import PageLayout from '../../layouts/PageLayout.astro';
-import HowItWorks from '../../components/ui/HowItWorks.astro';
-import StructuredData from '../../components/seo/StructuredData.astro';
-import type { FAQItem } from '../../utils/faq-data';
-// + import your calculator component
----
-
-// 1. Page-specific FAQ items defined inline (6-8 questions)
-const toolFaqItems: FAQItem[] = [
-  { question: '...', answerHtml: '...', answerText: '...' },
-];
----
-
-// 2. PageLayout with SEO props
-<PageLayout
-  title="{Tool Name} Calculator — {Value Prop}"
-  description="Free {tool name} calculator for {use case}. {Primary action} based on {inputs}. {Secondary benefit}."
-  canonical="https://truefinancetools.com/{tool-name}"
-  ogImage="https://truefinancetools.com/og-{tool-name}.png"
-  ogImageAlt="{Tool Name} Calculator — {Short Description}"
-  pageType="website"
-  keywords="{tool name} calculator, {primary keywords comma separated}"
->
-
-  // 3. StructuredData (WebApplication + FAQPage schema)
-  //    Include `features` array listing 4-6 tool capabilities
-  <StructuredData
-    title="{Tool Name} Calculator"
-    description="Free {tool name} calculator for {use case}."
-    url="https://truefinancetools.com/{tool-name}"
-    features={[
-      '{Feature 1}',
-      '{Feature 2}',
-      '{Feature 3}',
-      '{Feature 4}',
-    ]}
-  />
-
-  // 4. Hero section — centered h1 + subtitle
-  //    bg-canvas, border-b, py-12 sm:py-16
-  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
-    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
-      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
-        {Tool Name} Calculator
-      </h1>
-      <p class="text-lg text-body">{One-line value proposition}</p>
-    </div>
-  </section>
-
-  // 5. Calculator component
-  <YourCalculatorComponent />
-
-  // 6. How It Works — 3 steps in <HowItWorks>
-  <HowItWorks title="How the {Tool Name} Calculator Works">
-    <div class="text-center">
-      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
-        {/* SVG icon */}
-      </div>
-      <h3 class="mb-2 text-sm font-semibold text-ink">1. {Step title}</h3>
-      <p class="text-sm text-body">{Step description}</p>
-    </div>
-    <div class="text-center">{same structure for step 2}</div>
-    <div class="text-center">{same structure for step 3}</div>
-  </HowItWorks>
-
-  // 7. "What is {Tool}?" section (bg-canvas-soft)
-  //    Internal order: definition → formula → comparison table → Who Should Choose → Pros/Cons
-  <section class="border-t border-hairline bg-canvas-soft py-16">
-    <div class="mx-auto max-w-4xl px-4 sm:px-6">
-      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink">What is {Tool Name}?</h2>
-      <div class="prose prose-gray max-w-none text-body">
-        // a. Definition paragraph with bolded term
-        <p><strong>{Tool}</strong> is...{definition}...</p>
-
-        // b. Formula block (bg-canvas-soft-2, font-mono)
-        <h3 class="mb-3 text-lg font-semibold text-ink">The {Tool Name} Formula</h3>
-        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">{Formula expression}</div>
-
-        // c. Comparison table (border-hairline, bg-canvas-soft-2 header)
-        <h3 class="mb-3 text-lg font-semibold text-ink">{Tool} vs {Alternative}</h3>
-        <div class="overflow-x-auto rounded-lg border border-hairline">
-          <table class="w-full text-left text-sm">
-            <thead><tr class="border-b border-hairline bg-canvas-soft-2"><th>...</th></tr></thead>
-            <tbody class="font-mono text-xs tabular-nums"><tr>...</tr></tbody>
-          </table>
-        </div>
-
-        // d. "Who Should Choose" 2x2 grid (border-hairline cards)
-        <h3 class="mb-3 text-lg font-semibold text-ink">Who Should Choose {Tool}?</h3>
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div class="rounded-lg border border-hairline bg-canvas p-4">
-            <h4 class="mb-2 text-sm font-semibold text-ink">{Persona}</h4>
-            <p class="text-sm text-body">{Description}</p>
-          </div>
-          {...3 more cards}
-        </div>
-
-        // e. Pros and Cons grid (success/error borders)
-        <h3 class="mb-3 text-lg font-semibold text-ink">{Tool} Pros and Cons</h3>
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
-            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
-            <ul class="space-y-1 text-sm text-body">
-              <li>• {Advantage 1}</li>
-            </ul>
-          </div>
-          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
-            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
-            <ul class="space-y-1 text-sm text-body">
-              <li>• {Trade-off 1}</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  // 8. FAQ section (bg-canvas)
-  <section class="border-t border-hairline bg-canvas py-16">
-    <div class="mx-auto max-w-4xl px-4 sm:px-6">
-      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink">Frequently Asked Questions About {Tool Name}</h2>
-      <div class="space-y-4">
-        {toolFaqItems.map((item) => (
-          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
-            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
-            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
-          </details>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  // 9. "Complete Guide" section (bg-canvas)
-  //    "Why Choose {Tool}" + "Key Features" subheadings
-  <section class="border-t border-hairline bg-canvas py-16">
-    <div class="mx-auto max-w-4xl px-4 sm:px-6">
-      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink">Complete Guide to {Tool Name} Planning</h2>
-      <div class="prose prose-gray max-w-none text-body">
-        <p>Our <strong>{tool name} calculator</strong> is...{intro}...</p>
-        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose {Tool}?</h3>
-        <p>...{2-3 paragraphs}...</p>
-        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This {Tool Name} Calculator</h3>
-        <p>...{1-2 paragraphs}...</p>
-      </div>
-    </div>
-  </section>
-
-  // 10. "Explore Other {Category}" cross-links section (bg-canvas-soft)
-  <section class="border-t border-hairline bg-canvas-soft py-16">
-    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
-      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink">Explore Other {Category}</h2>
-      <p class="mb-8 text-body">{Category description}</p>
-      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <a href="/other-tool" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
-          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">{Tool Name}</h3>
-          <p class="text-xs text-body">{Short description}</p>
-        </a>
-        {...5 more links, one with border-2 border-ink for highlighted guide link}
-      </div>
-    </div>
-  </section>
-</PageLayout>
-```
+Page structure (11 sections in order):
+1. Imports (PageLayout, HowItWorks, StructuredData, FAQItem, calculator)
+2. FAQ items inline (6-8 items)
+3. PageLayout wrapper with SEO props
+4. StructuredData with features array
+5. Hero section (bg-canvas border-b, centered h1 + subtitle)
+6. Calculator component
+7. How It Works (3 steps in <HowItWorks>)
+8. "What is {Tool}?" (bg-canvas-soft) — definition → formula → comparison → Who Should Choose 2×2 → Pros/Cons
+9. FAQ section (bg-canvas) — details/summary mapped from toolFaqItems
+10. Complete Guide (bg-canvas) — "Why Choose" + "Key Features" subheadings
+11. Explore Other (bg-canvas-soft) — 6 cross-links in 3-column grid, highlight one with border-2
 
 **SEO rules:**
 - **Title:** Format `"{Tool Name} Calculator — {Compelling Value Proposition}"`
@@ -808,76 +423,11 @@ When creating a new tool page, verify every item:
 
 Learn/guide pages (at `/learn/`) use BaseLayout for long-form content:
 
-```astro
----
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Header from '../../components/layout/Header.astro';
-import Footer from '../../components/layout/Footer.astro';
-import StructuredData from '../../components/seo/StructuredData.astro';
----
-
-<BaseLayout
-  title="{Page Title} — {SEO Value Prop}"
-  description="..."
-  canonical="https://truefinancetools.com/learn/{page-slug}"
-  ogImage="https://truefinancetools.com/og-{page-slug}.png"
-  ogImageAlt="..."
-  keywords="..."
->
-  <Header />
-
-  <StructuredData
-    title="{Page Title}"
-    description="..."
-    url="https://truefinancetools.com/learn/{page-slug}"
-  />
-
-  <main>
-    // Hero with "Learn" label + h1 + subtitle
-    <section class="border-b border-hairline bg-canvas py-16 sm:py-20">
-      <div class="mx-auto max-w-3xl px-4 sm:px-6">
-        <p class="mb-4 font-mono text-xs uppercase tracking-wider text-mute">Learn</p>
-        <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">{Title}</h1>
-        <p class="text-lg text-body">{Subtitle}</p>
-      </div>
-    </section>
-
-    // Article with prose content
-    <article class="bg-canvas py-12 sm:py-16">
-      <div class="mx-auto max-w-3xl px-4 sm:px-6">
-        <div class="prose prose-sm max-w-none space-y-8 text-body">
-          <section><h2>What is...</h2><p>...</p></section>
-          <section><h2>How it Works</h2>
-            <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">{formula}</div>
-          </section>
-          <section><h2>Why Choose...</h2>
-            <div class="grid gap-4 sm:grid-cols-2">{cards}</div>
-          </section>
-          <section><h2>Comparison</h2>
-            <div class="overflow-x-auto"><table>...</table></div>
-          </section>
-          <section><h2>Things to Consider</h2>
-            <div class="space-y-4">{detail cards}</div>
-          </section>
-          // CTA linking to calculator
-          <section class="rounded-lg bg-canvas-soft-2 p-6">
-            <h2>Calculate Your {Tool} Number</h2>
-            <p>...</p>
-            <a href="/{tool}-calculator" class="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-medium text-canvas transition-opacity hover:opacity-90">
-              Open Calculator
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </a>
-          </section>
-        </div>
-      </div>
-    </article>
-  </main>
-
-  <Footer />
-</BaseLayout>
-```
+Learn/Guide page structure:
+- Uses BaseLayout (not PageLayout)
+- Imports: BaseLayout, Header, Footer, StructuredData
+- Sections: Hero (with "Learn" label + h1 + subtitle) → Article (prose content: What is → How it Works → Why Choose → Comparison → Things to Consider → CTA)
+- CTA uses: rounded-full bg-ink px-6 py-3 text-sm font-medium text-canvas
 
 ### Known existing components (always check these first)
 
