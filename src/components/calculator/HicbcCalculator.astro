@@ -1,0 +1,436 @@
+---
+import Card from '../ui/Card.astro';
+import Slider from '../ui/Slider.astro';
+import Input from '../ui/Input.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="hb-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="hb-form" class="space-y-4">
+          <Slider
+            label="Gross Salary"
+            name="grossSalary"
+            value={68000}
+            min={30000}
+            max={150000}
+            step={500}
+            suffix=" £"
+            inputId="hb-grossSalary"
+            displayId="hb-grossSalaryValue"
+            tooltip="Your total taxable income from all sources (salary, bonuses, rental income, dividends) before any deductions."
+          />
+
+          <Slider
+            label="Number of Children"
+            name="numberOfChildren"
+            value={2}
+            min={1}
+            max={10}
+            step={1}
+            suffix=" children"
+            inputId="hb-children"
+            displayId="hb-childrenValue"
+            tooltip="The number of children for whom you or your partner receive Child Benefit payments."
+          />
+
+          <Slider
+            label="Pension Contributions"
+            name="pensionContributions"
+            value={0}
+            min={0}
+            max={60000}
+            step={100}
+            suffix=" £"
+            inputId="hb-pension"
+            displayId="hb-pensionValue"
+            tooltip="Total gross contributions made to registered pensions this tax year (including relief at source and salary sacrifice)."
+          />
+
+          <Input
+            label="Gift Aid Donations"
+            name="giftAidDonations"
+            type="number"
+            value={0}
+            min={0}
+            max={10000}
+            step={50}
+            suffix="£"
+            hideArrows
+            tooltip="Total net donations made to registered charities using Gift Aid."
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Headline KPI -->
+      <div id="hb-headline-card" class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm text-center">
+        <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Your Net Retained Child Benefit</p>
+        <p id="hb-net-retained-headline" class="text-3xl font-semibold tabular-nums text-ink sm:text-4xl">—</p>
+        <p id="hb-headline-label" class="mt-1 text-sm text-mute">Adjust inputs to see your retained benefit</p>
+      </div>
+
+      <!-- Below threshold notification (hidden by default) -->
+      <div id="hb-below-threshold-notice" class="hidden rounded-lg border border-success/30 bg-success/5 p-4">
+        <p class="text-sm font-medium text-success-deep">✓ Your income is below the HICBC threshold. You keep 100% of your child benefit.</p>
+      </div>
+
+      <!-- 3 KPI cards -->
+      <div class="grid gap-4 sm:grid-cols-3">
+        <ResultCard
+          label="Total Child Benefit"
+          valueId="hb-total-cb"
+          value="—"
+          valueClass="text-ink"
+          description="Annual Child Benefit entitlement"
+        />
+        <ResultCard
+          label="HICBC Tax Clawback"
+          valueId="hb-clawback-amount"
+          value="—"
+          valueClass="text-error"
+          description="Charge amount and percentage"
+        />
+        <ResultCard
+          label="Net Retained Benefit"
+          valueId="hb-net-retained"
+          value="—"
+          valueClass="text-success-deep"
+          description="Child Benefit minus HICBC charge"
+        />
+      </div>
+
+      <!-- Optimization callout banner (hidden when below threshold) -->
+      <div id="hb-optimization-callout" class="hidden rounded-lg border border-link/30 bg-link/5 p-4">
+        <p id="hb-optimization-text" class="text-sm text-body">
+          Contribute <strong id="hb-opt-target">£0</strong> to your pension to eliminate this tax charge entirely, saving you <strong id="hb-opt-savings">£0</strong> in taxes while boosting your retirement pot.
+        </p>
+      </div>
+
+      <!-- Marginal Effective Rate card -->
+      <Card padding="lg">
+        <div class="flex items-center justify-between">
+          <p class="text-sm font-medium text-ink">Marginal Effective Tax Rate (Combined)</p>
+          <p id="hb-marginal-rate" class="font-mono text-2xl font-semibold tabular-nums text-ink">—</p>
+        </div>
+        <p class="mt-1 text-xs text-mute">Includes income tax, employee NI, and HICBC clawback</p>
+      </Card>
+
+      <!-- Clawback Curve Chart -->
+      <Card padding="lg">
+        <h2 class="mb-4 text-sm font-medium text-ink">Clawback Curve Visualisation</h2>
+        <div class="relative" style="height: 300px;">
+          <canvas
+            id="hb-clawback-chart"
+            role="img"
+            aria-label="HICBC clawback curve chart showing how the child benefit charge increases as income rises from £55,000 to £85,000"
+          ></canvas>
+        </div>
+      </Card>
+
+      <!-- Disclaimer -->
+      <div class="rounded-lg bg-canvas-soft p-4">
+        <p class="text-xs text-mute">
+          <strong>Disclaimer:</strong> This calculator provides estimates based on HMRC 2026/27 tax year rules (£60,000 HICBC threshold). It does not constitute tax, legal, or financial advice. Actual tax liabilities may differ based on your individual circumstances. Consult a qualified tax advisor or HMRC for official guidance.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+  import { calculateHicbc } from '../../utils/hicbc-calculations';
+  import { formatGBP, formatPercent } from '../../utils/formatters';
+
+  var chart = null;
+
+  function getFormData() {
+    var form = document.getElementById('hb-form');
+    var formData = new FormData(form);
+
+    return {
+      grossSalary: Number(formData.get('grossSalary')) || 68000,
+      numberOfChildren: Number(formData.get('numberOfChildren')) || 2,
+      pensionContributions: Number(formData.get('pensionContributions')) || 0,
+      giftAidDonations: Number(formData.get('giftAidDonations')) || 0,
+    };
+  }
+
+  function updateResults() {
+    var inputs = getFormData();
+    var r = calculateHicbc(inputs);
+
+    // Headline
+    var headlineEl = document.getElementById('hb-net-retained-headline');
+    var labelEl = document.getElementById('hb-headline-label');
+    var headlineCard = document.getElementById('hb-headline-card');
+
+    if (r.netRetainedBenefit > 0) {
+      headlineEl.textContent = formatGBP(r.netRetainedBenefit);
+      headlineEl.className = 'text-3xl font-semibold tabular-nums text-success-deep sm:text-4xl';
+      labelEl.textContent = 'This is your annual retained Child Benefit after the HICBC charge.';
+      headlineCard.className = 'rounded-lg border border-success/30 bg-success/5 p-6 shadow-sm text-center';
+    } else if (r.isFullClawback && r.isBelowThreshold === false) {
+      headlineEl.textContent = formatGBP(0);
+      headlineEl.className = 'text-3xl font-semibold tabular-nums text-error sm:text-4xl';
+      labelEl.textContent = 'Your entire Child Benefit is clawed back by the HICBC charge.';
+      headlineCard.className = 'rounded-lg border border-error/30 bg-error/5 p-6 shadow-sm text-center';
+    } else {
+      headlineEl.textContent = formatGBP(r.netRetainedBenefit);
+      headlineEl.className = 'text-3xl font-semibold tabular-nums text-ink sm:text-4xl';
+      labelEl.textContent = 'Adjust inputs to see your retained benefit';
+      headlineCard.className = 'rounded-lg border border-hairline bg-canvas p-6 shadow-sm text-center';
+    }
+
+    // Below threshold notification
+    var belowNotice = document.getElementById('hb-below-threshold-notice');
+    if (r.isBelowThreshold) {
+      belowNotice.classList.remove('hidden');
+    } else {
+      belowNotice.classList.add('hidden');
+    }
+
+    // KPI cards
+    document.getElementById('hb-total-cb').textContent = formatGBP(r.totalChildBenefit);
+    document.getElementById('hb-clawback-amount').textContent = formatGBP(r.hicbcCharge) + ' (' + r.clawbackPercentage.toFixed(0) + '%)';
+
+    var netRetainedEl = document.getElementById('hb-net-retained');
+    netRetainedEl.textContent = formatGBP(r.netRetainedBenefit);
+    if (r.netRetainedBenefit <= 0) {
+      netRetainedEl.className = 'text-2xl font-semibold tabular-nums text-error';
+    } else {
+      netRetainedEl.className = 'text-2xl font-semibold tabular-nums text-success-deep';
+    }
+
+    // Optimization callout
+    var optCallout = document.getElementById('hb-optimization-callout');
+    if (!r.isBelowThreshold && r.optimizationTarget > 0) {
+      optCallout.classList.remove('hidden');
+      document.getElementById('hb-opt-target').textContent = formatGBP(r.optimizationTarget);
+      document.getElementById('hb-opt-savings').textContent = formatGBP(r.hicbcCharge);
+    } else {
+      optCallout.classList.add('hidden');
+    }
+
+    // Marginal effective rate
+    document.getElementById('hb-marginal-rate').textContent = formatPercent(r.marginalEffectiveRate);
+
+    // Update chart
+    updateChart(r);
+  }
+
+  function updateChart(results) {
+    var ctx = document.getElementById('hb-clawback-chart');
+    if (!ctx) return;
+
+    var isDark = document.documentElement.classList.contains('dark');
+    var gridColor = isDark ? '#262626' : '#ebebeb';
+    var textColor = isDark ? '#737373' : '#888888';
+    var tooltipBg = isDark ? '#ededed' : '#171717';
+    var tooltipText = isDark ? '#171717' : '#ffffff';
+
+    var chargeColor = isDark ? '#f87171' : '#dc2626';
+    var retainedColor = isDark ? '#34d399' : '#059669';
+    var markerColor = isDark ? '#fbbf24' : '#d97706';
+
+    var labels = results.clawbackCurveData.map(function(d) { return '£' + d.income.toLocaleString(); });
+    var chargeData = results.clawbackCurveData.map(function(d) { return d.charge; });
+    var retainedData = results.clawbackCurveData.map(function(d) { return d.retained; });
+
+    var inputs = getFormData();
+    var ani = results.adjustedNetIncome;
+
+    if (chart) {
+      chart.data.labels = labels;
+      chart.data.datasets[0].data = chargeData;
+      chart.data.datasets[0].borderColor = chargeColor;
+      chart.data.datasets[0].backgroundColor = chargeColor + '15';
+      chart.data.datasets[1].data = retainedData;
+      chart.data.datasets[1].borderColor = retainedColor;
+      chart.data.datasets[1].backgroundColor = retainedColor + '15';
+      chart.options.scales.x.ticks.color = textColor;
+      chart.options.scales.y.ticks.color = textColor;
+      chart.options.scales.x.grid.color = gridColor;
+      chart.options.scales.y.grid.color = gridColor;
+      chart.options.plugins.legend.labels.color = textColor;
+      chart.update();
+      return;
+    }
+
+    chart = new window.Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'HICBC Charge',
+            data: chargeData,
+            borderColor: chargeColor,
+            backgroundColor: chargeColor + '15',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            borderWidth: 2,
+          },
+          {
+            label: 'Retained Benefit',
+            data: retainedData,
+            borderColor: retainedColor,
+            backgroundColor: retainedColor + '15',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 12,
+              usePointStyle: true,
+              pointStyle: 'circle',
+              padding: 16,
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: 500,
+            },
+            bodyFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+            },
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': ' + formatGBP(context.parsed.y);
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 10,
+              },
+              color: textColor,
+              maxTicksLimit: 8,
+            },
+            border: {
+              display: false,
+            },
+          },
+          y: {
+            grid: {
+              color: gridColor,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              callback: function(value) {
+                return '£' + value.toLocaleString();
+              },
+            },
+            border: {
+              display: false,
+            },
+            min: 0,
+          },
+        },
+      },
+    });
+  }
+
+  function initSliders() {
+    var sliders = [
+      { id: 'hb-grossSalary', displayId: 'hb-grossSalaryValue', suffix: ' £' },
+      { id: 'hb-children', displayId: 'hb-childrenValue', suffix: ' children' },
+      { id: 'hb-pension', displayId: 'hb-pensionValue', suffix: ' £' },
+    ];
+
+    sliders.forEach(function(slider) {
+      var el = document.getElementById(slider.id);
+      var display = document.getElementById(slider.displayId);
+
+      if (el && display) {
+        el.addEventListener('input', function() {
+          display.textContent = Number(el.value).toLocaleString() + slider.suffix;
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('hb-form');
+    if (form) {
+      form.addEventListener('input', function() {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    initSliders();
+    initFormListeners();
+    updateResults();
+
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', function() {
+        if (chart) {
+          chart.destroy();
+          chart = null;
+        }
+        updateResults();
+      });
+
+    var observer = new MutationObserver(function() {
+      if (chart) {
+        chart.destroy();
+        chart = null;
+      }
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>

@@ -1,0 +1,322 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import HicbcCalculator from '../../components/calculator/HicbcCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What counts as Adjusted Net Income for Child Benefit?',
+    answerHtml: 'Adjusted Net Income is your total taxable income (salary, bonuses, investment interest, dividends, and profits from trading or property) minus specific tax reliefs like <b>gross pension contributions</b> and <b>grossed-up charitable donations</b> under Gift Aid. It is the figure HMRC uses to determine whether the High Income Child Benefit Charge applies to you. Our calculator handles this automatically once you enter your salary, pension contributions, and Gift Aid donations.',
+    answerText: 'Adjusted Net Income is your total taxable income minus gross pension contributions and grossed-up Gift Aid donations. HMRC uses this figure to determine whether the HICBC applies. Our calculator handles this automatically.',
+  },
+  {
+    question: 'Can salary sacrifice save my Child Benefit?',
+    answerHtml: '<b>Yes.</b> Salary sacrifice structures contractually reduce your gross salary before tax is calculated. Because it lowers your baseline gross income, it directly reduces your Adjusted Net Income, making it one of the most effective strategies to bypass the HICBC. Common salary sacrifice arrangements include pension contributions, cycle-to-work schemes, electric car schemes, and childcare vouchers. Note that salary sacrifice must be a permanent change to your employment contract — ad-hoc reductions do not qualify.',
+    answerText: 'Yes, salary sacrifice reduces your gross salary before tax, which directly lowers your Adjusted Net Income. It is one of the most effective strategies to bypass the HICBC. Permanent salary sacrifice arrangements for pensions, cycle-to-work, and electric car schemes all help.',
+  },
+  {
+    question: 'Should I opt out of receiving Child Benefit payments if I earn over £80,000?',
+    answerHtml: 'Even if you plan to <b>opt out</b> of the actual cash payments to avoid filing a self-assessment tax return, you should still fill out the Child Benefit claim form. Registering ensures the child receives <b>National Insurance credits</b> toward their future state pension and guarantees they receive a National Insurance number automatically at age 16. These benefits have no income test — they are valuable regardless of your earnings level. Our calculator helps you see exactly how much charge you would face, so you can make an informed decision.',
+    answerText: 'Even if you earn over £80,000 and plan to opt out of cash payments, still fill out the Child Benefit claim form. This ensures your child receives NI credits toward their future state pension and gets an NI number automatically at 16.',
+  },
+  {
+    question: 'How much Child Benefit do I receive per child?',
+    answerHtml: 'For the <b>2026/27 tax year</b>, the eldest or only child receives <b>£25.60 per week</b> (£1,331.20 per year). Each additional child receives <b>£16.95 per week</b> (£881.40 per year). These rates are set by HMRC and may change annually. For a family with two children, the total annual benefit is £2,212.60. Our calculator includes these exact rates and automatically computes your entitlement based on the number of children you enter.',
+    answerText: 'For 2026/27: eldest child receives £25.60/week (£1,331.20/year). Each additional child receives £16.95/week (£881.40/year). A family with two children receives £2,212.60 annually. Our calculator uses these exact HMRC rates.',
+  },
+  {
+    question: 'At what income level does the HICBC charge reach 100%?',
+    answerHtml: 'The charge reaches <b>100%</b> when your Adjusted Net Income reaches <b>£80,000</b>. At this point, the total tax charge equals your entire Child Benefit entitlement, meaning you effectively receive nothing from the benefit. The charge is tapered at 1% for every £160 of income above the £60,000 threshold. Our interactive clawback curve chart visualises this taper from £55,000 to £85,000, showing you exactly where your income falls on the curve.',
+    answerText: 'The HICBC reaches 100% clawback when your Adjusted Net Income hits £80,000. The taper begins at £60,000 at 1% per £160 of additional income. Our clawback curve chart visualises this taper from £55,000 to £85,000.',
+  },
+  {
+    question: 'How can I reduce my Adjusted Net Income to avoid the charge?',
+    answerHtml: 'The most effective strategy is <b>increasing pension contributions</b>. Every £1 of gross pension contribution reduces your ANI by £1. If your ANI is £70,000, contributing £10,000 to a pension would bring you below the £60,000 threshold and eliminate the charge entirely. <b>Gift Aid donations</b> also reduce ANI — every £1 you donate reduces your ANI by £1.25 (the charity reclaims basic rate tax on the grossed-up amount). Our calculator shows you the exact pension contribution needed to eliminate the charge.',
+    answerText: 'The most effective strategy is increasing pension contributions — every £1 reduces ANI by £1. Gift Aid donations also help (£1 donated = £1.25 ANI reduction). Our calculator shows the exact contribution needed to eliminate the charge entirely.',
+  },
+  {
+    question: 'What is the marginal effective tax rate with HICBC?',
+    answerHtml: 'In the HICBC clawback zone (£60,000–£80,000 ANI), your combined marginal rate includes <b>40% income tax</b> (higher rate), <b>2% employee National Insurance</b> (above the Upper Earnings Limit), and the <b>HICBC clawback effect</b> of approximately 0.625% per pound of extra income. This gives a combined marginal rate of about <b>42.625%</b>. Above £100,000, the Personal Allowance taper adds another ~20%, potentially pushing your effective rate to <b>62%</b> or higher. Our calculator displays your combined marginal rate based on your specific inputs.',
+    answerText: 'In the clawback zone (£60k–£80k ANI), the combined marginal rate is about 42.625% (40% income tax + 2% NI + 0.625% HICBC effect). Above £100k, it can reach 62% with the Personal Allowance taper. Our calculator displays your specific rate.',
+  },
+  {
+    question: 'Do I need to file a self-assessment tax return if I am affected by HICBC?',
+    answerHtml: '<b>Yes, if your Adjusted Net Income exceeds £60,000</b> and you or your partner receive Child Benefit, you must file a Self Assessment tax return with HMRC to report and pay the HICBC charge. Even if your employer deducts tax through PAYE, you remain personally responsible for declaring the charge. If you choose to opt out of receiving Child Benefit cash payments and your income is below £80,000, you may not need to file — but you should still register for Child Benefit to secure NI credits for your child. Our calculator helps you determine whether the charge applies before you file.',
+    answerText: 'Yes. If your ANI exceeds £60,000 and you or your partner receive Child Benefit, you must file a Self Assessment return. Even with PAYE, you are personally responsible for the charge. Our calculator helps you determine whether the charge applies.',
+  },
+];
+---
+
+<PageLayout
+  title="High Income Child Benefit Charge Calculator — UK HICBC Tracker"
+  description="Calculate your UK High Income Child Benefit Charge. See how much tax you owe and find out the exact pension contribution needed to reduce your ANI and keep 100% of your benefit."
+  canonical="https://truefinancetools.com/hicbc-calculator"
+  ogImage="https://truefinancetools.com/og-hicbc-calculator.png"
+  ogImageAlt="High Income Child Benefit Charge Calculator — UK HICBC Tracker"
+  pageType="website"
+  keywords="high income child benefit charge calculator, HICBC calculator, child benefit tax charge UK, how to avoid child benefit tax charge, salary sacrifice child benefit, adjusted net income calculator, pension contribution child benefit"
+>
+  <StructuredData
+    title="High Income Child Benefit Charge Calculator"
+    description="Calculate your UK High Income Child Benefit Charge. See how much tax you owe and find out the exact pension contribution needed to reduce your ANI and keep 100% of your benefit."
+    url="https://truefinancetools.com/hicbc-calculator"
+    toolName="High Income Child Benefit Charge Calculator"
+    toolDescription="Calculate your UK High Income Child Benefit Charge with our free HICBC calculator. See exactly how much tax you owe and the pension contribution needed to reduce your ANI to the £60,000 threshold."
+    faqItems={toolFaqItems}
+    features={[
+      'HMRC 2026/27 Child Benefit rates and thresholds',
+      'Adjusted Net Income (ANI) calculation with pension deductions',
+      'Gift Aid gross-up factor for accurate ANI',
+      'Interactive clawback curve visualisation',
+      'Pension optimization target calculator',
+      'Marginal effective tax rate analysis',
+    ]}
+  />
+
+  <!-- Hero -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        High Income Child Benefit Charge (HICBC) Calculator
+      </h1>
+      <p class="text-lg text-body">Find out exactly how much Child Benefit you keep after the HICBC and the pension contributions needed to eliminate the tax charge entirely. Free HMRC-compliant calculator for 2026/27.</p>
+    </div>
+  </section>
+
+  <!-- Calculator Component -->
+  <HicbcCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the HICBC Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Details</h3>
+      <p class="text-sm text-body">Input your gross salary, number of children, pension contributions, and Gift Aid donations.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Calculate Your Charge</h3>
+      <p class="text-sm text-body">The tool calculates your Adjusted Net Income and determines the exact HICBC charge based on HMRC's tapered clawback formula.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Find Your Optimisation</h3>
+      <p class="text-sm text-body">See exactly how much pension contribution is needed to eliminate the charge and keep 100% of your Child Benefit.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is HICBC? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What Is the High Income Child Benefit Charge?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          The <strong>High Income Child Benefit Charge (HICBC)</strong> is a UK tax charge introduced in 2013 that claws back Child Benefit from taxpayers whose <strong>Adjusted Net Income (ANI)</strong> exceeds £60,000. If you or your partner earn above this threshold and receive Child Benefit, HMRC will charge you a tax equal to a percentage of the benefit — up to 100% for those earning £80,000 or more.
+        </p>
+
+        <p class="mb-4">
+          The charge is <strong>tapered</strong> at a rate of 1% for every £160 of income above the £60,000 threshold. This means the more you earn above £60,000, the more of your Child Benefit is reclaimed through the tax system. The taper runs all the way to £80,000, where 100% of the benefit is clawed back.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The HICBC Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Adjusted Net Income = Gross Salary − Pension Contributions − (Gift Aid × 1.25)<br />
+          Clawback = (ANI − £60,000) ÷ £160 × 1% of Total Child Benefit
+        </div>
+
+        <p class="mb-4 mt-4">
+          Where <strong>Total Child Benefit</strong> = £1,331.20 for the first child + £881.40 for each additional child per year (2026/27 rates). The charge is capped at the full amount of Child Benefit received, and no charge applies if ANI is at or below £60,000.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">With vs Without Pension Contributions</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Scenario</th>
+                <th class="p-3 font-medium text-ink">No Pension Contribution</th>
+                <th class="p-3 font-medium text-ink">With £10k Pension</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Gross Salary</td>
+                <td class="p-3 text-body font-sans">£70,000</td>
+                <td class="p-3 text-body font-sans">£70,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Pension Contribution</td>
+                <td class="p-3 text-body font-sans">£0</td>
+                <td class="p-3 text-success-deep">£10,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Adjusted Net Income</td>
+                <td class="p-3 text-body font-sans">£70,000</td>
+                <td class="p-3 text-success-deep">£60,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">HICBC Charge (2 children)</td>
+                <td class="p-3 text-error">£1,383</td>
+                <td class="p-3 text-success-deep">£0</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">Net Retained Benefit</td>
+                <td class="p-3 font-semibold text-body">£830</td>
+                <td class="p-3 font-semibold text-success-deep">£2,213</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Use This Calculator?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Higher-Rate Taxpayers with Children</h4>
+            <p class="text-sm text-body">Understand exactly how much Child Benefit you will lose to the HICBC and whether pension contributions can restore it.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Self-Assessment Filers</h4>
+            <p class="text-sm text-body">Calculate the precise HICBC amount you need to report on your annual Self Assessment tax return to HMRC.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Financial Advisers &amp; Tax Accountants</h4>
+            <p class="text-sm text-body">Model different pension contribution scenarios for clients and optimise their tax position using salary sacrifice.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Parents Planning Their Finances</h4>
+            <p class="text-sm text-body">Decide whether to opt out of Child Benefit or pay the charge, and see how pension contributions can make the charge disappear.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">HICBC Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Child Benefit is still received in full until you file your tax return</li>
+              <li>• Pension contributions directly reduce your ANI and the charge</li>
+              <li>• Gift Aid donations also reduce your chargeable income</li>
+              <li>• Salary sacrifice can permanently reduce your gross salary</li>
+              <li>• NI credits for children are preserved regardless of income</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Marginal effective rate hits ~42.6% in the clawback zone</li>
+              <li>• Must file Self Assessment if ANI exceeds £60,000</li>
+              <li>• Full clawback at £80,000 means no net benefit from Child Benefit</li>
+              <li>• Employer NI savings from salary sacrifice not always passed on</li>
+              <li>• Pension contributions lock money away until age 57+</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About the High Income Child Benefit Charge
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide to HICBC Planning -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to HICBC Tax Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>High Income Child Benefit Charge calculator</strong> helps you understand exactly how much of your Child Benefit you actually keep after the HICBC. Whether you are a higher-rate taxpayer with children, a financial adviser optimising client tax positions, or someone simply trying to understand the rules, this tool provides instant clarity under current HMRC 2026/27 rules.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose This HICBC Calculator?</h3>
+
+        <p class="mb-4">
+          Unlike generic tax calculators that ignore the Child Benefit taper, this tool correctly calculates your <strong>Adjusted Net Income</strong> by deducting pension contributions and grossed-up Gift Aid donations. It then applies HMRC's tapered clawback formula — 1% per £160 above £60,000 — to determine your exact HICBC liability. The interactive clawback curve chart visualises the taper from £55,000 to £85,000, showing where your income falls on the curve and how much benefit you retain at each level.
+        </p>
+
+        <p class="mb-4">
+          The calculator also computes the <strong>optimisation target</strong> — the exact pension contribution needed to reduce your ANI to the £60,000 threshold, thereby eliminating the charge entirely. This is one of the most powerful features for higher-rate taxpayers who want to preserve their full Child Benefit entitlement while simultaneously boosting their retirement savings. For more UK financial planning, explore our <a href="/lisa-vs-workplace-pension-calculator" class="text-link hover:underline">workplace pension comparison options</a> or our <a href="/sipp-drawdown-tax-calculator" class="text-link hover:underline">SIPP tax management</a> tools.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This HICBC Calculator</h3>
+
+        <p class="mb-4">
+          The calculator provides <strong>instant results</strong> as you adjust any input. Enter your gross salary, number of children, pension contributions, and Gift Aid donations. You will see your net retained Child Benefit, the HICBC tax charge with percentage, the adjusted net income, the marginal effective tax rate including the HICBC effect, and the exact pension contribution needed to eliminate the charge. The interactive clawback curve chart updates in real-time, showing both the charge and retained benefit as your income changes.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other UK Tax Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other UK Tax Tools
+      </h2>
+      <p class="mb-8 text-body">Free calculators for UK financial planning, tax efficiency, and retirement strategies.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/hicbc-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">HICBC Calculator</h3>
+          <p class="text-xs text-body">Calculate your High Income Child Benefit Charge and find the optimal pension contribution to eliminate it.</p>
+        </a>
+        <a href="/uk-redundancy-tax-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">UK Redundancy Tax</h3>
+          <p class="text-xs text-body">Master the UK redundancy tax rules with our complete guide to the £30,000 exemption and marginal rates.</p>
+        </a>
+        <a href="/sipp-drawdown-tax-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">SIPP Drawdown Tax (UK)</h3>
+          <p class="text-xs text-body">Model your SIPP drawdown strategy with UK tax bands and 25% tax-free cash.</p>
+        </a>
+        <a href="/lisa-vs-workplace-pension-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">LISA vs Workplace Pension (UK)</h3>
+          <p class="text-xs text-body">Compare a Lifetime ISA against a workplace pension for retirement savings.</p>
+        </a>
+        <a href="/mortgage-overpayment-vs-investing-calculator-uk" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mortgage vs ISA (UK)</h3>
+          <p class="text-xs text-body">Compare overpaying your mortgage against investing in a stocks &amp; shares ISA.</p>
+        </a>
+        <a href="/plan-5-student-loan-repayment-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Plan 5 Student Loan (UK)</h3>
+          <p class="text-xs text-body">Calculate your UK Plan 5 student loan repayments using the new £25,000 threshold.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
