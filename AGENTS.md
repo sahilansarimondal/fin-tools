@@ -10,7 +10,7 @@
 **Package Manager:** npm
 **Node Requirement:** >= 22.12.0
 
-A multi-tool financial calculator website. Currently has 15+ financial calculators covering FIRE planning, portfolio management, and investment analysis.
+A multi-tool financial calculator website. Currently has 33 calculator pages covering FIRE planning, portfolio management, investment analysis, UK tax optimization, student loans, and Social Security planning.
 
 ## Commands
 
@@ -55,6 +55,15 @@ fin-tools/
 │   │   │   ├── HsaShoeboxStrategyCalculator.astro    # HSA Shoebox Strategy delayed reimbursement calculator
 │   │   │   ├── HouseHackingCalculator.astro          # House hacking cash flow calculator
 │   │   │   ├── SeppVsRothLadderCalculator.astro      # 72(t) SEPP vs Roth Conversion Ladder comparison
+│   │   │   ├── AcaSubsidyCalculator.astro            # ACA Subsidy Cliff calculator
+│   │   │   ├── JisaVsBareTrustCalculator.astro       # JISA vs Bare Trust comparison calculator
+│   │   │   ├── LisaVsPensionCalculator.astro         # LISA vs Workplace Pension comparison calculator
+│   │   │   ├── MegaBackdoorRothCalculator.astro      # Mega Backdoor Roth calculator
+│   │   │   ├── MortgageVsIsaCalculator.astro         # Mortgage Overpayment vs Investing calculator (UK)
+│   │   │   ├── Plan5StudentLoanCalculator.astro      # Plan 5 Student Loan Repayment calculator
+│   │   │   ├── SocialSecurityBridgeCalculator.astro  # Social Security Bridge calculator
+│   │   │   ├── SippDrawdownCalculator.astro          # SIPP Drawdown Tax calculator
+│   │   │   ├── UkRedundancyTaxCalculator.astro       # UK Redundancy Tax calculator
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -114,7 +123,8 @@ fin-tools/
 │   │   ├── learn/
 │   │   │   ├── what-is-fire.astro      # Learn: What is FIRE?
 │   │   │   ├── fire-strategies.astro   # Learn: FIRE Strategies
-│   │   │   └── fire-number.astro       # Learn: Your FIRE Number
+│   │   │   ├── fire-number.astro       # Learn: Your FIRE Number
+│   │   │   └── barista-fire.astro       # Learn: Barista FIRE
 │   │   ├── tools/
 │   │   │   └── index.astro             # All tools overview page
 │   │   ├── about/
@@ -147,6 +157,13 @@ fin-tools/
 │       ├── hsa-shoebox-calculations.ts          # HSA Shoebox Strategy calculation engine
 │       ├── house-hacking-calculations.ts         # House hacking cash flow calculation engine
 │       ├── sepp-vs-roth-calculations.ts          # 72(t) SEPP vs Roth Ladder comparison engine
+│       ├── social-security-bridge-calculations.ts    # Social Security Bridge calculation engine
+│       ├── mega-backdoor-roth-calculations.ts        # Mega Backdoor Roth calculation engine
+│       ├── mortgage-isa-calculations.ts              # Mortgage vs ISA calculation engine
+│       ├── uk-redundancy-calculations.ts             # UK Redundancy Tax calculation engine
+│       ├── lisa-vs-pension-calculations.ts           # LISA vs Pension calculation engine
+│       ├── jisa-bare-trust-calculations.ts           # JISA vs Bare Trust calculation engine
+│       ├── plan5-student-loan-calculations.ts        # Plan 5 Student Loan calculation engine
 │       ├── faq-data.ts                    # FAQ types and shared FAQ data
 │       └── formatters.ts               # Currency/number formatting utilities
 ├── astro.config.mjs                    # Astro config (site URL, Tailwind vite plugin)
@@ -170,6 +187,7 @@ fin-tools/
 | `/learn/what-is-fire` | `src/pages/learn/what-is-fire.astro` | What is FIRE? |
 | `/learn/fire-strategies` | `src/pages/learn/fire-strategies.astro` | FIRE Strategies |
 | `/learn/fire-number` | `src/pages/learn/fire-number.astro` | Your FIRE Number |
+| `/learn/barista-fire` | `src/pages/learn/barista-fire.astro` | Barista FIRE |
 | `/geographic-arbitrage-calculator` | `src/pages/geographic-arbitrage-calculator/index.astro` | Geographic Arbitrage PPP Calculator |
 | `/die-with-zero-calculator` | `src/pages/die-with-zero-calculator/index.astro` | Die with Zero Decumulation Calculator |
 | `/sequence-of-returns-calculator` | `src/pages/sequence-of-returns-calculator/index.astro` | Sequence of Returns Risk Stress Tester |
@@ -188,6 +206,15 @@ fin-tools/
 | `/hsa-shoebox-strategy-calculator` | `src/pages/hsa-shoebox-strategy-calculator/index.astro` | HSA Shoebox Strategy Calculator |
 | `/house-hacking-calculator` | `src/pages/house-hacking-calculator/index.astro` | House Hacking Cash Flow Calculator |
 | `/72t-vs-roth-conversion-ladder-calculator` | `src/pages/72t-vs-roth-conversion-ladder-calculator/index.astro` | 72(t) SEPP vs Roth Conversion Ladder Calculator |
+| `/aca-subsidy-cliff-calculator` | `src/pages/aca-subsidy-cliff-calculator/index.astro` | ACA Subsidy Cliff Calculator |
+| `/jisa-vs-bare-trust-calculator` | `src/pages/jisa-vs-bare-trust-calculator/index.astro` | JISA vs Bare Trust Comparison Calculator |
+| `/lisa-vs-workplace-pension-calculator` | `src/pages/lisa-vs-workplace-pension-calculator/index.astro` | LISA vs Workplace Pension Comparison Calculator |
+| `/mega-backdoor-roth-calculator` | `src/pages/mega-backdoor-roth-calculator/index.astro` | Mega Backdoor Roth Calculator |
+| `/mortgage-overpayment-vs-investing-calculator-uk` | `src/pages/mortgage-overpayment-vs-investing-calculator-uk/index.astro` | Mortgage Overpayment vs Investing Calculator (UK) |
+| `/plan-5-student-loan-repayment-calculator` | `src/pages/plan-5-student-loan-repayment-calculator/index.astro` | Plan 5 Student Loan Repayment Calculator |
+| `/social-security-bridge-calculator` | `src/pages/social-security-bridge-calculator/index.astro` | Social Security Bridge Calculator |
+| `/sipp-drawdown-tax-calculator` | `src/pages/sipp-drawdown-tax-calculator/index.astro` | SIPP Drawdown Tax Calculator |
+| `/uk-redundancy-tax-calculator` | `src/pages/uk-redundancy-tax-calculator/index.astro` | UK Redundancy Tax Calculator |
 | `/tools` | `src/pages/tools/index.astro` | All tools overview |
 | `/about` | `src/pages/about/index.astro` | About page |
 | `/contact` | `src/pages/contact/index.astro` | Contact page |
@@ -264,6 +291,15 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 | Coast FIRE by Age | CoastFireByAgeCalculator.astro | ~505 | coast-fire-by-age-calculations.ts | Chart.js dual-line | Milestone at every age, reverse compound interest formula, 6 input controls, status alert card (Green/Orange), 4 KPI cards, required (solid) vs projected (dashed) chart, age-by-age table with progress bars, edge case warning, theme-aware via MutationObserver |
 | HSA Shoebox | HsaShoeboxStrategyCalculator.astro | ~400 | hsa-shoebox-calculations.ts | Chart.js dual-line | Immediate vs Delayed Reimbursement comparison, 5 slider inputs, 5 KPI cards, year-by-year advantage table, excess warning (expenses > HSA capacity Y1), theme-aware via MutationObserver, targets US-based early retirees/FIRE community |
 | House Hacking | HouseHackingCalculator.astro | ~290 | house-hacking-calculations.ts | None | PITI + PMI for FHA and conventional loans, operating expenses (vacancy, maintenance, CapEx), 9 inputs, 4 KPI cards (Gross Mortgage, Net Rental Income, Monthly P&I, PMI), monthly breakdown table with color-coded cash flow, PMI warning (< 20% down), theme-aware via CSS tokens |
+| ACA Subsidy Cliff | AcaSubsidyCalculator.astro | — | Inline (none) | None | ACA subsidy cliff visualization, income threshold analysis, phase-out calculation, year-by-year comparison, theme-aware via CSS tokens |
+| JISA vs Bare Trust | JisaVsBareTrustCalculator.astro | — | jisa-bare-trust-calculations.ts | None | UK JISA vs Bare Trust comparison, tax-free growth analysis, inheritance tax implications, scenario comparison |
+| LISA vs Workplace Pension | LisaVsPensionCalculator.astro | — | lisa-vs-pension-calculations.ts | None | UK LISA vs workplace pension comparison, employer match analysis, tax relief comparison, retirement savings optimizer |
+| Mega Backdoor Roth | MegaBackdoorRothCalculator.astro | — | mega-backdoor-roth-calculations.ts | None | Mega Backdoor Roth analysis, after-tax 401k to Roth IRA conversion, contribution limit calculator, tax-free growth projection |
+| Mortgage vs ISA (UK) | MortgageVsIsaCalculator.astro | — | mortgage-isa-calculations.ts | None | UK mortgage overpayment vs ISA investing comparison, interest savings vs investment growth, tax-free allowance optimization |
+| Plan 5 Student Loan | Plan5StudentLoanCalculator.astro | — | plan5-student-loan-calculations.ts | None | UK Plan 5 student loan repayment calculator, income-contingent repayment, forgiveness threshold analysis, early repayment comparison |
+| Social Security Bridge | SocialSecurityBridgeCalculator.astro | — | social-security-bridge-calculations.ts | Chart.js line | Social Security bridge strategy, early retirement gap analysis, claiming age optimization, portfolio withdrawal coordination |
+| SIPP Drawdown Tax | SippDrawdownCalculator.astro | — | Inline (none) | None | UK SIPP drawdown tax calculator, 25% tax-free lump sum, income tax band optimization, drawdown strategy planner |
+| UK Redundancy Tax | UkRedundancyTaxCalculator.astro | — | uk-redundancy-calculations.ts | None | UK redundancy payment tax calculator, statutory redundancy calculation, tax-free allowance, employment income comparison |
 
 ### Adding a New Tool
 
