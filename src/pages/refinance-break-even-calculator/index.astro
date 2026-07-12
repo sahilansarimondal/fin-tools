@@ -1,0 +1,260 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import RefinanceBreakEvenCalculator from '../../components/calculator/RefinanceBreakEvenCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is a good break-even time for refinancing?',
+    answerHtml: `<b>Generally 24 to 36 months.</b> If your break-even point falls within this range and you plan to stay in the home beyond that period, refinancing is typically worthwhile. A shorter break-even period means you start saving sooner. However, even a longer break-even of 4–5 years can make sense if you secure a significantly lower rate and plan to stay for 10+ years.`,
+    answerText: 'Generally 24 to 36 months. If you plan to stay beyond the break-even point, refinancing is worthwhile.'
+  },
+  {
+    question: 'Do Early Repayment Charges (ERC) ruin the break-even math?',
+    answerHtml: `<b>They significantly extend it.</b> In the UK, Early Repayment Charges are fees for leaving your current mortgage deal before the fixed term ends (typically 1–5% of the outstanding balance). ERCs are added to your upfront costs, which means you need more months of savings to break even. Always factor in ERCs when calculating your break-even point — they can add thousands to your costs and delay break-even by 12+ months.`,
+    answerText: 'ERCs significantly extend break-even. They add to upfront costs and can delay break-even by 12+ months.'
+  },
+  {
+    question: 'Should I refinance if my break-even point is 5 years?',
+    answerHtml: `<b>It depends on your plans.</b> A 5-year (60-month) break-even means you need to hold the property and keep the new loan for at least 5 years before the savings offset the costs. If you plan to move, sell, or refinance again within that window, it is not worth it. However, if you plan to stay for 10+ years and the monthly savings are significant, the long-term benefit may still justify the upfront cost.`,
+    answerText: 'Only if you plan to stay at least 5+ years. Shorter plans mean you will not recoup the costs.'
+  },
+  {
+    question: 'What are typical refinance closing costs in the US?',
+    answerHtml: `<b>Typically 2–5% of the loan amount.</b> US closing costs include origination fees (0.5–1%), appraisal fees ($300–700), title insurance ($500–3,500), recording fees, and prepaid items like escrow deposits. On a $300,000 refinance, expect $6,000–$15,000 in total closing costs. Some lenders offer "no-closing-cost" refinances, but these typically come with a higher interest rate.`,
+    answerText: 'Typically 2–5% of the loan amount. Includes origination, appraisal, title insurance, and recording fees.'
+  },
+  {
+    question: 'What are typical remortgage fees in the UK?',
+    answerHtml: `<b>Typically £1,000–£5,000 total.</b> UK remortgage costs include arrangement fees (£0–£2,000), valuation fees (£0–£1,500, sometimes free), legal fees (£300–£1,500), and potentially Early Repayment Charges (ERCs) if you leave your current deal early. Many UK lenders offer fee-free remortgage deals, but these may carry a slightly higher interest rate.`,
+    answerText: 'Typically £1,000–£5,000. Includes arrangement fees, valuation fees, legal fees, and possible ERCs.'
+  },
+  {
+    question: 'Should I roll closing costs into the loan balance?',
+    answerHtml: `<b>It depends on your cash flow and timeline.</b> Rolling fees into the loan (financing them) means you pay nothing upfront, but you pay interest on those fees for the entire loan term. For example, £5,000 in fees financed at 5% over 25 years costs approximately £3,800 in additional interest. Paying fees out-of-pocket gives you a faster break-even and lower total cost, but requires liquid cash.`,
+    answerText: 'Paying out-of-pocket gives faster break-even. Rolling fees in means paying interest on them for the full term.'
+  },
+];
+---
+
+<PageLayout
+  title="Refinance & Remortgage Break-Even Calculator — US/UK"
+  description="Calculate your mortgage refinance break-even point. Find out how long it takes for a lower interest rate to cover your closing costs and arrangement fees."
+  canonical="https://truefinancetools.com/refinance-break-even-calculator"
+  ogImage="https://truefinancetools.com/og-refinance-break-even-calculator.png"
+  ogImageAlt="Refinance and Remortgage Break-Even Calculator — Compare old vs new mortgage costs"
+  pageType="website"
+  keywords="refinance break even calculator, remortgage calculator UK, mortgage refinance calculator, is it worth remortgaging calculator, refinance closing costs, remortgage fees calculator, mortgage break even analysis"
+>
+  <StructuredData
+    title="Refinance & Remortgage Break-Even Calculator"
+    description="Calculate your mortgage refinance break-even point. Find out how long it takes for a lower interest rate to cover your closing costs and arrangement fees."
+    url="https://truefinancetools.com/refinance-break-even-calculator"
+    features={[
+      'US and UK market support with localization toggle',
+      'Break-even timeline calculation in months and years',
+      'Monthly payment comparison with savings analysis',
+      'Lifetime interest savings projection',
+      'Interactive Chart.js break-even visualization',
+      'Year-by-year savings projection table'
+    ]}
+    faqItems={toolFaqItems}
+  />
+
+  <!-- Hero Section -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-6xl px-4 text-center sm:px-6">
+      <p class="mb-4 font-mono text-xs uppercase tracking-wider text-link">Free Calculator</p>
+      <h1 class="mb-4 text-3xl font-bold tracking-tight text-ink sm:text-4xl lg:text-5xl">
+        Refinance & Remortgage Break-Even Calculator
+      </h1>
+      <p class="mx-auto max-w-2xl text-lg text-body">
+        Calculate exactly how many months it takes for a lower interest rate to cover your switching costs. Supports both US refinancing and UK remortgaging.
+      </p>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <RefinanceBreakEvenCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Refinance Break-Even Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Details</h3>
+      <p class="text-sm text-body">Input your current mortgage balance, interest rate, and remaining term. Then add the new rate, term, and upfront fees.</p>
+    </div>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Choose Your Region</h3>
+      <p class="text-sm text-body">Toggle between US (Refinance) and UK (Remortgage) to see localized terminology, currency, and fee structures.</p>
+    </div>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See Your Break-Even</h3>
+      <p class="text-sm text-body">View your break-even timeline, monthly savings, and lifetime interest savings in an interactive chart.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is a Mortgage Break-Even Analysis? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <h2 class="mb-8 text-2xl font-bold text-ink">What is a Mortgage Break-Even Analysis?</h2>
+
+      <div class="prose prose-neutral dark:prose-invert max-w-none">
+        <p>A mortgage break-even analysis calculates how many months it takes for the monthly savings from a lower interest rate to offset the upfront costs of switching lenders. It is the single most important calculation before deciding whether to refinance (US) or remortgage (UK).</p>
+
+        <!-- Formula block -->
+        <div class="my-6 rounded-lg border border-hairline bg-canvas p-4 font-mono text-sm">
+          <p class="mb-2 text-xs text-mute">Break-Even Formula:</p>
+          <p class="text-ink">Break-Even Months = Upfront Fees ÷ Monthly Payment Savings</p>
+        </div>
+
+        <h3 class="mt-8 mb-4 text-xl font-semibold text-ink">Cash Flow Savings vs. Lifetime Savings</h3>
+        <p>Monthly cash flow savings and lifetime savings can tell different stories. A lower monthly payment feels great, but if you extend your loan term (e.g., from 20 years remaining to a new 30-year term), you may pay more total interest over the life of the loan — even at a lower rate. Our calculator shows both perspectives: the monthly cash flow improvement AND the total lifetime interest comparison.</p>
+
+        <h3 class="mt-8 mb-4 text-xl font-semibold text-ink">US Refinance Closing Costs vs. UK Remortgage Fees</h3>
+        <p>The costs of switching mortgages differ significantly between markets:</p>
+
+        <div class="my-6 grid gap-6 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-6">
+            <h4 class="mb-3 text-sm font-semibold text-ink">🇺🇸 US Refinance Closing Costs</h4>
+            <ul class="space-y-2 text-sm text-body">
+              <li><b>Origination Fee:</b> 0.5–1% of loan amount</li>
+              <li><b>Appraisal Fee:</b> $300–$700</li>
+              <li><b>Title Insurance:</b> $500–$3,500</li>
+              <li><b>Recording Fees:</b> $100–$250</li>
+              <li><b>Prepaid Items:</b> Escrow deposits, property taxes</li>
+              <li><b>Total Typical Range:</b> 2–5% of loan amount</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-6">
+            <h4 class="mb-3 text-sm font-semibold text-ink">🇬🇧 UK Remortgage Fees</h4>
+            <ul class="space-y-2 text-sm text-body">
+              <li><b>Arrangement Fee:</b> £0–£2,000</li>
+              <li><b>Valuation Fee:</b> £0–£1,500 (sometimes free)</li>
+              <li><b>Legal/Conveyancing Fees:</b> £300–£1,500</li>
+              <li><b>Early Repayment Charges (ERC):</b> 1–5% of balance</li>
+              <li><b>Exit Fee:</b> £0–£300</li>
+              <li><b>Total Typical Range:</b> £1,000–£5,000+</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 class="mt-8 mb-4 text-xl font-semibold text-ink">Should You Roll Fees Into the Loan Balance?</h3>
+        <p>Many borrowers choose to finance their closing costs by adding them to the new loan principal. While this eliminates the upfront cash requirement, it comes with a hidden cost: you pay interest on those fees for the entire life of the loan.</p>
+        <p>For example, if you finance £5,000 in fees at 5% over 25 years, you will pay approximately £3,800 in additional interest on top of the fees themselves. The break-even analysis changes significantly depending on whether you pay fees out-of-pocket or roll them in. Our calculator handles both scenarios automatically.</p>
+
+        <h3 class="mt-8 mb-4 text-xl font-semibold text-ink">The "Finance Fees" Toggle Explained</h3>
+        <p>When you toggle <b>"Finance the Fees"</b> to Yes, the calculator adds your upfront costs to the new loan principal. This means:</p>
+        <ul>
+          <li>Your new monthly payment is calculated on a higher principal</li>
+          <li>Your monthly savings may be smaller (or turn negative)</li>
+          <li>The break-even period extends (you pay interest on the fees)</li>
+          <li>However, you keep your cash reserves intact for emergencies</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <h2 class="mb-8 text-2xl font-bold text-ink">Frequently Asked Questions</h2>
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas-soft">
+            <summary class="flex cursor-pointer items-center justify-between px-6 py-4 text-sm font-medium text-ink">
+              {item.question}
+              <svg class="ml-2 h-4 w-4 text-mute transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M19 9l-7 7-7-7" />
+              </svg>
+            </summary>
+            <div class="px-6 pb-4 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <h2 class="mb-8 text-2xl font-bold text-ink">Why Choose Our Break-Even Calculator?</h2>
+      <div class="prose prose-neutral dark:prose-invert max-w-none">
+        <p>Unlike simple calculators that only show monthly payment differences, our tool provides a comprehensive break-even analysis that accounts for:</p>
+        <ul>
+          <li><b>Fee financing:</b> See how rolling closing costs into your loan affects the break-even timeline</li>
+          <li><b>Lifetime cost comparison:</b> Understand whether a lower rate actually saves you money overall, or just shifts costs</li>
+          <li><b>US and UK markets:</b> One calculator that understands closing costs (US) and arrangement fees + ERCs (UK)</li>
+          <li><b>Interactive visualization:</b> Chart.js-powered chart showing exactly when you cross the break-even threshold</li>
+          <li><b>Year-by-year breakdown:</b> Detailed table showing cumulative savings at each year</li>
+        </ul>
+
+        <h3 class="mt-8 mb-4 text-xl font-semibold text-ink">Key Features</h3>
+        <ul>
+          <li>Real-time calculation as you adjust inputs</li>
+          <li>US/UK localization with correct terminology and currency</li>
+          <li>Handles Early Repayment Charges (ERC) for UK remortgages</li>
+          <li>Break-even in months, years, and remaining months</li>
+          <li>Total lifetime interest saved (or lost) comparison</li>
+          <li>Dark mode support</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Calculators -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-6xl px-4 sm:px-6">
+      <h2 class="mb-8 text-2xl font-bold text-ink">Explore Other Mortgage &amp; Savings Calculators</h2>
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <!-- Card 1: Highlighted -->
+        <a href="/mortgage-overpayment-vs-investing-calculator-uk" class="group rounded-xl border-2 border-ink bg-canvas p-6 shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mortgage Overpayment vs ISA (UK)</h3>
+          <p class="mb-3 text-xs text-body">Compare overpaying your UK mortgage against investing in a Stocks &amp; Shares ISA.</p>
+          <span class="inline-flex items-center gap-1.5 text-xs font-medium text-link">Calculate <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+        </a>
+        <a href="/house-hacking-calculator" class="group rounded-xl border border-hairline bg-canvas p-6 shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">House Hacking Calculator</h3>
+          <p class="mb-3 text-xs text-body">Calculate rental income potential vs mortgage costs for house hacking strategies.</p>
+          <span class="inline-flex items-center gap-1.5 text-xs font-medium text-link">Calculate <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+        </a>
+        <a href="/salary-sacrifice-pension-calculator" class="group rounded-xl border border-hairline bg-canvas p-6 shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Salary Sacrifice Pension (UK)</h3>
+          <p class="mb-3 text-xs text-body">Optimise your UK pension contributions through salary sacrifice arrangements.</p>
+          <span class="inline-flex items-center gap-1.5 text-xs font-medium text-link">Calculate <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+        </a>
+        <a href="/tax-gain-harvesting-calculator" class="group rounded-xl border border-hairline bg-canvas p-6 shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Tax Gain Harvesting</h3>
+          <p class="mb-3 text-xs text-body">Simulate tax gain harvesting to optimise your capital gains tax position.</p>
+          <span class="inline-flex items-center gap-1.5 text-xs font-medium text-link">Calculate <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+        </a>
+        <a href="/uk-redundancy-tax-calculator" class="group rounded-xl border border-hairline bg-canvas p-6 shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">UK Redundancy Tax Calculator</h3>
+          <p class="mb-3 text-xs text-body">Calculate tax on UK redundancy payments and understand your take-home pay.</p>
+          <span class="inline-flex items-center gap-1.5 text-xs font-medium text-link">Calculate <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+        </a>
+        <a href="/sipp-drawdown-tax-calculator" class="group rounded-xl border border-hairline bg-canvas p-6 shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">SIPP Drawdown Tax (UK)</h3>
+          <p class="mb-3 text-xs text-body">Plan your UK SIPP drawdown strategy with tax-efficient withdrawal planning.</p>
+          <span class="inline-flex items-center gap-1.5 text-xs font-medium text-link">Calculate <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg></span>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

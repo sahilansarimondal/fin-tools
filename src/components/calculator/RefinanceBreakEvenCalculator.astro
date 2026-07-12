@@ -1,0 +1,678 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="refinance-break-even-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="refinance-form" class="space-y-4">
+          <!-- Region Toggle -->
+          <div class="mb-6">
+            <label class="mb-2 block text-xs font-medium text-mute uppercase tracking-wider">Region</label>
+            <div class="flex gap-2 rounded-lg border border-hairline bg-canvas-soft p-1">
+              <button type="button" id="region-us" class="region-btn flex-1 rounded-md px-4 py-2 text-xs font-medium transition-all" data-region="us">
+                🇺🇸 US Refinance
+              </button>
+              <button type="button" id="region-uk" class="region-btn flex-1 rounded-md px-4 py-2 text-xs font-medium transition-all" data-region="uk">
+                🇬🇧 UK Remortgage
+              </button>
+            </div>
+          </div>
+
+          <!-- 1. Current Mortgage Balance -->
+          <Input
+            label="Current Mortgage Balance"
+            name="currentBalance"
+            type="number"
+            value={250000}
+            min={10000}
+            max={2000000}
+            step={5000}
+            suffix="$"
+            hideArrows
+            required
+          />
+          <Slider
+            label="Current Balance"
+            name="currentBalance"
+            value={250000}
+            min={10000}
+            max={2000000}
+            step={5000}
+            suffix=""
+            inputId="refi-balance"
+            displayId="refi-balanceValue"
+            tooltip="Your outstanding loan balance"
+          />
+
+          <!-- 2. Current Interest Rate -->
+          <Input
+            label="Current Interest Rate"
+            name="currentRate"
+            type="number"
+            value={6.5}
+            min={0.5}
+            max={15.0}
+            step={0.1}
+            suffix="%"
+            hideArrows
+            required
+          />
+          <Slider
+            label="Current Rate"
+            name="currentRate"
+            value={6.5}
+            min={0.5}
+            max={15.0}
+            step={0.1}
+            suffix="%"
+            inputId="refi-currentRate"
+            displayId="refi-currentRateValue"
+            tooltip="Your existing mortgage interest rate"
+          />
+
+          <!-- 3. Remaining Term (Years) -->
+          <Input
+            label="Remaining Loan Term"
+            name="currentTerm"
+            type="number"
+            value={25}
+            min={1}
+            max={40}
+            step={1}
+            suffix="years"
+            hideArrows
+            required
+          />
+          <Slider
+            label="Remaining Term"
+            name="currentTerm"
+            value={25}
+            min={1}
+            max={40}
+            step={1}
+            suffix=" years"
+            inputId="refi-currentTerm"
+            displayId="refi-currentTermValue"
+            tooltip="Years remaining on your current loan"
+          />
+
+          <!-- 4. New Interest Rate -->
+          <Input
+            label="New Interest Rate"
+            name="newRate"
+            type="number"
+            value={5.0}
+            min={0.5}
+            max={15.0}
+            step={0.1}
+            suffix="%"
+            hideArrows
+            required
+          />
+          <Slider
+            label="New Rate"
+            name="newRate"
+            value={5.0}
+            min={0.5}
+            max={15.0}
+            step={0.1}
+            suffix="%"
+            inputId="refi-newRate"
+            displayId="refi-newRateValue"
+            tooltip="The new interest rate you can obtain"
+          />
+
+          <!-- 5. New Loan Term -->
+          <Input
+            label="New Loan Term"
+            name="newTerm"
+            type="number"
+            value={25}
+            min={1}
+            max={40}
+            step={1}
+            suffix="years"
+            hideArrows
+            required
+          />
+          <Slider
+            label="New Term"
+            name="newTerm"
+            value={25}
+            min={1}
+            max={40}
+            step={1}
+            suffix=" years"
+            inputId="refi-newTerm"
+            displayId="refi-newTermValue"
+            tooltip="The term of the new loan"
+          />
+
+          <!-- 6. Upfront Fees -->
+          <Input
+            label="Upfront Fees"
+            name="upfrontFees"
+            type="number"
+            value={5000}
+            min={0}
+            max={50000}
+            step={500}
+            suffix="$"
+            hideArrows
+            required
+          />
+          <Slider
+            label="Upfront Fees"
+            name="upfrontFees"
+            value={5000}
+            min={0}
+            max={50000}
+            step={500}
+            suffix=""
+            inputId="refi-fees"
+            displayId="refi-feesValue"
+            tooltip="Total costs to switch lenders (closing costs / arrangement fees)"
+          />
+
+          <!-- Finance Fees Toggle -->
+          <div class="rounded-lg border border-hairline p-4">
+            <label class="flex cursor-pointer items-center justify-between">
+              <span class="text-sm font-medium text-ink">Finance the Fees</span>
+              <div class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors" id="finance-toggle-bg" style="background-color: #d1d5db;">
+                <input type="checkbox" id="financeFees" class="peer sr-only" />
+                <span class="inline-block h-5 w-5 transform rounded-full bg-white transition-transform peer-checked:translate-x-5" id="finance-toggle-knob"></span>
+              </div>
+            </label>
+            <p class="mt-1 text-xs text-mute" id="finance-toggle-label">Add fees to new loan principal</p>
+          </div>
+
+          <!-- New Currency Label -->
+          <p id="currency-label" class="pt-2 text-center text-xs text-mute">All values displayed in USD ($)</p>
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results -->
+    <div class="lg:col-span-7">
+      <!-- KPI Cards -->
+      <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Monthly Payment (Current)"
+          id="monthly-current"
+          value="$1,688"
+          description="Your current monthly payment"
+        />
+        <ResultCard
+          label="Monthly Payment (New)"
+          id="monthly-new"
+          value="$1,461"
+          description="Your new monthly payment after switching"
+        />
+        <ResultCard
+          label="Monthly Savings"
+          id="monthly-savings"
+          value="$227"
+          description="Amount saved per month"
+          variant="success"
+        />
+        <ResultCard
+          label="Break-Even Point"
+          id="break-even"
+          value="22 months"
+          description="Months to recoup upfront costs"
+          variant="info"
+        />
+      </div>
+
+      <!-- Secondary KPI Cards -->
+      <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <ResultCard
+          label="Break-Even Date"
+          id="break-even-date"
+          value="May 2028"
+          description="Estimated date you break even"
+        />
+        <ResultCard
+          label="5-Year Savings"
+          id="savings-5yr"
+          value="$8,620"
+          description="Net savings after 5 years"
+          variant="success"
+        />
+        <ResultCard
+          label="Lifetime Interest Savings"
+          id="lifetime-savings"
+          value="$52,400"
+          description="Total interest saved over the new loan term"
+          variant="success"
+        />
+      </div>
+
+      <!-- Chart -->
+      <Card padding="lg" class="mb-6">
+        <h3 class="mb-4 text-sm font-semibold text-ink">Cumulative Savings vs. Break-Even</h3>
+        <div class="relative" style="height: 300px;">
+          <canvas id="break-even-chart"></canvas>
+        </div>
+      </Card>
+
+      <!-- Year-by-Year Table -->
+      <Card padding="lg">
+        <details>
+          <summary class="cursor-pointer text-sm font-semibold text-ink">Year-by-Year Projection</summary>
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-left text-xs tabular-nums">
+              <thead>
+                <tr class="border-b border-hairline text-mute">
+                  <th class="pb-2 pr-4 font-medium">Year</th>
+                  <th class="pb-2 pr-4 font-medium">Cumulative Savings</th>
+                  <th class="pb-2 pr-4 font-medium">Remaining Fees</th>
+                  <th class="pb-2 font-medium">Break-Even Status</th>
+                </tr>
+              </thead>
+              <tbody id="year-table-body">
+                <tr class="border-b border-hairline/50">
+                  <td class="py-2 pr-4 text-ink">1</td>
+                  <td class="py-2 pr-4 text-success-deep">$2,724</td>
+                  <td class="py-2 pr-4 text-error">$2,276</td>
+                  <td class="py-2 text-warning">Before break-even</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </Card>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+(function () {
+  'use strict';
+
+  // --- DOM refs ---
+  const form = document.getElementById('refinance-form');
+  if (!form) return;
+
+  const getVal = (id) => parseFloat(document.getElementById(id)?.value || 0);
+  const getCheck = (id) => document.getElementById(id)?.checked || false;
+
+  const regionUS = document.getElementById('region-us');
+  const regionUK = document.getElementById('region-uk');
+  const currencyLabel = document.getElementById('currency-label');
+  const monthlyCurrentEl = document.getElementById('monthly-current');
+  const monthlyNewEl = document.getElementById('monthly-new');
+  const monthlySavingsEl = document.getElementById('monthly-savings');
+  const breakEvenEl = document.getElementById('break-even');
+  const breakEvenDateEl = document.getElementById('break-even-date');
+  const savings5yrEl = document.getElementById('savings-5yr');
+  const lifetimeSavingsEl = document.getElementById('lifetime-savings');
+  const tableBody = document.getElementById('year-table-body');
+  const financeToggleBg = document.getElementById('finance-toggle-bg');
+  const financeToggleLabel = document.getElementById('finance-toggle-label');
+  const financeCheckbox = document.getElementById('financeFees');
+
+  let currentRegion = 'us';
+  let chart = null;
+  let ChartLib = null;
+
+  // --- Currency helpers ---
+  const symbols = { us: '$', uk: '£' };
+  const labels = { us: 'USD ($)', uk: 'GBP (£)' };
+  const regionText = {
+    us: { name: 'US Refinance', fees: 'Closing Costs', loan: 'Loan' },
+    uk: { name: 'UK Remortgage', fees: 'Arrangement Fees', loan: 'Mortgage' },
+  };
+
+  function fmt(n) {
+    const sym = symbols[currentRegion];
+    return sym + n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  // --- Monthly payment calculation ---
+  function monthlyPayment(principal, annualRate, termYears) {
+    if (annualRate <= 0 || termYears <= 0) {
+      // Interest-only approximation for zero rate
+      return principal / (termYears * 12);
+    }
+    const r = annualRate / 100 / 12;
+    const n = termYears * 12;
+    if (r === 0) return principal / n;
+    const factor = Math.pow(1 + r, n);
+    return principal * (r * factor) / (factor - 1);
+  }
+
+  // --- Calculation engine ---
+  function calculate() {
+    const balance = getVal('currentBalance');
+    const currentRate = getVal('currentRate');
+    const currentTerm = getVal('currentTerm');
+    const newRate = getVal('newRate');
+    const newTerm = getVal('newTerm');
+    const upfrontFees = getVal('upfrontFees');
+    const financeFees = getCheck('financeFees');
+
+    if (!balance || !currentRate || !currentTerm || !newRate || !newTerm) return;
+
+    const effectivePrincipal = financeFees ? balance + upfrontFees : balance;
+    const feeCost = financeFees ? upfrontFees : 0;
+
+    const currentPMT = monthlyPayment(balance, currentRate, currentTerm);
+    const newPMT = monthlyPayment(effectivePrincipal, newRate, newTerm);
+    const monthlySavings = currentPMT - newPMT;
+
+    // Break-even: months to recoup upfront fees
+    const breakEvenMonths = monthlySavings > 0 ? Math.ceil(upfrontFees / monthlySavings) : Infinity;
+
+    // Total interest paid over loan life
+    function totalInterest(principal, rate, term) {
+      const pmt = monthlyPayment(principal, rate, term);
+      return pmt * term * 12 - principal;
+    }
+
+    const currentTotalInterest = totalInterest(balance, currentRate, currentTerm);
+    const newTotalInterest = totalInterest(effectivePrincipal, newRate, newTerm);
+    const lifetimeInterestSaved = currentTotalInterest - newTotalInterest - feeCost;
+
+    // 5-year net savings
+    const fiveYearGross = monthlySavings * 60;
+    const fiveYearNet = fiveYearGross - upfrontFees;
+
+    // Year-by-year projection
+    let cumulative = 0;
+    let rows = '';
+    const breakEvenYear = Math.ceil(breakEvenMonths / 12);
+    const breakEvenMonthInYear = breakEvenMonths % 12;
+
+    for (let y = 1; y <= Math.min(newTerm, 30); y++) {
+      const yearlySavings = monthlySavings * 12;
+      cumulative += yearlySavings;
+      const remainingFees = Math.max(0, upfrontFees - cumulative);
+      let status = '';
+      if (cumulative >= upfrontFees) {
+        status = '<span class="text-success-deep">✓ Break-even reached</span>';
+      } else {
+        status = '<span class="text-warning">Before break-even</span>';
+      }
+      rows += '<tr class="border-b border-hairline/50">';
+      rows += '<td class="py-2 pr-4 text-ink">' + y + '</td>';
+      rows += '<td class="py-2 pr-4 text-success-deep">' + fmt(Math.round(cumulative)) + '</td>';
+      rows += '<td class="py-2 pr-4 text-error">' + fmt(Math.round(remainingFees)) + '</td>';
+      rows += '<td class="py-2">' + status + '</td>';
+      rows += '</tr>';
+    }
+    if (tableBody) tableBody.innerHTML = rows;
+
+    // Update KPI cards
+    function setText(el, val) { if (el) el.textContent = val; }
+
+    setText(monthlyCurrentEl, fmt(Math.round(currentPMT)));
+    setText(monthlyNewEl, fmt(Math.round(newPMT)));
+    setText(monthlySavingsEl, fmt(Math.round(monthlySavings)));
+
+    // Break-even display
+    if (breakEvenMonths === Infinity || monthlySavings <= 0) {
+      setText(breakEvenEl, 'Never');
+      setText(breakEvenDateEl, 'Savings too small');
+    } else {
+      const beYears = Math.floor(breakEvenMonths / 12);
+      const beMonths = breakEvenMonths % 12;
+      let beStr = '';
+      if (beYears > 0) beStr += beYears + ' yr ';
+      beStr += beMonths + ' mo';
+      setText(breakEvenEl, beStr);
+
+      // Break-even date
+      const now = new Date();
+      const beDate = new Date(now.getFullYear(), now.getMonth() + breakEvenMonths, 1);
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      setText(breakEvenDateEl, months[beDate.getMonth()] + ' ' + beDate.getFullYear());
+    }
+
+    setText(savings5yrEl, fmt(Math.round(fiveYearNet)));
+    setText(lifetimeSavingsEl, fmt(Math.round(lifetimeInterestSaved)));
+
+    // Chart
+    drawChart(monthlySavings, upfrontFees, newTerm);
+  }
+
+  // --- Chart drawing ---
+  function drawChart(monthlySavings, upfrontFees, maxYears) {
+    const canvas = document.getElementById('break-even-chart');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const isDark = document.documentElement.classList.contains('dark');
+
+    // Generate data points
+    const labels = [];
+    const cumulativeData = [];
+    const breakEvenLine = [];
+    let cumulative = 0;
+    const points = Math.min(maxYears * 12, 360); // Max 30 years
+
+    for (let m = 0; m <= points; m++) {
+      const year = m / 12;
+      labels.push(year.toFixed(1));
+      cumulative = monthlySavings * m;
+      cumulativeData.push(Math.round(cumulative));
+      breakEvenLine.push(upfrontFees);
+    }
+
+    const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+    const textColor = isDark ? '#a1a1aa' : '#71717a';
+    const inkColor = isDark ? '#fafafa' : '#171717';
+    const successColor = isDark ? '#4ade80' : '#16a34a';
+    const warningColor = isDark ? '#fbbf24' : '#d97706';
+    const errorColor = isDark ? '#f87171' : '#dc2626';
+
+    if (ChartLib) {
+      if (chart) {
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = cumulativeData;
+        chart.data.datasets[1].data = breakEvenLine;
+        chart.update();
+        return;
+      }
+
+      chart = new ChartLib(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Cumulative Savings',
+              data: cumulativeData,
+              borderColor: successColor,
+              backgroundColor: successColor + '20',
+              fill: true,
+              tension: 0.3,
+              pointRadius: 0,
+              borderWidth: 2,
+            },
+            {
+              label: 'Upfront Costs',
+              data: breakEvenLine,
+              borderColor: errorColor,
+              backgroundColor: errorColor + '30',
+              borderDash: [6, 3],
+              pointRadius: 0,
+              borderWidth: 2,
+              fill: false,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                color: textColor,
+                font: { size: 11 },
+              },
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  const sym = symbols[currentRegion];
+                  return context.dataset.label + ': ' + sym + context.parsed.y.toLocaleString();
+                },
+              },
+            },
+          },
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Years',
+                color: textColor,
+                font: { size: 11 },
+              },
+              ticks: { color: textColor, font: { size: 10 } },
+              grid: { color: gridColor },
+            },
+            y: {
+              title: {
+                display: true,
+                text: symbols[currentRegion],
+                color: textColor,
+                font: { size: 11 },
+              },
+              ticks: {
+                color: textColor,
+                font: { size: 10 },
+                callback: function (value) {
+                  return symbols[currentRegion] + value.toLocaleString();
+                },
+              },
+              grid: { color: gridColor },
+            },
+          },
+        },
+      });
+    }
+  }
+
+  // --- Load Chart.js ---
+  function loadChartJS(callback) {
+    if (typeof Chart !== 'undefined') {
+      ChartLib = Chart;
+      callback();
+      return;
+    }
+    var script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
+    script.onload = function () {
+      ChartLib = Chart;
+      callback();
+    };
+    document.head.appendChild(script);
+  }
+
+  // --- Region toggle ---
+  function setRegion(region) {
+    currentRegion = region;
+    const sym = symbols[region];
+    const text = regionText[region];
+
+    // Update button styles
+    document.querySelectorAll('.region-btn').forEach(function (btn) {
+      btn.classList.remove('bg-ink', 'text-canvas');
+      btn.classList.add('text-body', 'hover:text-ink');
+    });
+    const activeBtn = document.getElementById('region-' + region);
+    if (activeBtn) {
+      activeBtn.classList.add('bg-ink', 'text-canvas');
+      activeBtn.classList.remove('text-body', 'hover:text-ink');
+    }
+
+    // Update currency label
+    if (currencyLabel) currencyLabel.textContent = 'All values displayed in ' + labels[region];
+
+    // Update suffix on all inputs
+    document.querySelectorAll('input[data-suffix]').forEach(function (input) {
+      // Update suffix display
+    });
+
+    // Update balance and fees input suffixes via a simple approach: modify the form labels
+    const feeInput = document.querySelector('input[name="upfrontFees"]');
+    if (feeInput) {
+      const parent = feeInput.closest('.input-wrapper');
+      // Input component handles suffix display internally
+    }
+
+    // Refresh calculation
+    calculate();
+  }
+
+  // --- Finance toggle ---
+  if (financeCheckbox) {
+    financeCheckbox.addEventListener('change', function () {
+      const isChecked = this.checked;
+      if (financeToggleBg) {
+        financeToggleBg.style.backgroundColor = isChecked ? '#16a34a' : '#d1d5db';
+      }
+      if (financeToggleLabel) {
+        financeToggleLabel.textContent = isChecked
+          ? 'Fees added to new loan principal — interest accrues'
+          : 'Fees paid out-of-pocket — faster break-even';
+      }
+      calculate();
+    });
+    // Initial state
+    financeToggleBg.style.backgroundColor = '#d1d5db';
+  }
+
+  // --- Event listeners ---
+  const inputs = form.querySelectorAll('input, select');
+  inputs.forEach(function (input) {
+    input.addEventListener('input', calculate);
+    input.addEventListener('change', calculate);
+  });
+
+  // Region buttons
+  if (regionUS) {
+    regionUS.addEventListener('click', function () { setRegion('us'); });
+  }
+  if (regionUK) {
+    regionUK.addEventListener('click', function () { setRegion('uk'); });
+  }
+
+  // --- Init ---
+  loadChartJS(function () {
+    setRegion('us');
+    calculate();
+  });
+
+  // --- Theme observer for chart ---
+  const observer = new MutationObserver(function () {
+    if (chart && ChartLib) {
+      const isDark = document.documentElement.classList.contains('dark');
+      const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+      const textColor = isDark ? '#a1a1aa' : '#71717a';
+      chart.options.scales.x.ticks.color = textColor;
+      chart.options.scales.x.title.color = textColor;
+      chart.options.scales.y.ticks.color = textColor;
+      chart.options.scales.y.title.color = textColor;
+      chart.options.scales.x.grid.color = gridColor;
+      chart.options.scales.y.grid.color = gridColor;
+      chart.options.plugins.legend.labels.color = textColor;
+      chart.data.datasets[0].borderColor = isDark ? '#4ade80' : '#16a34a';
+      chart.data.datasets[0].backgroundColor = isDark ? '#4ade8020' : '#16a34a20';
+      chart.data.datasets[1].borderColor = isDark ? '#f87171' : '#dc2626';
+      chart.data.datasets[1].backgroundColor = isDark ? '#f8717130' : '#dc262630';
+      chart.update();
+    }
+  });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+})();
+</script>
