@@ -65,6 +65,7 @@ fin-tools/
 │   │   │   ├── SippDrawdownCalculator.astro          # SIPP Drawdown Tax calculator
 │   │   │   ├── UkRedundancyTaxCalculator.astro       # UK Redundancy Tax calculator
 │   │   │   ├── SalarySacrificePensionCalculator.astro # UK Salary Sacrifice Pension Optimizer
+│   │   │   ├── CollegeSavingsCalculator.astro         # 529 vs UTMA/UGMA comparison calculator
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -166,6 +167,7 @@ fin-tools/
 │       ├── uk-redundancy-calculations.ts             # UK Redundancy Tax calculation engine
 │       ├── lisa-vs-pension-calculations.ts           # LISA vs Pension calculation engine
 │       ├── salary-sacrifice-calculations.ts          # UK Salary Sacrifice Pension calculation engine
+│       ├── college-savings-calculations.ts             # 529 vs UTMA/UGMA comparison engine
 │       ├── jisa-bare-trust-calculations.ts           # JISA vs Bare Trust calculation engine
 │       ├── plan5-student-loan-calculations.ts        # Plan 5 Student Loan calculation engine
 │       ├── faq-data.ts                    # FAQ types and shared FAQ data
@@ -220,6 +222,7 @@ fin-tools/
 | `/sipp-drawdown-tax-calculator` | `src/pages/sipp-drawdown-tax-calculator/index.astro` | SIPP Drawdown Tax Calculator |
 | `/uk-redundancy-tax-calculator` | `src/pages/uk-redundancy-tax-calculator/index.astro` | UK Redundancy Tax Calculator |
 | `/salary-sacrifice-pension-calculator` | `src/pages/salary-sacrifice-pension-calculator/index.astro` | Salary Sacrifice Pension Optimizer |
+| `/529-vs-utma-calculator` | `src/pages/529-vs-utma-calculator/index.astro` | 529 vs UTMA/UGMA College Savings Calculator |
 | `/tools` | `src/pages/tools/index.astro` | All tools overview |
 | `/about` | `src/pages/about/index.astro` | About page |
 | `/contact` | `src/pages/contact/index.astro` | Contact page |
@@ -306,6 +309,7 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 | SIPP Drawdown Tax | SippDrawdownCalculator.astro | — | Inline (none) | None | UK SIPP drawdown tax calculator, 25% tax-free lump sum, income tax band optimization, drawdown strategy planner |
 | UK Redundancy Tax | UkRedundancyTaxCalculator.astro | — | uk-redundancy-calculations.ts | None | UK redundancy payment tax calculator, statutory redundancy calculation, tax-free allowance, employment income comparison |
 | Salary Sacrifice Pension | SalarySacrificePensionCalculator.astro | ~650 | salary-sacrifice-calculations.ts | Chart.js stacked bar | Standard vs Salary Sacrifice comparison, 2026/27 UK tax bands, employer NI savings pass-through (15%), PA taper analysis, NMW viability check, side-by-side KPI cards, benefit banner, Chart.js stacked bar chart, theme-aware via MutationObserver |
+| 529 vs UTMA/UGMA | CollegeSavingsCalculator.astro | ~489 | college-savings-calculations.ts | Chart.js dual-line | 529 vs UTMA/UGMA comparison, 2026 Kiddie Tax brackets ($1,350/$2,700 thresholds), FAFSA impact (5.64% vs 20%), 6 KPI cards, status badge, year-by-year tax drag table, theme-aware via MutationObserver |
 
 ### Adding a New Tool
 
