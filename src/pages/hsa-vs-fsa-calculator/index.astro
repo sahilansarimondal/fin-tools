@@ -1,0 +1,333 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import HsaVsFsaCalculator from '../../components/calculator/HsaVsFsaCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'Can I have both an HSA and an FSA at the same time?',
+    answerHtml: '<b>Generally, no.</b> If you contribute to a standard healthcare FSA, you are disqualified from contributing to an HSA. However, you can pair an HSA with a <b>Limited Purpose FSA (LPFSA)</b>, which only covers dental and vision expenses until your health deductible is met.',
+    answerText: 'Generally, no. If you contribute to a standard healthcare FSA, you are disqualified from contributing to an HSA. However, you can pair an HSA with a Limited Purpose FSA (LPFSA) for dental and vision.',
+  },
+  {
+    question: 'What is the "use it or lose it" rule for an FSA?',
+    answerHtml: 'FSA funds expire at the end of the plan year. While employers can opt into allowing a grace period or a rollover of up to <b>$680 (for 2026)</b> into the next year, any unspent funds beyond that limit are legally forfeited and returned to your employer. HSAs never expire and roll over indefinitely.',
+    answerText: 'FSA funds expire at the end of the plan year. Employers can allow a rollover of up to $680 (for 2026), but anything beyond that is forfeited. HSAs never expire and roll over indefinitely.',
+  },
+  {
+    question: 'Why is an HSA considered a "triple-tax advantaged" account?',
+    answerHtml: 'Money goes in <b>tax-free</b> (via payroll deduction), grows <b>tax-free</b> when invested, and comes out <b>tax-free</b> when used for qualified medical expenses. At age 65, you can also withdraw HSA funds for non-medical expenses without penalty, paying only standard income tax (just like a Traditional 401(k)).',
+    answerText: 'Money goes in tax-free (via payroll deduction), grows tax-free when invested, and comes out tax-free for qualified medical expenses. At 65, non-medical withdrawals are taxed as income without penalty.',
+  },
+  {
+    question: 'What happens to FSA funds if I leave my job mid-year?',
+    answerHtml: 'When you leave an employer, you can typically access the <b>full annual FSA election amount</b> for expenses incurred before your termination date. However, any unused funds are generally forfeited to the employer. COBRA continuation is available for medical FSAs, but this is rarely elected. HSAs, by contrast, are <b>fully portable</b> and stay with you regardless of employment changes.',
+    answerText: 'When you leave a job, you can access the full annual FSA amount for expenses before termination, but unused funds are forfeited. HSAs are fully portable and stay with you regardless of employment.',
+  },
+  {
+    question: 'How are HSA and FSA contributions treated for tax purposes?',
+    answerHtml: 'Both HSA and FSA contributions are made with <b>pre-tax dollars</b> through payroll deduction, reducing your taxable income for federal, state, and FICA (Social Security and Medicare) taxes. This means every dollar you contribute saves you at your <b>marginal tax rate plus FICA taxes</b> — typically 25-40% total savings depending on your income. The key difference is that HSA funds can be <b>invested and grown tax-free</b> while FSA funds must be used within the plan year.',
+    answerText: 'Both use pre-tax payroll deductions that reduce your federal, state, and FICA taxes. The key difference is HSAs can be invested and grown tax-free, while FSAs must be used within the plan year.',
+  },
+  {
+    question: 'Can I use my HSA or FSA for dental and vision expenses?',
+    answerHtml: '<b>Yes, both</b> HSAs and FSAs can be used for dental and vision expenses. Eligible expenses include routine cleanings, fillings, crowns, orthodontics, eye exams, prescription glasses, contact lenses, and LASIK surgery. A <b>Limited Purpose FSA</b> is specifically designed to cover only dental and vision expenses when paired with an HSA, making it possible to benefit from both accounts simultaneously.',
+    answerText: 'Yes, both HSAs and FSAs cover dental and vision expenses including cleanings, fillings, orthodontics, eye exams, glasses, contact lenses, and LASIK. A Limited Purpose FSA can be paired with an HSA for dental and vision coverage.',
+  },
+  {
+    question: 'What are the 2026 contribution limits for HSAs and FSAs?',
+    answerHtml: 'For the 2026 tax year: <br /><br /><ul><li><b>HSA Self-Only:</b> $4,400 (used as default in this calculator)</li><li><b>HSA Family:</b> $8,750</li><li><b>HSA Catch-up (55+):</b> Additional $1,000</li><li><b>Healthcare FSA:</b> $3,400 (used as default in this calculator)</li><li><b>FSA Carryover:</b> Up to $680</li></ul><br />These limits are set annually by the IRS and typically increase with inflation. Our calculator uses the 2026 limits.',
+    answerText: '2026 limits: HSA Self-Only $4,400, HSA Family $8,750, HSA Catch-up (55+) $1,000 additional, Healthcare FSA $3,400, FSA Carryover up to $680.',
+  },
+  {
+    question: 'Is an HSA or FSA better for high medical expenses?',
+    answerHtml: 'For consistently high medical expenses, an <b>FSA may provide more predictable short-term tax savings</b> because you can contribute pre-tax dollars and use them immediately within the same plan year. However, an <b>HSA offers superior long-term value</b> due to its investment growth potential and lack of expiration. Even with high expenses, if you can pay some costs out-of-pocket and let the HSA invest the rest, the HSA\'s tax-free growth may significantly outweigh the FSA\'s smaller but more immediate benefit. This calculator models exactly this trade-off.',
+    answerText: 'FSAs offer predictable short-term tax savings for high expenses. HSAs provide superior long-term value through tax-free investment growth and no expiration. The best choice depends on your specific financial situation and timeline.',
+  },
+];
+---
+
+<PageLayout
+  title="HSA vs FSA Decision Calculator — Tax Savings & Investment Growth"
+  description="Compare an HSA vs FSA for your healthcare expenses. Calculate your immediate tax savings, use-it-or-lose-it risk, and long-term tax-free investment growth."
+  canonical="https://truefinancetools.com/hsa-vs-fsa-calculator"
+  ogImage="https://truefinancetools.com/og-hsa-vs-fsa-calculator.png"
+  ogImageAlt="HSA vs FSA Calculator — Tax Savings and Investment Growth Comparison"
+  pageType="website"
+  keywords="HSA vs FSA calculator, HSA vs FSA tax savings, is HSA better than FSA, HSA investment growth calculator, use it or lose it FSA calculator, health savings account calculator, flexible spending account calculator"
+>
+  <StructuredData
+    title="HSA vs FSA Decision Calculator"
+    description="Free calculator to compare Health Savings Accounts (HSA) and Flexible Spending Accounts (FSA) side by side."
+    url="https://truefinancetools.com/hsa-vs-fsa-calculator"
+    toolName="HSA vs FSA Decision Calculator"
+    toolDescription="Compare an HSA vs FSA for your healthcare expenses. Calculate immediate tax savings, use-it-or-lose-it risk, and 20-year tax-free investment growth."
+    faqItems={toolFaqItems}
+    features={[
+      'Side-by-side HSA vs FSA comparison',
+      '2026 IRS contribution limits built-in',
+      'Tax savings calculator with FICA included',
+      '20-year compound growth projection',
+      'Interactive Chart.js visualization',
+      'HSA Shoebox Strategy modeling'
+    ]}
+  />
+
+  <!-- Hero -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        HSA vs FSA Decision Calculator
+      </h1>
+      <p class="text-lg text-body">Compare immediate tax savings, use-it-or-lose-it risk, and long-term investment growth.</p>
+    </div>
+  </section>
+
+  <!-- Calculator Component -->
+  <HsaVsFsaCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the HSA vs FSA Decision Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Choose Coverage Type &amp; Expenses</h3>
+      <p class="text-sm text-body">Select self-only or family coverage and enter your expected annual medical costs.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Set Tax Rate &amp; Strategy</h3>
+      <p class="text-sm text-body">Enter your combined marginal tax rate and choose whether to pay medical costs from HSA or out of pocket.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Compare FSA vs HSA Side-by-Side</h3>
+      <p class="text-sm text-body">See immediate tax savings, long-term growth potential, and the 20-year investment advantage.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is HSA vs FSA? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        HSA vs FSA: Which Healthcare Account Is Right for You?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Health Savings Accounts (HSAs)</strong> and <strong>Flexible Spending Accounts (FSAs)</strong> are both tax-advantaged accounts that help you pay for qualified medical expenses. Both let you contribute pre-tax dollars and withdraw tax-free for eligible healthcare costs. However, they differ in one critical way: <strong>HSAs are long-term investment vehicles that never expire</strong>, while <strong>FSAs are use-it-or-lose-it accounts that must be spent within the plan year</strong>. This difference has enormous implications for your financial planning, especially if you are pursuing financial independence and early retirement (FIRE).
+        </p>
+
+        <p class="mb-4">
+          This <strong>HSA vs FSA calculator</strong> helps you decide which account is right for you by comparing the immediate tax savings, the risk of losing unused FSA funds, and the long-term investment growth potential of an HSA. The key insight: every dollar you contribute to an HSA that you don't spend on medical costs stays invested, compounds tax-free, and grows into a much larger sum over 20 years. FSA dollars that you don't use are simply forfeited.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">HSA vs FSA: Key Differences</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Feature</th>
+                <th class="p-3 font-medium text-ink">HSA</th>
+                <th class="p-3 font-medium text-ink">FSA</th>
+              </tr>
+            </thead>
+            <tbody class="text-xs">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Account Ownership</td>
+                <td class="p-3 text-success-deep font-sans">You own it (portable)</td>
+                <td class="p-3 text-body font-sans">Employer-owned</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Funds Expire</td>
+                <td class="p-3 text-success-deep font-sans">Never</td>
+                <td class="p-3 text-error font-sans">End of plan year</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Investment Option</td>
+                <td class="p-3 text-success-deep font-sans">Yes (stocks, bonds, ETFs)</td>
+                <td class="p-3 text-error font-sans">No</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Requires HDHP</td>
+                <td class="p-3 text-ink font-sans">Yes</td>
+                <td class="p-3 text-body font-sans">No</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Triple Tax Advantage</td>
+                <td class="p-3 text-success-deep font-sans">Yes</td>
+                <td class="p-3 text-error font-sans">No</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">2026 Contribution Limit</td>
+                <td class="p-3 text-ink font-sans">$4,400 / $8,750</td>
+                <td class="p-3 text-ink font-sans">$3,400</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">Post-65 Withdrawals</td>
+                <td class="p-3 font-semibold text-success-deep font-sans">Tax-free for medical</td>
+                <td class="p-3 font-semibold text-error font-sans">N/A</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose Each Account?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Choose HSA If</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• You have a High Deductible Health Plan (HDHP)</li>
+              <li>• You want tax-free investment growth</li>
+              <li>• You're pursuing FIRE or early retirement</li>
+              <li>• You can pay some medical costs out-of-pocket</li>
+              <li>• You want a portable account that follows you</li>
+              <li>• You want to use the shoebox receipt strategy</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Choose FSA If</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• You have predictable annual medical costs</li>
+              <li>• You're not eligible for an HSA</li>
+              <li>• You want to use funds immediately</li>
+              <li>• Your employer offers a generous FSA match</li>
+              <li>• You don't have an HDHP-compatible plan</li>
+              <li>• You need dental/vision only (Limited Purpose FSA)</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">HSA Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Triple tax advantage (pre-tax, growth, withdrawals)</li>
+              <li>• Funds never expire — roll over indefinitely</li>
+              <li>• Can invest in stocks, bonds, and ETFs</li>
+              <li>• Portable — stays with you across employers</li>
+              <li>• Shoebox strategy for tax-free retirement income</li>
+              <li>• No penalty for medical withdrawals at any age</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Requires HDHP with minimum deductible</li>
+              <li>• 20% penalty on non-medical withdrawals before 65</li>
+              <li>• Contribution limits lower than 401(k)</li>
+              <li>• Not all employers offer HDHP + HSA</li>
+              <li>• Must track receipts for shoebox strategy</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        HSA vs FSA FAQs
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to HSA vs FSA Decision Making
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>HSA vs FSA calculator</strong> is the most comprehensive free tool for comparing these two tax-advantaged healthcare accounts side by side. Unlike generic comparisons that only list features, this calculator runs the actual numbers for your specific situation — your coverage type, expected medical expenses, tax rate, and investment horizon — to show you the <strong>real dollar difference</strong> between choosing an HSA versus an FSA.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose This HSA vs FSA Calculator?</h3>
+
+        <p class="mb-4">
+          The decision between an HSA and an FSA is not just about today's tax savings — it's about the <strong>long-term wealth-building potential</strong> of each account. An FSA gives you immediate pre-tax access to funds for medical expenses, but any unused money is forfeited at the end of the year (or up to $680 may roll over). An HSA, by contrast, lets you contribute pre-tax dollars, invest them in the stock market, and let them grow completely tax-free for decades. This calculator models both scenarios simultaneously, showing you exactly how much more wealth an HSA can build over a 20-year horizon.
+        </p>
+
+        <p class="mb-4">
+          Pair this tool with our <a href="/hsa-shoebox-strategy-calculator" class="text-link hover:underline">HSA shoebox strategy calculator</a> to see how delaying reimbursements multiplies your HSA's wealth-building power, or compare it with our <a href="/mega-backdoor-roth-calculator" class="text-link hover:underline">Mega Backdoor Roth calculator</a> for a complete picture of maximizing tax-advantaged accounts.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This HSA vs FSA Calculator</h3>
+
+        <p class="mb-4">
+          The calculator uses <strong>2026 IRS contribution limits</strong> by default: $4,400 for self-only HSA, $8,750 for family HSA, and $3,400 for healthcare FSA. You can toggle between self-only and family coverage, adjust your expected annual medical expenses from $0 to $15,000, and set your combined marginal tax rate (federal + state + FICA) from 10% to 50%. The <strong>HSA strategy toggle</strong> lets you choose between paying medical costs from your HSA or paying out-of-pocket (the "shoebox strategy") — the latter leaves your full HSA contribution invested and compounding. The <strong>interactive bar chart</strong> shows the 20-year value of one year's contribution for both accounts, making the long-term advantage instantly visible.
+        </p>
+
+        <p class="mb-4">
+          Whether you're a <strong>FIRE enthusiast</strong> optimizing every tax-advantaged dollar or simply choosing between healthcare plans during open enrollment, this tool gives you the clarity to make an informed decision. No signup required, completely free, and results in seconds.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Tax &amp; Account Optimization Tools
+      </h2>
+      <p class="mb-8 text-body">Maximize your tax-advantaged accounts with our free calculators.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/hsa-vs-fsa-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">HSA vs FSA Calculator</h3>
+          <p class="text-xs text-body">Compare HSA vs FSA tax savings and long-term investment growth side by side.</p>
+        </a>
+        <a href="/hsa-shoebox-strategy-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">HSA Shoebox Strategy</h3>
+          <p class="text-xs text-body">Delay HSA reimbursements to maximize tax-free compound growth.</p>
+        </a>
+        <a href="/mega-backdoor-roth-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mega Backdoor Roth</h3>
+          <p class="text-xs text-body">Calculate your maximum after-tax 401(k) contribution space.</p>
+        </a>
+        <a href="/tax-gain-harvesting-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Tax Gain Harvesting</h3>
+          <p class="text-xs text-body">Model the long-term benefit of harvesting capital gains at the 0% rate.</p>
+        </a>
+        <a href="/owner-earnings-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Owner Earnings</h3>
+          <p class="text-xs text-body">Warren Buffett's intrinsic value method for stock valuation.</p>
+        </a>
+        <a href="/aca-subsidy-cliff-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">ACA Subsidy Cliff</h3>
+          <p class="text-xs text-body">Calculate MAGI thresholds for ACA premium tax credits.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

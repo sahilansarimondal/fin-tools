@@ -1,0 +1,480 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+import Tooltip from '../ui/Tooltip.astro';
+---
+
+<div id="hsa-vs-fsa-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="hsa-vs-fsa-form" class="space-y-4">
+          <!-- Coverage Type Toggle -->
+          <div>
+            <label class="mb-2 inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              Coverage Type
+              <Tooltip content="Determines your maximum IRS contribution limits for the year." />
+            </label>
+            <div class="mt-2 flex gap-2">
+              <button type="button" data-coverage="self" class="coverage-btn flex-1 rounded-md border border-ink bg-canvas px-4 py-2 text-sm font-medium text-ink transition-colors">Self-Only</button>
+              <button type="button" data-coverage="family" class="coverage-btn flex-1 rounded-md border border-hairline bg-canvas px-4 py-2 text-sm font-medium text-mute transition-colors">Family</button>
+            </div>
+            <input type="hidden" name="coverageType" id="coverageType" value="self" />
+          </div>
+
+          <Slider
+            label="Expected Annual Medical Expenses"
+            name="expectedExpenses"
+            value={1500}
+            min={0}
+            max={15000}
+            step={100}
+            suffix="$"
+            inputId="hvf-expectedExpenses"
+            displayId="hvf-expectedExpensesValue"
+            tooltip="What you realistically expect to spend this year on doctor visits, prescriptions, and eligible medical costs."
+          />
+
+          <Slider
+            label="Marginal Tax Rate (Fed + State + FICA)"
+            name="taxRate"
+            value={29.65}
+            min={10}
+            max={50}
+            step={0.1}
+            suffix="%"
+            inputId="hvf-taxRate"
+            displayId="hvf-taxRateValue"
+            tooltip="Your combined federal, state, and payroll (FICA) tax rate. Pre-tax contributions save you money at this exact rate."
+          />
+
+          <!-- HSA Strategy Toggle -->
+          <div>
+            <label class="mb-2 inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              HSA Strategy
+              <Tooltip content="The 'Shoebox Strategy': paying cash for medical bills now so your HSA funds can stay invested tax-free for decades." />
+            </label>
+            <div class="mt-2 flex gap-2">
+              <button type="button" data-strategy="pay-from-hsa" class="strategy-btn flex-1 rounded-md border border-hairline bg-canvas px-4 py-2 text-sm font-medium text-mute transition-colors">Pay medical costs from HSA</button>
+              <button type="button" data-strategy="pay-out-of-pocket" class="strategy-btn flex-1 rounded-md border border-ink bg-canvas px-4 py-2 text-sm font-medium text-ink transition-colors">Pay out of pocket (Let HSA grow)</button>
+            </div>
+            <input type="hidden" name="hsaStrategy" id="hsaStrategy" value="pay-out-of-pocket" />
+          </div>
+
+          <Slider
+            label="Expected Investment Return"
+            name="returnRate"
+            value={7}
+            min={0}
+            max={12}
+            step={0.5}
+            suffix="%"
+            inputId="hvf-returnRate"
+            displayId="hvf-returnRateValue"
+            tooltip="Unlike FSAs, HSA funds can be invested in the stock market and roll over year after year."
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- FIRE Optimization Callout (hidden by default) -->
+      <div id="hvf-fire-callout" class="hidden rounded-lg border border-success/30 bg-success/5 p-5">
+        <p id="hvf-fire-callout-text" class="text-sm leading-relaxed text-ink"></p>
+      </div>
+
+      <!-- Summary Comparison Cards -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <Card padding="lg" variant="bordered">
+          <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-mute">FSA</p>
+          <div class="space-y-3">
+            <div>
+              <p class="text-xs text-mute">Max Contribution</p>
+              <p id="hvf-fsa-contrib" class="text-2xl font-semibold tabular-nums text-ink">$0</p>
+            </div>
+            <div>
+              <p class="text-xs text-mute">Immediate Tax Savings</p>
+              <p id="hvf-fsa-savings" class="text-2xl font-semibold tabular-nums text-ink">$0</p>
+            </div>
+            <div>
+              <p class="text-xs text-mute">Risk Note</p>
+              <p id="hvf-fsa-risk" class="text-sm font-medium text-amber-600 dark:text-amber-400">Use it or lose it</p>
+            </div>
+          </div>
+        </Card>
+        <Card padding="lg" variant="bordered">
+          <p class="mb-3 text-xs font-semibold uppercase tracking-wider text-link">HSA</p>
+          <div class="space-y-3">
+            <div>
+              <p class="text-xs text-mute">Max Contribution</p>
+              <p id="hvf-hsa-contrib" class="text-2xl font-semibold tabular-nums text-ink">$0</p>
+            </div>
+            <div>
+              <p class="text-xs text-mute">Immediate Tax Savings</p>
+              <p id="hvf-hsa-savings" class="text-2xl font-semibold tabular-nums text-ink">$0</p>
+            </div>
+            <div>
+              <p class="text-xs text-mute">Investable Balance (20-Year Growth)</p>
+              <p id="hvf-hsa-investable" class="text-2xl font-semibold tabular-nums text-ink">$0</p>
+            </div>
+            <div>
+              <p class="text-xs text-mute">Investment Growth (20 Years)</p>
+              <p id="hvf-hsa-growth" class="text-2xl font-semibold tabular-nums text-success-deep">$0</p>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <!-- Additional comparison: extra post-tax cost for FSA if expenses exceed limit -->
+      <div id="hvf-fsa-extra-cost" class="hidden rounded-lg border border-error/30 bg-error/5 p-4">
+        <p class="text-sm text-body">
+          <span class="font-medium text-error">FSA Shortfall:</span>
+          Your expenses exceed the FSA limit by <span id="hvf-fsa-excess-amount" class="font-semibold">$0</span>.
+          This amount is paid with post-tax dollars, reducing your FSA net benefit by <span id="hvf-fsa-extra-tax" class="font-semibold">$0</span>.
+        </p>
+      </div>
+
+      <!-- Chart card -->
+      <Card padding="lg">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">20-Year Value of 1 Year's Contribution</h2>
+        </div>
+        <div class="relative h-64 sm:h-80">
+          <canvas
+            id="hvf-chart"
+            role="img"
+            aria-label="Bar chart comparing the 20-year value of an FSA versus an HSA contribution"
+          ></canvas>
+        </div>
+      </Card>
+
+      <!-- Detailed breakdown card -->
+      <Card padding="lg" variant="soft">
+        <h3 class="mb-3 text-sm font-medium text-ink">How the Numbers Work</h3>
+        <div class="space-y-2 text-sm text-body">
+          <p><strong>FSA:</strong> You contribute pre-tax dollars and use them within the plan year. Unused funds are forfeited (up to $680 may roll over).</p>
+          <p><strong>HSA:</strong> You contribute pre-tax dollars, invest the balance, and let it grow tax-free. Funds never expire.</p>
+          <p class="mt-1">Key advantage: HSA contributions that aren't spent on medical costs stay invested and compound tax-free. Over 20 years at a 7% return, every $1,000 not spent grows to <strong>$3,870</strong>.</p>
+        </div>
+      </Card>
+    </div>
+  </div>
+</div>
+
+<p class="mx-auto max-w-6xl px-4 pb-8 text-center text-xs text-mute sm:px-6">
+  Disclaimer: This calculator provides estimates based on 2026 IRS contribution limits. Tax laws, HSA/FSA rules, and contribution limits are subject to change. Always consult a qualified tax professional for personalized advice. This is not financial or tax advice.
+</p>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+  import { formatCurrency, formatCurrencyShort } from '../../utils/formatters';
+
+  const HSA_LIMIT_SINGLE = 4400;
+  const HSA_LIMIT_FAMILY = 8750;
+  const FSA_LIMIT = 3400;
+  const FSA_CARRYOVER = 680;
+
+  let chart = null;
+
+  function getFormData() {
+    var form = document.getElementById('hsa-vs-fsa-form');
+    var formData = new FormData(form);
+    return {
+      coverageType: document.getElementById('coverageType').value,
+      expectedExpenses: Number(formData.get('expectedExpenses')) || 1500,
+      taxRate: Number(formData.get('taxRate')) || 29.65,
+      hsaStrategy: document.getElementById('hsaStrategy').value,
+      returnRate: Number(formData.get('returnRate')) || 7,
+    };
+  }
+
+  function calculateResults(inputs) {
+    var coverageType = inputs.coverageType;
+    var expectedExpenses = inputs.expectedExpenses;
+    var taxRate = inputs.taxRate;
+    var hsaStrategy = inputs.hsaStrategy;
+    var returnRate = inputs.returnRate;
+
+    // FSA calculations
+    var fsaContrib = Math.min(expectedExpenses, FSA_LIMIT);
+    var fsaTaxSavings = fsaContrib * (taxRate / 100);
+    var extraPostTaxCost = 0;
+    if (expectedExpenses > FSA_LIMIT) {
+      extraPostTaxCost = (expectedExpenses - FSA_LIMIT) * (taxRate / 100);
+    }
+    var fsaNetBenefit = fsaTaxSavings - extraPostTaxCost;
+
+    // HSA calculations
+    var hsaContrib = coverageType === 'family' ? HSA_LIMIT_FAMILY : HSA_LIMIT_SINGLE;
+    var hsaTaxSavings = hsaContrib * (taxRate / 100);
+
+    // Investable amount
+    var investableAmount;
+    if (hsaStrategy === 'pay-from-hsa') {
+      investableAmount = Math.max(0, hsaContrib - expectedExpenses);
+    } else {
+      investableAmount = hsaContrib;
+    }
+
+    // 20-year future value
+    var fv = investableAmount * Math.pow(1 + (returnRate / 100), 20);
+    var investmentGrowth = fv - investableAmount;
+    var totalHsaAdvantage = hsaTaxSavings + investmentGrowth;
+
+    return {
+      fsaContrib: fsaContrib,
+      fsaTaxSavings: fsaTaxSavings,
+      extraPostTaxCost: extraPostTaxCost,
+      fsaNetBenefit: fsaNetBenefit,
+      hsaContrib: hsaContrib,
+      hsaTaxSavings: hsaTaxSavings,
+      investableAmount: investableAmount,
+      fv: fv,
+      investmentGrowth: investmentGrowth,
+      totalHsaAdvantage: totalHsaAdvantage,
+      hsaStrategy: hsaStrategy,
+      returnRate: returnRate,
+      taxRate: taxRate,
+      expectedExpenses: expectedExpenses,
+    };
+  }
+
+  function currency(val) {
+    if (val >= 1000000) {
+      return '$' + (val / 1000000).toFixed(1) + 'M';
+    }
+    return '$' + Math.round(val).toLocaleString('en-US');
+  }
+
+  function updateResults() {
+    var inputs = getFormData();
+    var result = calculateResults(inputs);
+
+    // Update FSA cards
+    document.getElementById('hvf-fsa-contrib').textContent = currency(result.fsaContrib);
+    document.getElementById('hvf-fsa-savings').textContent = currency(result.fsaTaxSavings);
+    document.getElementById('hvf-fsa-risk').textContent = 'Use it or lose it';
+    document.getElementById('hvf-fsa-risk').className = 'text-sm font-medium text-amber-600 dark:text-amber-400';
+
+    // Update HSA cards
+    document.getElementById('hvf-hsa-contrib').textContent = currency(result.hsaContrib);
+    document.getElementById('hvf-hsa-savings').textContent = currency(result.hsaTaxSavings);
+    document.getElementById('hvf-hsa-investable').textContent = currency(result.investableAmount) + ' → ' + currency(result.fv);
+    var growthEl = document.getElementById('hvf-hsa-growth');
+    growthEl.textContent = '+' + currency(result.investmentGrowth);
+    growthEl.className = 'text-2xl font-semibold tabular-nums text-success-deep';
+
+    // Extra post-tax cost warning
+    var extraCostEl = document.getElementById('hvf-fsa-extra-cost');
+    if (result.extraPostTaxCost > 0) {
+      extraCostEl.classList.remove('hidden');
+      document.getElementById('hvf-fsa-excess-amount').textContent = currency(result.expectedExpenses - FSA_LIMIT);
+      document.getElementById('hvf-fsa-extra-tax').textContent = currency(result.extraPostTaxCost);
+    } else {
+      extraCostEl.classList.add('hidden');
+    }
+
+    // FIRE Optimization Callout
+    var calloutEl = document.getElementById('hvf-fire-callout');
+    calloutEl.classList.remove('hidden');
+    document.getElementById('hvf-fire-callout-text').innerHTML =
+      '<strong>FIRE Optimization:</strong> By maxing out your HSA and letting it grow at ' +
+      result.returnRate.toFixed(1) + '%, this single year\'s contribution could grow to ' +
+      '<strong>' + currency(result.fv) + '</strong> tax-free over 20 years.' +
+      (result.hsaStrategy === 'pay-out-of-pocket'
+        ? ' The Shoebox Strategy (paying out-of-pocket) lets your full HSA contribution compound untouched.'
+        : '');
+
+    updateChart(result);
+  }
+
+  function updateChart(result) {
+    var ctx = document.getElementById('hvf-chart');
+    if (!ctx) return;
+    if (chart) chart.destroy();
+
+    var isDark = document.documentElement.classList.contains('dark');
+    var gridColor = isDark ? '#262626' : '#ebebeb';
+    var textColor = isDark ? '#737373' : '#888888';
+    var tooltipBg = isDark ? '#ededed' : '#171717';
+    var tooltipText = isDark ? '#171717' : '#ffffff';
+
+    var fsaColor = isDark ? '#a3a3a3' : '#a3a3a3';
+    var hsaBaseColor = isDark ? '#4ade80' : '#22c55e';
+    var hsaGrowthColor = isDark ? '#86efac' : '#4ade80';
+
+    var fsaValue = result.fsaTaxSavings;
+    var hsaBase = result.hsaTaxSavings;
+    var hsaGrowth = result.investmentGrowth;
+
+    chart = new window.Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['FSA (Immediate Tax Savings)', 'HSA (Total 20-Year Value)'],
+        datasets: [
+          {
+            label: 'Immediate Tax Savings',
+            data: [fsaValue, hsaBase],
+            backgroundColor: [fsaColor, hsaBaseColor],
+            borderColor: [fsaColor, hsaBaseColor],
+            borderWidth: 1,
+            borderRadius: 4,
+            barPercentage: 0.6,
+          },
+          {
+            label: 'Investment Growth (Tax-Free)',
+            data: [0, hsaGrowth],
+            backgroundColor: ['transparent', hsaGrowthColor],
+            borderColor: ['transparent', hsaGrowthColor],
+            borderWidth: 1,
+            borderRadius: 4,
+            barPercentage: 0.6,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { intersect: false, mode: 'index' },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 12,
+              padding: 16,
+              font: { family: 'Inter, system-ui, sans-serif', size: 11 },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: { family: 'Inter, system-ui, sans-serif', size: 12, weight: 500 },
+            bodyFont: { family: 'Inter, system-ui, sans-serif', size: 12 },
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': ' + currency(context.parsed.y);
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: {
+              font: { family: 'Inter, system-ui, sans-serif', size: 11 },
+              color: textColor,
+            },
+            border: { display: false },
+          },
+          y: {
+            grid: { color: gridColor },
+            ticks: {
+              font: { family: 'Inter, system-ui, sans-serif', size: 11 },
+              color: textColor,
+              callback: function(value) { return currency(value); },
+            },
+            border: { display: false },
+            beginAtZero: true,
+          },
+        },
+      },
+    });
+  }
+
+  function initSliders() {
+    var sliders = [
+      { id: 'hvf-expectedExpenses', displayId: 'hvf-expectedExpensesValue', suffix: '$', format: true },
+      { id: 'hvf-taxRate', displayId: 'hvf-taxRateValue', suffix: '%', format: false },
+      { id: 'hvf-returnRate', displayId: 'hvf-returnRateValue', suffix: '%', format: false },
+    ];
+
+    sliders.forEach(function(slider) {
+      var el = document.getElementById(slider.id);
+      var display = document.getElementById(slider.displayId);
+      if (el && display) {
+        el.addEventListener('input', function() {
+          var val = Number(el.value);
+          if (slider.suffix === '$') {
+            display.textContent = currency(val);
+          } else {
+            display.textContent = val + slider.suffix;
+          }
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initToggles() {
+    // Coverage type buttons
+    var coverageBtns = document.querySelectorAll('.coverage-btn');
+    coverageBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        coverageBtns.forEach(function(b) {
+          b.classList.remove('border-ink', 'text-ink');
+          b.classList.add('border-hairline', 'text-mute');
+        });
+        btn.classList.remove('border-hairline', 'text-mute');
+        btn.classList.add('border-ink', 'text-ink');
+        document.getElementById('coverageType').value = btn.getAttribute('data-coverage');
+        updateResults();
+      });
+    });
+
+    // Strategy buttons
+    var strategyBtns = document.querySelectorAll('.strategy-btn');
+    strategyBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        strategyBtns.forEach(function(b) {
+          b.classList.remove('border-ink', 'text-ink');
+          b.classList.add('border-hairline', 'text-mute');
+        });
+        btn.classList.remove('border-hairline', 'text-mute');
+        btn.classList.add('border-ink', 'text-ink');
+        document.getElementById('hsaStrategy').value = btn.getAttribute('data-strategy');
+        updateResults();
+      });
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('hsa-vs-fsa-form');
+    if (form) {
+      form.addEventListener('input', function() { updateResults(); });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    initSliders();
+    initToggles();
+    initFormListeners();
+    updateResults();
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+      if (chart) { chart.destroy(); chart = null; }
+      updateResults();
+    });
+
+    var observer = new MutationObserver(function() {
+      if (chart) { chart.destroy(); chart = null; }
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
