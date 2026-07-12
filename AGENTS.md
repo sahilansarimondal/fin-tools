@@ -10,7 +10,7 @@
 **Package Manager:** npm
 **Node Requirement:** >= 22.12.0
 
-A multi-tool financial calculator website. Currently has 33 calculator pages covering FIRE planning, portfolio management, investment analysis, UK tax optimization, student loans, and Social Security planning.
+A multi-tool financial calculator website. Currently has 35 calculator pages covering FIRE planning, portfolio management, investment analysis, UK tax optimization, student loans, and Social Security planning.
 
 ## Commands
 
@@ -64,6 +64,7 @@ fin-tools/
 │   │   │   ├── SocialSecurityBridgeCalculator.astro  # Social Security Bridge calculator
 │   │   │   ├── SippDrawdownCalculator.astro          # SIPP Drawdown Tax calculator
 │   │   │   ├── UkRedundancyTaxCalculator.astro       # UK Redundancy Tax calculator
+│   │   │   ├── SalarySacrificePensionCalculator.astro # UK Salary Sacrifice Pension Optimizer
 │   │   ├── layout/
 │   │   │   ├── Header.astro            # Sticky header with nav, mobile menu, theme toggle
 │   │   │   └── Footer.astro            # 4-column footer
@@ -120,6 +121,8 @@ fin-tools/
 │   │   │   └── index.astro             # House Hacking Cash Flow Calculator page
 │   │   ├── 72t-vs-roth-conversion-ladder-calculator/
 │   │   │   └── index.astro             # 72(t) SEPP vs Roth Conversion Ladder Calculator page
+│   │   ├── salary-sacrifice-pension-calculator/
+│   │   │   └── index.astro             # UK Salary Sacrifice Pension Optimizer page
 │   │   ├── learn/
 │   │   │   ├── what-is-fire.astro      # Learn: What is FIRE?
 │   │   │   ├── fire-strategies.astro   # Learn: FIRE Strategies
@@ -162,6 +165,7 @@ fin-tools/
 │       ├── mortgage-isa-calculations.ts              # Mortgage vs ISA calculation engine
 │       ├── uk-redundancy-calculations.ts             # UK Redundancy Tax calculation engine
 │       ├── lisa-vs-pension-calculations.ts           # LISA vs Pension calculation engine
+│       ├── salary-sacrifice-calculations.ts          # UK Salary Sacrifice Pension calculation engine
 │       ├── jisa-bare-trust-calculations.ts           # JISA vs Bare Trust calculation engine
 │       ├── plan5-student-loan-calculations.ts        # Plan 5 Student Loan calculation engine
 │       ├── faq-data.ts                    # FAQ types and shared FAQ data
@@ -215,6 +219,7 @@ fin-tools/
 | `/social-security-bridge-calculator` | `src/pages/social-security-bridge-calculator/index.astro` | Social Security Bridge Calculator |
 | `/sipp-drawdown-tax-calculator` | `src/pages/sipp-drawdown-tax-calculator/index.astro` | SIPP Drawdown Tax Calculator |
 | `/uk-redundancy-tax-calculator` | `src/pages/uk-redundancy-tax-calculator/index.astro` | UK Redundancy Tax Calculator |
+| `/salary-sacrifice-pension-calculator` | `src/pages/salary-sacrifice-pension-calculator/index.astro` | Salary Sacrifice Pension Optimizer |
 | `/tools` | `src/pages/tools/index.astro` | All tools overview |
 | `/about` | `src/pages/about/index.astro` | About page |
 | `/contact` | `src/pages/contact/index.astro` | Contact page |
@@ -300,6 +305,7 @@ Scale: `rounded-sm` (6px), `rounded-md` (8px), `rounded-lg` (12px), `rounded-xl`
 | Social Security Bridge | SocialSecurityBridgeCalculator.astro | — | social-security-bridge-calculations.ts | Chart.js line | Social Security bridge strategy, early retirement gap analysis, claiming age optimization, portfolio withdrawal coordination |
 | SIPP Drawdown Tax | SippDrawdownCalculator.astro | — | Inline (none) | None | UK SIPP drawdown tax calculator, 25% tax-free lump sum, income tax band optimization, drawdown strategy planner |
 | UK Redundancy Tax | UkRedundancyTaxCalculator.astro | — | uk-redundancy-calculations.ts | None | UK redundancy payment tax calculator, statutory redundancy calculation, tax-free allowance, employment income comparison |
+| Salary Sacrifice Pension | SalarySacrificePensionCalculator.astro | ~650 | salary-sacrifice-calculations.ts | Chart.js stacked bar | Standard vs Salary Sacrifice comparison, 2026/27 UK tax bands, employer NI savings pass-through (15%), PA taper analysis, NMW viability check, side-by-side KPI cards, benefit banner, Chart.js stacked bar chart, theme-aware via MutationObserver |
 
 ### Adding a New Tool
 
