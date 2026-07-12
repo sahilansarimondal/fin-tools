@@ -192,6 +192,34 @@ import ResultCard from '../ui/ResultCard.astro';
             <p class="mt-1 text-xs text-mute" id="finance-toggle-label">Add fees to new loan principal</p>
           </div>
 
+          <!-- Early Repayment Charge (UK only) -->
+          <div id="erc-group" class="hidden rounded-lg border border-hairline bg-warning/5 p-4">
+            <Input
+              label="Early Repayment Charge (ERC)"
+              name="erc"
+              type="number"
+              value={0}
+              min={0}
+              max={100000}
+              step={250}
+              suffix="£"
+              hideArrows
+              helpText="Fee charged by your current lender for ending your fixed deal early"
+            />
+            <Slider
+              label="ERC Amount"
+              name="erc"
+              value={0}
+              min={0}
+              max={100000}
+              step={250}
+              suffix=""
+              inputId="refi-erc"
+              displayId="refi-ercValue"
+              tooltip="Early Repayment Charge — typically 1–5% of outstanding balance"
+            />
+          </div>
+
           <!-- New Currency Label -->
           <p id="currency-label" class="pt-2 text-center text-xs text-mute">All values displayed in USD ($)</p>
         </form>
@@ -356,6 +384,8 @@ import ResultCard from '../ui/ResultCard.astro';
     const newRate = getVal('newRate');
     const newTerm = getVal('newTerm');
     const upfrontFees = getVal('upfrontFees');
+    const erc = currentRegion === 'uk' ? getVal('erc') : 0;
+    const totalUpfront = upfrontFees + erc;
     const financeFees = getCheck('financeFees');
 
     if (!balance || !currentRate || !currentTerm || !newRate || !newTerm) return;
@@ -367,8 +397,8 @@ import ResultCard from '../ui/ResultCard.astro';
     const newPMT = monthlyPayment(effectivePrincipal, newRate, newTerm);
     const monthlySavings = currentPMT - newPMT;
 
-    // Break-even: months to recoup upfront fees
-    const breakEvenMonths = monthlySavings > 0 ? Math.ceil(upfrontFees / monthlySavings) : Infinity;
+    // Break-even: months to recoup total upfront costs (fees + ERC)
+    const breakEvenMonths = monthlySavings > 0 ? Math.ceil(totalUpfront / monthlySavings) : Infinity;
 
     // Total interest paid over loan life
     function totalInterest(principal, rate, term) {
@@ -382,7 +412,7 @@ import ResultCard from '../ui/ResultCard.astro';
 
     // 5-year net savings
     const fiveYearGross = monthlySavings * 60;
-    const fiveYearNet = fiveYearGross - upfrontFees;
+    const fiveYearNet = fiveYearGross - totalUpfront;
 
     // Year-by-year projection
     let cumulative = 0;
@@ -393,9 +423,9 @@ import ResultCard from '../ui/ResultCard.astro';
     for (let y = 1; y <= Math.min(newTerm, 30); y++) {
       const yearlySavings = monthlySavings * 12;
       cumulative += yearlySavings;
-      const remainingFees = Math.max(0, upfrontFees - cumulative);
+      const remainingFees = Math.max(0, totalUpfront - cumulative);
       let status = '';
-      if (cumulative >= upfrontFees) {
+      if (cumulative >= totalUpfront) {
         status = '<span class="text-success-deep">✓ Break-even reached</span>';
       } else {
         status = '<span class="text-warning">Before break-even</span>';
@@ -439,7 +469,7 @@ import ResultCard from '../ui/ResultCard.astro';
     setText(lifetimeSavingsEl, fmt(Math.round(lifetimeInterestSaved)));
 
     // Chart
-    drawChart(monthlySavings, upfrontFees, newTerm);
+    drawChart(monthlySavings, totalUpfront, newTerm);
   }
 
   // --- Chart drawing ---
@@ -597,6 +627,18 @@ import ResultCard from '../ui/ResultCard.astro';
 
     // Update currency label
     if (currencyLabel) currencyLabel.textContent = 'All values displayed in ' + labels[region];
+
+    // Show/hide ERC input (UK only)
+    const ercGroup = document.getElementById('erc-group');
+    if (ercGroup) {
+      ercGroup.classList.toggle('hidden', region === 'us');
+    }
+
+    // Update ERC display
+    const ercSlider = document.getElementById('refi-erc');
+    const ercDisplay = document.getElementById('refi-ercValue');
+    if (ercSlider) ercSlider.value = '0';
+    if (ercDisplay) ercDisplay.textContent = sym + '0';
 
     // Update suffix on all inputs
     document.querySelectorAll('input[data-suffix]').forEach(function (input) {
