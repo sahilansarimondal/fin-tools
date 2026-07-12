@@ -1,0 +1,652 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="ssp-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="ssp-form" class="space-y-6">
+          <Input
+            label="Gross Annual Salary"
+            name="grossSalary"
+            type="number"
+            value={60000}
+            min={0}
+            step={1000}
+            suffix="£"
+            hideArrows
+            required
+            tooltip="Your total annual salary before any deductions."
+          />
+
+          <Slider
+            label="Employee Contribution"
+            name="employeeContributionPercent"
+            value={5}
+            min={0}
+            max={50}
+            step={0.5}
+            suffix="%"
+            inputId="ssp-employee-contrib"
+            displayId="ssp-employee-contrib-display"
+            tooltip="The percentage of your salary you contribute to your pension. Under salary sacrifice, this amount is redirected from your gross salary."
+          />
+
+          <Slider
+            label="Employer Contribution"
+            name="employerContributionPercent"
+            value={3}
+            min={0}
+            max={50}
+            step={0.5}
+            suffix="%"
+            inputId="ssp-employer-contrib"
+            displayId="ssp-employer-contrib-display"
+            tooltip="The percentage your employer contributes to your pension based on your original gross salary."
+          />
+
+          <Slider
+            label="Employer NI Reinvestment"
+            name="employerNiReinvestmentPercent"
+            value={100}
+            min={0}
+            max={100}
+            step={5}
+            suffix="%"
+            inputId="ssp-ni-reinvestment"
+            displayId="ssp-ni-reinvestment-display"
+            helpText="How much of the employer's 15% NI saving is added to your pension"
+            tooltip="When you salary sacrifice, your employer saves 15% NI on the sacrificed amount. Some employers pass all or part of this saving into your pension."
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Warning Banner -->
+      <div id="ssp-warnings" class="hidden rounded-lg border border-error/30 bg-error/5 p-4">
+        <p class="text-sm font-medium text-error">⚠ Important Notes</p>
+        <ul id="ssp-warnings-list" class="mt-2 list-inside list-disc space-y-1 text-xs text-body"></ul>
+      </div>
+
+      <!-- Total Benefit Banner -->
+      <div id="ssp-benefit-total" class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm text-center">
+        <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Total Financial Benefit</p>
+        <p id="ssp-benefit-value" class="text-3xl font-semibold tabular-nums text-ink sm:text-4xl">—</p>
+        <div class="mt-2 space-y-0.5">
+          <p id="ssp-benefit-takehome" class="text-sm text-mute">Take-Home Change: —</p>
+          <p id="ssp-benefit-pension" class="text-sm text-mute">Extra Pension: —</p>
+        </div>
+      </div>
+
+      <!-- Side-by-Side Comparison -->
+      <div class="grid gap-6 sm:grid-cols-2">
+        <!-- Standard Pension Column -->
+        <div class="space-y-4">
+          <h3 class="text-sm font-semibold text-ink">Standard Pension</h3>
+
+          <ResultCard
+            label="Annual Take-Home"
+            valueId="ssp-standard-takehome"
+            value="—"
+            valueClass="text-ink"
+            description="After income tax, NI, and pension contribution"
+          />
+
+          <ResultCard
+            label="Monthly Take-Home"
+            valueId="ssp-standard-takehome-monthly"
+            value="—"
+            valueClass="text-ink"
+            description="Per month after all deductions"
+          />
+
+          <ResultCard
+            label="Annual Pension"
+            valueId="ssp-standard-pension"
+            value="—"
+            valueClass="text-success-deep"
+            description="Employee + employer contributions"
+          />
+
+          <ResultCard
+            label="Monthly Pension"
+            valueId="ssp-standard-pension-monthly"
+            value="—"
+            valueClass="text-success-deep"
+            description="Per month into your pension"
+          />
+
+          <div class="space-y-1 text-xs text-mute">
+            <p>Income Tax: <span id="ssp-standard-income-tax" class="font-mono tabular-nums">—</span></p>
+            <p>Employee NI: <span id="ssp-standard-employee-ni" class="font-mono tabular-nums">—</span></p>
+          </div>
+        </div>
+
+        <!-- Salary Sacrifice Column -->
+        <div class="space-y-4">
+          <div class="flex items-center gap-2">
+            <h3 class="text-sm font-semibold text-ink">Salary Sacrifice</h3>
+            <span id="ssp-ss-badge" class="hidden rounded-full bg-success/15 px-2 py-0.5 text-xs font-medium text-success-deep">BETTER</span>
+          </div>
+
+          <ResultCard
+            label="Annual Take-Home"
+            valueId="ssp-ss-takehome"
+            value="—"
+            valueClass="text-ink"
+            description="After income tax and NI (no separate deduction)"
+          />
+
+          <ResultCard
+            label="Monthly Take-Home"
+            valueId="ssp-ss-takehome-monthly"
+            value="—"
+            valueClass="text-ink"
+            description="Per month after all deductions"
+          />
+
+          <ResultCard
+            label="Annual Pension"
+            valueId="ssp-ss-pension"
+            value="—"
+            valueClass="text-success-deep"
+            description="Sacrificed amount + employer + NI savings"
+          />
+
+          <ResultCard
+            label="Monthly Pension"
+            valueId="ssp-ss-pension-monthly"
+            value="—"
+            valueClass="text-success-deep"
+            description="Per month into your pension"
+          />
+
+          <div class="space-y-1 text-xs text-mute">
+            <p>Income Tax: <span id="ssp-ss-income-tax" class="font-mono tabular-nums">—</span></p>
+            <p>Employee NI: <span id="ssp-ss-employee-ni" class="font-mono tabular-nums">—</span></p>
+            <p>Employer NI Saved: <span id="ssp-ss-employer-ni-saved" class="font-mono tabular-nums">—</span></p>
+            <p>Employer NI Passed On: <span id="ssp-ss-employer-ni-passed" class="font-mono tabular-nums">—</span></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Employer NI Savings Card -->
+      <Card padding="lg" id="ssp-employer-ni-card">
+        <h3 class="mb-3 text-sm font-semibold text-ink">Employer NI Savings</h3>
+        <div class="space-y-2 text-sm">
+          <p class="flex justify-between">
+            <span class="text-mute">Employer NI Saving:</span>
+            <span id="ssp-employer-ni-saving" class="font-mono font-medium tabular-nums text-success-deep">—</span>
+          </p>
+          <p class="flex justify-between">
+            <span class="text-mute">Passed to Your Pension:</span>
+            <span id="ssp-employer-ni-passed-on" class="font-mono font-medium tabular-nums text-success-deep">—</span>
+          </p>
+          <p id="ssp-employer-ni-kept-row" class="flex justify-between hidden">
+            <span class="text-mute">Your employer keeps:</span>
+            <span id="ssp-employer-ni-kept" class="font-mono font-medium tabular-nums text-error">—</span>
+          </p>
+        </div>
+      </Card>
+
+      <!-- Chart -->
+      <Card padding="lg">
+        <h3 class="mb-4 text-sm font-semibold text-ink">Annual Comparison Breakdown</h3>
+        <div class="relative">
+          <canvas id="ssp-chart" class="max-h-80 w-full"></canvas>
+        </div>
+      </Card>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    'use strict';
+
+    // --- Constants (2026/27, England/Wales/NI) ---
+    var PERSONAL_ALLOWANCE = 12570;
+    var PA_TAPER_THRESHOLD = 100000;
+    var PA_TAPER_RATE = 0.5;
+    var BASIC_RATE_LIMIT = 50270;
+    var HIGHER_RATE_LIMIT = 125140;
+    var BASIC_RATE = 0.20;
+    var HIGHER_RATE = 0.40;
+    var ADDITIONAL_RATE = 0.45;
+    var NI_PRIMARY_THRESHOLD = 12570;
+    var NI_UPPER_THRESHOLD = 50270;
+    var NI_MAIN_RATE = 0.08;
+    var NI_HIGHER_RATE = 0.02;
+    var NI_SECONDARY_THRESHOLD = 5000;
+    var NI_SECONDARY_RATE = 0.15;
+    var NMW_SAFE_THRESHOLD = 22500;
+    var BASIC_RATE_TAXABLE_BAND = BASIC_RATE_LIMIT - PERSONAL_ALLOWANCE;
+    var HIGHER_RATE_TAXABLE_BAND = HIGHER_RATE_LIMIT - BASIC_RATE_LIMIT;
+
+    // --- Helpers ---
+
+    function round2(n) {
+      return Math.round(n * 100) / 100;
+    }
+
+    function formatGBP(n) {
+      return '£' + n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // --- Core Tax Functions ---
+
+    function calculatePersonalAllowance(grossSalary) {
+      var incomeOverThreshold = Math.max(0, grossSalary - PA_TAPER_THRESHOLD);
+      var paReduction = Math.floor(incomeOverThreshold * PA_TAPER_RATE);
+      return round2(Math.max(0, PERSONAL_ALLOWANCE - paReduction));
+    }
+
+    function calculateIncomeTax(taxableIncome, personalAllowance) {
+      var incomeAfterPA = Math.max(0, taxableIncome - personalAllowance);
+      var remaining = incomeAfterPA;
+      var tax = 0;
+      var basicAmount = Math.min(remaining, BASIC_RATE_TAXABLE_BAND);
+      tax += basicAmount * BASIC_RATE;
+      remaining -= basicAmount;
+      if (remaining > 0) {
+        var higherAmount = Math.min(remaining, HIGHER_RATE_TAXABLE_BAND);
+        tax += higherAmount * HIGHER_RATE;
+        remaining -= higherAmount;
+      }
+      if (remaining > 0) {
+        tax += remaining * ADDITIONAL_RATE;
+      }
+      return round2(tax);
+    }
+
+    function calculateEmployeeNI(earnings) {
+      if (earnings <= NI_PRIMARY_THRESHOLD) return 0;
+      var abovePrimary = earnings - NI_PRIMARY_THRESHOLD;
+      var inMainBand = Math.min(abovePrimary, NI_UPPER_THRESHOLD - NI_PRIMARY_THRESHOLD);
+      var aboveUpper = Math.max(0, abovePrimary - (NI_UPPER_THRESHOLD - NI_PRIMARY_THRESHOLD));
+      return round2(inMainBand * NI_MAIN_RATE + aboveUpper * NI_HIGHER_RATE);
+    }
+
+    function calculateEmployerNI(earnings) {
+      if (earnings <= NI_SECONDARY_THRESHOLD) return 0;
+      var aboveSecondary = earnings - NI_SECONDARY_THRESHOLD;
+      return round2(aboveSecondary * NI_SECONDARY_RATE);
+    }
+
+    // --- Scenario Calculators ---
+
+    function calculateStandardPension(inputs) {
+      var grossSalary = inputs.grossSalary;
+      var employeeContributionPercent = inputs.employeeContributionPercent;
+      var employerContributionPercent = inputs.employerContributionPercent;
+
+      var employeeContribution = round2(grossSalary * (employeeContributionPercent / 100));
+      var employerContribution = round2(grossSalary * (employerContributionPercent / 100));
+      var taxableIncome = round2(grossSalary - employeeContribution);
+      var personalAllowance = calculatePersonalAllowance(taxableIncome);
+      var incomeTax = calculateIncomeTax(taxableIncome, personalAllowance);
+      var employeeNI = calculateEmployeeNI(grossSalary);
+      var takeHomePay = round2(grossSalary - incomeTax - employeeNI - employeeContribution);
+      var totalPension = round2(employeeContribution + employerContribution);
+
+      return {
+        taxableIncome: taxableIncome,
+        personalAllowance: personalAllowance,
+        incomeTax: incomeTax,
+        employeeNI: employeeNI,
+        takeHomePay: takeHomePay,
+        employeeContribution: employeeContribution,
+        employerContribution: employerContribution,
+        totalPension: totalPension,
+      };
+    }
+
+    function calculateSalarySacrifice(inputs) {
+      var grossSalary = inputs.grossSalary;
+      var employeeContributionPercent = inputs.employeeContributionPercent;
+      var employerContributionPercent = inputs.employerContributionPercent;
+      var employerNiReinvestmentPercent = inputs.employerNiReinvestmentPercent;
+
+      var sacrificeAmount = round2(grossSalary * (employeeContributionPercent / 100));
+      var newGrossSalary = round2(grossSalary - sacrificeAmount);
+      var employerContribution = round2(grossSalary * (employerContributionPercent / 100));
+      var personalAllowance = calculatePersonalAllowance(newGrossSalary);
+      var incomeTax = calculateIncomeTax(newGrossSalary, personalAllowance);
+      var employeeNI = calculateEmployeeNI(newGrossSalary);
+      var takeHomePay = round2(newGrossSalary - incomeTax - employeeNI);
+      var oldEmployerNI = calculateEmployerNI(grossSalary);
+      var newEmployerNI = calculateEmployerNI(newGrossSalary);
+      var employerNiSaving = round2(oldEmployerNI - newEmployerNI);
+      var employerNiPassedOn = round2(employerNiSaving * (employerNiReinvestmentPercent / 100));
+      var totalPension = round2(sacrificeAmount + employerContribution + employerNiPassedOn);
+
+      return {
+        taxableIncome: newGrossSalary,
+        personalAllowance: personalAllowance,
+        incomeTax: incomeTax,
+        employeeNI: employeeNI,
+        takeHomePay: takeHomePay,
+        employeeContribution: sacrificeAmount,
+        employerContribution: employerContribution,
+        totalPension: totalPension,
+        employerNiSaving: employerNiSaving,
+        employerNiPassedOn: employerNiPassedOn,
+        newGrossSalary: newGrossSalary,
+      };
+    }
+
+    function calculateSalarySacrificeComparison(inputs) {
+      var warnings = [];
+
+      if (inputs.employeeContributionPercent < 0 || inputs.employeeContributionPercent > 100) {
+        warnings.push('Employee contribution percentage must be between 0 and 100.');
+      }
+      if (inputs.employerContributionPercent < 0 || inputs.employerContributionPercent > 100) {
+        warnings.push('Employer contribution percentage must be between 0 and 100.');
+      }
+      if (inputs.employerNiReinvestmentPercent < 0 || inputs.employerNiReinvestmentPercent > 100) {
+        warnings.push('Employer NI reinvestment percentage must be between 0 and 100.');
+      }
+
+      var standard = calculateStandardPension(inputs);
+      var salarySacrifice = calculateSalarySacrifice(inputs);
+
+      var takeHomePayDifference = round2(salarySacrifice.takeHomePay - standard.takeHomePay);
+      var pensionDifference = round2(salarySacrifice.totalPension - standard.totalPension);
+      var totalBenefit = round2(takeHomePayDifference + pensionDifference);
+
+      var isViable = salarySacrifice.newGrossSalary >= NMW_SAFE_THRESHOLD;
+      if (!isViable) {
+        warnings.push(
+          'Your new gross salary of £' + salarySacrifice.newGrossSalary.toFixed(2) +
+          ' is below the estimated National Minimum Wage threshold of £' + NMW_SAFE_THRESHOLD.toFixed(2) +
+          ' for full-time work (37.5 hrs/wk × 52 wks × £11.44/hr). Salary sacrifice may not be legally viable.',
+        );
+      }
+
+      if (salarySacrifice.newGrossSalary > 0 && salarySacrifice.newGrossSalary < NI_SECONDARY_THRESHOLD) {
+        warnings.push(
+          'Your new gross salary of £' + salarySacrifice.newGrossSalary.toFixed(2) +
+          ' falls below the employer NI Secondary Threshold of £' + NI_SECONDARY_THRESHOLD.toFixed(2) +
+          '. The employer NI saving calculation assumes marginal savings at 15%, which may differ if the threshold is crossed.',
+        );
+      }
+
+      if (salarySacrifice.personalAllowance < PERSONAL_ALLOWANCE) {
+        warnings.push(
+          'Your personal allowance of £' + salarySacrifice.personalAllowance.toFixed(2) +
+          ' has been tapered due to income above £' + PA_TAPER_THRESHOLD.toLocaleString() +
+          '. Higher earners may experience marginal tax rates above 60% in the taper band.',
+        );
+      }
+
+      return {
+        standard: standard,
+        salarySacrifice: salarySacrifice,
+        comparison: {
+          takeHomePayDifference: takeHomePayDifference,
+          pensionDifference: pensionDifference,
+          totalBenefit: totalBenefit,
+          employerNiSavingTotal: salarySacrifice.employerNiSaving,
+        },
+        warnings: warnings,
+        isViable: isViable,
+      };
+    }
+
+    // --- UI Functions ---
+
+    function getFormData() {
+      var form = document.getElementById('ssp-form');
+      var formData = new FormData(form);
+
+      return {
+        grossSalary: Number(formData.get('grossSalary')) || 60000,
+        employeeContributionPercent: Number(formData.get('employeeContributionPercent')) || 5,
+        employerContributionPercent: Number(formData.get('employerContributionPercent')) || 3,
+        employerNiReinvestmentPercent: Number(formData.get('employerNiReinvestmentPercent')) || 100,
+      };
+    }
+
+    function updateResults() {
+      var input = getFormData();
+      var r = calculateSalarySacrificeComparison(input);
+
+      // Warnings
+      var warningsEl = document.getElementById('ssp-warnings');
+      var warningsList = document.getElementById('ssp-warnings-list');
+      if (r.warnings.length > 0) {
+        warningsEl.classList.remove('hidden');
+        warningsList.innerHTML = '';
+        r.warnings.forEach(function (w) {
+          var li = document.createElement('li');
+          li.className = 'text-xs text-body';
+          li.textContent = w;
+          warningsList.appendChild(li);
+        });
+      } else {
+        warningsEl.classList.add('hidden');
+      }
+
+      // Total Benefit Banner
+      var benefitValue = document.getElementById('ssp-benefit-value');
+      var benefitTakehome = document.getElementById('ssp-benefit-takehome');
+      var benefitPension = document.getElementById('ssp-benefit-pension');
+      var benefitTotal = document.getElementById('ssp-benefit-total');
+
+      if (r.comparison.totalBenefit >= 0) {
+        benefitValue.textContent = formatGBP(r.comparison.totalBenefit);
+        benefitValue.className = 'text-3xl font-semibold tabular-nums text-success-deep sm:text-4xl';
+        benefitTotal.className = 'rounded-lg border border-success/30 bg-success/5 p-6 shadow-sm text-center';
+      } else {
+        benefitValue.textContent = formatGBP(r.comparison.totalBenefit);
+        benefitValue.className = 'text-3xl font-semibold tabular-nums text-error sm:text-4xl';
+        benefitTotal.className = 'rounded-lg border border-error/30 bg-error/5 p-6 shadow-sm text-center';
+      }
+
+      var takeHomeSign = r.comparison.takeHomePayDifference >= 0 ? '+' : '';
+      var pensionSign = r.comparison.pensionDifference >= 0 ? '+' : '';
+      benefitTakehome.textContent = 'Take-Home Change: ' + takeHomeSign + formatGBP(r.comparison.takeHomePayDifference);
+      benefitPension.textContent = 'Extra Pension: ' + pensionSign + formatGBP(r.comparison.pensionDifference);
+
+      // Standard Pension Results
+      document.getElementById('ssp-standard-takehome').textContent = formatGBP(r.standard.takeHomePay);
+      document.getElementById('ssp-standard-takehome-monthly').textContent = formatGBP(r.standard.takeHomePay / 12);
+      document.getElementById('ssp-standard-pension').textContent = formatGBP(r.standard.totalPension);
+      document.getElementById('ssp-standard-pension-monthly').textContent = formatGBP(r.standard.totalPension / 12);
+      document.getElementById('ssp-standard-income-tax').textContent = formatGBP(r.standard.incomeTax);
+      document.getElementById('ssp-standard-employee-ni').textContent = formatGBP(r.standard.employeeNI);
+
+      // Salary Sacrifice Results
+      document.getElementById('ssp-ss-takehome').textContent = formatGBP(r.salarySacrifice.takeHomePay);
+      document.getElementById('ssp-ss-takehome-monthly').textContent = formatGBP(r.salarySacrifice.takeHomePay / 12);
+      document.getElementById('ssp-ss-pension').textContent = formatGBP(r.salarySacrifice.totalPension);
+      document.getElementById('ssp-ss-pension-monthly').textContent = formatGBP(r.salarySacrifice.totalPension / 12);
+      document.getElementById('ssp-ss-income-tax').textContent = formatGBP(r.salarySacrifice.incomeTax);
+      document.getElementById('ssp-ss-employee-ni').textContent = formatGBP(r.salarySacrifice.employeeNI);
+      document.getElementById('ssp-ss-employer-ni-saved').textContent = formatGBP(r.salarySacrifice.employerNiSaving);
+      document.getElementById('ssp-ss-employer-ni-passed').textContent = formatGBP(r.salarySacrifice.employerNiPassedOn);
+
+      // BETTER badge
+      var badge = document.getElementById('ssp-ss-badge');
+      if (r.comparison.totalBenefit > 0) {
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+
+      // Employer NI Card
+      document.getElementById('ssp-employer-ni-saving').textContent = formatGBP(r.salarySacrifice.employerNiSaving) + '/year';
+      document.getElementById('ssp-employer-ni-passed-on').textContent = formatGBP(r.salarySacrifice.employerNiPassedOn) + '/year';
+
+      var keptRow = document.getElementById('ssp-employer-ni-kept-row');
+      var keptEl = document.getElementById('ssp-employer-ni-kept');
+      var keptAmount = r.salarySacrifice.employerNiSaving - r.salarySacrifice.employerNiPassedOn;
+      if (input.employerNiReinvestmentPercent < 100 && keptAmount > 0) {
+        keptRow.classList.remove('hidden');
+        keptEl.textContent = formatGBP(keptAmount) + '/year';
+      } else {
+        keptRow.classList.add('hidden');
+      }
+
+      // Update chart
+      updateChart(r);
+    }
+
+    // --- Chart ---
+
+    var sspChartInstance = null;
+
+    function getChartColors() {
+      var isDark = document.documentElement.classList.contains('dark');
+      return {
+        takeHome: isDark ? '#34d399' : '#10b981',
+        incomeTax: isDark ? '#f87171' : '#ef4444',
+        employeeNI: isDark ? '#fbbf24' : '#f59e0b',
+        pension: isDark ? '#60a5fa' : '#3b82f6',
+        grid: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)',
+        text: isDark ? '#a3a3a3' : '#737373',
+      };
+    }
+
+    function updateChart(result) {
+      var canvas = document.getElementById('ssp-chart');
+      if (!canvas) return;
+
+      var ctx = canvas.getContext('2d');
+      var colors = getChartColors();
+
+      if (sspChartInstance) {
+        sspChartInstance.destroy();
+      }
+
+      if (typeof Chart === 'undefined') return;
+
+      sspChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Standard Pension', 'Salary Sacrifice'],
+          datasets: [
+            {
+              label: 'Take-Home Pay',
+              data: [result.standard.takeHomePay, result.salarySacrifice.takeHomePay],
+              backgroundColor: colors.takeHome,
+              borderColor: colors.takeHome,
+              borderWidth: 1,
+            },
+            {
+              label: 'Income Tax',
+              data: [result.standard.incomeTax, result.salarySacrifice.incomeTax],
+              backgroundColor: colors.incomeTax,
+              borderColor: colors.incomeTax,
+              borderWidth: 1,
+            },
+            {
+              label: 'Employee NI',
+              data: [result.standard.employeeNI, result.salarySacrifice.employeeNI],
+              backgroundColor: colors.employeeNI,
+              borderColor: colors.employeeNI,
+              borderWidth: 1,
+            },
+            {
+              label: 'Pension',
+              data: [result.standard.totalPension, result.salarySacrifice.totalPension],
+              backgroundColor: colors.pension,
+              borderColor: colors.pension,
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            x: {
+              stacked: true,
+              grid: { color: colors.grid },
+              ticks: { color: colors.text },
+            },
+            y: {
+              stacked: true,
+              beginAtZero: true,
+              grid: { color: colors.grid },
+              ticks: {
+                color: colors.text,
+                callback: function (value) {
+                  return '£' + value.toLocaleString('en-GB');
+                },
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: colors.text,
+                padding: 16,
+                usePointStyle: true,
+              },
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  return context.dataset.label + ': £' + context.parsed.y.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+
+    // --- Initialization ---
+
+    function initFormListeners() {
+      var form = document.getElementById('ssp-form');
+      if (form) {
+        form.addEventListener('input', function () {
+          updateResults();
+        });
+      }
+    }
+
+    function loadChartJS(callback) {
+      if (typeof Chart !== 'undefined') {
+        callback();
+        return;
+      }
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js';
+      script.onload = callback;
+      script.onerror = function () {
+        console.warn('Failed to load Chart.js');
+      };
+      document.head.appendChild(script);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      initFormListeners();
+      loadChartJS(function () {
+        updateResults();
+      });
+
+      // Theme change observer
+      var observer = new MutationObserver(function () {
+        if (sspChartInstance) {
+          updateResults();
+        }
+      });
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class'],
+      });
+    });
+  })();
+</script>

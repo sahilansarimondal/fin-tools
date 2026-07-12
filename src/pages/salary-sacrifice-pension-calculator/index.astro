@@ -1,0 +1,379 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import SalarySacrificePensionCalculator from '../../components/calculator/SalarySacrificePensionCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is salary sacrifice for a pension and how does it work?',
+    answerHtml: '<b>Salary sacrifice</b> (also known as a "salary exchange" or "SMART pension") is an arrangement where you agree to give up a portion of your gross salary in exchange for an equivalent pension contribution from your employer. Unlike a standard "relief at source" pension where you contribute from your net pay and the government adds basic rate tax relief, salary sacrifice reduces your contractual salary <b>before</b> income tax and National Insurance are calculated.<br /><br />The key difference: with salary sacrifice, you save both <b>income tax</b> and <b>employee National Insurance</b> (8% on earnings between £12,570 and £50,270, 2% above). Your employer also saves <b>15% employer NI</b> on the sacrificed amount, which some employers pass into your pension. The sacrificed amount goes directly into your pension as an employer contribution, with no tax relief needed because it was never taxed in the first place.',
+    answerText: 'Salary sacrifice is an arrangement where you give up part of your gross salary in exchange for an equivalent employer pension contribution. This saves both income tax and National Insurance because the sacrificed amount is never treated as income.',
+  },
+  {
+    question: 'How much can I save with salary sacrifice vs a standard pension?',
+    answerHtml: 'The savings from salary sacrifice can be substantial. For a <b>basic rate taxpayer</b> earning £50,000 and contributing 5% (£2,500):<br /><br /><ul><li><b>Standard pension:</b> You contribute £2,500 from gross pay. You pay 20% income tax (£500) and 8% employee NI (£200) on that amount, so the net cost to you is <b>£1,800</b>. The government adds £500 basic rate tax relief to make the full £2,500 contribution.</li><li><b>Salary sacrifice:</b> Your salary is reduced by £2,500 before tax. You save 20% income tax (£500) AND 8% employee NI (£200). The net cost to you is <b>£1,800</b> — the same net cost, but the full £2,500 goes into your pension <b>without needing tax relief</b>.</li></ul>The real advantage: your employer saves <b>15% employer NI</b> (£375 on £2,500). If your employer passes this saving into your pension, your total contribution becomes <b>£2,875</b> for the same £1,800 net cost — an <b>extra 15% boost</b> to your retirement savings.',
+    answerText: 'Salary sacrifice reduces your gross salary before tax and NI, with the sacrificed amount going directly into your pension as an employer contribution. You save income tax and employee NI, and your employer saves 15% NI which may be passed into your pension.',
+  },
+  {
+    question: 'How does salary sacrifice affect my take-home pay?',
+    answerHtml: 'Salary sacrifice reduces your <b>gross salary</b>, which means your <b>take-home pay decreases</b> by less than the amount sacrificed. Here is how it works:<br /><br /><ul><li>If you sacrifice <b>£2,500</b> of your gross salary into your pension, your take-home pay only drops by <b>£1,800</b> (for a basic rate taxpayer) because you save 20% income tax (£500) and 8% employee NI (£200) on the sacrificed amount.</li><li>For a <b>higher rate taxpayer</b> (40% tax, 2% NI), sacrificing £2,500 reduces take-home pay by just <b>£1,450</b> — a saving of £1,050 in tax and NI.</li><li>For an <b>additional rate taxpayer</b> (45% tax, 2% NI), the net cost of sacrificing £2,500 is only <b>£1,325</b>.</li></ul>Your payslip will show a lower gross salary, but your pension receives the full sacrificed amount as an employer contribution. The reduction in take-home pay is always <b>less than the amount going into your pension</b> because of the tax and NI savings.',
+    answerText: 'Salary sacrifice reduces your gross salary before tax and NI. For a basic rate taxpayer, sacrificing £2,500 costs only £1,800 in take-home pay because you save 20% income tax and 8% employee NI. Higher rate taxpayers save even more.',
+  },
+  {
+    question: 'How much National Insurance can I save with salary sacrifice?',
+    answerHtml: 'The National Insurance savings from salary sacrifice are one of its biggest advantages. Here is the breakdown for the <b>2026/27 tax year</b>:<br /><br /><ul><li><b>Employee NI:</b> You save 8% on earnings between £12,570 and £50,270, and 2% on earnings above £50,270. For a basic rate taxpayer earning £50,000 and sacrificing 5% (£2,500), you save <b>£200 in employee NI</b>.</li><li><b>Employer NI:</b> Your employer saves <b>15%</b> on the sacrificed amount. On £2,500, that is <b>£375</b>. Some employers pass this saving into your pension, giving you an extra boost.</li><li><b>Combined saving:</b> For a basic rate taxpayer, the total tax and NI saving is 28% (20% income tax + 8% employee NI). For a higher rate taxpayer, it is 42% (40% + 2%). For an additional rate taxpayer, it is 47% (45% + 2%).</li></ul>These NI savings compound over time inside your pension, making salary sacrifice significantly more efficient than standard pension contributions over a full career.',
+    answerText: 'Employee NI savings are 8% on earnings between £12,570 and £50,270, and 2% above. Combined with income tax savings, basic rate taxpayers save 28%, higher rate save 42%, and additional rate save 47% on sacrificed amounts.',
+  },
+  {
+    question: 'What is the annual allowance limit for salary sacrifice pensions?',
+    answerHtml: 'The <b>Annual Allowance</b> for pension contributions in 2026/27 is <b>£60,000</b> (or 100% of your earnings, whichever is lower). This limit applies to <b>all contributions</b> — including your employer\'s contributions under salary sacrifice, your own contributions, and any tax relief added.<br /><br />Key points to understand:<br /><br /><ul><li><b>Salary sacrifice contributions count toward the Annual Allowance:</b> The full sacrificed amount is treated as an employer contribution and counts toward your £60,000 limit.</li><li><b>Carry forward:</b> You can carry forward unused Annual Allowance from up to three previous tax years, allowing you to contribute more than £60,000 in a single year.</li><li><b>Tapered Annual Allowance:</b> If your total income (including employer pension contributions) exceeds £260,000, your Annual Allowance is reduced by £1 for every £2 of income over £260,000, down to a minimum of £10,000.</li><li><b>Money Purchase Annual Allowance (MPAA):</b> If you have flexibly accessed a defined contribution pension, your Annual Allowance drops to £10,000. Salary sacrifice contributions are still subject to this lower limit.</li></ul>Exceeding the Annual Allowance triggers an <b>Annual Allowance Charge</b>, which adds the excess to your income and taxes it at your marginal rate. You can use carry forward to avoid this charge.',
+    answerText: 'The Annual Allowance for 2026/27 is £60,000. Salary sacrifice contributions count toward this limit. The Tapered Annual Allowance applies above £260,000 total income, reducing the limit to a minimum of £10,000. Carry forward from up to three previous years is available.',
+  },
+  {
+    question: 'Can salary sacrifice affect my Personal Allowance or other benefits?',
+    answerHtml: '<b>Yes, salary sacrifice can affect your Personal Allowance and means-tested benefits.</b> Here is what you need to know:<br /><br /><ul><li><b>Personal Allowance Taper:</b> Your Personal Allowance (£12,570 for 2026/27) is reduced by £1 for every £2 of income above £100,000. Salary sacrifice <b>reduces your gross salary</b>, which can help you stay below the £100,000 threshold and preserve your full Personal Allowance. This is one of the most powerful uses of salary sacrifice for higher earners.</li><li><b>Child Benefit (HICBC):</b> If your Adjusted Net Income is between £60,000 and £80,000, salary sacrifice can reduce your income below the threshold and help you retain some or all of your Child Benefit.</li><li><b>Means-tested benefits:</b> Salary sacrifice reduces your gross salary, which may affect eligibility for means-tested benefits such as Universal Credit, tax credits, or housing benefit. Check with a benefits adviser before making changes.</li><li><b>Mortgage affordability:</b> A lower gross salary may reduce the amount you can borrow for a mortgage. Lenders typically use your reduced salary (after salary sacrifice) for affordability calculations.</li><li><b>Student loan repayments:</b> Salary sacrifice reduces your gross salary, which can lower your Plan 1, Plan 2, Plan 4, or Plan 5 student loan repayments.</li></ul>Always consider the full picture before entering a salary sacrifice arrangement — the pension savings are significant, but there can be knock-on effects on borrowing and benefits.',
+    answerText: 'Salary sacrifice reduces your gross salary, which can help preserve your Personal Allowance (if earning over £100,000) and reduce Child Benefit charges (HICBC). However, it may also reduce mortgage affordability and means-tested benefits. Consider the full picture before committing.',
+  },
+  {
+    question: 'Can my employer refuse to offer salary sacrifice for pensions?',
+    answerHtml: '<b>Yes, employers are not required to offer salary sacrifice for pension contributions.</b> While all UK employers must automatically enrol eligible employees into a workplace pension and make minimum contributions (3% employer, 5% employee total under auto-enrolment), they are not obliged to offer salary sacrifice as the contribution method.<br /><br />Employers may choose not to offer salary sacrifice for several reasons:<br /><br /><ul><li><b>Administrative complexity:</b> Salary sacrifice requires changes to employment contracts and payroll systems.</li><li><b>Impact on employer costs:</b> While salary sacrifice saves employer NI, it also reduces the employer\'s NIable pay bill, which can affect other calculations.</li><li><b>Pension scheme rules:</b> Some pension schemes may not support salary sacrifice arrangements.</li><li><b>Minimum wage compliance:</b> Salary sacrifice cannot reduce your pay below the National Minimum Wage or National Living Wage, which can limit its use for lower earners.</li></ul>If your employer does not offer salary sacrifice, you can ask them to consider it. Many employers are willing to implement it because they also save 15% employer NI on the sacrificed amount. Some employers share these savings with employees by passing all or part of the employer NI saving into the pension.',
+    answerText: 'Yes, employers are not required to offer salary sacrifice. Many do because they save 15% employer NI. However, salary sacrifice cannot reduce pay below the National Minimum Wage, which limits its use for lower earners.',
+  },
+  {
+    question: 'What is the difference between salary sacrifice and relief at source pensions?',
+    answerHtml: 'The two main methods of making pension contributions in the UK differ in how tax relief is applied:<br /><br /><table class="w-full text-left text-sm"><thead><tr class="border-b border-hairline bg-canvas-soft-2"><th class="p-3 font-medium text-ink">Feature</th><th class="p-3 font-medium text-ink">Salary Sacrifice</th><th class="p-3 font-medium text-ink">Relief at Source</th></tr></thead><tbody><tr class="border-b border-hairline/50"><td class="p-3 text-body">How it works</td><td class="p-3 text-body">You give up gross salary; employer pays into pension</td><td class="p-3 text-body">You contribute from net pay; government adds basic rate relief</td></tr><tr class="border-b border-hairline/50"><td class="p-3 text-body">Income Tax saving</td><td class="p-3 text-success-deep">Yes — at your marginal rate</td><td class="p-3 text-success-deep">Yes — at your marginal rate</td></tr><tr class="border-b border-hairline/50"><td class="p-3 text-body">Employee NI saving</td><td class="p-3 text-success-deep">Yes — 8% or 2%</td><td class="p-3 text-error">No</td></tr><tr class="border-b border-hairline/50"><td class="p-3 text-body">Employer NI saving</td><td class="p-3 text-success-deep">Yes — 15% (may be passed on)</td><td class="p-3 text-error">No</td></tr><tr class="border-b border-hairline/50"><td class="p-3 text-body">Higher rate relief</td><td class="p-3 text-body">Automatic (via reduced salary)</td><td class="p-3 text-body">Claim via self-assessment</td></tr><tr class="border-b border-hairline/50"><td class="p-3 text-body">Employer NI saving</td><td class="p-3 text-success-deep">Yes — 15%</td><td class="p-3 text-error">No</td></tr><tr class="border-b border-hairline/50"><td class="p-3 text-body">Minimum wage check</td><td class="p-3 text-body">Required — salary cannot fall below NMW/NLW</td><td class="p-3 text-body">Not applicable</td></tr></tbody></table><br />The key difference: salary sacrifice saves <b>employee NI</b> (8% or 2%) and <b>employer NI</b> (15%), while relief at source does not. Over a full career, these NI savings compound significantly.',
+    answerText: 'Salary sacrifice saves employee NI (8% or 2%) and employer NI (15%) that relief at source does not. Higher rate relief is automatic with salary sacrifice (via reduced salary) but must be claimed via self-assessment with relief at source.',
+  },
+  {
+    question: 'Is there a limit on how much I can salary sacrifice into my pension?',
+    answerHtml: 'There are several limits to be aware of:<br /><br /><ul><li><b>Annual Allowance:</b> Total pension contributions (including salary sacrifice) cannot exceed <b>£60,000</b> per tax year (2026/27) without triggering an Annual Allowance Charge. You can carry forward unused allowance from up to three previous years.</li><li><b>National Minimum Wage / Living Wage:</b> Salary sacrifice cannot reduce your gross pay below the National Minimum Wage or National Living Wage. This is a hard legal limit — your employer must ensure your reduced salary meets minimum wage requirements.</li><li><b>Lifetime Allowance:</b> The Lifetime Allowance was abolished from April 2024, so there is no longer a cap on the total pension savings you can accumulate without an additional tax charge. However, the <b>Lump Sum Allowance</b> and <b>Lump Sum and Death Benefit Allowance</b> still apply to tax-free cash.</li><li><b>Employer policy:</b> Your employer may set their own maximum salary sacrifice limit (e.g., 10%, 20%, or 50% of salary). Check your employer\'s pension policy.</li><li><b>Contractual change:</b> Salary sacrifice requires a permanent change to your employment contract. You cannot switch back and forth month-to-month — it is typically an annual or permanent election.</li></ul>Our calculator above models all of these limits and shows you the maximum tax-efficient contribution available.',
+    answerText: 'The Annual Allowance is £60,000 (2026/27). Salary sacrifice cannot reduce pay below the National Minimum Wage. The Tapered Annual Allowance applies above £260,000 total income. Carry forward from three previous years is available.',
+  },
+  {
+    question: 'Does salary sacrifice affect my State Pension?',
+    answerHtml: '<b>Yes, salary sacrifice can reduce your State Pension entitlement.</b> Your State Pension is based on your National Insurance record — specifically, the number of <b>qualifying years</b> you have built up through NI contributions or credits.<br /><br />Here is how salary sacrifice affects your State Pension:<br /><br /><ul><li><b>NI contributions:</b> Salary sacrifice reduces your gross salary, which reduces the amount of National Insurance you pay. However, as long as your reduced salary remains above the <b>Lower Earnings Limit (£6,396 for 2026/27)</b>, you will still build up a qualifying year for State Pension purposes.</li><li><b>No impact on qualifying years:</b> If your reduced salary stays above the Lower Earnings Limit, you continue to build a full qualifying year for State Pension. The reduction in NI paid does not reduce your State Pension entitlement — you just need to earn above the LEL to get credit for the year.</li><li><b>If salary drops below LEL:</b> If your salary sacrifice reduces your earnings below the Lower Earnings Limit, you will not build a qualifying year for that period. This is rare for full-time employees but could affect part-time workers with high sacrifice percentages.</li><li><b>NI credits:</b> If you are not earning enough to build NI credits through employment, you may need to consider making voluntary NI contributions to protect your State Pension.</li></ul>In most cases, salary sacrifice does not affect your State Pension because your reduced salary still exceeds the Lower Earnings Limit. However, if you are a low earner or sacrifice a very high percentage, it is worth checking.',
+    answerText: 'Salary sacrifice reduces your gross salary but typically does not affect State Pension as long as your reduced salary stays above the Lower Earnings Limit (£6,396 for 2026/27). It can help preserve your Personal Allowance if you earn over £100,000 and reduce Child Benefit charges.',
+  },
+  {
+    question: 'Can I use salary sacrifice if my employer does not offer it?',
+    answerHtml: '<b>No, salary sacrifice requires your employer\'s agreement and active participation.</b> It is not something you can set up independently. Here is what you can do:<br /><br /><ul><li><b>Ask your employer:</b> Many employers are willing to implement salary sacrifice because they save 15% employer NI on the sacrificed amount. Present the business case — it saves them money too.</li><li><b>Use a SIPP instead:</b> If your employer does not offer salary sacrifice, you can open a Self-Invested Personal Pension (SIPP) and make contributions from your net pay. The government adds basic rate tax relief automatically, and you can claim higher rate relief via self-assessment.</li><li><b>Increase workplace pension contributions:</b> Even without salary sacrifice, increasing your workplace pension contributions through the standard "relief at source" method still saves income tax (though not NI).</li><li><b>Negotiate as part of your package:</b> If you are starting a new job or negotiating a pay rise, ask if salary sacrifice for pension contributions is available. Some employers offer it as a benefit to attract senior employees.</li></ul>If your employer does offer salary sacrifice, it is almost always the most tax-efficient way to save for retirement — but check whether they pass on the employer NI savings to your pension.',
+    answerText: 'Employers are not required to offer salary sacrifice. If yours does not, you can ask them to consider it — they save 15% employer NI. Alternatively, use a SIPP with relief at source. Salary sacrifice cannot reduce pay below the National Minimum Wage.',
+  },
+  {
+    question: 'How does salary sacrifice compare to a SIPP or personal pension?',
+    answerHtml: 'Salary sacrifice and personal pensions (SIPPs) both help you save for retirement, but they work differently:<br /><br /><b>Salary Sacrifice Advantages:</b><br /><ul><li><b>NI savings:</b> You save employee NI (8% or 2%) that you cannot save with a SIPP. Your employer saves 15% employer NI, which may be passed into your pension.</li><li><b>Automatic higher rate relief:</b> Higher and additional rate tax relief is automatic because your salary is reduced before tax. No need to claim via self-assessment.</li><li><b>Employer contributions:</b> Your employer makes the contribution directly, which may be simpler for payroll.</li></ul><b>SIPP Advantages:</b><br /><ul><li><b>Full control:</b> You choose the investment platform, funds, and withdrawal strategy.</li><li><b>No employer involvement:</b> You can contribute independently without needing your employer\'s cooperation.</li><li><b>Wider investment choice:</b> SIPPs typically offer a broader range of investments than workplace pension schemes.</li><li><b>No minimum wage constraint:</b> SIPP contributions come from your net pay, so they do not affect minimum wage compliance.</li></ul><b>Which is better?</b> If your employer offers salary sacrifice and passes on the NI savings, it is almost always the better option. If not, a SIPP may offer more flexibility and investment choice. Many people use both — salary sacrifice through their workplace pension for the NI savings, plus a SIPP for additional contributions or greater investment control.',
+    answerText: 'Salary sacrifice saves employee and employer NI that a SIPP cannot. However, SIPPs offer greater investment choice and control. If your employer passes on NI savings, salary sacrifice is usually better. Many people use both.',
+  },
+  {
+    question: 'Can I opt out of salary sacrifice once I have started?',
+    answerHtml: '<b>Opting out of salary sacrifice is possible but not always straightforward.</b> Here is what you need to know:<br /><br /><ul><li><b>Contractual change:</b> Salary sacrifice requires a permanent change to your employment contract. Once you have signed up, you cannot simply opt out month-to-month like you can with standard pension contributions.</li><li><b>Annual windows:</b> Most employers allow you to change your salary sacrifice election once per tax year, typically during a specific window (e.g., at the start of the tax year or during your employer\'s benefits enrolment period).</li><li><b>Life events:</b> Some employers allow changes outside the normal window for significant life events such as marriage, divorce, birth of a child, or a significant change in financial circumstances.</li><li><b>Leaving employment:</b> If you leave your job, the salary sacrifice arrangement ends automatically. Your new employer may or may not offer salary sacrifice.</li><li><b>Reducing vs stopping:</b> Some employers allow you to reduce your sacrifice percentage (e.g., from 10% to 5%) rather than stopping entirely, which may be easier to accommodate.</li></ul>Before entering a salary sacrifice arrangement, check your employer\'s policy on changes and opt-outs. Some employers require a minimum commitment period (e.g., 12 months) before you can reduce or stop the arrangement.',
+    answerText: 'Opting out is possible but typically limited to once per tax year or during specific enrolment windows. Salary sacrifice is a contractual change, not a month-to-month election. Life events or leaving employment may allow changes outside normal windows.',
+  },
+  {
+    question: 'How does salary sacrifice interact with the tapered annual allowance?',
+    answerHtml: 'The <b>Tapered Annual Allowance</b> reduces your Annual Allowance from £60,000 to as low as £10,000 if your total income exceeds certain thresholds. Salary sacrifice has a unique interaction with this rule:<br /><br /><b>Thresholds for 2026/27:</b><br /><ul><li><b>Threshold income:</b> If your threshold income (broadly, your total taxable income minus your gross pension contributions) exceeds <b>£200,000</b>, the taper may apply.</li><li><b>Adjusted income:</b> If your adjusted income (total taxable income plus employer pension contributions) exceeds <b>£260,000</b>, your Annual Allowance is reduced by £1 for every £2 over £260,000.</li><li><b>Minimum:</b> The tapered Annual Allowance cannot fall below <b>£10,000</b>.</li></ul><b>How salary sacrifice helps:</b> Salary sacrifice reduces your gross salary, which directly lowers both your threshold income and adjusted income. This can help you <b>stay below the taper thresholds</b> and preserve your full £60,000 Annual Allowance. For high earners, this is one of the most valuable benefits of salary sacrifice — it not only saves tax and NI on the contribution itself but also protects your ability to make large pension contributions in future years.',
+    answerText: 'Salary sacrifice reduces your gross salary, which can help you stay below the Tapered Annual Allowance thresholds (£200,000 threshold income / £260,000 adjusted income). This preserves your full £60,000 Annual Allowance and is a key benefit for high earners.',
+  },
+  {
+    question: 'Is salary sacrifice worth it for basic rate taxpayers?',
+    answerHtml: '<b>Yes, salary sacrifice is still worth it for basic rate taxpayers,</b> though the advantage is smaller than for higher rate taxpayers. Here is the breakdown:<br /><br /><b>For a basic rate taxpayer (20% tax, 8% NI):</b><br /><ul><li>Sacrificing £100 of salary costs you just <b>£72 in take-home pay</b> (you save £20 income tax + £8 employee NI).</li><li>The full £100 goes into your pension as an employer contribution.</li><li>Your employer saves £15 in employer NI. If passed on, your pension gets <b>£115</b> for a net cost of just £72.</li></ul><b>Comparison with a standard pension:</b><br /><ul><li>With a standard "relief at source" pension, contributing £100 costs you £80 net (after 20% tax relief added by the government). But you still pay 8% employee NI on the full £100, so your actual take-home pay reduction is <b>£88</b>.</li><li>With salary sacrifice, the same £100 contribution costs you just <b>£72</b> — a saving of <b>£16 per £100</b> contributed.</li></ul>Over a year, if you contribute 5% of a £50,000 salary, salary sacrifice saves you <b>£400 in employee NI</b> compared to a standard pension. Over a 30-year career, assuming 5% growth, that extra £400 per year compounds to over <b>£28,000</b> in additional retirement savings.',
+    answerText: 'Yes. For a basic rate taxpayer, salary sacrifice saves 8% employee NI that a standard pension cannot. On a 5% contribution from a £50,000 salary, that is £400 per year in NI savings. Compounded over a career, this can add tens of thousands to your retirement pot.',
+  },
+  {
+    question: 'What happens to my salary sacrifice pension if I change jobs?',
+    answerHtml: 'When you change jobs, your salary sacrifice arrangement ends with your current employer. Here is what happens:<br /><br /><ul><li><b>Your pension pot is yours:</b> The money already contributed through salary sacrifice is held in your pension and remains yours. You can leave it in your former employer\'s scheme, transfer it to your new employer\'s scheme, or transfer it to a SIPP.</li><li><b>New employer:</b> Your new employer may or may not offer salary sacrifice. If they do, you can set up a new arrangement. If not, you will contribute through the standard relief at source method.</li><li><b>Transfer options:</b> You can transfer your old pension to your new employer\'s scheme (if they accept transfers) or to a SIPP for greater control and potentially lower fees.</li><li><b>Salary negotiation:</b> When negotiating your new compensation package, ask about salary sacrifice for pension contributions. Some employers are more willing to offer it to senior hires or as part of a flexible benefits package.</li><li><b>Gap in contributions:</b> There is usually no gap — your new employer\'s pension scheme starts from your first pay period. However, if there is a delay in enrolment, you may miss a month of contributions.</li></ul>If your new employer does not offer salary sacrifice, you can still make pension contributions through a SIPP or their workplace pension using relief at source. The NI savings are lost, but you still benefit from income tax relief.',
+    answerText: 'Your existing pension pot is unaffected when you change jobs. Your new employer may or may not offer salary sacrifice. If they do not, you can use a SIPP or their workplace pension with relief at source. The NI savings are lost without salary sacrifice.',
+  },
+];
+---
+
+<PageLayout
+  title="UK Salary Sacrifice Pension Optimizer — Compare Standard vs Salary Sacrifice (2026/27)"
+  description="Compare standard pension contributions vs salary sacrifice for UK employees. See your tax and NI savings, employer NI pass-on, and net retirement pot for 2026/27."
+  canonical="https://truefinancetools.com/salary-sacrifice-pension-calculator"
+  ogImage="https://truefinancetools.com/og-salary-sacrifice-pension-calculator.png"
+  ogImageAlt="UK Salary Sacrifice Pension Optimizer — Compare Standard vs Salary Sacrifice"
+  pageType="website"
+  keywords="salary sacrifice pension calculator, salary sacrifice vs standard pension, pension salary sacrifice calculator uk, salary sacrifice calculator, pension tax relief calculator, salary exchange pension, employer ni pension calculator, salary sacrifice pension savings"
+>
+  <StructuredData
+    title="UK Salary Sacrifice Pension Optimizer"
+    description="Compare standard pension contributions vs salary sacrifice for UK employees. See your tax and NI savings, employer NI pass-on, and net retirement pot for 2026/27."
+    url="https://truefinancetools.com/salary-sacrifice-pension-calculator"
+    toolName="UK Salary Sacrifice Pension Optimizer"
+    toolDescription="Interactive UK calculator comparing standard pension contributions against salary sacrifice arrangements. Models income tax savings, employee and employer National Insurance savings, employer NI pass-on, and projected retirement pot growth."
+    faqItems={toolFaqItems}
+    features={[
+      'Standard vs salary sacrifice side-by-side comparison',
+      'Income tax and employee NI savings calculation',
+      'Employer NI pass-on modelling (15% saving)',
+      '2026/27 UK tax bands and rates',
+      'Projected retirement pot with compound growth',
+      'Annual Allowance and minimum wage compliance checks',
+    ]}
+  />
+
+  <!-- Hero -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        UK Salary Sacrifice Pension Optimizer
+      </h1>
+      <p class="text-lg text-body">Compare standard pension contributions against salary sacrifice. See exactly how much tax and NI you can save, and how employer NI pass-on boosts your retirement pot for 2026/27.</p>
+    </div>
+  </section>
+
+  <!-- Calculator Component -->
+  <SalarySacrificePensionCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Salary Sacrifice Pension Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Salary &amp; Contribution Details</h3>
+      <p class="text-sm text-body">Input your gross annual salary, employee contribution percentage, and employer contribution percentage. Toggle employer NI pass-on if your employer shares the 15% NI saving.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Compare Standard vs Salary Sacrifice</h3>
+      <p class="text-sm text-body">See a side-by-side comparison of take-home pay impact, total pension contribution, and the NI savings from salary sacrifice. Toggle employer pass-on to see the full benefit.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See Your Projected Retirement Pot</h3>
+      <p class="text-sm text-body">View the projected value of your pension at retirement under both scenarios, with compound growth. See exactly how much more you accumulate with salary sacrifice over your working career.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is Salary Sacrifice? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is Salary Sacrifice for Pensions?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Salary sacrifice</strong> (also called "salary exchange" or "SMART pension") is a tax-efficient arrangement where you agree to give up a portion of your gross salary in exchange for an equivalent pension contribution from your employer. Because the sacrificed amount is never treated as your income, you pay <strong>no income tax and no employee National Insurance</strong> on it. Your employer also saves 15% employer NI, which some employers pass into your pension as an additional contribution.
+        </p>
+
+        <p class="mb-4">
+          In contrast, a <strong>standard "relief at source" pension</strong> takes your contribution from your net pay, with the government adding basic rate tax relief (20%) automatically. Higher rate taxpayers must claim additional relief via self-assessment. Crucially, standard contributions do <strong>not</strong> save employee or employer National Insurance.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Salary Sacrifice Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Net Cost to You = Sacrificed Amount × (1 − Income Tax Rate − Employee NI Rate)
+        </div>
+
+        <p class="mb-4 mt-4">
+          For a <strong>basic rate taxpayer</strong> (20% tax, 8% NI): Net cost = Sacrificed Amount × 0.72. Sacrificing £1,000 costs just £720 in take-home pay.<br />
+          For a <strong>higher rate taxpayer</strong> (40% tax, 2% NI): Net cost = Sacrificed Amount × 0.58. Sacrificing £1,000 costs just £580.<br />
+          For an <strong>additional rate taxpayer</strong> (45% tax, 2% NI): Net cost = Sacrificed Amount × 0.53. Sacrificing £1,000 costs just £530.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Standard vs Salary Sacrifice Comparison</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Feature</th>
+                <th class="p-3 font-medium text-ink">Standard Pension</th>
+                <th class="p-3 font-medium text-ink">Salary Sacrifice</th>
+              </tr>
+            </thead>
+            <tbody class="text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Gross contribution</td>
+                <td class="p-3 text-body font-sans">£2,500</td>
+                <td class="p-3 text-body font-sans">£2,500</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Income tax saved</td>
+                <td class="p-3 text-body font-sans">£500 (20%)</td>
+                <td class="p-3 text-success-deep">£500 (20%)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Employee NI saved</td>
+                <td class="p-3 text-body font-sans">£0</td>
+                <td class="p-3 text-success-deep">£200 (8%)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Employer NI saved</td>
+                <td class="p-3 text-body font-sans">£0</td>
+                <td class="p-3 text-success-deep">£375 (15%)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Net cost to you</td>
+                <td class="p-3 text-body font-sans">£1,800</td>
+                <td class="p-3 text-success-deep">£1,800</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Total in pension</td>
+                <td class="p-3 text-body font-sans">£2,500</td>
+                <td class="p-3 text-success-deep">£2,500</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">With employer NI pass-on</td>
+                <td class="p-3 font-sans text-body">£2,500</td>
+                <td class="p-3 font-semibold text-success-deep">£2,875</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Consider Salary Sacrifice?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Higher &amp; Additional Rate Taxpayers</h4>
+            <p class="text-sm text-body">Salary sacrifice saves 42% (higher rate) or 47% (additional rate) in combined tax and NI. The savings are substantial and compound significantly over time. Higher rate relief is automatic — no self-assessment claim needed.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Employees Near the £100k Personal Allowance Threshold</h4>
+            <p class="text-sm text-body">Salary sacrifice reduces your gross salary, helping you stay below the £100,000 Personal Allowance taper threshold. This preserves your full £12,570 tax-free allowance — worth up to £5,000 per year in tax savings.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Parents Affected by HICBC</h4>
+            <p class="text-sm text-body">If your Adjusted Net Income is between £60,000 and £80,000, salary sacrifice can reduce your income below the High Income Child Benefit Charge threshold, helping you retain some or all of your Child Benefit payments.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Basic Rate Taxpayers with Employer NI Pass-On</h4>
+            <p class="text-sm text-body">Even basic rate taxpayers benefit from the 8% employee NI saving. If your employer passes on the 15% NI saving, your pension gets an extra boost — turning a £2,500 contribution into £2,875 for the same net cost.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Salary Sacrifice Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Saves employee NI (8% or 2%) that standard pensions cannot</li>
+              <li>• Employer saves 15% NI — may be passed into your pension</li>
+              <li>• Higher rate relief is automatic — no self-assessment claim needed</li>
+              <li>• Reduces gross salary, helping preserve Personal Allowance</li>
+              <li>• Can reduce HICBC and student loan repayments</li>
+              <li>• Simple payroll integration with no tax relief paperwork</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Requires employer participation — not all employers offer it</li>
+              <li>• Cannot reduce pay below National Minimum Wage</li>
+              <li>• May reduce mortgage borrowing capacity</li>
+              <li>• Can affect means-tested benefits and tax credits</li>
+              <li>• Contractual change — not easy to opt out month-to-month</li>
+              <li>• Reduces gross salary for employer pension scheme reference</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Salary Sacrifice Pensions
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide to Salary Sacrifice Pension Planning -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Salary Sacrifice Pension Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>UK Salary Sacrifice Pension Optimizer</strong> helps you compare standard pension contributions against salary sacrifice, showing the exact tax and NI savings you can achieve. Whether you are a basic rate taxpayer looking to maximise your retirement savings, a higher earner trying to preserve your Personal Allowance, or an employer wanting to understand the cost benefits, this tool provides instant clarity under current HMRC 2026/27 rules.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose This Salary Sacrifice Calculator?</h3>
+
+        <p class="mb-4">
+          Unlike generic pension calculators that ignore the National Insurance dimension, this tool correctly models the <strong>full tax treatment</strong> of both standard and salary sacrifice contributions. It accounts for employee NI savings (8% or 2%), employer NI savings (15%), and the potential employer pass-on that can boost your pension by an additional 15%. It also models the <strong>compound growth</strong> of these savings over your full working career, showing you the real difference salary sacrifice makes to your retirement pot.
+        </p>
+
+        <p class="mb-4">
+          The calculator supports all three UK income tax bands (basic, higher, and additional), flexible employee and employer contribution percentages, employer NI pass-on toggling, and customisable growth rate and investment horizon assumptions. The interactive Chart.js chart shows the year-by-year projected pot growth for both scenarios, and the side-by-side comparison cards make it easy to see exactly how much more you accumulate with salary sacrifice.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Salary Sacrifice Calculator</h3>
+
+        <p class="mb-4">
+          The calculator provides <strong>instant results</strong> as you adjust any input. Enter your gross annual salary, employee contribution percentage, and employer contribution percentage. Toggle whether your employer passes on the 15% NI saving. You will see side-by-side comparison cards showing the take-home pay impact, total pension contribution, and NI savings for both standard and salary sacrifice approaches. The interactive Chart.js chart shows the year-by-year projected growth of your pension pot under both scenarios, and the detailed breakdown cards highlight the exact savings from employee NI, employer NI, and any employer pass-on.
+        </p>
+
+        <p class="mb-4">
+          For more UK financial planning tools, explore our <a href="/lisa-vs-workplace-pension-calculator" class="text-link hover:underline">LISA vs Workplace Pension Calculator</a> to compare a Lifetime ISA against a workplace pension for retirement savings, or our <a href="/sipp-drawdown-tax-calculator" class="text-link hover:underline">SIPP Drawdown Tax Calculator</a> to model pension withdrawal taxes in retirement. If you are a higher earner, our <a href="/hicbc-calculator" class="text-link hover:underline">HICBC Calculator</a> can help you optimise pension contributions to eliminate the High Income Child Benefit Charge. For those planning early retirement, our <a href="/fire-calculator" class="text-link hover:underline">FIRE Calculator</a> can help you project how your pension savings fit into your overall financial independence plan.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other UK Tax & Pension Tools -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other UK Tax &amp; Pension Tools
+      </h2>
+      <p class="mb-8 text-body">Free calculators for UK financial planning, pension optimisation, and tax efficiency.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/salary-sacrifice-pension-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Salary Sacrifice Pension</h3>
+          <p class="text-xs text-body">Compare standard vs salary sacrifice pension contributions. See your NI savings and employer pass-on boost.</p>
+        </a>
+        <a href="/lisa-vs-workplace-pension-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">LISA vs Workplace Pension (UK)</h3>
+          <p class="text-xs text-body">Compare a Lifetime ISA against a workplace pension for retirement savings, including salary sacrifice modelling.</p>
+        </a>
+        <a href="/sipp-drawdown-tax-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">SIPP Drawdown Tax (UK)</h3>
+          <p class="text-xs text-body">Model your SIPP drawdown strategy with UK tax bands and 25% tax-free cash.</p>
+        </a>
+        <a href="/hicbc-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">HICBC Calculator</h3>
+          <p class="text-xs text-body">Calculate your UK High Income Child Benefit Charge and find the optimal pension contribution to eliminate it.</p>
+        </a>
+        <a href="/uk-redundancy-tax-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">UK Redundancy Tax</h3>
+          <p class="text-xs text-body">Calculate your net take-home pay after redundancy with the £30,000 tax-free exemption and HMRC marginal rates.</p>
+        </a>
+        <a href="/mortgage-overpayment-vs-investing-calculator-uk" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mortgage vs ISA (UK)</h3>
+          <p class="text-xs text-body">Compare overpaying your mortgage against investing in a stocks &amp; shares ISA.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
