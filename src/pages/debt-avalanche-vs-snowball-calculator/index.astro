@@ -1,0 +1,353 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import DebtAvalancheSnowballCalculator from '../../components/calculator/DebtAvalancheSnowballCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'Which method saves more money — debt avalanche or debt snowball?',
+    answerHtml: '<b>The Debt Avalanche method is mathematically guaranteed to save the most money</b> in interest fees. By targeting the debt with the highest interest rate first, you minimize the total capitalization of unearned charges across your entire portfolio. The savings can be substantial — often hundreds or thousands of pounds depending on your balances and rates.',
+    answerText: 'The Debt Avalanche method saves the most money by targeting highest-APR debt first.',
+  },
+  {
+    question: 'What is the difference between debt avalanche and debt snowball?',
+    answerHtml: 'The <b>Debt Avalanche</b> method prioritizes debts by interest rate (highest APR first), while the <b>Debt Snowball</b> method prioritizes by balance (smallest first). Avalanche minimizes total interest paid; Snowball provides psychological momentum through quick wins. Both methods require paying minimums on all debts while directing extra cash to a single target.',
+    answerText: 'Avalanche targets highest APR first (saves more money); Snowball targets smallest balance first (builds momentum).',
+  },
+  {
+    question: 'How does the calculator handle debt rollovers?',
+    answerHtml: 'Once an individual debt is completely cleared, its minimum payment is freed up. The engine automatically <b>rolls that cash over</b> into the acceleration pool for the next priority debt, creating a compounding "snowball" or "avalanche" effect. This means your extra payment toward each subsequent debt grows larger over time.',
+    answerText: 'Freed-up minimum payments roll over to accelerate the next priority debt automatically.',
+  },
+  {
+    question: 'Can I switch from a snowball strategy to an avalanche strategy midway through?',
+    answerHtml: '<b>Yes.</b> Many people begin with the Debt Snowball to knock out 1 or 2 small psychologically draining accounts, and then transition to the Debt Avalanche to optimize their remaining large balances. You can re-run this calculator at any point with your current remaining debts to see which strategy makes sense going forward.',
+    answerText: 'Yes. You can re-run the calculator with your remaining debts at any time.',
+  },
+  {
+    question: 'What happens if my minimum payments exceed my monthly budget?',
+    answerHtml: 'The calculator will display an error: <b>"Your total minimum payments exceed your monthly budget allocation."</b> In this scenario, you need to either increase your monthly budget, negotiate lower minimum payments with creditors, or explore debt consolidation options to reduce the monthly obligation.',
+    answerText: 'An error is displayed. You need to increase your budget or reduce minimum payments.',
+  },
+  {
+    question: 'Does this calculator work for UK debts and student loans?',
+    answerHtml: '<b>Yes.</b> The calculator supports both USD ($) and GBP (£) currencies and works with any debt type — credit cards, personal loans, car financing, and <a href="/plan-5-student-loan-repayment-calculator" class="text-link underline">UK student loan debt thresholds</a>. For UK student loans specifically, note that Plan 2 and Plan 5 loans are written off after 25/30 years, which may affect your payoff strategy.',
+    answerText: 'Yes. It supports both USD and GBP, and works with any debt type including UK student loans.',
+  },
+  {
+    question: 'What is negative amortization and why does the calculator warn about it?',
+    answerHtml: '<b>Negative amortization</b> occurs when your minimum monthly payment is less than the interest accruing on that debt. In this case, the balance actually grows each month despite making payments. The calculator flags this with a warning because no payoff strategy can succeed unless you increase payments above the monthly interest charge.',
+    answerText: 'Negative amortization means your balance grows because minimum payments don\'t cover monthly interest.',
+  },
+  {
+    question: 'How accurate are the payoff timeline projections?',
+    answerHtml: 'The projections assume <b>fixed interest rates, consistent monthly payments, and no additional charges</b>. Real-world payoff timelines may vary due to rate changes, payment timing, fees, or additional borrowing. For the most accurate results, use your current actual balances, rates, and minimum payments as inputs. The calculator is designed for educational and planning purposes.',
+    answerText: 'Projections assume fixed rates and consistent payments. Real results may vary due to rate changes and fees.',
+  },
+];
+---
+
+<PageLayout
+  title="Debt Avalanche vs Snowball Calculator — Compare Payoff Timelines & Save Interest"
+  description="Compare debt avalanche vs snowball methods with our free interactive timeline tool. Calculate interest savings, payoff dates, and see your custom monthly payoff schedule."
+  canonical="https://truefinancetools.com/debt-avalanche-vs-snowball-calculator"
+  ogImage="https://truefinancetools.com/og-debt-avalanche-vs-snowball-calculator.png"
+  ogImageAlt="Debt Avalanche vs Snowball Calculator - Compare Payoff Timelines"
+  pageType="website"
+  keywords="debt avalanche vs snowball calculator, debt payoff calculator, debt snowball calculator, debt avalanche calculator, debt repayment strategy calculator, debt payoff timeline, which debt to pay off first, debt repayment planner, snowball vs avalanche comparison"
+>
+  <StructuredData
+    title="Debt Avalanche vs Snowball Calculator"
+    description="Free interactive calculator to compare debt avalanche and snowball repayment strategies. Calculate interest savings, payoff timelines, and monthly schedules."
+    url="https://truefinancetools.com/debt-avalanche-vs-snowball-calculator"
+    toolName="Debt Avalanche vs Snowball Calculator"
+    toolDescription="Compare debt avalanche and snowball repayment strategies with interactive timeline charts and interest savings calculations."
+    faqItems={toolFaqItems}
+    features={[
+      'Side-by-side avalanche vs snowball strategy comparison',
+      'Interactive payoff timeline chart',
+      'Interest savings calculator',
+      'Dynamic debt management with up to 10 debts',
+      'USD and GBP currency support',
+      'Negative amortization warnings'
+    ]}
+  />
+
+  <!-- Hero -->
+  <section class="bg-canvas border-b border-hairline py-16 sm:py-20">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <p class="mb-4 font-mono text-xs uppercase tracking-wider text-mute">Debt Payoff Strategy</p>
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl lg:text-5xl" style="letter-spacing: -0.02em;">
+        Debt Avalanche vs Snowball Calculator
+      </h1>
+      <p class="mx-auto max-w-2xl text-lg text-body">
+        Compare payoff strategies side-by-side. See exactly how much interest you'll save and when you'll be debt-free.
+      </p>
+    </div>
+  </section>
+
+  <!-- Calculator Component -->
+  <DebtAvalancheSnowballCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Calculator Works" subtitle="Three Simple Steps">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Debts</h3>
+      <p class="text-sm text-body">Add each debt with its balance, interest rate, and minimum monthly payment. Set your total monthly budget.</p>
+    </div>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Compare Strategies</h3>
+      <p class="text-sm text-body">The calculator runs both avalanche and snowball simulations simultaneously, tracking every payment and interest charge.</p>
+    </div>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See Your Savings</h3>
+      <p class="text-sm text-body">View the interest saved, months to freedom, and an interactive chart showing both payoff trajectories over time.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is Debt Avalanche vs Snowball? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is Debt Avalanche vs Snowball?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Debt Avalanche</strong> and <strong>Debt Snowball</strong> are two popular strategies for paying off multiple debts. Both methods require you to make minimum payments on all debts while directing any extra cash toward a single target. The difference lies in how that target is chosen — and that difference has major implications for both your total interest cost and your psychological motivation.
+        </p>
+
+        <p class="mb-4">
+          The <strong>Debt Avalanche</strong> method targets the debt with the highest annual percentage rate (APR) first. This approach is mathematically optimal — it minimizes the total interest you pay over the life of all your debts. The <strong>Debt Snowball</strong> method, popularised by Dave Ramsey, targets the smallest balance first regardless of interest rate. This creates quick psychological wins that keep you motivated to continue. Our <strong>debt avalanche vs snowball calculator</strong> lets you compare both approaches side-by-side with your actual numbers.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Avalanche vs Snowball: Comparison Table</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Factor</th>
+                <th class="p-3 font-medium text-ink">Debt Avalanche</th>
+                <th class="p-3 font-medium text-ink">Debt Snowball</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Priority</td>
+                <td class="p-3 text-ink font-sans">Highest APR first</td>
+                <td class="p-3 text-ink font-sans">Smallest balance first</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Interest Savings</td>
+                <td class="p-3 text-success-deep font-sans">Maximum (mathematically optimal)</td>
+                <td class="p-3 text-body font-sans">Lower — may pay more interest overall</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Psychological Impact</td>
+                <td class="p-3 text-body font-sans">Slower early progress; may lose motivation</td>
+                <td class="p-3 text-success-deep font-sans">Quick wins; powerful momentum</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">Best For</td>
+                <td class="p-3 font-semibold text-ink font-sans">Disciplined savers who want absolute minimum cost</td>
+                <td class="p-3 font-semibold text-ink font-sans">People who need motivation and behavioural momentum</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">How the Math Works</h3>
+        <p class="mb-4">
+          Each debt accrues interest monthly based on its outstanding balance and APR. The monthly interest is calculated as:
+        </p>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Monthly Interest = Balance × (APR ÷ 12 ÷ 100)
+        </div>
+        <p class="mb-4 mt-4">
+          When you make a payment, the money first covers the accrued interest, and the remainder reduces the principal. By paying off high-APR debt first, the avalanche method prevents large balances from compounding at high rates over many months. The snowball method, while potentially costing more in total interest, gets you the emotional reward of eliminating entire accounts sooner, which can be the difference between sticking with the plan and giving up.
+        </p>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose Each Strategy?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Choose Avalanche If</h4>
+            <p class="text-sm text-body">You are mathematically minded, want to pay the absolute least amount of interest, and can stay disciplined without early wins. Best for large debt loads with high APRs.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Choose Snowball If</h4>
+            <p class="text-sm text-body">You need motivation to stay on track, have several small debts you can knock out quickly, or have struggled with debt repayment in the past and need behavioural momentum.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Hybrid Approach</h4>
+            <p class="text-sm text-body">Start with snowball to eliminate 1–2 small debts for motivation, then switch to avalanche for the remaining larger balances. This gives you the best of both worlds.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Consider Consolidation</h4>
+            <p class="text-sm text-body">If interest rates are very high across the board, consider balance transfer cards or consolidation loans. Our calculator helps you compare before and after scenarios.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Debt Avalanche vs Snowball: Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Avalanche Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Mathematically guaranteed to minimize total interest</li>
+              <li>• Typically results in the shortest payoff timeline</li>
+              <li>• Best long-term financial outcome</li>
+              <li>• Ideal for large, high-interest debts</li>
+              <li>• Works well for disciplined, analytical personalities</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Avalanche Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Slower initial progress — hardest debts first</li>
+              <li>• Can be demotivating if the highest APR debt has a large balance</li>
+              <li>• Requires more tracking and discipline</li>
+              <li>• Less satisfying early on compared to snowball</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Snowball Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Quick psychological wins boost motivation</li>
+              <li>• Behavioural momentum helps you stay on track</li>
+              <li>• Fewer accounts to manage early on</li>
+              <li>• Proven higher completion rate for some people</li>
+              <li>• Simple — just sort by balance and go</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-color/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Snowball Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• May cost significantly more in total interest</li>
+              <li>• Payoff timeline can be longer than avalanche</li>
+              <li>• Not mathematically optimal</li>
+              <li>• High-APR debts continue compounding while you target smaller balances</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="mt-8">
+          Pair this calculator with our <a href="/cash-cushion-optimizer" class="text-link underline">cash cushion optimizer</a> to see how eliminating debt changes your cash reserve strategy, or use our <a href="/plan-5-student-loan-repayment-calculator" class="text-link underline">UK student loan repayment calculator</a> to model your student loan payoff alongside your other debts.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Debt Avalanche vs Snowball FAQs
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Debt Avalanche vs Snowball
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>debt avalanche vs snowball calculator</strong> is the most comprehensive free tool for comparing these two repayment strategies with your actual numbers. Unlike generic calculators that only show you one method, this tool runs both simulations simultaneously — tracking every payment, every interest charge, and every debt payoff milestone — so you can see exactly which strategy works best for your situation.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose Each Strategy?</h3>
+
+        <p class="mb-4">
+          The choice between avalanche and snowball ultimately comes down to <strong>math versus behaviour</strong>. The avalanche method is objectively superior from a pure numbers perspective — it will always result in either the same or lower total interest paid compared to the snowball method. However, personal finance is not just about math. If the snowball method keeps you motivated enough to actually follow through on your debt repayment plan, it may be the better choice for you, even if it costs a bit more in interest.
+        </p>
+
+        <p class="mb-4">
+          Research in behavioural economics suggests that humans are more likely to persist with goals that provide frequent, visible progress. The snowball method capitalises on this by giving you the satisfaction of fully eliminating debts early in the process. For many people, the motivational boost from paying off a small credit card or personal loan in the first few months is worth the extra interest cost — because the alternative (giving up on the avalanche method due to frustration) costs far more.
+        </p>
+
+        <p class="mb-4">
+          Use this calculator to quantify exactly how much your choice costs. If the avalanche method saves you £200 in interest over the life of your debts, the snowball might still be worth it for the motivation. If it saves you £5,000, the math becomes harder to ignore. This tool gives you the data to make an informed decision.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Debt Payoff Calculator</h3>
+
+        <p class="mb-4">
+          The calculator supports <strong>up to 10 separate debts</strong> with custom names, balances, APRs, and minimum payments. You can add or remove debts dynamically, change your total monthly budget, and toggle between USD ($) and GBP (£) currencies. The results update in real time as you adjust any input — you will see the interest saved, the payoff timeline for both strategies, and an interactive chart showing how your total debt balance declines month by month under each approach.
+        </p>
+
+        <p class="mb-4">
+          The calculator also includes <strong>negative amortization warnings</strong> — if any of your minimum payments don't cover the monthly interest charge, the calculator flags it immediately. This is a critical safety feature because no payoff strategy can succeed if your debt is growing faster than you are paying it down. Pair this calculator with our <a href="/fire-calculator" class="text-link hover:underline">FIRE calculator</a> to see how eliminating debt accelerates your path to financial independence, or use it alongside <a href="/mortgage-overpayment-vs-investing-calculator-uk" class="text-link hover:underline">our mortgage vs ISA calculator</a> to decide whether overpaying your mortgage or investing makes more sense.
+        </p>
+
+        <p class="mb-4">
+          Start comparing strategies today — no signup required, completely free, and results in seconds. Adjust any input to see how it shifts your payoff timeline. The path to being debt-free is clearer than you think.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Tools -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Financial Tools
+      </h2>
+      <p class="mb-8 text-body">Run the numbers on your next financial move with our free calculators.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/fire-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Calculate your Financial Independence number and retirement timeline.</p>
+        </a>
+        <a href="/mortgage-overpayment-vs-investing-calculator-uk" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mortgage vs ISA Calculator</h3>
+          <p class="text-xs text-body">Compare mortgage overpayment vs investing in an ISA or pension.</p>
+        </a>
+        <a href="/house-hacking-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">House Hacking Calculator</h3>
+          <p class="text-xs text-body">Calculate cash flow on multifamily rental properties.</p>
+        </a>
+        <a href="/salary-sacrifice-pension-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Salary Sacrifice Calculator</h3>
+          <p class="text-xs text-body">Optimise your UK pension contributions with salary sacrifice.</p>
+        </a>
+        <a href="/plan-5-student-loan-repayment-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Plan 5 Student Loan</h3>
+          <p class="text-xs text-body">Calculate your UK Plan 5 student loan repayments and forgiveness.</p>
+        </a>
+        <a href="/social-security-bridge-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Social Security Bridge</h3>
+          <p class="text-xs text-body">Optimise your Social Security claiming strategy and bridge gap.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
