@@ -1,0 +1,387 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import EarlyPenaltyVsRothConversionCalculator from '../../components/calculator/EarlyPenaltyVsRothConversionCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'Can I avoid the 10% early withdrawal penalty on my 401(k)?',
+    answerHtml: 'Yes. The IRS provides several exceptions to the 10% early withdrawal penalty under IRC §72(t):<br /><br /><b>• Roth Conversion Ladder:</b> Convert traditional 401(k) funds to a Roth IRA, pay income taxes today, and withdraw the converted principal penalty-free after a 5-year seasoning period.<br /><b>• Rule of 55:</b> If you leave your job in or after the year you turn 55, you can withdraw from that employer\'s 401(k) penalty-free.<br /><b>• Substantially Equal Periodic Payments (SEPP/72t):</b> Set up a series of equal payments from your IRA or 401(k) based on IRS life expectancy tables.<br /><b>• Other exceptions:</b> Disability, medical expenses exceeding 7.5% of AGI, IRS levies, and qualified reservist distributions.',
+    answerText: 'Yes, through Roth conversions (5-year wait), the Rule of 55, SEPP 72(t) payments, or qualifying exceptions like disability.',
+  },
+  {
+    question: 'Do I pay taxes on a Roth conversion?',
+    answerHtml: 'Yes. A Roth conversion is treated as ordinary income in the year of conversion. The converted amount is added to your taxable income and taxed at your marginal rate.<br /><br /><b>Example:</b> If you convert $200,000 and your combined federal + state marginal rate is 24%, you owe approximately $48,000 in income taxes on the conversion. This tax is typically paid from the converted funds (reducing the amount that goes into the Roth) or from separate savings.',
+    answerText: 'Yes, Roth conversions are taxed as ordinary income in the year of conversion at your marginal tax rate.',
+  },
+  {
+    question: 'What happens if I withdraw from a Roth conversion before 5 years?',
+    answerHtml: 'If you withdraw converted principal from a Roth IRA before the 5-year seasoning period is met, you will owe the <b>10% early withdrawal penalty</b> on the converted amount (if you\'re under 59½). The penalty applies even though you already paid income taxes on the conversion.<br /><br /><b>Each conversion has its own 5-year clock.</b> A conversion made in 2024 has a separate 5-year waiting period from a conversion made in 2025. The clock starts on January 1st of the year the conversion was made.',
+    answerText: 'You owe the 10% early withdrawal penalty on the converted principal if you\'re under 59½. Each conversion has its own 5-year clock.',
+  },
+  {
+    question: 'How does the Roth Conversion Ladder work for early retirement?',
+    answerHtml: 'The Roth Conversion Ladder is a strategy used by early retirees to access 401(k) funds before age 59½ without paying the 10% penalty:<br /><br /><b>Step 1:</b> Leave your job and roll your 401(k) into a Traditional IRA.<br /><b>Step 2:</b> Convert a portion of the Traditional IRA to a Roth IRA each year, paying income taxes at your (lower early-retirement) rate.<br /><b>Step 3:</b> Wait 5 years for each conversion amount to season.<br /><b>Step 4:</b> After 5 years, withdraw the converted principal penalty-free and tax-free.<br /><br />By converting annually, you create a rolling pipeline of accessible funds every year after the initial 5-year wait.',
+    answerText: 'Roll 401(k) to Traditional IRA, convert portions to Roth each year (paying income tax), wait 5 years per conversion, then withdraw the principal penalty-free.',
+  },
+  {
+    question: 'What is the 5-year rule for Roth conversions?',
+    answerHtml: 'The 5-year rule for Roth conversions states that each converted amount must remain in the Roth IRA for at least 5 years before it can be withdrawn penalty-free if you\'re under age 59½.<br /><br /><b>Key details:</b><br />• The 5-year clock starts on January 1 of the year the conversion was made.<br />• Each conversion has its own separate 5-year clock.<br />• This rule is separate from the 5-year rule for Roth account earnings (which requires the account to be open for 5 years before earnings can be withdrawn tax-free).<br />• The converted principal is not subject to the 10% penalty after 5 years, regardless of age.',
+    answerText: 'Each converted amount must wait 5 years (starting Jan 1 of the conversion year) before penalty-free withdrawal if under 59½.',
+  },
+  {
+    question: 'Is a Roth conversion always better than an early 401(k) withdrawal?',
+    answerHtml: 'Not always. A Roth conversion is generally better when:<br />• You can afford to pay the conversion tax from other savings (not from the converted amount).<br />• Your current tax rate is lower than or equal to your expected retirement tax rate.<br />• You can wait 5 years before needing the funds.<br /><br />An early withdrawal might be preferable when:<br />• You have an immediate financial emergency with no other options.<br />• You qualify for a penalty exception (Rule of 55, SEPP 72(t), disability).<br />• The amount is small enough that the penalty is manageable compared to the tax cost of conversion.',
+    answerText: 'Roth conversions are usually better for building wealth, but early withdrawals may be necessary for emergencies or when penalty exceptions apply.',
+  },
+  {
+    question: 'How much does the 10% early withdrawal penalty cost in lost growth?',
+    answerHtml: 'The 10% penalty doesn\'t just cost you 10% today — it destroys decades of compound growth.<br /><br /><b>Example:</b> Withdrawing $200,000 early (at age 35 with a 24% tax rate and 7% return):<br />• You lose $20,000 to the 10% penalty.<br />• You lose $48,000 to income taxes.<br />• You keep only $132,000.<br />• If that $132,000 had stayed invested until age 59½, it would grow to approximately $717,000.<br /><br />The true cost is not just the $68,000 in immediate taxes and penalties — it\'s the <b>$585,000 in lost compound growth</b> over 24.5 years.',
+    answerText: 'A $200K early withdrawal at age 35 costs $68K in immediate taxes and penalties, but destroys over $500K in future compound growth by age 59½.',
+  },
+  {
+    question: 'What is the Rule of 55 and how does it differ from a Roth conversion?',
+    answerHtml: 'The Rule of 55 allows you to withdraw from your 401(k) penalty-free if you leave your job in or after the year you turn 55. It\'s an immediate exception — no 5-year wait required.<br /><br /><b>Key differences from Roth conversions:</b><br />• <b>Timing:</b> Rule of 55 provides immediate access; Roth conversions require a 5-year wait.<br />• <b>Tax treatment:</b> Rule of 55 withdrawals are taxed as ordinary income; Roth conversions are also taxed but future growth is tax-free.<br />• <b>Scope:</b> Rule of 55 only applies to the most recent employer\'s 401(k); Roth conversions can be done with any Traditional IRA.<br />• <b>Reusability:</b> Rule of 55 is a one-time event per job change; Roth conversions create a rolling pipeline of accessible funds.',
+    answerText: 'The Rule of 55 allows penalty-free 401(k) withdrawals after leaving a job at 55+, but only from your most recent employer\'s plan and without the tax-free growth benefit of Roth.',
+  },
+];
+---
+
+<PageLayout
+  title="Early 401(k) Penalty vs Roth Conversion Calculator"
+  description="Compare the true cost of an early 401(k) withdrawal against a Roth Conversion Ladder. Calculate your 10% IRS penalty, taxes owed, and lost compounding growth."
+  canonical="https://truefinancetools.com/early-401k-penalty-vs-roth-conversion-calculator"
+  ogImage="https://truefinancetools.com/og-early-401k-penalty-vs-roth-conversion-calculator.png"
+  ogImageAlt="Early 401(k) Penalty vs Roth Conversion Calculator — Compare withdrawal strategies and calculate IRS penalties"
+  pageType="website"
+  keywords="early 401k withdrawal penalty calculator, roth conversion ladder calculator, 10 percent early withdrawal penalty, 401k penalty calculator, roth conversion 5 year rule, how to avoid 401k penalty, early retirement withdrawal strategies, fire calculator, irc 72t, rule of 55 calculator"
+>
+  <StructuredData
+    title="Early 401(k) Penalty vs Roth Conversion Calculator"
+    description="Compare the true cost of an early 401(k) withdrawal against a Roth Conversion Ladder. Calculate your 10% IRS penalty, taxes owed, and lost compounding growth."
+    url="https://truefinancetools.com/early-401k-penalty-vs-roth-conversion-calculator"
+    toolName="Early 401(k) Penalty vs Roth Conversion Calculator"
+    toolDescription="Compare the financial impact of an immediate early 401(k) withdrawal versus a Roth Conversion Ladder. See exactly how much the 10% IRS penalty costs you in lost compound growth."
+    faqItems={toolFaqItems}
+    features={[
+      'Three-scenario comparison: early withdrawal, Roth conversion, and traditional 401(k)',
+      '10% IRS penalty calculation with income tax modeling',
+      'Dynamic timeline chart showing balance growth over time',
+      'Side-by-side comparison table with all costs and penalties',
+      'Plain-English summary of financial impact',
+      'Interactive real-time results',
+    ]}
+  />
+
+  <!-- Hero Section -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Early 401(k) Withdrawal Penalty vs. Roth Conversion Calculator
+      </h1>
+      <p class="mx-auto max-w-2xl text-lg text-body">
+        See exactly how much the IRS 10% early withdrawal penalty costs you — and how a Roth Conversion Ladder can preserve your retirement wealth.
+      </p>
+    </div>
+  </section>
+
+  <!-- Calculator -->
+  <EarlyPenaltyVsRothConversionCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Early 401(k) Penalty vs Roth Conversion Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Details</h3>
+      <p class="text-sm text-body">Input your 401(k) balance, age, tax rates, and expected return to model your situation.</p>
+    </div>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Compare Three Paths</h3>
+      <p class="text-sm text-body">See the immediate cost of early withdrawal vs. Roth conversion vs. leaving funds in your 401(k).</p>
+    </div>
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Make an Informed Decision</h3>
+      <p class="text-sm text-body">Understand the true long-term impact of each strategy on your retirement wealth.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is the Early 401(k) Penalty vs Roth Conversion? -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What Is the 10% Early Withdrawal Penalty?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <!-- Definition -->
+        <p>
+          The <strong>10% early withdrawal penalty</strong> is an IRS tax imposed under IRC Section 72(t) on withdrawals from qualified retirement accounts (401(k)s, IRAs, 403(b)s) made before age 59&frac12;. Congress created this penalty to discourage the use of retirement savings as a piggy bank — the intent is that these funds should be preserved for retirement. When you withdraw early, the IRS imposes the penalty on top of ordinary income taxes, making early withdrawals extremely costly.
+        </p>
+
+        <p>
+          The penalty applies to the <strong>gross withdrawal amount</strong>, not just the earnings. If you withdraw $100,000 from your 401(k) at age 40, you owe $10,000 in penalties plus income taxes on the full $100,000. Combined with federal and state income taxes, you could lose 30-45% of your hard-earned savings to taxes and penalties in a single transaction.
+        </p>
+
+        <!-- Formula -->
+        <h3 class="mb-3 mt-6 text-lg font-semibold text-ink">The True Cost of Early Withdrawal</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Net Cash = Gross Amount &minus; (Gross Amount &times; Tax Rate) &minus; (Gross Amount &times; 10%)<br />
+          Lost Wealth = Net Cash &times; (1 + Return)<sup>(59.5 &minus; Current Age)</sup>
+        </div>
+        <p class="mt-3">
+          <b>Example:</b> Withdrawing $200,000 at age 35 with a 24% tax rate and 7% expected return:<br />
+          • Immediate taxes: $48,000 (24% of $200K)<br />
+          • Penalty: $20,000 (10% of $200K)<br />
+          • Net cash received: $132,000<br />
+          • Future value of that $132K at age 59&frac12;: ~$717,000<br />
+          • The true cost: over <b>$585,000 in lost compound growth</b>
+        </p>
+
+        <h3 class="mb-3 mt-6 text-lg font-semibold text-ink">What Is a Roth Conversion Ladder?</h3>
+        <p>
+          The <strong>Roth Conversion Ladder</strong> is a strategy used by early retirees to access pre-tax retirement funds before age 59&frac12; without paying the 10% early withdrawal penalty. Here is how it works:
+        </p>
+        <p>
+          <b>Step 1:</b> After leaving your job, roll your 401(k) into a Traditional IRA. This is a tax-free event — no penalties or taxes are owed on the rollover itself.<br />
+          <b>Step 2:</b> Each year, convert a portion of your Traditional IRA to a Roth IRA. You pay ordinary income tax on the converted amount at your current marginal rate. In early retirement, your income is typically low, so this tax rate is often much lower than during your working years.<br />
+          <b>Step 3:</b> Wait 5 years for each conversion to "season." The IRS requires a <b>5-year holding period</b> before converted principal can be withdrawn penalty-free.<br />
+          <b>Step 4:</b> After 5 years, withdraw the converted principal from your Roth IRA — completely penalty-free and tax-free.
+        </p>
+        <p>
+          By repeating this process annually, you create a rolling pipeline of accessible funds. In Year 6 of retirement, the Year 1 conversion becomes available. In Year 7, the Year 2 conversion becomes available, and so on. After the initial 5-year wait, you have continuous penalty-free access to your retirement savings.
+        </p>
+
+        <h3 class="mb-3 mt-6 text-lg font-semibold text-ink">The 5-Year Rule Explained</h3>
+        <p>
+          The <b>5-year rule for Roth conversions</b> (IRC &sect;408A(d)(3)(F)) is one of the most misunderstood aspects of the Roth Conversion Ladder. Each conversion has its <b>own separate 5-year clock</b> that starts on January 1st of the year the conversion is made. If you convert $50,000 in 2025 and another $50,000 in 2026, the 2025 money becomes accessible on January 1, 2030, while the 2026 money becomes accessible on January 1, 2031.
+        </p>
+        <p>
+          During this 5-year waiting period, you need <b>bridge cash</b> from a taxable brokerage account or other savings to cover your living expenses. This is why the Roth Conversion Ladder requires planning — you need 5 years of accessible funds before the first conversion matures.
+        </p>
+
+        <h3 class="mb-3 mt-6 text-lg font-semibold text-ink">Alternatives: Rule of 55 and SEPP 72(t)</h3>
+        <p>
+          The <b>Rule of 55</b> allows you to withdraw from your 401(k) penalty-free if you leave your job in or after the year you turn 55. This is an immediate exception — no 5-year wait, no complex calculations. However, it only applies to your most recent employer's 401(k), and the funds are still subject to ordinary income tax (just not the 10% penalty). It is a one-time opportunity per job change.
+        </p>
+        <p>
+          The <b>SEPP / 72(t) strategy</b> lets you set up substantially equal periodic payments from your IRA or 401(k) based on IRS life expectancy tables. You commit to a fixed payment schedule for the longer of 5 years or until age 59&frac12;. Breaking the schedule early triggers penalties on all prior distributions. This strategy is ideal if you need immediate income but can commit to the payment schedule.
+        </p>
+
+        <!-- Comparison Table -->
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Early Withdrawal Strategies Compared</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Strategy</th>
+                <th class="p-3 font-medium text-ink">Penalty</th>
+                <th class="p-3 font-medium text-ink">Tax Timing</th>
+                <th class="p-3 font-medium text-ink">Access Age</th>
+                <th class="p-3 font-medium text-ink">Tax-Free Growth</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Early Withdrawal</td>
+                <td class="p-3 text-error">10%</td>
+                <td class="p-3 text-ink">Now</td>
+                <td class="p-3 text-ink">Immediately</td>
+                <td class="p-3 text-ink">No</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Roth Conversion</td>
+                <td class="p-3 text-success-deep">0%</td>
+                <td class="p-3 text-ink">Now (conversion tax)</td>
+                <td class="p-3 text-ink">5 years after conversion</td>
+                <td class="p-3 text-success-deep">Yes</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Leave in 401(k)</td>
+                <td class="p-3 text-success-deep">0%</td>
+                <td class="p-3 text-ink">At 59&frac12;</td>
+                <td class="p-3 text-ink">59&frac12;</td>
+                <td class="p-3 text-ink">No</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Rule of 55</td>
+                <td class="p-3 text-success-deep">0%</td>
+                <td class="p-3 text-ink">At withdrawal</td>
+                <td class="p-3 text-ink">55+ (job separation)</td>
+                <td class="p-3 text-ink">No</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 text-body font-sans">SEPP 72(t)</td>
+                <td class="p-3 text-success-deep">0%</td>
+                <td class="p-3 text-ink">At each payment</td>
+                <td class="p-3 text-ink">Any age (locked in)</td>
+                <td class="p-3 text-ink">No</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Who Should Choose -->
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose Each Strategy?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Early Withdrawal</h4>
+            <p class="text-sm text-body">Emergency situations where all other options are exhausted. Only use when you have an immediate, unavoidable need for cash and no other source of funds.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Roth Conversion Ladder</h4>
+            <p class="text-sm text-body">Early retirees who can wait 5 years and want tax-free growth. Best for those with taxable bridge savings and the ability to plan ahead.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Leave in 401(k)</h4>
+            <p class="text-sm text-body">Those comfortable waiting until 59&frac12; for penalty-free access. The simplest option — no conversions, no special rules, just standard retirement withdrawals.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Rule of 55</h4>
+            <p class="text-sm text-body">Those leaving their job at 55+ who need immediate access to their 401(k) without paying penalties. A powerful but underutilized exception.</p>
+          </div>
+        </div>
+
+        <!-- Pros and Cons -->
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Early Withdrawal vs. Roth Conversion: Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Early Withdrawal</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• <b>Pros:</b> Immediate cash access, no planning required, no 5-year wait</li>
+              <li>• <b>Cons:</b> 10% IRS penalty, lost compound growth, taxed as ordinary income, permanently reduces retirement savings</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Roth Conversion Ladder</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• <b>Pros:</b> No 10% penalty, tax-free growth after conversion, flexible access after 5 years, reduces future RMDs</li>
+              <li>• <b>Cons:</b> Must pay conversion tax upfront, 5-year waiting period, requires bridge cash, needs annual planning</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Early 401(k) Penalties
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Early 401(k) Penalty vs. Roth Conversion Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>Early 401(k) Penalty vs Roth Conversion Calculator</strong> is the most comprehensive free tool for comparing the true financial impact of an early 401(k) withdrawal against the Roth Conversion Ladder strategy. Unlike basic calculators that only show the immediate penalty, this tool models the <strong>full lifetime cost</strong> — including lost compound growth across decades — so you can see exactly what an early withdrawal really costs you.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose a Roth Conversion Over Early Withdrawal?</h3>
+
+        <p class="mb-4">
+          The <strong>Roth Conversion Ladder</strong> is almost always the superior financial choice when you can wait 5 years. Here is why:
+        </p>
+
+        <p class="mb-4">
+          <b>Pay taxes at a potentially lower rate today.</b> In early retirement, your income is typically much lower than during your working years. By converting during these low-income years, you pay taxes at a marginal rate that may be half of what you paid while employed. A Roth conversion done during a low-income year at a 12% rate is dramatically more efficient than an early withdrawal taxed at 24% plus the 10% penalty.
+        </p>
+
+        <p class="mb-4">
+          <b>Avoid the 10% IRS penalty entirely.</b> The 10% penalty is a pure wealth destroyer. It is not a tax deduction — it is a surcharge on top of income taxes that disappears from your portfolio forever. By using the Roth Conversion Ladder, you keep that 10% working for you in the market instead of sending it to the IRS.
+        </p>
+
+        <p class="mb-4">
+          <b>Enjoy tax-free growth for decades.</b> Once money is in a Roth IRA, all future growth is completely tax-free. If you convert $50,000 at age 40 and it grows to $380,000 by age 70 (at 7% return), every dollar of that $330,000 growth is yours — no taxes owed. This tax-free compounding is the single most powerful wealth-building feature of the Roth structure.
+        </p>
+
+        <p class="mb-4">
+          <b>Create a rolling pipeline of accessible funds.</b> By converting annually, you create a continuous stream of funds that become available every year after the initial 5-year wait. Once the pipeline is established, you have permanent, penalty-free access to your retirement savings — something an early withdrawal can never provide.
+        </p>
+
+        <p class="mb-4">
+          <b>Preserve more compound growth for retirement.</b> The true cost of an early withdrawal is not just the 10% penalty and income taxes — it is the decades of compound growth that the withdrawn funds would have generated. Our calculator shows this total cost clearly, helping you make an informed decision.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Calculator</h3>
+
+        <p class="mb-4">
+          This tool provides a <b>three-path comparison</b> — early withdrawal, Roth conversion, and traditional 401(k) — so you can see all your options side by side. The <b>IRS-compliant penalty and tax calculations</b> use the exact 10% penalty rate under IRC &sect;72(t) and model ordinary income taxes on withdrawals and conversions. The <b>interactive timeline chart</b> shows how each strategy performs over time, with the balance divergence between paths clearly visible.
+        </p>
+
+        <p class="mb-4">
+          The <b>side-by-side comparison table</b> breaks down every cost and penalty in plain English, while the <b>financial impact summary</b> tells you in simple terms what each strategy means for your retirement. All calculations run in your browser — adjust any slider and see the results update in real time. No data is sent to any server, and nothing is stored or tracked.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Calculators -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Early Withdrawal Strategy Tools
+      </h2>
+      <p class="mb-8 text-body">Free tools to help you access your retirement savings before age 59&frac12; without unnecessary penalties.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/sepp-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">72(t) SEPP Calculator</h3>
+          <p class="text-xs text-body">Calculate substantially equal periodic payments under IRS Rule 72(t).</p>
+        </a>
+        <a href="/72t-vs-roth-conversion-ladder-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">72(t) vs Roth Conversion Ladder</h3>
+          <p class="text-xs text-body">Compare SEPP payments against a Roth Conversion strategy.</p>
+        </a>
+        <a href="/early-401k-penalty-vs-roth-conversion-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Early 401(k) Penalty vs Roth Conversion</h3>
+          <p class="text-xs text-body">This calculator — compare early withdrawal vs Roth conversion costs.</p>
+        </a>
+        <a href="/tax-gain-harvesting-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Tax Gain Harvesting Calculator</h3>
+          <p class="text-xs text-body">Optimize tax-efficient capital gains harvesting.</p>
+        </a>
+        <a href="/mega-backdoor-roth-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mega Backdoor Roth Calculator</h3>
+          <p class="text-xs text-body">Maximize Roth savings with after-tax 401(k) conversions.</p>
+        </a>
+        <a href="/social-security-bridge-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Social Security Bridge Calculator</h3>
+          <p class="text-xs text-body">Plan the gap between early retirement and Social Security.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

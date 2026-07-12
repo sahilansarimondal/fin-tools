@@ -1,0 +1,595 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="early-penalty-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="early-penalty-form" class="space-y-4">
+          <Slider
+            label="Gross Amount to Withdraw/Convert"
+            name="grossAmount"
+            value={200000}
+            min={10000}
+            max={2000000}
+            step={10000}
+            formatValue={(v) => '$' + v.toLocaleString()}
+            inputId="grossAmount"
+            displayId="grossAmountValue"
+            tooltip="The total amount in your 401(k) that you're considering withdrawing or converting."
+          />
+
+          <Input
+            label="Current Age"
+            name="currentAge"
+            type="number"
+            value={35}
+            min={20}
+            max={59}
+            required
+            tooltip="Your current age. Must be under 59.5 for the early withdrawal penalty to apply."
+          />
+
+          <Slider
+            label="Current Marginal Tax Rate"
+            name="currentTaxRate"
+            value={24}
+            min={0}
+            max={50}
+            step={1}
+            suffix="%"
+            inputId="currentTaxRate"
+            displayId="currentTaxRateValue"
+            tooltip="Your combined federal + state marginal tax rate today. This is the rate at which your withdrawal or conversion will be taxed."
+          />
+
+          <Slider
+            label="Expected Retirement Tax Rate"
+            name="retirementTaxRate"
+            value={12}
+            min={0}
+            max={50}
+            step={1}
+            suffix="%"
+            inputId="retirementTaxRate"
+            displayId="retirementTaxRateValue"
+            tooltip="Your expected marginal tax rate when you withdraw from your 401(k) at age 59.5. Often lower than your current rate."
+          />
+
+          <Slider
+            label="Expected Annual Market Return"
+            name="annualReturn"
+            value={7}
+            min={0}
+            max={15}
+            step={0.5}
+            suffix="%"
+            inputId="annualReturn"
+            displayId="annualReturnValue"
+            tooltip="Assumed annual investment growth rate. 7% is a common long-term stock market average."
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- KPI cards row 1 (3 cards) -->
+      <div class="grid gap-4 sm:grid-cols-3">
+        <ResultCard
+          label="Early Withdrawal Net Cash"
+          valueId="early-penalty-netCash"
+          value="$0"
+          valueClass="text-error"
+          description="What you actually receive after taxes and the 10% penalty"
+        />
+        <ResultCard
+          label="Roth Conversion Balance (5yr)"
+          valueId="early-penalty-rothValue"
+          value="$0"
+          valueClass="text-success"
+          description="Roth balance accessible after 5-year seasoning period"
+        />
+        <ResultCard
+          label="401(k) Value at 59½"
+          valueId="early-penalty-traditionalValue"
+          value="$0"
+          valueClass="text-ink"
+          description="What the 401(k) grows to by age 59½ (after taxes)"
+        />
+      </div>
+
+      <!-- Chart -->
+      <Card padding="lg">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">Balance Over Time Until Age 59½</h2>
+        </div>
+        <div class="relative h-64 sm:h-80">
+          <canvas
+            id="early-penalty-chart"
+            role="img"
+            aria-label="Line chart comparing early withdrawal, Roth conversion, and leaving funds in the 401(k) over time until age 59.5"
+          ></canvas>
+        </div>
+      </Card>
+
+      <!-- KPI cards row 2 (3 cards) -->
+      <div class="grid gap-4 sm:grid-cols-3">
+        <ResultCard
+          label="Total Taxes + Penalties"
+          valueId="early-penalty-totalCost"
+          value="$0"
+          valueClass="text-error"
+          description="Combined cost of early withdrawal (taxes + 10% IRS penalty)"
+        />
+        <ResultCard
+          label="Wealth Destroyed"
+          valueId="early-penalty-lostWealth"
+          value="$0"
+          valueClass="text-error"
+          description="How much future wealth you sacrifice by taking the 10% penalty today"
+        />
+        <ResultCard
+          label="Best Path"
+          valueId="early-penalty-bestPath"
+          value="—"
+          valueClass="text-link"
+          description="Which strategy maximizes your net wealth at age 59½"
+        />
+      </div>
+
+      <!-- Comparison table (collapsible) -->
+      <Card padding="lg">
+        <details class="group">
+          <summary class="cursor-pointer py-2 text-sm font-medium text-ink">
+            Side-by-Side Comparison
+            <svg class="ml-2 inline h-4 w-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M19 9l-7 7-7-7" />
+            </svg>
+          </summary>
+          <div class="mt-4 overflow-x-auto">
+            <table class="w-full text-left text-sm">
+              <thead>
+                <tr class="border-b border-hairline bg-canvas-soft-2">
+                  <th class="p-2 text-xs font-medium text-mute">Metric</th>
+                  <th class="p-2 text-xs font-medium text-mute">Early Withdrawal</th>
+                  <th class="p-2 text-xs font-medium text-mute">Roth Conversion</th>
+                  <th class="p-2 text-xs font-medium text-mute">Leave in 401(k)</th>
+                </tr>
+              </thead>
+              <tbody id="early-penalty-table-body" class="font-mono text-xs tabular-nums">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </Card>
+
+      <!-- Dynamic results text -->
+      <Card padding="lg" id="early-penalty-summary-card">
+        <p id="early-penalty-summary-text" class="text-sm text-body leading-relaxed">
+          Adjust the inputs above to see how each path compares.
+        </p>
+      </Card>
+
+      <!-- Disclaimer -->
+      <div class="rounded-lg border border-hairline bg-canvas-soft p-4">
+        <p class="text-xs text-mute">
+          <strong>Disclaimer:</strong> This calculator provides estimates for educational purposes only.
+          Tax laws are complex and subject to change. Consult a qualified tax professional before making
+          withdrawal or conversion decisions. The 10% early withdrawal penalty applies to traditional
+          401(k) and IRA distributions before age 59½, with certain exceptions under IRC §72(t).
+          Roth conversions are subject to the 5-year rule for each conversion amount.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+  import { calculateEarlyPenaltyComparison, formatDollar } from '../../utils/early-penalty-vs-roth-conversions';
+
+  let chart = null;
+
+  function getFormData() {
+    var form = document.getElementById('early-penalty-form');
+    var formData = new FormData(form);
+
+    return {
+      grossAmount: Number(formData.get('grossAmount')) || 200000,
+      currentAge: Number(formData.get('currentAge')) || 35,
+      currentTaxRate: (Number(formData.get('currentTaxRate')) || 24) / 100,
+      retirementTaxRate: (Number(formData.get('retirementTaxRate')) || 12) / 100,
+      annualReturn: (Number(formData.get('annualReturn')) || 7) / 100,
+    };
+  }
+
+  function updateResults() {
+    var input = getFormData();
+    var result = calculateEarlyPenaltyComparison(input);
+
+    // Row 1 KPIs
+    document.getElementById('early-penalty-netCash').textContent = formatDollar(result.earlyWithdrawal.netCash);
+    document.getElementById('early-penalty-rothValue').textContent = formatDollar(result.rothConversion.valueAtAccessible);
+    document.getElementById('early-penalty-traditionalValue').textContent = formatDollar(result.leftIn401k.netCashAt59_5);
+
+    // Row 2 KPIs
+    document.getElementById('early-penalty-totalCost').textContent = formatDollar(result.earlyWithdrawal.totalCost);
+    document.getElementById('early-penalty-lostWealth').textContent = formatDollar(result.summary.wealthDestroyedByEarlyWithdrawal);
+
+    // Best Path KPI
+    var bestPathEl = document.getElementById('early-penalty-bestPath');
+    var bestPathLabel = '';
+    var bestPathClass = 'text-success';
+    if (result.summary.bestPath === 'roth') {
+      bestPathLabel = 'Roth Conversion';
+      bestPathClass = 'text-success';
+    } else if (result.summary.bestPath === 'early') {
+      bestPathLabel = 'Early Withdrawal';
+      bestPathClass = 'text-error';
+    } else {
+      bestPathLabel = 'Leave in 401(k)';
+      bestPathClass = 'text-link';
+    }
+    bestPathEl.textContent = bestPathLabel;
+    bestPathEl.className = 'text-2xl font-semibold tabular-nums ' + bestPathClass;
+
+    // Update chart
+    updateChart(result);
+
+    // Update table
+    updateTable(result);
+
+    // Update summary text
+    updateSummary(result);
+  }
+
+  function updateChart(result) {
+    var ctx = document.getElementById('early-penalty-chart');
+    if (!ctx) return;
+
+    if (chart) {
+      chart.destroy();
+      chart = null;
+    }
+
+    var isDark = document.documentElement.classList.contains('dark');
+    var gridColor = isDark ? '#262626' : '#ebebeb';
+    var textColor = isDark ? '#737373' : '#888888';
+    var tooltipBg = isDark ? '#ededed' : '#171717';
+    var tooltipText = isDark ? '#171717' : '#ffffff';
+
+    var earlyColor = isDark ? '#f87171' : '#dc2626';
+    var rothColor = isDark ? '#34d399' : '#16a34a';
+    var tradColor = isDark ? '#60a5fa' : '#2563eb';
+
+    var labels = result.timeline.map(function (t) {
+      if (t.year === 0) return 'Now (' + t.age + ')';
+      return 'Age ' + t.age;
+    });
+
+    var earlyData = result.timeline.map(function (t) { return t.earlyWithdrawal; });
+    var rothData = result.timeline.map(function (t) { return t.rothConversion; });
+    var tradData = result.timeline.map(function (t) { return t.leftIn401k; });
+
+    chart = new window.Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Early Withdrawal',
+            data: earlyData,
+            borderColor: earlyColor,
+            backgroundColor: isDark
+              ? 'rgba(248,113,113,0.05)'
+              : 'rgba(220,38,38,0.05)',
+            borderDash: [5, 5],
+            tension: 0.3,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+            fill: false,
+          },
+          {
+            label: 'Roth Conversion',
+            data: rothData,
+            borderColor: rothColor,
+            backgroundColor: 'transparent',
+            tension: 0.3,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+            fill: false,
+          },
+          {
+            label: 'Left in 401(k)',
+            data: tradData,
+            borderColor: tradColor,
+            backgroundColor: isDark
+              ? 'rgba(96,165,250,0.05)'
+              : 'rgba(37,99,235,0.05)',
+            borderDash: [3, 3],
+            tension: 0.3,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+            fill: false,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 2,
+              usePointStyle: false,
+              padding: 16,
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: 500,
+            },
+            bodyFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+            },
+            callbacks: {
+              label: function (context) {
+                return context.dataset.label + ': ' + formatDollar(context.parsed.y);
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              maxTicksLimit: 10,
+            },
+            border: {
+              display: false,
+            },
+          },
+          y: {
+            grid: {
+              color: gridColor,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              callback: function (value) {
+                if (value >= 1000000) {
+                  return '$' + (value / 1000000).toFixed(1) + 'M';
+                }
+                if (value >= 1000) {
+                  return '$' + (value / 1000).toFixed(0) + 'K';
+                }
+                return '$' + value.toFixed(0);
+              },
+            },
+            border: {
+              display: false,
+            },
+            min: 0,
+          },
+        },
+      },
+    });
+  }
+
+  function updateTable(result) {
+    var tbody = document.getElementById('early-penalty-table-body');
+    if (!tbody) return;
+
+    var penalty = result.earlyWithdrawal.penalty;
+    var earlyIncomeTax = result.earlyWithdrawal.incomeTax;
+    var rothIncomeTax = result.rothConversion.incomeTax;
+    var tradFutureTax = result.leftIn401k.futureTaxOwed;
+
+    var rows = [
+      {
+        metric: 'Taxes Owed Today',
+        early: formatDollar(earlyIncomeTax),
+        roth: formatDollar(rothIncomeTax),
+        trad: '$0',
+        earlyClass: 'text-error',
+        rothClass: 'text-error',
+        tradClass: 'text-ink',
+      },
+      {
+        metric: 'Penalty Owed',
+        early: formatDollar(penalty),
+        roth: '$0',
+        trad: '$0',
+        earlyClass: 'text-error',
+        rothClass: 'text-success',
+        tradClass: 'text-success',
+      },
+      {
+        metric: 'Amount Invested',
+        early: formatDollar(result.earlyWithdrawal.netCash),
+        roth: formatDollar(result.rothConversion.amountConverted),
+        trad: formatDollar(result.input.grossAmount),
+        earlyClass: 'text-error',
+        rothClass: 'text-ink',
+        tradClass: 'text-ink',
+      },
+      {
+        metric: 'Value at 59½',
+        early: formatDollar(result.earlyWithdrawal.futureValueAt59_5),
+        roth: formatDollar(result.rothConversion.valueAt59_5),
+        trad: formatDollar(result.leftIn401k.futureGrossValue),
+        earlyClass: 'text-error',
+        rothClass: 'text-success',
+        tradClass: 'text-ink',
+      },
+      {
+        metric: 'Net Cash Received',
+        early: formatDollar(result.earlyWithdrawal.futureValueAt59_5),
+        roth: formatDollar(result.rothConversion.valueAt59_5),
+        trad: formatDollar(result.leftIn401k.netCashAt59_5),
+        earlyClass: 'text-error',
+        rothClass: 'text-success',
+        tradClass: 'text-ink',
+      },
+    ];
+
+    tbody.innerHTML = rows.map(function (r) {
+      return '<tr class="border-b border-hairline/50">' +
+        '<td class="p-2 font-medium text-ink font-sans text-xs">' + r.metric + '</td>' +
+        '<td class="p-2 ' + r.earlyClass + '">' + r.early + '</td>' +
+        '<td class="p-2 ' + r.rothClass + '">' + r.roth + '</td>' +
+        '<td class="p-2 ' + r.tradClass + '">' + r.trad + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  function updateSummary(result) {
+    var summaryEl = document.getElementById('early-penalty-summary-text');
+    if (!summaryEl) return;
+
+    var input = result.input;
+    var ew = result.earlyWithdrawal;
+    var rc = result.rothConversion;
+    var trad = result.leftIn401k;
+    var summary = result.summary;
+
+    var years = result.yearsToRetirement;
+    var yearsRounded = Math.round(years);
+
+    var lostWealth = summary.wealthDestroyedByEarlyWithdrawal;
+    var rothAdvantage = summary.rothAdvantageOverTraditional;
+
+    var text = '';
+
+    if (input.grossAmount <= 0) {
+      text = 'Enter a valid amount and age above to see how each path compares.';
+    } else {
+      text = 'By taking the money now as an early withdrawal, you would lose ' +
+        formatDollar(ew.penalty) + ' to the 10% IRS penalty and ' +
+        formatDollar(ew.incomeTax) + ' in income taxes \u2014 keeping only ' +
+        formatDollar(ew.netCash) + ' of your original ' + formatDollar(input.grossAmount) + '. ';
+
+      if (years > 0) {
+        text += 'Over the next ' + yearsRounded + ' years, that early decision destroys ' +
+          formatDollar(lostWealth) + ' in potential retirement wealth. ';
+      }
+
+      text += 'A Roth Conversion would let you keep ' +
+        formatDollar(rc.amountConverted) + ' growing tax-free, becoming ' +
+        formatDollar(rc.valueAt59_5) + ' by age 59\u00BD \u2014 that\u2019s ' +
+        formatDollar(rc.valueAt59_5 - ew.futureValueAt59_5) + ' MORE than the early withdrawal path.';
+
+      if (rothAdvantage > 0 && years > 0) {
+        text += ' Compared to leaving the funds in the 401(k), the Roth conversion yields ' +
+          formatDollar(rothAdvantage) + ' more in net cash at age 59\u00BD.';
+      }
+    }
+
+    summaryEl.textContent = text;
+  }
+
+  function initSliders() {
+    var sliders = [
+      { id: 'grossAmount', displayId: 'grossAmountValue', format: function(v) { return '$' + Number(v).toLocaleString(); } },
+      { id: 'currentTaxRate', displayId: 'currentTaxRateValue', suffix: '%' },
+      { id: 'retirementTaxRate', displayId: 'retirementTaxRateValue', suffix: '%' },
+      { id: 'annualReturn', displayId: 'annualReturnValue', suffix: '%' },
+    ];
+
+    sliders.forEach(function (slider) {
+      var el = document.getElementById(slider.id);
+      var display = document.getElementById(slider.displayId);
+
+      if (el && display) {
+        el.addEventListener('input', function () {
+          if (slider.format) {
+            display.textContent = slider.format(el.value);
+          } else {
+            display.textContent = el.value + (slider.suffix || '');
+          }
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('early-penalty-form');
+    if (form) {
+      form.addEventListener('input', function () {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initSliders();
+    initFormListeners();
+    updateResults();
+
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', function () {
+        if (chart) {
+          chart.destroy();
+          chart = null;
+        }
+        updateResults();
+      });
+
+    var observer = new MutationObserver(function () {
+      if (chart) {
+        chart.destroy();
+        chart = null;
+      }
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
