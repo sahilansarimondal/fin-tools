@@ -1,0 +1,391 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import CollegeSavingsCalculator from '../../components/calculator/CollegeSavingsCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is the difference between a 529 plan and a UTMA/UGMA account?',
+    answerHtml: '<b>529 plans</b> and <b>UTMA/UGMA accounts</b> are both tax-advantaged ways to save for a child&#39;s future, but they differ in purpose, tax treatment, and control.<br /><br /><b>529 Plan:</b> A state-sponsored education savings account. Contributions grow <b>tax-free</b> when withdrawn for qualified education expenses (tuition, room &amp; board, books, supplies, and up to $10,000/year in K-12 tuition). Funds remain under the account owner&#39;s (typically a parent&#39;s) control indefinitely. The beneficiary can be changed to another family member at any time.<br /><br /><b>UTMA/UGMA Account:</b> A custodial account under the Uniform Transfers/Gifts to Minors Act (UTMA) or Uniform Gifts to Minors Act (UGMA). Any adult can open one and gift assets to a minor. The assets can be used for <b>any purpose</b> that benefits the child — not just education. However, the account becomes the child&#39;s property at the age of majority (18-21 depending on the state), at which point they can use the funds for any purpose.<br /><br /><b>Key tax difference:</b> 529 plans grow completely tax-free for qualified education expenses. UTMA/UGMA accounts are subject to the <b>Kiddie Tax</b> on unearned income above certain thresholds, which can significantly reduce after-tax returns.',
+    answerText: '529 plans are education-specific accounts with tax-free growth for qualified expenses. UTMA/UGMA accounts are general-purpose custodial accounts that can be used for anything benefiting the child, but are subject to Kiddie Tax on investment income above certain thresholds.',
+  },
+  {
+    question: 'How does the 2026 Kiddie Tax affect UTMA/UGMA accounts?',
+    answerHtml: 'The <b>Kiddie Tax</b> rules for 2026 tax unearned income of children under 18 (or full-time students aged 18-23) in three brackets:<br /><br /><ul><li><b>$0 – $1,350:</b> Tax-free. This portion of unearned income is covered by the child&#39;s standard deduction and is not subject to any tax.</li><li><b>$1,350 – $2,700:</b> Taxed at the <b>child&#39;s tax rate</b> (typically 10% for most children). This is the portion of unearned income above the standard deduction but below the next threshold.</li><li><b>Above $2,700:</b> Taxed at the <b>parent&#39;s marginal tax rate</b>. This is where the real tax drag appears — for a parent in the 32% bracket, every dollar of UTMA income above $2,700 is taxed at 32%.</li></ul><br /><b>Real-world example:</b> A UTMA account earning $5,000/year in dividends and capital gains at a 5% yield on $100,000 would owe approximately: $0 on the first $1,350 + $135 on the next $1,350 (at 10%) + $736 on the remaining $2,300 (at 32% parent rate) = <b>$871 in annual tax</b>. Over 13 years, this Kiddie Tax drag can reduce the UTMA account by 10-15% compared to the tax-free growth of a 529 plan.',
+    answerText: 'The 2026 Kiddie Tax has three brackets: $0-$1,350 tax-free, $1,350-$2,700 taxed at the child\'s rate (typically 10%), and above $2,700 taxed at the parent\'s marginal rate. For a parent in the 32% bracket with a $100,000 UTMA earning 5%, the annual tax can be ~$871.',
+  },
+  {
+    question: 'What is the FAFSA impact of 529 vs UTMA accounts?',
+    answerHtml: 'The treatment of 529 plans vs UTMA/UGMA accounts on the <b>FAFSA (Free Application for Federal Student Aid)</b> is significantly different and can meaningfully affect financial aid eligibility:<br /><br /><ul><li><b>529 Plan (parent-owned):</b> Assessed as a <b>parent asset</b> at a maximum rate of <b>5.64%</b>. This means that for every $10,000 in a 529 plan, the Expected Family Contribution (EFC) increases by at most $564 per year.</li><li><b>UTMA/UGMA Account:</b> Assessed as a <b>child asset</b> at a flat rate of <b>20%</b>. For every $10,000 in a UTMA account, the EFC increases by $2,000 per year — nearly <b>3.5 times more</b> than a 529 plan.</li></ul><br /><b>Over 4 years of college:</b> A $50,000 529 plan might reduce aid eligibility by ~$11,280 total, while a $50,000 UTMA would reduce aid eligibility by ~$40,000 total. The difference can mean thousands in lost grants, scholarships, and subsidized loans.<br /><br /><b>Important note:</b> UTMA/UGMA accounts also generate income (dividends, interest, capital gains) that counts as <b>student income</b> on FAFSA, which is assessed at 50% (after certain allowances). This double hit — asset assessment + income assessment — makes UTMA accounts significantly worse for financial aid purposes.',
+    answerText: '529 plans are assessed as parent assets at 5.64% on FAFSA, while UTMA accounts are assessed as child assets at 20% — nearly 3.5 times higher. A $50,000 529 may reduce aid by ~$11,280 over 4 years, while the same amount in UTMA could reduce aid by ~$40,000. UTMA income also counts as student income at 50%.',
+  },
+  {
+    question: 'Can I roll a UTMA into a 529 plan?',
+    answerHtml: '<b>No, you cannot directly roll over or transfer assets from a UTMA/UGMA account into a 529 plan.</b> The UTMA/UGMA assets legally belong to the minor, and the custodian cannot simply move them into a different account type.<br /><br />However, there are some strategies to consider:<br /><br /><ul><li><b>Spend the UTMA on qualified 529 expenses:</b> If your child has qualified education expenses, you can use the UTMA funds to pay for them directly, while contributing new money to a 529 plan. This effectively shifts the purpose of the UTMA assets toward education without a direct rollover.</li><li><b>Gift the UTMA assets to a 529:</b> Once the child reaches the age of majority (18-21 depending on the state), they can choose to contribute their UTMA assets to a 529 plan. However, the child has full legal control at that point and may choose to spend the money differently.</li><li><b>Contribute new gifts to a 529 instead:</b> Going forward, direct new gifts into a 529 plan rather than the UTMA. The existing UTMA can simply be spent down on the child&#39;s needs.</li></ul><br /><b>Regarding SECURE 2.0 529-to-Roth conversions:</b> The SECURE 2.0 Act (2024) allows limited rollovers from a 529 plan to a Roth IRA (up to $35,000 lifetime, subject to Roth IRA contribution limits). However, this only applies to <b>529-to-Roth</b> rollovers, not UTMA-to-anything. The UTMA remains subject to the Kiddie Tax rules until the child reaches majority age.',
+    answerText: 'No, you cannot directly roll over UTMA assets into a 529 plan. UTMA assets legally belong to the minor and cannot be moved by the custodian. Options include spending the UTMA on education expenses while contributing new money to a 529, or waiting until the child reaches majority age and they can choose to contribute to a 529.',
+  },
+  {
+    question: 'What happens to a 529 if my child doesn\'t go to college?',
+    answerHtml: 'If your child does not attend college, you have several options for a 529 plan that avoid or minimize penalties:<br /><br /><ul><li><b>Change the beneficiary:</b> You can change the beneficiary to another family member — including siblings, cousins, nieces/nephews, parents, or even yourself (for your own education). This is a simple and penalty-free option.</li><li><b>Qualified non-college uses:</b> 529 funds can be used for <b>trade school</b>, <b>vocational programs</b>, <b>apprenticeships</b> (registered with the U.S. Department of Labor), <b>K-12 tuition</b> (up to $10,000/year), and <b>student loan repayment</b> (up to $10,000 lifetime per beneficiary).</li><li><b>529-to-Roth IRA rollover (SECURE 2.0):</b> Starting in 2024, you can roll over up to <b>$35,000 lifetime</b> from a 529 plan to a Roth IRA for the beneficiary, subject to Roth IRA earned income and contribution limits. The 529 must have been open for at least 15 years.</li><li><b>Non-qualified withdrawal:</b> You can withdraw the money for non-education purposes, but you will pay <b>income tax on the earnings</b> plus a <b>10% penalty</b>. If the beneficiary receives a scholarship, the penalty is waived on withdrawals up to the scholarship amount.</li></ul><br />The 529 plan is one of the most flexible education savings vehicles — even if your original plans change, you have many options to avoid penalties.',
+    answerText: 'If your child doesn\'t attend college, you can change the beneficiary to another family member, use funds for trade school or K-12 tuition (up to $10k/year), roll up to $35k to a Roth IRA (SECURE 2.0), or withdraw with a 10% penalty on earnings. Many options exist to avoid or minimize penalties.',
+  },
+  {
+    question: 'At what age does the Kiddie Tax stop applying?',
+    answerHtml: 'The <b>Kiddie Tax</b> rules apply based on age and student status. Here is when it stops:<br /><br /><ul><li><b>Under age 18:</b> The Kiddie Tax always applies if the child has unearned income above the thresholds, regardless of student status.</li><li><b>Age 18:</b> The Kiddie Tax applies only if the child&#39;s <b>earned income</b> does not exceed <b>one-half of their support</b>. If they are working and self-supporting, the Kiddie Tax stops at 18.</li><li><b>Ages 19-23:</b> The Kiddie Tax continues to apply if the child is a <b>full-time student</b> AND their earned income does not exceed one-half of their support. Once they graduate, stop being a full-time student, or earn more than half their support, the Kiddie Tax stops.</li><li><b>Age 24 and over:</b> The Kiddie Tax no longer applies, regardless of student or support status.</li></ul><br /><b>Practical summary:</b> For most children, the Kiddie Tax stops at age 19 (if not a full-time student) or age 24 (if a full-time student through college and graduate school). Once it stops, all investment income is taxed at the child&#39;s own marginal rate, which is typically lower than the parent&#39;s rate but no longer has the $1,350 tax-free standard deduction floor — that deduction applies regardless of age.',
+    answerText: 'The Kiddie Tax stops at age 18 if the child earns more than half their support; at age 19 for non-students; and at age 24 for full-time students. After it stops, investment income is taxed at the child\'s own marginal rate.',
+  },
+  {
+    question: 'Which account is better for financial aid purposes?',
+    answerHtml: '<b>The 529 plan is significantly better for financial aid purposes</b> than a UTMA/UGMA account. Here is the detailed comparison:<br /><br /><b>529 Plan (parent-owned):</b><br /><ul><li><b>Asset treatment:</b> Assessed at a maximum of <b>5.64%</b> as a parent asset on FAFSA</li><li><b>Income treatment:</b> Distributions are not counted as income on FAFSA as long as they are used for qualified education expenses</li><li><b>Impact:</b> A $50,000 529 plan increases EFC by ~$2,820/year, or ~$11,280 over 4 years</li></ul><br /><b>UTMA/UGMA Account:</b><br /><ul><li><b>Asset treatment:</b> Assessed at <b>20%</b> as a child asset on FAFSA</li><li><b>Income treatment:</b> Dividends, interest, and realized capital gains count as <b>student income</b>, assessed at 50% after certain allowances</li><li><b>Impact:</b> A $50,000 UTMA increases EFC by ~$10,000/year, or ~$40,000 over 4 years — <b>3.5× more</b> than a 529</li></ul><br /><b>Over the full college journey:</b> The difference can be staggering. A family saving $50,000 in a UTMA could lose $28,720+ more in aid eligibility than if they had saved in a 529. For families with high savings and moderate incomes, this can mean the difference between qualifying for need-based aid and receiving nothing.<br /><br />If financial aid is a priority, a <b>parent-owned 529 plan is almost always the better choice</b> compared to a UTMA/UGMA account.',
+    answerText: 'A 529 plan is far better for financial aid. It is assessed at 5.64% as a parent asset vs. 20% as a child asset for UTMA. A $50,000 529 reduces aid by ~$11,280 over 4 years, while the same UTMA reduces aid by ~$40,000 — 3.5 times more. The UTMA also generates student income that is assessed at 50%.',
+  },
+  {
+    question: 'Are there contribution limits for 529 vs UTMA accounts?',
+    answerHtml: 'The contribution rules differ significantly between 529 plans and UTMA/UGMA accounts:<br /><br /><b>529 Plan Contributions:</b><br /><ul><li><b>No federal contribution limit</b> — but each state sets a maximum (typically $235,000–$550,000 depending on the state) before contributions are no longer accepted</li><li><b>Gift tax:</b> Contributions over <b>$18,000 per year (2026)</b> per donor per beneficiary require filing a gift tax return (Form 709)</li><li><b>5-year front-loading:</b> You can contribute up to <b>$90,000</b> in a single year (5 × $18,000) and elect to treat it as spread over 5 years for gift tax purposes — this allows a grandparent to contribute $180,000 with a spouse!</li><li><b>No income limit:</b> Anyone can contribute regardless of income level</li></ul><br /><b>UTMA/UGMA Contributions:</b><br /><ul><li><b>No set contribution limit</b> — but annual gifts over $18,000 (2026) require a gift tax return</li><li><b>No front-loading option:</b> The 5-year election is unique to 529 plans</li><li><b>Irrevocable:</b> Once you gift assets into a UTMA, the gift is final. You cannot reclaim the assets — they belong to the minor, and the custodian manages them on the child&#39;s behalf</li><li><b>Any asset type:</b> UTMA can hold stocks, bonds, mutual funds, real estate, and other investments — providing more diversification than most 529 plans</li></ul><br /><b>Key insight:</b> Both accounts can receive significant gifts, but the 5-year front-loading option for 529 plans is a powerful tool for grandparents and high-net-worth families to accelerate education savings without gift tax implications.',
+    answerText: '529 plans have no federal limit but state maximums ($235K–$550K). Gifts over $18K/year require a gift tax return. Unique benefit: 5-year front-loading allows $90K in one year. UTMA has no contribution limit either, but gifts are irrevocable once made. The 5-year election is exclusive to 529 plans.',
+  },
+];
+---
+
+<PageLayout
+  title="529 vs UTMA/UGMA Calculator — Compare Tax-Free Growth &amp; Kiddie Tax Drag"
+  description="Compare 529 plan vs UTMA/UGMA custodial accounts with 2026 Kiddie Tax rules. See tax drag, FAFSA impact, and which saves more for college."
+  canonical="https://truefinancetools.com/529-vs-utma-calculator"
+  ogImage="https://truefinancetools.com/og-529-vs-utma-calculator.png"
+  ogImageAlt="529 vs UTMA/UGMA Calculator comparison showing tax savings"
+  pageType="website"
+  keywords="529 vs UTMA calculator, kiddie tax calculator 2026, college savings account comparison, 529 plan vs custodial account, UTMA tax drag, FAFSA financial aid impact"
+>
+  <StructuredData
+    title="529 vs UTMA/UGMA Calculator — Compare Tax-Free Growth & Kiddie Tax Drag"
+    description="Compare 529 plan vs UTMA/UGMA custodial accounts with 2026 Kiddie Tax rules. See tax drag, FAFSA impact, and which saves more for college."
+    url="https://truefinancetools.com/529-vs-utma-calculator"
+    toolName="529 vs UTMA/UGMA Calculator"
+    toolDescription="Compare the future value of 529 education savings plans versus UTMA/UGMA custodial accounts, accounting for 2026 Kiddie Tax rules and FAFSA financial aid impact."
+    faqItems={toolFaqItems}
+    features={[
+      '529 vs UTMA/UGMA side-by-side projection',
+      '2026 Kiddie Tax bracket calculations',
+      'FAFSA financial aid impact analysis',
+      'Year-by-year tax drag breakdown',
+      'Interactive growth comparison chart',
+      'PDF export and shareable links',
+    ]}
+  />
+
+  <!-- 1. Hero Section -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        529 vs UTMA/UGMA Calculator
+      </h1>
+      <p class="text-lg text-body">Compare tax-free 529 plan growth against UTMA/UGMA custodial accounts with 2026 Kiddie Tax rules. See which saves more for your child&#39;s education.</p>
+    </div>
+  </section>
+
+  <!-- 2. Calculator Component -->
+  <section class="bg-canvas-soft py-12">
+    <div class="mx-auto max-w-7xl px-4">
+      <CollegeSavingsCalculator />
+    </div>
+  </section>
+
+  <!-- 3. How It Works -->
+  <HowItWorks title="How the 529 vs UTMA/UGMA Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Savings Plan</h3>
+      <p class="text-sm text-body">Input your initial and monthly contributions, expected returns, and your child&#39;s age to see how both accounts project over time.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. See the Tax Impact</h3>
+      <p class="text-sm text-body">The calculator projects year-by-year growth, applying 2026 Kiddie Tax rules to the UTMA account so you see the exact tax drag.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Compare &amp; Decide</h3>
+      <p class="text-sm text-body">View the final balance comparison, total tax saved, and FAFSA financial aid impact to make an informed choice for your child&#39;s future.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- 4. What is 529 vs UTMA? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is a 529 Plan vs a UTMA/UGMA Account?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>529 Plan:</strong> A tax-advantaged education savings plan sponsored by states. Contributions grow <strong>tax-free</strong> when withdrawn for qualified education expenses including tuition, room &amp; board, books, supplies, and up to $10,000/year in K-12 tuition. The account owner retains control and can change the beneficiary at any time to another family member.
+        </p>
+
+        <p class="mb-4">
+          <strong>UTMA/UGMA Account:</strong> Uniform Transfers/Gifts to Minors Act (UTMA) or Uniform Gifts to Minors Act (UGMA) custodial accounts. Any adult can open one for a minor. They can hold any investment — stocks, bonds, mutual funds, real estate. Subject to the <strong>Kiddie Tax</strong> on unearned income. The account becomes the child&#39;s property at the age of majority (18-21 depending on the state).
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Core Comparison Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          529 Balance = Initial × (1 + r)<sup>n</sup> + &Sigma;[Monthly × (1 + r)<sup>((n-t)/12)</sup>]<br /><br />
+          UTMA Balance = Initial × (1 + r)<sup>n</sup> + &Sigma;[Monthly × (1 + r)<sup>((n-t)/12)</sup>] &minus; &Sigma;[Kiddie Tax]
+        </div>
+        <p class="mt-2 text-xs text-mute">Where r = expected annual return, n = number of years, t = month index</p>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">529 vs UTMA/UGMA Comparison</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Feature</th>
+                <th class="p-3 font-medium text-ink">529 Plan</th>
+                <th class="p-3 font-medium text-ink">UTMA/UGMA</th>
+              </tr>
+            </thead>
+            <tbody class="text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Tax on Growth</td>
+                <td class="p-3 text-success-deep font-sans">0% (qualified withdrawals)</td>
+                <td class="p-3 text-body font-sans">Kiddie Tax rates</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Annual Contribution Limit (gift tax)</td>
+                <td class="p-3 text-body font-sans">~$18,000/year (with 5-year front-loading)</td>
+                <td class="p-3 text-body font-sans">~$18,000/year (no front-loading)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Financial Aid Impact</td>
+                <td class="p-3 text-success-deep font-sans">5.64% (parent asset)</td>
+                <td class="p-3 text-error font-sans">20% (child asset)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Usage Restrictions</td>
+                <td class="p-3 text-body font-sans">Education only (with exceptions)</td>
+                <td class="p-3 text-body font-sans">Any purpose benefiting the child</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Beneficiary Changes</td>
+                <td class="p-3 text-success-deep font-sans">Yes — any family member</td>
+                <td class="p-3 text-error font-sans">No — irrevocable on beneficiary</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Control at Age of Majority</td>
+                <td class="p-3 text-success-deep font-sans">Parent retains control</td>
+                <td class="p-3 text-body font-sans">Child receives full control</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Choose Which?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Choose 529 If</h4>
+            <p class="text-sm text-body">You&#39;re saving specifically for education AND want maximum tax benefits AND care about FAFSA impact. The tax-free growth and preferential financial aid treatment make 529 the clear winner for most education savers.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Choose UTMA If</h4>
+            <p class="text-sm text-body">You want flexibility to use funds for anything benefiting the child AND your child may not attend college AND you&#39;ve already maxed out your 529 contributions. UTMA offers investment flexibility that 529 plans cannot match.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Choose Both If</h4>
+            <p class="text-sm text-body">You want education-focused savings with tax benefits PLUS a flexible backup for non-education expenses. Many families contribute enough to a 529 to cover projected education costs and use a UTMA for other child-related expenses.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Choose Neither If</h4>
+            <p class="text-sm text-body">Your child is already near college age (4-5 years out) and you need the flexibility of a regular taxable brokerage account. The tax benefits diminish with shorter time horizons, and prepaid tuition plans or Coverdell ESAs may be better options.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">529 Plan vs UTMA/UGMA: Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">529 Plan Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>&bull; Tax-free growth for qualified education expenses</li>
+              <li>&bull; FAFSA-friendly (5.64% parent asset assessment)</li>
+              <li>&bull; State tax deductions and credits (many states)</li>
+              <li>&bull; Beneficiary flexibility — change to any family member</li>
+              <li>&bull; 5-year front-loading allows $90,000 lump sum gifts</li>
+              <li>&bull; SECURE 2.0 allows up to $35k Roth IRA rollover</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">529 Plan Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>&bull; Education-only use (penalties for non-qualified withdrawals)</li>
+              <li>&bull; 10% penalty + income tax on non-qualified earnings</li>
+              <li>&bull; Limited investment options compared to taxable accounts</li>
+              <li>&bull; State cap may limit very high contributions</li>
+              <li>&bull; State tax recapture if you move to another state</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">UTMA/UGMA Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>&bull; No education restriction — use for any child benefit</li>
+              <li>&bull; Any investment type (stocks, bonds, real estate, ETFs)</li>
+              <li>&bull; First $1,350/year in income is tax-free</li>
+              <li>&bull; Simpler setup — no state plan selection needed</li>
+              <li>&bull; No penalty on withdrawals for any purpose</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">UTMA/UGMA Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>&bull; Kiddie Tax drag — income above $2,700 taxed at parent&#39;s rate</li>
+              <li>&bull; Heavy FAFSA impact (20% child asset assessment)</li>
+              <li>&bull; Irrevocable gift — cannot reclaim assets</li>
+              <li>&bull; Child gains full control at age of majority (18-21)</li>
+              <li>&bull; Student income counts at 50% on FAFSA</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. FAQ Section -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About 529 Plans vs UTMA/UGMA Accounts
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Complete Guide -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to 529 vs UTMA/UGMA College Savings
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>529 vs UTMA/UGMA Calculator</strong> helps you compare the two most popular ways to save for a child&#39;s future. By modeling the 2026 Kiddie Tax rules, FAFSA financial aid assessment rates, and compound growth assumptions, you can see exactly which account type leaves you with more money for college.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why 529 Plans Are Usually Better for College Savings</h3>
+
+        <p class="mb-4">
+          The <strong>compounding tax advantage</strong> of a 529 plan is substantial over a typical 13-year savings horizon (age 5 to 18). Consider a real-world example: saving <strong>$10,000 initially plus $500/month</strong> for 13 years at a <strong>7% annual return</strong> with a <strong>2% dividend yield</strong> and a <strong>24% parent tax bracket</strong>:
+        </p>
+
+        <ul class="mb-4 space-y-2">
+          <li><strong>529 Plan:</strong> No annual tax on dividends or capital gains. The full balance grows tax-free. At age 18, the projected balance is approximately <strong>$161,000</strong> — every dollar available for education.</li>
+          <li><strong>UTMA Account:</strong> Subject to Kiddie Tax each year. The first $1,350 of dividends is tax-free, the next $1,350 is taxed at 10%, and everything above is taxed at 24%. Over 13 years, the Kiddie Tax drag reduces the balance by approximately <strong>$8,000–$12,000</strong>, leaving roughly <strong>$149,000–$153,000</strong>.</li>
+          <li><strong>Total 529 advantage:</strong> <strong>$8,000–$12,000 more</strong> in the 529 plan — and that is before accounting for the FAFSA advantage!</li>
+        </ul>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This 529 vs UTMA Calculator</h3>
+
+        <p class="mb-4">
+          This calculator provides <strong>instant side-by-side projections</strong> as you adjust any input. Enter your initial contribution, monthly contribution, expected annual return, dividend yield, your marginal tax rate, your child&#39;s age, and the number of years until college. The calculator applies the 2026 Kiddie Tax brackets automatically, showing you the exact annual tax drag on the UTMA account. The interactive <strong>growth comparison chart</strong> plots both accounts year by year, making the compounding advantage of tax-free growth immediately visible. Key result cards highlight the projected balance at college age, the total tax paid, and the net advantage of choosing a 529 plan.
+        </p>
+
+        <p class="mb-4">
+          For more college and education savings planning, explore our <a href="/hsa-shoebox-strategy-calculator" class="text-link hover:underline">HSA Shoebox Strategy Calculator</a> to see how Health Savings Accounts can complement your education funding, or our <a href="/mega-backdoor-roth-calculator" class="text-link hover:underline">Mega Backdoor Roth Calculator</a> to maximize your retirement savings alongside college planning. If you are comparing other tax-advantaged accounts, our <a href="/lisa-vs-workplace-pension-calculator" class="text-link hover:underline">LISA vs Workplace Pension Calculator</a> and <a href="/tax-gain-harvesting-calculator" class="text-link hover:underline">Tax Gain Harvesting Calculator</a> can help you optimize your overall tax strategy.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Explore Other Tools -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Tax &amp; Savings Calculators
+      </h2>
+      <p class="mb-8 text-body">Free calculators for college savings, tax optimization, and investment comparison.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/529-vs-utma-calculator" class="group rounded-xl border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">529 vs UTMA/UGMA</h3>
+          <p class="text-xs text-body">Compare 529 plan tax-free growth against UTMA custodial accounts with Kiddie Tax drag and FAFSA impact.</p>
+          <span class="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-link">
+            Calculate
+            <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </span>
+        </a>
+        <a href="/mega-backdoor-roth-calculator" class="group rounded-xl border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mega Backdoor Roth</h3>
+          <p class="text-xs text-body">Maximize after-tax 401(k) contributions and convert to Roth IRA through the mega backdoor strategy.</p>
+          <span class="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-link">
+            Calculate
+            <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </span>
+        </a>
+        <a href="/hsa-shoebox-strategy-calculator" class="group rounded-xl border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">HSA Shoebox Strategy</h3>
+          <p class="text-xs text-body">Model the HSA delayed reimbursement strategy to maximize tax-free growth for healthcare expenses.</p>
+          <span class="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-link">
+            Calculate
+            <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </span>
+        </a>
+        <a href="/tax-gain-harvesting-calculator" class="group rounded-xl border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Tax Gain Harvesting</h3>
+          <p class="text-xs text-body">Plan strategic capital gains harvesting to optimize your tax brackets and minimize future tax liability.</p>
+          <span class="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-link">
+            Calculate
+            <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </span>
+        </a>
+        <a href="/mortgage-overpayment-vs-investing-calculator-uk" class="group rounded-xl border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mortgage vs Investing (UK)</h3>
+          <p class="text-xs text-body">Compare mortgage overpayment against investing in a stocks &amp; shares ISA for UK homeowners.</p>
+          <span class="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-link">
+            Calculate
+            <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </span>
+        </a>
+        <a href="/lisa-vs-workplace-pension-calculator" class="group rounded-xl border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">LISA vs Workplace Pension</h3>
+          <p class="text-xs text-body">Compare a Lifetime ISA against a workplace pension for retirement savings and tax efficiency in the UK.</p>
+          <span class="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-link">
+            Calculate
+            <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
