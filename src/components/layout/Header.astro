@@ -4,54 +4,84 @@ import Logo from '../ui/Logo.astro';
 
 const currentPath = Astro.url.pathname;
 
-const calculatorCategories = [
-  { name: 'FIRE Calculator', href: '/fire-calculator' },
-  { name: 'Lean FIRE Calculator', href: '/lean-fire-calculator' },
-  { name: 'Fat FIRE Calculator', href: '/fat-fire-calculator' },
-  { name: 'Barista FIRE Calculator', href: '/barista-fire-calculator' },
-  { name: 'Coast FIRE Number', href: '/coast-fire-number' },
-  { name: 'Coast FIRE by Age Calculator', href: '/coast-fire-by-age-calculator' },
-  { name: 'Coast FIRE Shift Calculator', href: '/coast-fire-shift-calculator' },
-  { name: 'Geographic Arbitrage Calculator', href: '/geographic-arbitrage-calculator' },
-  { name: 'Die With Zero Calculator', href: '/die-with-zero-calculator' },
-  { name: 'VPW Calculator', href: '/vpw-calculator' },
-  { name: 'Perpetual SWR Calculator', href: '/perpetual-swr-calculator' },
-  { name: 'Guardrails Withdrawal Calculator', href: '/guardrails-withdrawal-calculator' },
-  { name: 'Retirement Bucket Strategy Calculator', href: '/retirement-bucket-strategy-calculator' },
-  { name: 'Social Security Bridge Calculator', href: '/social-security-bridge-calculator' },
-  { name: 'Sequence of Returns Calculator', href: '/sequence-of-returns-calculator' },
-  { name: 'One More Year Calculator', href: '/one-more-year-calculator' },
-  { name: 'Bond Tent Calculator', href: '/bond-tent-calculator' },
-  { name: 'Owner Earnings Calculator', href: '/owner-earnings-calculator' },
-  { name: 'Core-Satellite Rebalancer', href: '/core-satellite-rebalancer' },
-  { name: 'Cash Cushion Optimizer', href: '/cash-cushion-optimizer' },
-  { name: 'Dividend Tax Drag Calculator', href: '/dividend-tax-drag-calculator' },
-  { name: 'Tax Gain Harvesting Calculator', href: '/tax-gain-harvesting-calculator' },
-  { name: 'Mega Backdoor Roth Calculator', href: '/mega-backdoor-roth-calculator' },
-  { name: 'RSU Sell-to-Cover Tax Calculator', href: '/rsu-sell-to-cover-tax-calculator' },
-  { name: 'RSU Vesting Tax Calculator', href: '/rsu-vesting-tax-calculator' },
-  { name: 'HSA Shoebox Strategy Calculator', href: '/hsa-shoebox-strategy-calculator' },
-  { name: 'HSA vs FSA Calculator', href: '/hsa-vs-fsa-calculator' },
-  { name: 'ACA Subsidy Cliff Calculator', href: '/aca-subsidy-cliff-calculator' },
-  { name: '72(t) SEPP Calculator', href: '/sepp-calculator' },
-  { name: '72(t) vs Roth Ladder Calculator', href: '/72t-vs-roth-conversion-ladder-calculator' },
-  { name: 'Early 401k Penalty vs Roth Conversion', href: '/early-401k-penalty-vs-roth-conversion-calculator' },
-  { name: '529 vs UTMA/UGMA Calculator', href: '/529-vs-utma-calculator' },
-  { name: 'House Hacking Calculator', href: '/house-hacking-calculator' },
-  { name: 'JISA vs Bare Trust Calculator', href: '/jisa-vs-bare-trust-calculator' },
-  { name: 'LISA vs Workplace Pension Calculator', href: '/lisa-vs-workplace-pension-calculator' },
-  { name: 'UK Redundancy Tax Calculator', href: '/uk-redundancy-tax-calculator' },
-  { name: 'Mortgage vs ISA Calculator (UK)', href: '/mortgage-overpayment-vs-investing-calculator-uk' },
-  { name: 'Refinance Break-Even Calculator', href: '/refinance-break-even-calculator' },
-  { name: 'SIPP Drawdown Tax Calculator', href: '/sipp-drawdown-tax-calculator' },
-  { name: 'Plan 5 Student Loan Calculator', href: '/plan-5-student-loan-repayment-calculator' },
-  { name: 'Salary Sacrifice Pension Calculator', href: '/salary-sacrifice-pension-calculator' },
-  { name: 'College Savings Calculator', href: '/529-vs-utma-calculator' },
-  { name: 'HICBC Calculator', href: '/hicbc-calculator' },
-  { name: 'UK Pension Taper Calculator', href: '/uk-pension-taper-calculator' },
+const calculatorGroups = [
+  {
+    label: 'FIRE & Retirement',
+    calculators: [
+      { name: 'FIRE Calculator', href: '/fire-calculator' },
+      { name: 'Lean FIRE Calculator', href: '/lean-fire-calculator' },
+      { name: 'Fat FIRE Calculator', href: '/fat-fire-calculator' },
+      { name: 'Barista FIRE Calculator', href: '/barista-fire-calculator' },
+      { name: 'Coast FIRE Number', href: '/coast-fire-number' },
+      { name: 'Coast FIRE by Age', href: '/coast-fire-by-age-calculator' },
+      { name: 'Coast FIRE Shift', href: '/coast-fire-shift-calculator' },
+      { name: 'Geographic Arbitrage', href: '/geographic-arbitrage-calculator' },
+    ],
+  },
+  {
+    label: 'Withdrawal Strategies',
+    calculators: [
+      { name: 'Die With Zero', href: '/die-with-zero-calculator' },
+      { name: 'VPW Calculator', href: '/vpw-calculator' },
+      { name: 'Perpetual SWR', href: '/perpetual-swr-calculator' },
+      { name: 'Guardrails Withdrawal', href: '/guardrails-withdrawal-calculator' },
+      { name: 'Retirement Bucket Strategy', href: '/retirement-bucket-strategy-calculator' },
+      { name: 'Social Security Bridge', href: '/social-security-bridge-calculator' },
+    ],
+  },
+  {
+    label: 'Tax Optimization',
+    calculators: [
+      { name: 'Mega Backdoor Roth', href: '/mega-backdoor-roth-calculator' },
+      { name: 'Tax Gain Harvesting', href: '/tax-gain-harvesting-calculator' },
+      { name: 'Dividend Tax Drag', href: '/dividend-tax-drag-calculator' },
+      { name: '72(t) SEPP Calculator', href: '/sepp-calculator' },
+      { name: '72(t) vs Roth Ladder', href: '/72t-vs-roth-conversion-ladder-calculator' },
+      { name: 'Early 401k vs Roth Conversion', href: '/early-401k-penalty-vs-roth-conversion-calculator' },
+      { name: 'ACA Subsidy Cliff', href: '/aca-subsidy-cliff-calculator' },
+      { name: 'HSA Shoebox Strategy', href: '/hsa-shoebox-strategy-calculator' },
+      { name: 'HSA vs FSA', href: '/hsa-vs-fsa-calculator' },
+    ],
+  },
+  {
+    label: 'Portfolio & Analysis',
+    calculators: [
+      { name: 'Core-Satellite Rebalancer', href: '/core-satellite-rebalancer' },
+      { name: 'Owner Earnings', href: '/owner-earnings-calculator' },
+      { name: 'Cash Cushion Optimizer', href: '/cash-cushion-optimizer' },
+      { name: 'Sequence of Returns', href: '/sequence-of-returns-calculator' },
+      { name: 'One More Year Syndrome', href: '/one-more-year-calculator' },
+      { name: 'Bond Tent Calculator', href: '/bond-tent-calculator' },
+    ],
+  },
+  {
+    label: 'UK Finance',
+    calculators: [
+      { name: 'Salary Sacrifice Pension', href: '/salary-sacrifice-pension-calculator' },
+      { name: 'SIPP Drawdown Tax', href: '/sipp-drawdown-tax-calculator' },
+      { name: 'UK Redundancy Tax', href: '/uk-redundancy-tax-calculator' },
+      { name: 'LISA vs Workplace Pension', href: '/lisa-vs-workplace-pension-calculator' },
+      { name: 'Mortgage vs ISA (UK)', href: '/mortgage-overpayment-vs-investing-calculator-uk' },
+      { name: 'Plan 5 Student Loan', href: '/plan-5-student-loan-repayment-calculator' },
+      { name: 'JISA vs Bare Trust', href: '/jisa-vs-bare-trust-calculator' },
+      { name: 'HICBC Calculator', href: '/hicbc-calculator' },
+      { name: 'UK Pension Taper', href: '/uk-pension-taper-calculator' },
+    ],
+  },
+  {
+    label: 'Real Estate & Other',
+    calculators: [
+      { name: 'House Hacking', href: '/house-hacking-calculator' },
+      { name: 'Refinance Break-Even', href: '/refinance-break-even-calculator' },
+      { name: '529 vs UTMA/UGMA', href: '/529-vs-utma-calculator' },
+      { name: 'RSU Sell-to-Cover Tax', href: '/rsu-sell-to-cover-tax-calculator' },
+      { name: 'RSU Vesting Tax', href: '/rsu-vesting-tax-calculator' },
+    ],
+  },
 ];
 
 const navLinks = [
+  { href: '/', label: 'Home', match: 'exact' as const },
   { href: '/tools', label: 'Calculators', match: 'prefix' as const },
   { href: '/learn/what-is-fire', label: 'Learn', match: 'prefix-start' as const },
   { href: '/about', label: 'About', match: 'exact' as const },
@@ -73,7 +103,7 @@ function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boo
     </a>
 
     <nav class="hidden items-center gap-1 md:flex">
-      {navLinks.map(({ href, label, match }) => (
+      {navLinks.filter((l) => l.label !== 'Calculators').map(({ href, label, match }) => (
         <a
           href={href}
           class:list={[
@@ -84,6 +114,64 @@ function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boo
           {label}
         </a>
       ))}
+
+      <!-- Calculators dropdown trigger -->
+      <div class="relative" id="calculators-wrapper">
+        <button
+          id="calculators-trigger"
+          class:list={[
+            'inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
+            isActive('/tools', 'prefix') ? 'bg-ink text-canvas' : 'text-body hover:text-ink',
+          ]}
+          aria-expanded="false"
+          aria-haspopup="true"
+        >
+          Calculators
+          <svg
+            id="calculators-chevron"
+            class="h-4 w-4 transition-transform duration-200"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
+
+        <!-- Mega-menu dropdown -->
+        <div
+          id="calculators-menu"
+          class="absolute left-1/2 top-full z-50 mt-2 hidden w-[640px] -translate-x-1/2 rounded-xl border border-hairline bg-canvas p-6 shadow-lg lg:w-[800px]"
+          role="menu"
+        >
+          <div class="grid grid-cols-3 gap-x-6 gap-y-8">
+            {calculatorGroups.map((group) => (
+              <div>
+                <h3 class="mb-2 text-xs font-semibold uppercase tracking-wider text-ink">{group.label}</h3>
+                <ul class="space-y-1">
+                  {group.calculators.map((calc) => (
+                    <li>
+                      <a
+                        href={calc.href}
+                        class="text-sm text-ink-secondary transition-colors hover:text-ink"
+                        role="menuitem"
+                      >
+                        {calc.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div class="mt-4 border-t border-hairline pt-4">
+            <a href="/tools" class="text-sm font-medium text-ink transition-colors hover:text-ink-secondary">
+              View All Calculators &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
     </nav>
 
     <div class="flex items-center gap-2">
@@ -109,9 +197,15 @@ function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boo
     </div>
   </div>
 
-  <div id="mobile-menu" class="hidden border-t border-hairline bg-canvas transition-all duration-200 ease-in-out md:hidden" role="menu" aria-hidden="true">
-    <nav class="flex flex-col gap-1 p-4">
-      {navLinks.map(({ href, label, match }) => (
+  <!-- Mobile menu -->
+  <div
+    id="mobile-menu"
+    class="hidden border-t border-hairline bg-canvas transition-all duration-200 ease-in-out md:hidden"
+    role="menu"
+    aria-hidden="true"
+  >
+    <nav class="flex max-h-[80vh] flex-col gap-1 overflow-y-auto p-4">
+      {navLinks.filter((l) => l.label !== 'Calculators').map(({ href, label, match }) => (
         <a
           href={href}
           class:list={[
@@ -125,11 +219,71 @@ function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boo
           {label}
         </a>
       ))}
+
+      <!-- Mobile Calculators accordion -->
+      <div class="rounded-lg bg-canvas-soft">
+        <button
+          data-mobile-accordion-trigger
+          class="flex w-full items-center justify-between px-3 py-3 text-sm font-medium text-body transition-colors hover:text-ink"
+          aria-expanded="false"
+        >
+          Calculators
+          <svg
+            data-mobile-accordion-chevron
+            class="h-4 w-4 transition-transform duration-200"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
+        <div data-mobile-accordion-content class="hidden px-3 pb-3">
+          {calculatorGroups.map((group) => (
+            <div class="mt-3">
+              <h4 class="mb-1.5 text-xs font-semibold uppercase tracking-wider text-ink">
+                {group.label}
+              </h4>
+              <ul class="space-y-0.5">
+                {group.calculators.map((calc) => (
+                  <li>
+                    <a
+                      href={calc.href}
+                      class="block rounded px-2 py-1.5 text-sm text-ink-secondary transition-colors hover:bg-canvas-soft-2 hover:text-ink"
+                      role="menuitem"
+                    >
+                      {calc.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+          <a
+            href="/tools"
+            class="mt-3 block rounded px-2 py-2 text-sm font-medium text-ink transition-colors hover:bg-canvas-soft-2"
+            role="menuitem"
+          >
+            View All Calculators &rarr;
+          </a>
+        </div>
+      </div>
+
+      <!-- Mobile CTA -->
+      <a
+        href="/tools"
+        class="mt-2 rounded-full bg-ink px-4 py-3 text-center text-sm font-medium text-canvas transition-opacity hover:opacity-90"
+        role="menuitem"
+      >
+        Start Calculating
+      </a>
     </nav>
   </div>
 </header>
 
 <script>
+  // --- Mobile menu toggle ---
   const toggle = document.getElementById('mobile-menu-toggle');
   const menu = document.getElementById('mobile-menu');
 
@@ -143,6 +297,9 @@ function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boo
     menu?.classList.add('hidden');
     menu?.setAttribute('aria-hidden', 'true');
     toggle?.setAttribute('aria-expanded', 'false');
+
+    // Collapse the mobile accordion when menu closes
+    collapseMobileAccordion();
   }
 
   function toggleMenu() {
@@ -155,20 +312,95 @@ function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boo
 
   toggle?.addEventListener('click', toggleMenu);
 
+  // Close mobile menu when clicking a link inside it
   menu?.querySelectorAll('a').forEach((link) => {
     link.addEventListener('click', closeMenu);
   });
 
+  // Close mobile menu on outside click
   document.addEventListener('click', (e) => {
-    if (!menu?.classList.contains('hidden') && !menu?.contains(e.target as Node) && !toggle?.contains(e.target as Node)) {
+    if (
+      !menu?.classList.contains('hidden') &&
+      !menu?.contains(e.target as Node) &&
+      !toggle?.contains(e.target as Node)
+    ) {
       closeMenu();
     }
   });
 
+  // Close mobile menu on Escape
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !menu?.classList.contains('hidden')) {
       closeMenu();
       toggle?.focus();
+    }
+  });
+
+  // --- Desktop calculators mega-menu ---
+  const calculatorsTrigger = document.getElementById('calculators-trigger');
+  const calculatorsMenu = document.getElementById('calculators-menu');
+  const calculatorsChevron = document.getElementById('calculators-chevron');
+  const calculatorsWrapper = document.getElementById('calculators-wrapper');
+
+  function openCalculatorsMenu() {
+    calculatorsMenu?.classList.remove('hidden');
+    calculatorsTrigger?.setAttribute('aria-expanded', 'true');
+    calculatorsChevron?.classList.add('rotate-180');
+  }
+
+  function closeCalculatorsMenu() {
+    calculatorsMenu?.classList.add('hidden');
+    calculatorsTrigger?.setAttribute('aria-expanded', 'false');
+    calculatorsChevron?.classList.remove('rotate-180');
+  }
+
+  calculatorsTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (calculatorsMenu?.classList.contains('hidden')) {
+      openCalculatorsMenu();
+    } else {
+      closeCalculatorsMenu();
+    }
+  });
+
+  // Close mega-menu on outside click
+  document.addEventListener('click', (e) => {
+    if (
+      !calculatorsMenu?.classList.contains('hidden') &&
+      !calculatorsWrapper?.contains(e.target as Node)
+    ) {
+      closeCalculatorsMenu();
+    }
+  });
+
+  // Close mega-menu on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !calculatorsMenu?.classList.contains('hidden')) {
+      closeCalculatorsMenu();
+      calculatorsTrigger?.focus();
+    }
+  });
+
+  // --- Mobile calculators accordion ---
+  const mobileAccordionTrigger = document.querySelector('[data-mobile-accordion-trigger]');
+  const mobileAccordionContent = document.querySelector('[data-mobile-accordion-content]');
+  const mobileAccordionChevron = document.querySelector('[data-mobile-accordion-chevron]');
+
+  function collapseMobileAccordion() {
+    mobileAccordionContent?.classList.add('hidden');
+    mobileAccordionChevron?.classList.remove('rotate-180');
+    mobileAccordionTrigger?.setAttribute('aria-expanded', 'false');
+  }
+
+  mobileAccordionTrigger?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = !mobileAccordionContent?.classList.contains('hidden');
+    if (isOpen) {
+      collapseMobileAccordion();
+    } else {
+      mobileAccordionContent?.classList.remove('hidden');
+      mobileAccordionChevron?.classList.add('rotate-180');
+      mobileAccordionTrigger?.setAttribute('aria-expanded', 'true');
     }
   });
 </script>
