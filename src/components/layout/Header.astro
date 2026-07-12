@@ -5,87 +5,10 @@ import Logo from '../ui/Logo.astro';
 const currentPath = Astro.url.pathname;
 
 const navLinks = [
-  { href: '/tools', label: 'Calculators', match: 'prefix' as const, hasDropdown: true },
+  { href: '/tools', label: 'Calculators', match: 'prefix' as const },
   { href: '/learn/what-is-fire', label: 'Learn', match: 'prefix-start' as const },
   { href: '/about', label: 'About', match: 'exact' as const },
   { href: '/contact', label: 'Contact', match: 'exact' as const },
-];
-
-const calculatorCategories = [
-  {
-    title: 'FIRE Strategies',
-    calculators: [
-      { href: '/fire-calculator', label: 'FIRE Calculator' },
-      { href: '/lean-fire-calculator', label: 'Lean FIRE' },
-      { href: '/fat-fire-calculator', label: 'Fat FIRE' },
-      { href: '/barista-fire-calculator', label: 'Barista FIRE' },
-      { href: '/coast-fire-number', label: 'Coast FIRE Number' },
-      { href: '/coast-fire-by-age-calculator', label: 'Coast FIRE by Age' },
-      { href: '/coast-fire-shift-calculator', label: 'Coast FIRE Shift' },
-      { href: '/geographic-arbitrage-calculator', label: 'Geo Arbitrage' },
-    ],
-  },
-  {
-    title: 'Withdrawal & Income',
-    calculators: [
-      { href: '/die-with-zero-calculator', label: 'Die with Zero' },
-      { href: '/vpw-calculator', label: 'VPW Withdrawal' },
-      { href: '/perpetual-swr-calculator', label: 'Perpetual SWR' },
-      { href: '/guardrails-withdrawal-calculator', label: 'Guardrails Withdrawal' },
-      { href: '/retirement-bucket-strategy-calculator', label: 'Bucket Strategy' },
-      { href: '/social-security-bridge-calculator', label: 'SS Bridge Strategy' },
-    ],
-  },
-  {
-    title: 'Risk & Analysis',
-    calculators: [
-      { href: '/sequence-of-returns-calculator', label: 'SRR Stress Test' },
-      { href: '/one-more-year-calculator', label: 'OMY Syndrome' },
-      { href: '/bond-tent-calculator', label: 'Bond Tent Glide Path' },
-      { href: '/cash-cushion-optimizer', label: 'Cash Cushion' },
-    ],
-  },
-  {
-    title: 'Real Estate',
-    calculators: [
-      { href: '/house-hacking-calculator', label: 'House Hacking' },
-    ],
-  },
-  {
-    title: 'Debt & Budget',
-    calculators: [
-      { href: '/debt-avalanche-vs-snowball-calculator', label: 'Avalanche vs Snowball' },
-    ],
-  },
-  {
-    title: 'Portfolio & Tax',
-    calculators: [
-      { href: '/rsu-sell-to-cover-tax-calculator', label: 'RSU Sell-to-Cover Tax' },
-      { href: '/rsu-vesting-tax-calculator', label: 'RSU Vesting Tax' },
-      { href: '/owner-earnings-calculator', label: 'Owner Earnings' },
-      { href: '/core-satellite-rebalancer', label: 'Core-Satellite Rebalancer' },
-      { href: '/tax-gain-harvesting-calculator', label: 'Tax Gain Harvesting' },
-      { href: '/hsa-shoebox-strategy-calculator', label: 'HSA Shoebox Strategy' },
-      { href: '/hsa-vs-fsa-calculator', label: 'HSA vs FSA' },
-      { href: '/aca-subsidy-cliff-calculator', label: 'ACA Subsidy Cliff' },
-      { href: '/sepp-calculator', label: '72(t) SEPP' },
-      { href: '/72t-vs-roth-conversion-ladder-calculator', label: '72(t) vs Roth Ladder' },
-      { href: '/mega-backdoor-roth-calculator', label: 'Mega Backdoor Roth' },
-      { href: '/529-vs-utma-calculator', label: '529 vs UTMA/UGMA' },
-    ],
-  },
-  {
-    title: 'UK Tools',
-    calculators: [
-      { href: '/jisa-vs-bare-trust-calculator', label: 'JISA vs Bare Trust' },
-      { href: '/uk-redundancy-tax-calculator', label: 'UK Redundancy Tax' },
-      { href: '/mortgage-overpayment-vs-investing-calculator-uk', label: 'Mortgage vs ISA (UK)' },
-      { href: '/sipp-drawdown-tax-calculator', label: 'SIPP Drawdown Tax (UK)' },
-      { href: '/salary-sacrifice-pension-calculator', label: 'Salary Sacrifice Pension' },
-      { href: '/plan-5-student-loan-repayment-calculator', label: 'Plan 5 Student Loan (UK)' },
-      { href: '/hicbc-calculator', label: 'HICBC Calculator' },
-    ],
-  },
 ];
 
 function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boolean {
@@ -103,63 +26,16 @@ function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boo
     </a>
 
     <nav class="hidden items-center gap-1 md:flex">
-      {navLinks.map(({ href, label, match, hasDropdown }) => (
-        <div class="relative" data-nav-item={hasDropdown ? 'calc-dropdown' : undefined}>
-          <a
-            href={href}
-            class:list={[
-              'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
-              isActive(href, match) ? 'bg-ink text-canvas' : 'text-body hover:text-ink',
-              hasDropdown && 'flex items-center gap-1',
-            ]}
-          >
-            {label}
-            {hasDropdown && (
-              <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M19 9l-7 7-7-7" />
-              </svg>
-            )}
-          </a>
-          {hasDropdown && (
-            <div class="calc-dropdown-menu invisible absolute left-0 top-full z-50 mt-1 w-[720px] rounded-lg border border-hairline bg-canvas p-5 shadow-lg opacity-0 transition-all duration-200">
-              <div class="grid grid-cols-6 gap-4">
-                {calculatorCategories.map((category) => (
-                  <div>
-                    <p class="mb-2 truncate text-xs font-semibold uppercase tracking-wider text-mute">{category.title}</p>
-                    <div class="space-y-0.5">
-                      {category.calculators.map((calc) => (
-                        <a
-                          href={calc.href}
-                          class:list={[
-                            'block rounded-md px-3 py-1.5 text-sm transition-colors',
-                            isActive(calc.href, 'exact')
-                              ? 'bg-canvas-soft-2 font-medium text-ink'
-                              : 'text-body hover:bg-canvas-soft hover:text-ink',
-                          ]}
-                        >
-                          {calc.label}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div class="mt-4 border-t border-hairline pt-3">
-                <a
-                  href="/tools"
-                  class:list={[
-                    'block rounded-md px-3 py-2 text-sm font-medium transition-colors',
-                    isActive('/tools', 'prefix')
-                      ? 'bg-canvas-soft-2 text-ink'
-                      : 'text-link hover:bg-canvas-soft hover:text-link-deep',
-                  ]}
-                >
-                  Browse All 38+ Tools &rarr;
-                </a>
-              </div>
-            </div>
-          )}
-        </div>
+      {navLinks.map(({ href, label, match }) => (
+        <a
+          href={href}
+          class:list={[
+            'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
+            isActive(href, match) ? 'bg-ink text-canvas' : 'text-body hover:text-ink',
+          ]}
+        >
+          {label}
+        </a>
       ))}
     </nav>
 
@@ -248,35 +124,4 @@ function isActive(href: string, match: 'prefix' | 'prefix-start' | 'exact'): boo
       toggle?.focus();
     }
   });
-
-  const calcDropdown = document.querySelector('[data-nav-item="calc-dropdown"]');
-  const calcDropdownMenu = document.querySelector('.calc-dropdown-menu') as HTMLElement;
-
-  if (calcDropdown && calcDropdownMenu) {
-    let timeout: ReturnType<typeof setTimeout>;
-
-    calcDropdown.addEventListener('mouseenter', () => {
-      clearTimeout(timeout);
-      calcDropdownMenu.classList.remove('invisible', 'opacity-0');
-      calcDropdownMenu.classList.add('opacity-100');
-    });
-
-    calcDropdown.addEventListener('mouseleave', () => {
-      timeout = setTimeout(() => {
-        calcDropdownMenu.classList.add('invisible', 'opacity-0');
-        calcDropdownMenu.classList.remove('opacity-100');
-      }, 150);
-    });
-
-    calcDropdownMenu.addEventListener('mouseenter', () => {
-      clearTimeout(timeout);
-    });
-
-    calcDropdownMenu.addEventListener('mouseleave', () => {
-      timeout = setTimeout(() => {
-        calcDropdownMenu.classList.add('invisible', 'opacity-0');
-        calcDropdownMenu.classList.remove('opacity-100');
-      }, 150);
-    });
-  }
 </script>
