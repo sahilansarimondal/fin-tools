@@ -328,7 +328,7 @@ import ResultCard from '../ui/ResultCard.astro';
   const form = document.getElementById('refinance-form');
   if (!form) return;
 
-  const getVal = (id) => parseFloat(document.getElementById(id)?.value || 0);
+  const getVal = (name) => parseFloat(document.getElementById('input-' + name)?.value || 0);
   const getCheck = (id) => document.getElementById(id)?.checked || false;
 
   const regionUS = document.getElementById('region-us');
@@ -640,16 +640,20 @@ import ResultCard from '../ui/ResultCard.astro';
     if (ercSlider) ercSlider.value = '0';
     if (ercDisplay) ercDisplay.textContent = sym + '0';
 
-    // Update suffix on all inputs
-    document.querySelectorAll('input[data-suffix]').forEach(function (input) {
-      // Update suffix display
+    // Update currency suffix on money inputs (Balance and Upfront Fees)
+    const moneyInputs = ['currentBalance', 'upfrontFees', 'erc'];
+    moneyInputs.forEach(function (inputName) {
+      const input = document.querySelector('input[name="' + inputName + '"]');
+      if (input) {
+        const suffixSpan = input.parentElement.querySelector('span');
+        if (suffixSpan) suffixSpan.textContent = sym;
+      }
     });
 
-    // Update balance and fees input suffixes via a simple approach: modify the form labels
-    const feeInput = document.querySelector('input[name="upfrontFees"]');
-    if (feeInput) {
-      const parent = feeInput.closest('.input-wrapper');
-      // Input component handles suffix display internally
+    // Update fees section label
+    const feesSection = document.querySelector('label[for="input-upfrontFees"]');
+    if (feesSection) {
+      feesSection.childNodes[0].textContent = region === 'uk' ? 'Arrangement Fees' : 'Closing Costs';
     }
 
     // Refresh calculation
