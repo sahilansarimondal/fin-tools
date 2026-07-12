@@ -1,210 +1,874 @@
 ---
 import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
 import ResultCard from '../ui/ResultCard.astro';
+import type { DebtInput } from '../../utils/debt-avalanche-snowball-calculations';
 ---
 
-<div id="debt-avalanche-snowball-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+<div id="das-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
   <div class="grid gap-6 lg:grid-cols-12">
-    <!-- LEFT PANEL: Inputs -->
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
     <div class="lg:col-span-5">
       <Card padding="lg" class="lg:sticky lg:top-24">
-        <div class="mb-4">
-          <p class="mb-2 text-sm font-semibold text-ink">Add Your Debts</p>
-          <p class="text-xs text-body">Enter each debt's balance, APR, and minimum payment. Set your monthly budget below.</p>
-        </div>
-
-        <div id="debt-list" class="space-y-4">
-          <!-- Debt rows injected by JS -->
-        </div>
-
-        <button id="add-debt-btn" type="button" class="mt-3 w-full rounded-lg border-2 border-dashed border-hairline py-2 text-sm font-medium text-body transition-colors hover:border-ink hover:text-ink">
-          + Add Another Debt
-        </button>
-
-        <div class="mt-6 border-t border-hairline pt-4">
-          <label class="mb-2 block text-sm font-medium text-ink" for="monthly-budget">Total Monthly Budget</label>
-          <div class="relative">
-            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-body" id="currency-symbol">$</span>
-            <input id="monthly-budget" type="number" value="500" min="0" step="50" class="w-full rounded-lg border border-hairline bg-canvas py-2 pl-8 pr-3 text-sm text-ink outline-none transition-colors focus:border-link" />
+        <form id="das-form" class="space-y-4">
+          <!-- Currency Toggle -->
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-medium uppercase tracking-wider text-mute">Currency</span>
+            <div id="das-currency-toggle" class="inline-flex overflow-hidden rounded-md border border-hairline" role="radiogroup" aria-label="Currency">
+              <button
+                type="button"
+                class="das-currency-btn px-3 py-1.5 text-sm font-medium transition-colors"
+                data-currency="usd"
+                role="radio"
+                aria-checked="true"
+              >USD ($)</button>
+              <button
+                type="button"
+                class="das-currency-btn px-3 py-1.5 text-sm font-medium transition-colors"
+                data-currency="gbp"
+                role="radio"
+                aria-checked="false"
+              >GBP (£)</button>
+            </div>
+            <input type="hidden" name="currency" id="das-currency-input" value="usd" />
           </div>
-          <p class="mt-1 text-xs text-mute">Must cover all minimum payments plus extra toward your target debt.</p>
-        </div>
+
+          <!-- Monthly Budget -->
+          <Input
+            label="Total Monthly Budget"
+            name="monthlyBudget"
+            type="number"
+            value={1000}
+            min={1}
+            max={1000000}
+            step={50}
+            suffix="$"
+            hideArrows
+            required
+            tooltip="The total absolute maximum cash amount you can deploy toward all debts combined each month."
+          />
+
+          <!-- Debt Rows Section -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-medium uppercase tracking-wider text-mute">Your Debts</span>
+              <button
+                type="button"
+                id="das-add-debt-btn"
+                class="inline-flex items-center gap-1 rounded-md border border-hairline bg-canvas-soft px-2.5 py-1 text-xs font-medium text-link transition-colors hover:bg-link/10 hover:border-link/30"
+              >
+                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Add Debt
+              </button>
+            </div>
+
+            <div id="das-debt-rows" class="space-y-3">
+              <!-- Debt Row 0 -->
+              <div class="das-debt-row rounded-lg border border-hairline bg-canvas-soft p-4" data-index="0">
+                <div class="mb-3 flex items-center justify-between">
+                  <span class="text-xs font-medium uppercase tracking-wider text-mute">Debt #1</span>
+                  <button
+                    type="button"
+                    class="das-remove-btn inline-flex h-7 w-7 items-center justify-center rounded-md text-mute transition-colors hover:bg-error/10 hover:text-error"
+                    data-index="0"
+                    aria-label="Remove debt"
+                  >
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="grid gap-3 sm:grid-cols-2">
+                  <div class="sm:col-span-2">
+                    <Input
+                      label="Debt Name"
+                      name="debt-0-name"
+                      type="text"
+                      value="Credit Card A"
+                      placeholder="e.g. Credit Card A"
+                      required
+                    />
+                  </div>
+                  <Input
+                    label="Current Balance"
+                    name="debt-0-balance"
+                    type="number"
+                    value={5000}
+                    min={1}
+                    max={1000000}
+                    step={100}
+                    suffix="$"
+                    hideArrows
+                    required
+                  />
+                  <Input
+                    label="Interest Rate (APR)"
+                    name="debt-0-apr"
+                    type="number"
+                    value={20}
+                    min={0}
+                    max={100}
+                    step={0.01}
+                    suffix="%"
+                    hideArrows
+                    required
+                  />
+                  <Input
+                    label="Min. Monthly Payment"
+                    name="debt-0-minPayment"
+                    type="number"
+                    value={150}
+                    min={1}
+                    max={50000}
+                    step={10}
+                    suffix="$"
+                    hideArrows
+                    required
+                  />
+                </div>
+              </div>
+
+              <!-- Debt Row 1 -->
+              <div class="das-debt-row rounded-lg border border-hairline bg-canvas-soft p-4" data-index="1">
+                <div class="mb-3 flex items-center justify-between">
+                  <span class="text-xs font-medium uppercase tracking-wider text-mute">Debt #2</span>
+                  <button
+                    type="button"
+                    class="das-remove-btn inline-flex h-7 w-7 items-center justify-center rounded-md text-mute transition-colors hover:bg-error/10 hover:text-error"
+                    data-index="1"
+                    aria-label="Remove debt"
+                  >
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <div class="grid gap-3 sm:grid-cols-2">
+                  <div class="sm:col-span-2">
+                    <Input
+                      label="Debt Name"
+                      name="debt-1-name"
+                      type="text"
+                      value="Car Loan"
+                      placeholder="e.g. Car Loan"
+                      required
+                    />
+                  </div>
+                  <Input
+                    label="Current Balance"
+                    name="debt-1-balance"
+                    type="number"
+                    value={2000}
+                    min={1}
+                    max={1000000}
+                    step={100}
+                    suffix="$"
+                    hideArrows
+                    required
+                  />
+                  <Input
+                    label="Interest Rate (APR)"
+                    name="debt-1-apr"
+                    type="number"
+                    value={5}
+                    min={0}
+                    max={100}
+                    step={0.01}
+                    suffix="%"
+                    hideArrows
+                    required
+                  />
+                  <Input
+                    label="Min. Monthly Payment"
+                    name="debt-1-minPayment"
+                    type="number"
+                    value={50}
+                    min={1}
+                    max={50000}
+                    step={10}
+                    suffix="$"
+                    hideArrows
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
       </Card>
     </div>
 
-    <!-- RIGHT PANEL: Results -->
-    <div class="lg:col-span-7">
-      <div class="mb-6 grid gap-4 sm:grid-cols-3">
-        <ResultCard label="Avalanche Interest" id="avalanche-interest" value="$0" description="Total interest paid" />
-        <ResultCard label="Snowball Interest" id="snowball-interest" value="$0" description="Total interest paid" />
-        <ResultCard label="Interest Saved" id="interest-saved" value="$0" description="With avalanche method" />
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Headline KPI -->
+      <div id="das-headline-card" class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm text-center">
+        <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Interest Saved with Avalanche</p>
+        <p id="das-interest-saved" class="text-3xl font-semibold tabular-nums text-success-deep sm:text-4xl">—</p>
+        <p id="das-interest-saved-label" class="mt-1 text-sm text-mute">Add debts to see savings</p>
       </div>
 
-      <div class="mb-6 grid gap-4 sm:grid-cols-2">
-        <ResultCard label="Avalanche Payoff Date" id="avalanche-date" value="—" description="Debt-free date" />
-        <ResultCard label="Snowball Payoff Date" id="snowball-date" value="—" description="Debt-free date" />
+      <!-- Error Banner -->
+      <div id="das-error-banner" class="hidden rounded-lg border border-error/30 bg-error/5 p-4">
+        <p id="das-error-text" class="text-sm text-error"></p>
       </div>
 
-      <!-- Chart placeholder -->
+      <!-- Negative Amortization Warning -->
+      <div id="das-warning-banner" class="hidden rounded-lg border border-warning/30 bg-warning/5 p-4">
+        <p id="das-warning-text" class="text-sm text-warning"></p>
+      </div>
+
+      <!-- Strategy Comparison Cards -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Avalanche Total Interest"
+          valueId="das-avalanche-interest"
+          value="—"
+          valueClass="text-ink"
+          description="Mathematically optimal"
+        />
+        <ResultCard
+          label="Snowball Total Interest"
+          valueId="das-snowball-interest"
+          value="—"
+          valueClass="text-ink"
+          description="Psychologically motivating"
+        />
+      </div>
+
+      <!-- Time Comparison Cards -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Avalanche Time to Freedom"
+          valueId="das-avalanche-time"
+          value="—"
+          valueClass="text-ink"
+          description="Months until debt-free"
+        />
+        <ResultCard
+          label="Snowball Time to Freedom"
+          valueId="das-snowball-time"
+          value="—"
+          valueClass="text-ink"
+          description="Months until debt-free"
+        />
+      </div>
+
+      <!-- Chart Container -->
       <Card padding="lg">
-        <h3 class="mb-4 text-sm font-semibold text-ink">Payoff Timeline</h3>
-        <div class="flex h-64 items-center justify-center rounded-lg bg-canvas-soft-2">
-          <p class="text-sm text-mute">Add debts above to see the payoff comparison chart.</p>
+        <p class="mb-3 text-xs font-medium uppercase tracking-wider text-mute">Payoff Timeline Comparison</p>
+        <div class="relative h-64 sm:h-80">
+          <canvas id="das-timeline-chart" role="img" aria-label="Line chart comparing Avalanche and Snowball payoff timelines"></canvas>
         </div>
       </Card>
+
+      <!-- Strategy Explanation Cards -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
+          <div class="mb-3 flex items-center gap-2">
+            <svg class="h-5 w-5 text-link" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+            </svg>
+            <h3 class="text-sm font-semibold text-ink">Debt Avalanche</h3>
+          </div>
+          <p class="text-xs leading-relaxed text-body">
+            Targets highest APR first. Mathematically optimal — minimizes total interest paid.
+          </p>
+        </div>
+        <div class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm">
+          <div class="mb-3 flex items-center gap-2">
+            <svg class="h-5 w-5 text-success-deep" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+            <h3 class="text-sm font-semibold text-ink">Debt Snowball</h3>
+          </div>
+          <p class="text-xs leading-relaxed text-body">
+            Targets smallest balance first. Psychologically motivating — quick wins build momentum.
+          </p>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <p class="text-xs text-mute">
+        This calculator provides estimates for educational purposes. Actual payoff timelines may vary based on payment timing, fees, and rate changes.
+      </p>
     </div>
   </div>
 </div>
 
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
 <script>
-  (function () {
-    // Selection state
-    var debts = [];
-    var currency = '$';
+  import { calculateDebtPayoff } from '../../utils/debt-avalanche-snowball-calculations';
 
-    function formatCurrency(value) {
-      return currency + Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  var chart = null;
+  var currentCurrency = 'usd';
+  var MAX_DEBTS = 10;
+
+  // ---- Currency Formatting ----
+
+  function formatMoney(value) {
+    if (currentCurrency === 'gbp') {
+      return '£' + Number(value).toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
     }
+    return '$' + Number(value).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
 
-    function addDebtRow(balance, apr, minimum, name) {
-      var list = document.getElementById('debt-list');
-      var index = debts.length;
-      debts.push({ balance: balance || 0, apr: apr || 0, minimum: minimum || 0, name: name || 'Debt ' + (index + 1) });
+  // ---- Currency Toggle ----
 
-      var row = document.createElement('div');
-      row.className = 'rounded-lg border border-hairline bg-canvas-soft-2 p-3 space-y-3';
-      row.dataset.index = index;
+  function updateCurrencyDisplay(currency) {
+    var symbol = currency === 'gbp' ? '£' : '$';
+    currentCurrency = currency;
 
-      row.innerHTML =
-        '<div class="flex items-center justify-between">' +
-          '<input type="text" class="w-full rounded border border-hairline bg-canvas px-2 py-1 text-sm font-medium text-ink outline-none" value="' + debts[index].name + '" placeholder="Debt name" />' +
-          '<button type="button" class="ml-2 text-mute hover:text-error" data-remove="' + index + '">' +
-            '<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>' +
-          '</button>' +
-        '</div>' +
-        '<div class="grid grid-cols-3 gap-2">' +
-          '<div><label class="mb-1 block text-xs text-mute">Balance</label><div class="relative"><span class="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-body">$</span><input type="number" class="w-full rounded border border-hairline bg-canvas py-1 pl-5 pr-2 text-sm text-ink outline-none" value="' + debts[index].balance + '" min="0" step="100" data-field="balance" /></div></div>' +
-          '<div><label class="mb-1 block text-xs text-mute">APR %</label><input type="number" class="w-full rounded border border-hairline bg-canvas py-1 px-2 text-sm text-ink outline-none" value="' + debts[index].apr + '" min="0" max="100" step="0.1" data-field="apr" /></div>' +
-          '<div><label class="mb-1 block text-xs text-mute">Min Payment</label><div class="relative"><span class="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-body">$</span><input type="number" class="w-full rounded border border-hairline bg-canvas py-1 pl-5 pr-2 text-sm text-ink outline-none" value="' + debts[index].minimum + '" min="0" step="10" data-field="minimum" /></div></div>' +
-        '</div>';
+    // Update hidden input
+    document.getElementById('das-currency-input').value = currency;
 
-      list.appendChild(row);
-    }
+    // Update toggle buttons
+    var btns = document.querySelectorAll('.das-currency-btn');
+    btns.forEach(function (btn) {
+      var isActive = btn.dataset.currency === currency;
+      btn.className = isActive
+        ? 'das-currency-btn px-3 py-1.5 text-sm font-medium transition-colors bg-ink text-canvas'
+        : 'das-currency-btn px-3 py-1.5 text-sm font-medium transition-colors bg-canvas-soft text-body';
+      btn.setAttribute('aria-checked', isActive ? 'true' : 'false');
+    });
 
-    function resetCalculator() {
-      debts = [];
-      document.getElementById('debt-list').innerHTML = '';
-      addDebtRow(5000, 22.9, 150, 'Credit Card');
-      addDebtRow(15000, 6.8, 300, 'Car Loan');
-      addDebtRow(25000, 4.5, 400, 'Student Loan');
-      recalculate();
-    }
-
-    function recalculate() {
-      // Gather current values from DOM
-      var rows = document.querySelectorAll('#debt-list > div');
-      debts = [];
-      rows.forEach(function (row) {
-        var inputs = row.querySelectorAll('input');
-        var name = inputs[0].value;
-        var balance = parseFloat(inputs[1].value) || 0;
-        var apr = parseFloat(inputs[2].value) || 0;
-        var minimum = parseFloat(inputs[3].value) || 0;
-        debts.push({ name: name, balance: balance, apr: apr, minimum: minimum });
-      });
-
-      var budget = parseFloat(document.getElementById('monthly-budget').value) || 0;
-
-      // Check for minimum payment overflow
-      var totalMin = debts.reduce(function (sum, d) { return sum + d.minimum; }, 0);
-      if (totalMin > budget) {
-        document.getElementById('avalanche-interest').querySelector('.result-value').textContent = 'Error';
-        document.getElementById('snowball-interest').querySelector('.result-value').textContent = 'Error';
-        document.getElementById('interest-saved').querySelector('.result-value').textContent = 'Error';
-        document.getElementById('avalanche-date').querySelector('.result-value').textContent = '—';
-        document.getElementById('snowball-date').querySelector('.result-value').textContent = '—';
-        return;
+    // Update monthly budget suffix
+    var budgetInput = document.querySelector('[name="monthlyBudget"]');
+    if (budgetInput) {
+      var wrapper = budgetInput.closest('.relative');
+      if (wrapper) {
+        var suffix = wrapper.querySelector('.text-mute');
+        if (suffix) suffix.textContent = symbol;
       }
+    }
 
-      // Run both simulations
-      function simulate(orderFn) {
-        var remaining = debts.map(function (d) { return { name: d.name, balance: d.balance, apr: d.apr, minimum: d.minimum }; });
-        var totalInterest = 0;
-        var months = 0;
+    // Update all debt balance and minPayment suffixes
+    document.querySelectorAll('[name$="-balance"], [name$="-minPayment"]').forEach(function (input) {
+      var wrapper = input.closest('.relative');
+      if (wrapper) {
+        var suffix = wrapper.querySelector('.text-mute');
+        if (suffix) suffix.textContent = symbol;
+      }
+    });
+  }
 
-        while (remaining.length > 0 && months < 600) {
-          months++;
-          var extra = budget;
-          remaining.forEach(function (d) {
-            var interest = d.balance * (d.apr / 100 / 12);
-            totalInterest += interest;
-            var payment = Math.min(d.minimum, d.balance + interest);
-            d.balance -= (payment - interest);
-            extra -= payment;
-          });
+  // ---- Debt Row Management ----
 
-          // Sort by orderFn
-          remaining.sort(orderFn);
+  function getDebtCount() {
+    return document.querySelectorAll('.das-debt-row').length;
+  }
 
-          // Apply extra to first debt
-          if (remaining.length > 0 && extra > 0) {
-            var target = remaining[0];
-            var payExtra = Math.min(extra, target.balance);
-            target.balance -= payExtra;
+  function reindexRows() {
+    var rows = document.querySelectorAll('.das-debt-row');
+    rows.forEach(function (row, idx) {
+      // Update data-index
+      row.dataset.index = idx;
+
+      // Update header text
+      var header = row.querySelector('.text-xs.font-medium.uppercase');
+      if (header) header.textContent = 'Debt #' + (idx + 1);
+
+      // Update remove button data-index
+      var removeBtn = row.querySelector('.das-remove-btn');
+      if (removeBtn) removeBtn.dataset.index = idx;
+
+      // Update all input names, IDs, and label for attributes
+      var inputs = row.querySelectorAll('input');
+      inputs.forEach(function (input) {
+        var oldName = input.name;
+        if (oldName) {
+          var parts = oldName.split('-');
+          if (parts.length >= 2) {
+            parts[1] = idx.toString();
+            var newName = parts.join('-');
+            input.name = newName;
+            input.id = 'input-' + newName;
           }
-
-          remaining = remaining.filter(function (d) { return d.balance > 0.01; });
         }
-
-        return { interest: totalInterest, months: months };
-      }
-
-      var avalanceResult = simulate(function (a, b) { return b.apr - a.apr; });
-      var snowballResult = simulate(function (a, b) { return a.balance - b.balance; });
-
-      var avalanceInterest = avalanceResult.interest;
-      var snowballInterest = snowballResult.interest;
-      var saved = snowballInterest - avalanceInterest;
-
-      var now = new Date();
-
-      document.getElementById('avalanche-interest').querySelector('.result-value').textContent = formatCurrency(avalanceInterest);
-      document.getElementById('snowball-interest').querySelector('.result-value').textContent = formatCurrency(snowballInterest);
-      document.getElementById('interest-saved').querySelector('.result-value').textContent = formatCurrency(Math.max(0, saved));
-
-      function getDateStr(months) {
-        var d = new Date(now);
-        d.setMonth(d.getMonth() + months);
-        return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-      }
-
-      document.getElementById('avalanche-date').querySelector('.result-value').textContent = getDateStr(avalanceResult.months);
-      document.getElementById('snowball-date').querySelector('.result-value').textContent = getDateStr(snowballResult.months);
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-      resetCalculator();
-
-      document.getElementById('add-debt-btn').addEventListener('click', function () {
-        addDebtRow(0, 0, 0, 'Debt ' + (debts.length + 1));
       });
 
-      document.getElementById('monthly-budget').addEventListener('input', recalculate);
-
-      document.getElementById('debt-list').addEventListener('input', function (e) {
-        recalculate();
-      });
-
-      document.getElementById('debt-list').addEventListener('click', function (e) {
-        var btn = e.target.closest('[data-remove]');
-        if (btn) {
-          var row = btn.closest('[data-index]');
-          if (row) {
-            row.remove();
-            recalculate();
+      // Update label for attributes
+      var labels = row.querySelectorAll('label');
+      labels.forEach(function (label) {
+        var oldFor = label.getAttribute('for');
+        if (oldFor && oldFor.startsWith('input-debt-')) {
+          var parts = oldFor.split('-');
+          if (parts.length >= 3) {
+            parts[2] = idx.toString();
+            label.setAttribute('for', parts.join('-'));
           }
         }
       });
     });
-  })();
+
+    // Update remove button visibility
+    updateRemoveButtons();
+  }
+
+  function updateRemoveButtons() {
+    var count = getDebtCount();
+    var removeBtns = document.querySelectorAll('.das-remove-btn');
+    removeBtns.forEach(function (btn) {
+      if (count <= 1) {
+        btn.classList.add('opacity-30', 'pointer-events-none');
+      } else {
+        btn.classList.remove('opacity-30', 'pointer-events-none');
+      }
+    });
+  }
+
+  function updateAddDebtButton() {
+    var btn = document.getElementById('das-add-debt-btn');
+    var count = getDebtCount();
+    if (count >= MAX_DEBTS) {
+      btn.classList.add('opacity-30', 'pointer-events-none');
+    } else {
+      btn.classList.remove('opacity-30', 'pointer-events-none');
+    }
+  }
+
+  function addDebtRow() {
+    var count = getDebtCount();
+    if (count >= MAX_DEBTS) return;
+
+    var newIndex = count;
+    var rows = document.querySelectorAll('.das-debt-row');
+    var lastRow = rows[rows.length - 1];
+    if (!lastRow) return;
+
+    var clone = lastRow.cloneNode(true);
+
+    // Clear values
+    var inputs = clone.querySelectorAll('input');
+    inputs.forEach(function (input) {
+      if (input.type === 'text') {
+        input.value = '';
+      } else if (input.type === 'number') {
+        input.value = '';
+      }
+    });
+
+    // Set data-index
+    clone.dataset.index = newIndex;
+
+    // Update header
+    var header = clone.querySelector('.text-xs.font-medium.uppercase');
+    if (header) header.textContent = 'Debt #' + (newIndex + 1);
+
+    // Update remove button
+    var removeBtn = clone.querySelector('.das-remove-btn');
+    if (removeBtn) removeBtn.dataset.index = newIndex;
+
+    // Update input names, IDs, and label for attributes
+    inputs.forEach(function (input) {
+      var oldName = input.name;
+      if (oldName) {
+        var parts = oldName.split('-');
+        if (parts.length >= 2 && !isNaN(parseInt(parts[1]))) {
+          parts[1] = newIndex.toString();
+          var newName = parts.join('-');
+          input.name = newName;
+          input.id = 'input-' + newName;
+        }
+      }
+    });
+
+    var labels = clone.querySelectorAll('label');
+    labels.forEach(function (label) {
+      var oldFor = label.getAttribute('for');
+      if (oldFor) {
+        var parts = oldFor.split('-');
+        if (parts.length >= 3 && !isNaN(parseInt(parts[2]))) {
+          parts[2] = newIndex.toString();
+          label.setAttribute('for', parts.join('-'));
+        }
+      }
+    });
+
+    // Apply current currency symbol to new row's currency suffixes
+    var symbol = currentCurrency === 'gbp' ? '£' : '$';
+    var currencyInputs = clone.querySelectorAll('[name$="-balance"], [name$="-minPayment"]');
+    currencyInputs.forEach(function (input) {
+      var wrapper = input.closest('.relative');
+      if (wrapper) {
+        var suffix = wrapper.querySelector('.text-mute');
+        if (suffix) suffix.textContent = symbol;
+      }
+    });
+
+    document.getElementById('das-debt-rows').appendChild(clone);
+
+    updateRemoveButtons();
+    updateAddDebtButton();
+    updateResults();
+  }
+
+  function removeDebtRow(index) {
+    var rows = document.querySelectorAll('.das-debt-row');
+    if (rows.length <= 1) return;
+
+    var rowToRemove = rows[parseInt(index)];
+    if (rowToRemove) {
+      rowToRemove.remove();
+      reindexRows();
+      updateAddDebtButton();
+      updateResults();
+    }
+  }
+
+  // ---- Negative Amortization Check ----
+
+  function checkNegativeAmortization(debts) {
+    return debts.some(function (d) {
+      return d.balance > 0 && d.balance * (d.apr / 100 / 12) > d.minPayment;
+    });
+  }
+
+  // ---- Read Form Data ----
+
+  function getFormData() {
+    var rows = document.querySelectorAll('.das-debt-row');
+    var debts = [];
+    var monthlyBudget = Number(document.querySelector('[name="monthlyBudget"]')?.value) || 0;
+
+    rows.forEach(function (row) {
+      var nameInput = row.querySelector('[name$="-name"]');
+      var balanceInput = row.querySelector('[name$="-balance"]');
+      var aprInput = row.querySelector('[name$="-apr"]');
+      var minPaymentInput = row.querySelector('[name$="-minPayment"]');
+
+      var name = nameInput ? nameInput.value.trim() : '';
+      var balance = Number(balanceInput ? balanceInput.value : 0) || 0;
+      var apr = Number(aprInput ? aprInput.value : 0) || 0;
+      var minPayment = Number(minPaymentInput ? minPaymentInput.value : 0) || 0;
+
+      if (name) {
+        debts.push({ name: name, balance: balance, apr: apr, minPayment: minPayment });
+      }
+    });
+
+    return { debts: debts, monthlyBudget: monthlyBudget };
+  }
+
+  // ---- Results Update ----
+
+  function updateResults() {
+    var input = getFormData();
+    var errorBanner = document.getElementById('das-error-banner');
+    var errorText = document.getElementById('das-error-text');
+    var warningBanner = document.getElementById('das-warning-banner');
+    var warningText = document.getElementById('das-warning-text');
+    var headlineValue = document.getElementById('das-interest-saved');
+    var headlineLabel = document.getElementById('das-interest-saved-label');
+    var headlineCard = document.getElementById('das-headline-card');
+
+    // Hide banners initially
+    errorBanner.classList.add('hidden');
+    warningBanner.classList.add('hidden');
+
+    // Reset headline
+    headlineValue.textContent = '—';
+    headlineValue.className = 'text-3xl font-semibold tabular-nums sm:text-4xl';
+    headlineLabel.textContent = 'Add debts to see savings';
+    headlineCard.className = 'rounded-lg border border-hairline bg-canvas p-6 shadow-sm text-center';
+
+    // Reset result cards
+    document.getElementById('das-avalanche-interest').textContent = '—';
+    document.getElementById('das-snowball-interest').textContent = '—';
+    document.getElementById('das-avalanche-time').textContent = '—';
+    document.getElementById('das-snowball-time').textContent = '—';
+
+    // Destroy previous chart
+    if (chart) {
+      chart.destroy();
+      chart = null;
+    }
+
+    // Need at least one debt with a name
+    if (input.debts.length === 0) return;
+
+    // Check negative amortization
+    if (checkNegativeAmortization(input.debts)) {
+      warningBanner.classList.remove('hidden');
+      warningText.textContent = 'One or more debts have minimum payments that don\'t cover monthly interest (negative amortization). The balance will grow each month if only minimum payments are made.';
+    }
+
+    // Run calculation
+    var result = calculateDebtPayoff(input);
+    var symbol = currentCurrency === 'gbp' ? '£' : '$';
+
+    if (!result.budgetSufficient) {
+      errorBanner.classList.remove('hidden');
+      errorText.textContent = result.error || 'Budget is insufficient to cover minimum payments.';
+      return;
+    }
+
+    // Update headline interest saved
+    if (result.interestSaved > 0) {
+      headlineValue.textContent = symbol + Number(result.interestSaved).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+      headlineValue.className = 'text-3xl font-semibold tabular-nums text-success-deep sm:text-4xl';
+      headlineLabel.textContent = 'Avalanche saves you money vs. Snowball';
+      headlineCard.className = 'rounded-lg border border-success/30 bg-success/5 p-6 shadow-sm text-center';
+    } else if (result.interestSaved === 0) {
+      headlineValue.textContent = symbol + '0';
+      headlineValue.className = 'text-3xl font-semibold tabular-nums text-ink sm:text-4xl';
+      headlineLabel.textContent = 'Both strategies yield the same interest';
+      headlineCard.className = 'rounded-lg border border-hairline bg-canvas p-6 shadow-sm text-center';
+    } else {
+      headlineValue.textContent = '−' + symbol + Number(Math.abs(result.interestSaved)).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+      headlineValue.className = 'text-3xl font-semibold tabular-nums text-warning sm:text-4xl';
+      headlineLabel.textContent = 'Snowball saves you money vs. Avalanche (unusual)';
+      headlineCard.className = 'rounded-lg border border-warning/30 bg-warning/5 p-6 shadow-sm text-center';
+    }
+
+    // Strategy interest cards
+    document.getElementById('das-avalanche-interest').textContent = formatMoney(result.avalanche.totalInterestPaid);
+    document.getElementById('das-snowball-interest').textContent = formatMoney(result.snowball.totalInterestPaid);
+
+    // Time cards
+    document.getElementById('das-avalanche-time').textContent = result.avalanche.totalMonths > 0 ? result.avalanche.totalMonths + ' months' : '—';
+    document.getElementById('das-snowball-time').textContent = result.snowball.totalMonths > 0 ? result.snowball.totalMonths + ' months' : '—';
+
+    // Render chart
+    renderChart(result);
+  }
+
+  // ---- Chart Rendering ----
+
+  function renderChart(result) {
+    var ctx = document.getElementById('das-timeline-chart');
+    if (!ctx) return;
+    if (chart) chart.destroy();
+
+    var isDark = document.documentElement.classList.contains('dark');
+    var gridColor = isDark ? '#262626' : '#ebebeb';
+    var textColor = isDark ? '#737373' : '#888888';
+    var tooltipBg = isDark ? '#ededed' : '#171717';
+    var tooltipText = isDark ? '#171717' : '#ffffff';
+
+    // Strategy colors
+    var inkBorder = isDark ? '#ededed' : '#171717';
+    var inkBg = isDark ? 'rgba(237, 237, 237, 0.2)' : 'rgba(23, 23, 23, 0.15)';
+    var successBorder = isDark ? '#29bc9b' : '#1a9e82';
+    var successBg = isDark ? 'rgba(41, 188, 155, 0.2)' : 'rgba(26, 158, 130, 0.15)';
+
+    // Build timeline data
+    var maxMonths = Math.max(result.avalanche.timeline.length, result.snowball.timeline.length);
+    if (maxMonths === 0) return;
+
+    var labels = [];
+    for (var i = 0; i < maxMonths; i++) {
+      labels.push('Month ' + (i + 1));
+    }
+
+    var avalancheData = [];
+    for (var i = 0; i < maxMonths; i++) {
+      if (i < result.avalanche.timeline.length) {
+        avalancheData.push(result.avalanche.timeline[i].totalBalance);
+      } else {
+        avalancheData.push(0);
+      }
+    }
+
+    var snowballData = [];
+    for (var i = 0; i < maxMonths; i++) {
+      if (i < result.snowball.timeline.length) {
+        snowballData.push(result.snowball.timeline[i].totalBalance);
+      } else {
+        snowballData.push(0);
+      }
+    }
+
+    chart = new window.Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Avalanche',
+            data: avalancheData,
+            backgroundColor: inkBg,
+            borderColor: inkBorder,
+            borderWidth: 2,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            pointHitRadius: 10,
+          },
+          {
+            label: 'Snowball',
+            data: snowballData,
+            backgroundColor: successBg,
+            borderColor: successBorder,
+            borderWidth: 2,
+            fill: true,
+            tension: 0.3,
+            pointRadius: 0,
+            pointHitRadius: 10,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 12,
+              usePointStyle: false,
+              padding: 16,
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: 500,
+            },
+            bodyFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+            },
+            callbacks: {
+              label: function (context) {
+                if (context.parsed.y !== null && context.parsed.y !== undefined) {
+                  return context.dataset.label + ': ' + formatMoney(context.parsed.y);
+                }
+                return context.dataset.label + ': ' + formatMoney(0);
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              maxTicksLimit: 15,
+            },
+            border: {
+              display: false,
+            },
+          },
+          y: {
+            grid: {
+              color: gridColor,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              callback: function (value) {
+                return formatMoney(value);
+              },
+            },
+            border: {
+              display: false,
+            },
+            min: 0,
+          },
+        },
+      },
+    });
+  }
+
+  // ---- Initialization ----
+
+  function ensureChartLoaded(callback) {
+    if (typeof window.Chart !== 'undefined') {
+      callback();
+      return;
+    }
+    var script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js';
+    script.onload = callback;
+    document.head.appendChild(script);
+  }
+
+  function init() {
+    // Currency toggle
+    var currencyBtns = document.querySelectorAll('.das-currency-btn');
+    currencyBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var currency = btn.dataset.currency;
+        updateCurrencyDisplay(currency);
+        updateResults();
+      });
+    });
+
+    // Add debt button
+    document.getElementById('das-add-debt-btn').addEventListener('click', addDebtRow);
+
+    // Remove debt (event delegation)
+    document.getElementById('das-debt-rows').addEventListener('click', function (e) {
+      var btn = e.target.closest('.das-remove-btn');
+      if (btn) {
+        var index = btn.dataset.index;
+        removeDebtRow(index);
+      }
+    });
+
+    // Form input changes (event delegation on form)
+    var form = document.getElementById('das-form');
+    form.addEventListener('input', function () {
+      updateResults();
+    });
+
+    // Initialize currency display
+    updateCurrencyDisplay('usd');
+
+    // Set initial remove button state
+    updateRemoveButtons();
+    updateAddDebtButton();
+
+    // Run initial calculation
+    ensureChartLoaded(function () {
+      updateResults();
+    });
+
+    // Theme change observer
+    var observer = new MutationObserver(function () {
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    // Also listen for prefers-color-scheme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+      updateResults();
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
 </script>
