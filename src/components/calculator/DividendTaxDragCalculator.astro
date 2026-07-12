@@ -1,450 +1,268 @@
 ---
 import Card from '../ui/Card.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+import Tooltip from '../ui/Tooltip.astro';
+import { defaultInput, presets } from '../../utils/dividend-tax-drag-calculations';
 ---
 
-<div
-  class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12"
-  id="dividend-tax-drag-calculator"
->
-  <!-- Hero text -->
-  <div class="mb-8 text-center">
-    <p class="mb-2 font-mono text-xs uppercase tracking-wider text-mute">
-      Interactive Tool
-    </p>
-    <h2
-      class="mb-3 text-2xl font-semibold tracking-tight text-ink sm:text-3xl"
-      style="letter-spacing: -0.02em;"
-    >
-      Dividend Tax Drag Modeler
-    </h2>
-    <p class="mx-auto max-w-2xl text-sm text-body">
-      Compare the growth of dividend-paying investments in a Taxable Account vs
-      a Tax-Advantaged Account over time.
-    </p>
-  </div>
-
-  <!-- Two-column layout -->
+<div id="dtd-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
   <div class="grid gap-6 lg:grid-cols-12">
-    <!-- Left: Controls -->
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
     <div class="lg:col-span-5">
       <!-- Preset buttons -->
       <div class="mb-4 flex flex-wrap gap-2">
-        <button
-          data-preset="0"
-          class="preset-btn rounded-full cursor-pointer bg-ink px-3 py-1.5 text-xs font-medium text-canvas transition-colors"
-          >High-Yield Div Growth</button
-        >
-        <button
-          data-preset="1"
-          class="preset-btn rounded-full cursor-pointer bg-canvas-soft-2 px-3 py-1.5 text-xs font-medium text-body transition-colors hover:text-ink"
-          >Aristocrats Conservative</button
-        >
-        <button
-          data-preset="2"
-          class="preset-btn rounded-full cursor-pointer bg-canvas-soft-2 px-3 py-1.5 text-xs font-medium text-body transition-colors hover:text-ink"
-          >Indian Div Value</button
-        >
-        <button
-          data-preset="3"
-          class="preset-btn rounded-full cursor-pointer bg-canvas-soft-2 px-3 py-1.5 text-xs font-medium text-body transition-colors hover:text-ink"
-          >REIT Heavy</button
-        >
-        <button
-          data-preset="4"
-          class="preset-btn rounded-full cursor-pointer bg-canvas-soft-2 px-3 py-1.5 text-xs font-medium text-body transition-colors hover:text-ink"
-          >Low Tax / Roth</button
-        >
+        {
+          presets.map((preset, idx) => (
+            <button
+              data-preset={idx}
+              class={`preset-btn rounded-full cursor-pointer px-3 py-1.5 text-xs font-medium transition-colors ${idx === 0 ? 'bg-ink text-canvas' : 'bg-canvas-soft-2 text-body hover:text-ink'}`}
+            >
+              {preset.name}
+            </button>
+          ))
+        }
       </div>
 
-      <!-- Controls card -->
       <Card padding="lg" class="lg:sticky lg:top-24">
-        <!-- Reinvest toggle -->
-        <div class="mb-6 flex items-center justify-between">
-          <div>
-            <label class="text-sm font-medium text-ink"
-              >Reinvest Dividends</label
-            >
-            <p class="text-xs text-mute">
-              Toggle between reinvesting or taking dividends as cash
-            </p>
-          </div>
-          <button
-            id="reinvest-toggle"
-            role="switch"
-            aria-checked="true"
-            class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full bg-ink transition-colors"
-          >
-            <span
-              id="reinvest-dot"
-              class="pointer-events-none inline-block h-5 w-5 translate-x-5 transform rounded-full bg-canvas shadow-sm ring-0 transition-transform"
-            ></span>
-          </button>
-        </div>
-
-        <!-- Sliders -->
-        <!-- Initial Investment -->
-        <div class="mb-4 flex flex-col gap-2">
-          <div class="flex items-center justify-between">
-            <label for="slider-initial" class="text-sm font-medium text-ink"
-              >Initial Investment</label
-            >
-            <span
-              id="display-initial"
-              class="font-mono text-sm font-medium text-ink tabular-nums"
-              >$10,000</span
-            >
-          </div>
-          <input
-            id="slider-initial"
-            type="range"
-            value="10000"
-            min="1000"
-            max="1000000"
-            step="1000"
-            class="w-full accent-ink"
+        <form id="dtd-form" class="space-y-6">
+          <!-- 1. Initial Investment -->
+          <Slider
+            label="Initial Investment"
+            name="initialInvestment"
+            value={defaultInput.initialInvestment}
+            min={1000}
+            max={1000000}
+            step={1000}
+            inputId="dtd-initial"
+            displayId="dtd-initial-display"
+            tooltip="The amount you invest as a lump sum at the start."
           />
-          <div class="flex justify-between text-xs text-mute">
-            <span>$1,000</span><span>$1,000,000</span>
-          </div>
-        </div>
 
-        <!-- Annual Contribution -->
-        <div class="mb-4 flex flex-col gap-2">
-          <div class="flex items-center justify-between">
-            <label
-              for="slider-contribution"
-              class="text-sm font-medium text-ink"
-              >Annual Contribution</label
-            >
-            <span
-              id="display-contribution"
-              class="font-mono text-sm font-medium text-ink tabular-nums"
-              >$6,000</span
-            >
-          </div>
-          <input
-            id="slider-contribution"
-            type="range"
-            value="6000"
-            min="0"
-            max="100000"
-            step="500"
-            class="w-full accent-ink"
+          <!-- 2. Monthly Contribution -->
+          <Slider
+            label="Monthly Contribution"
+            name="monthlyContribution"
+            value={defaultInput.monthlyContribution}
+            min={0}
+            max={5000}
+            step={50}
+            inputId="dtd-monthly"
+            displayId="dtd-monthly-display"
+            tooltip="Additional amount you add to the account each month."
           />
-          <div class="flex justify-between text-xs text-mute">
-            <span>$0</span><span>$100,000</span>
-          </div>
-        </div>
 
-        <!-- Investment Horizon -->
-        <div class="mb-4 flex flex-col gap-2">
-          <div class="flex items-center justify-between">
-            <label for="slider-horizon" class="text-sm font-medium text-ink"
-              >Investment Horizon</label
-            >
-            <span
-              id="display-horizon"
-              class="font-mono text-sm font-medium text-ink tabular-nums"
-              >25 yrs</span
-            >
-          </div>
-          <input
-            id="slider-horizon"
-            type="range"
-            value="25"
-            min="1"
-            max="50"
-            step="1"
-            class="w-full accent-ink"
+          <!-- 3. Time Horizon -->
+          <Slider
+            label="Time Horizon"
+            name="timeHorizon"
+            value={defaultInput.timeHorizon}
+            min={1}
+            max={50}
+            step={1}
+            suffix=" years"
+            inputId="dtd-horizon"
+            displayId="dtd-horizon-display"
+            tooltip="Number of years you plan to hold the investment."
           />
-          <div class="flex justify-between text-xs text-mute">
-            <span>1 yr</span><span>50 yrs</span>
-          </div>
-        </div>
 
-        <!-- Capital Appreciation Rate -->
-        <div class="mb-4 flex flex-col gap-2">
-          <div class="flex items-center justify-between">
-            <label for="slider-gc" class="text-sm font-medium text-ink"
-              >Capital Appreciation Rate</label
-            >
-            <span
-              id="display-gc"
-              class="font-mono text-sm font-medium text-ink tabular-nums"
-              >5.5%</span
-            >
-          </div>
-          <input
-            id="slider-gc"
-            type="range"
-            value="5.5"
-            min="0"
-            max="15"
-            step="0.1"
-            class="w-full accent-ink"
+          <!-- 4. Expected Annual Price Appreciation -->
+          <Slider
+            label="Expected Annual Price Appreciation"
+            name="priceAppreciation"
+            value={Math.round(defaultInput.priceAppreciation * 100)}
+            min={0}
+            max={15}
+            step={0.1}
+            suffix="%"
+            inputId="dtd-appreciation"
+            displayId="dtd-appreciation-display"
+            tooltip="Expected annual growth in share price (excluding dividends)."
           />
-          <div class="flex justify-between text-xs text-mute">
-            <span>0%</span><span>15%</span>
-          </div>
-        </div>
 
-        <!-- Dividend Yield -->
-        <div class="mb-4 flex flex-col gap-2">
-          <div class="flex items-center justify-between">
-            <label for="slider-yield" class="text-sm font-medium text-ink"
-              >Dividend Yield</label
-            >
-            <span
-              id="display-yield"
-              class="font-mono text-sm font-medium text-ink tabular-nums"
-              >3.5%</span
-            >
-          </div>
-          <input
-            id="slider-yield"
-            type="range"
-            value="3.5"
-            min="0"
-            max="15"
-            step="0.1"
-            class="w-full accent-ink"
+          <!-- 5. Annual Dividend Yield -->
+          <Slider
+            label="Annual Dividend Yield"
+            name="dividendYield"
+            value={Math.round(defaultInput.dividendYield * 100)}
+            min={0}
+            max={10}
+            step={0.1}
+            suffix="%"
+            inputId="dtd-yield"
+            displayId="dtd-yield-display"
+            tooltip="Expected annual dividend yield as a percentage of the portfolio value."
           />
-          <div class="flex justify-between text-xs text-mute">
-            <span>0%</span><span>15%</span>
-          </div>
-        </div>
 
-        <!-- Dividend Growth Rate -->
-        <div class="mb-4 flex flex-col gap-2">
-          <div class="flex items-center justify-between">
-            <label for="slider-gd" class="text-sm font-medium text-ink"
-              >Dividend Growth Rate</label
-            >
-            <span
-              id="display-gd"
-              class="font-mono text-sm font-medium text-ink tabular-nums"
-              >5.0%</span
-            >
-          </div>
-          <input
-            id="slider-gd"
-            type="range"
-            value="5.0"
-            min="0"
-            max="10"
-            step="0.1"
-            class="w-full accent-ink"
+          <!-- 6. Percent Qualified Dividends -->
+          <Slider
+            label="Percent of Dividends that are 'Qualified'"
+            name="percentQualified"
+            value={Math.round(defaultInput.percentQualified * 100)}
+            min={0}
+            max={100}
+            step={1}
+            suffix="%"
+            inputId="dtd-qualified"
+            displayId="dtd-qualified-display"
+            tooltip="Qualified dividends are taxed at the lower long-term capital gains rate. Most US stock dividends (held >60 days) are qualified."
           />
-          <div class="flex justify-between text-xs text-mute">
-            <span>0%</span><span>10%</span>
-          </div>
-        </div>
 
-        <!-- Dividend Tax Rate -->
-        <div class="mb-4 flex flex-col gap-2">
-          <div class="flex items-center justify-between">
-            <label for="slider-td" class="text-sm font-medium text-ink"
-              >Dividend Tax Rate</label
+          <!-- 7. Federal Ordinary Income Tax Bracket -->
+          <div class="flex flex-col gap-2">
+            <label for="dtd-ordinary-bracket" class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              Federal Ordinary Income Tax Bracket
+              <Tooltip content="Your marginal federal income tax bracket. Non-qualified dividends and short-term capital gains are taxed at this rate." />
+            </label>
+            <select
+              id="dtd-ordinary-bracket"
+              name="federalOrdinaryBracket"
+              class="h-11 w-full rounded-lg border border-hairline bg-canvas px-3 text-base text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
             >
-            <span
-              id="display-td"
-              class="font-mono text-sm font-medium text-ink tabular-nums"
-              >15%</span
-            >
+              <option value="10">10%</option>
+              <option value="12">12%</option>
+              <option value="22">22%</option>
+              <option value="24">24%</option>
+              <option value="32" selected>32%</option>
+              <option value="35">35%</option>
+              <option value="37">37%</option>
+            </select>
           </div>
-          <input
-            id="slider-td"
-            type="range"
-            value="15"
-            min="0"
-            max="50"
-            step="0.5"
-            class="w-full accent-ink"
-          />
-          <div class="flex justify-between text-xs text-mute">
-            <span>0%</span><span>50%</span>
-          </div>
-        </div>
 
-        <!-- Capital Gains Tax Rate -->
-        <div class="mb-4 flex flex-col gap-2">
-          <div class="flex items-center justify-between">
-            <label for="slider-tcg" class="text-sm font-medium text-ink"
-              >Capital Gains Tax Rate</label
+          <!-- 8. Federal LTCG Tax Bracket -->
+          <div class="flex flex-col gap-2">
+            <label for="dtd-ltcg-bracket" class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              Federal Long-Term Capital Gains Tax Bracket
+              <Tooltip content="Qualified dividends are taxed at the long-term capital gains rate. Most retirees in the 10-12% ordinary brackets pay 0% LTCG." />
+            </label>
+            <select
+              id="dtd-ltcg-bracket"
+              name="federalLTCGBracket"
+              class="h-11 w-full rounded-lg border border-hairline bg-canvas px-3 text-base text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
             >
-            <span
-              id="display-tcg"
-              class="font-mono text-sm font-medium text-ink tabular-nums"
-              >15%</span
-            >
+              <option value="0">0%</option>
+              <option value="15" selected>15%</option>
+              <option value="20">20%</option>
+            </select>
           </div>
-          <input
-            id="slider-tcg"
-            type="range"
-            value="15"
-            min="0"
-            max="50"
-            step="0.5"
-            class="w-full accent-ink"
+
+          <!-- 9. State Income Tax Rate -->
+          <Slider
+            label="State Income Tax Rate"
+            name="stateTaxRate"
+            value={Math.round(defaultInput.stateTaxRate * 100)}
+            min={0}
+            max={15}
+            step={0.1}
+            suffix="%"
+            inputId="dtd-state-tax"
+            displayId="dtd-state-tax-display"
+            tooltip="Your marginal state income tax rate. Dividends are taxed at the state level in most states (excludes AK, FL, NV, SD, TN, TX, WA, WY)."
           />
-          <div class="flex justify-between text-xs text-mute">
-            <span>0%</span><span>50%</span>
+
+          <!-- 10. NIIT Toggle -->
+          <div class="flex items-center justify-between rounded-lg border border-hairline p-4">
+            <div class="flex items-center gap-1.5">
+              <label for="dtd-niit-toggle" class="text-sm font-medium text-ink">
+                Subject to NIIT (3.8% Surtax)
+              </label>
+              <Tooltip content="The Net Investment Income Tax (NIIT) adds a 3.8% surtax on the lesser of your net investment income or MAGI above $200k (single) / $250k (married filing jointly)." />
+            </div>
+            <button
+              type="button"
+              id="dtd-niit-toggle"
+              class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full bg-hairline transition-colors"
+              role="switch"
+              aria-checked="false"
+            >
+              <span
+                id="dtd-niit-knob"
+                class="pointer-events-none inline-block h-4 w-4 translate-x-1 rounded-full bg-white shadow-sm ring-0 transition-transform"
+              ></span>
+            </button>
+            <input type="hidden" name="subjectToNIIT" value="false" />
           </div>
-        </div>
+        </form>
       </Card>
     </div>
 
-    <!-- Right: Outputs -->
+    <!-- RIGHT PANEL: Results (7 cols) -->
     <div class="space-y-6 lg:col-span-7">
-      <!-- Primary metric cards -->
-      <div class="grid gap-4 sm:grid-cols-3">
-        <div
-          class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm"
-        >
-          <p class="mb-1 text-xs text-mute">Tax-Advantaged Ending</p>
-          <p
-            id="result-ta"
-            class="font-mono text-2xl font-semibold tabular-nums"
-            style="color: var(--color-success-deep);"
-          >
-            $0
-          </p>
-        </div>
-        <div
-          class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm"
-        >
-          <p class="mb-1 text-xs text-mute">Taxable Realized</p>
-          <p
-            id="result-taxable"
-            class="font-mono text-2xl font-semibold text-ink tabular-nums"
-          >
-            $0
-          </p>
-        </div>
-        <div
-          class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm"
-        >
-          <p class="mb-1 text-xs text-mute">Opportunity Cost</p>
-          <p
-            id="result-cost"
-            class="font-mono text-2xl font-semibold tabular-nums"
-            style="color: var(--color-error);"
-          >
-            $0
-          </p>
-        </div>
-      </div>
-
-      <!-- Secondary metrics -->
-      <div class="grid gap-4 sm:grid-cols-3">
-        <div class="rounded-lg bg-canvas-soft-2 p-4">
-          <p class="mb-1 text-xs text-mute">Return Lost to Drag</p>
-          <p
-            id="result-pct"
-            class="font-mono text-lg font-semibold text-ink tabular-nums"
-          >
-            0.0%
-          </p>
-        </div>
-        <div class="rounded-lg bg-canvas-soft-2 p-4">
-          <p class="mb-1 text-xs text-mute">Effective Annual Drag</p>
-          <p
-            id="result-drag"
-            class="font-mono text-lg font-semibold text-ink tabular-nums"
-          >
-            0.00%
-          </p>
-        </div>
-        <div class="rounded-lg bg-canvas-soft-2 p-4">
-          <p class="mb-1 text-xs text-mute">Total Dividend Tax Paid</p>
-          <p
-            id="result-divtax"
-            class="font-mono text-lg font-semibold tabular-nums"
-            style="color: var(--color-error);"
-          >
-            $0
-          </p>
-        </div>
-      </div>
-
-      <!-- FIRE Alert Banner -->
+      <!-- Expense Ratio Equivalent Banner -->
       <div
-        class="rounded-lg p-5"
-        style="background: var(--color-warning-soft); border: 1px solid var(--color-warning);"
+        id="dtd-expense-banner"
+        class="rounded-lg border border-warning/30 bg-warning/5 p-5"
       >
         <div class="flex items-start gap-3">
-          <div
-            class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full"
-            style="background: var(--color-warning);"
-          >
-            <svg
-              class="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z"
-              />
-              <path
-                d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z"
-              />
+          <div class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-warning/20">
+            <svg class="h-4 w-4 text-warning" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
             </svg>
           </div>
           <div>
-            <h3 class="mb-1 text-sm font-semibold text-ink">
-              Why does this matter for FIRE?
-            </h3>
-            <p class="text-sm text-body">
-              Asset location is critical for FIRE seekers. High-dividend assets
-              like REITs and Value stocks suffer massive compounding decay in
-              taxable accounts. Every dollar of dividend tax paid in Year 1
-              permanently removes that cash from compound growth for the
-              remaining N-1 years. Over 25+ years, this "sequence of tax drag"
-              can cost tens or hundreds of thousands in lost wealth.
+            <h3 class="mb-1 text-sm font-semibold text-warning">Hidden Fee Alert</h3>
+            <p id="dtd-expense-text" class="text-sm text-body">
+              Taxes on your dividends are acting like a hidden fee of
+              <strong id="dtd-expense-rate">—</strong>
+              of your portfolio every year. Over your investment horizon, this
+              drag silently erodes your compounding growth in the taxable account.
+              The higher your dividend yield and tax rate, the more severe the impact.
             </p>
           </div>
         </div>
       </div>
 
-      <!-- Chart section -->
-      <div
-        class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm"
-      >
-        <div class="mb-4 flex items-center justify-between">
-          <h3 class="text-sm font-medium text-ink">
-            Growth Trajectory Comparison
-          </h3>
-          <div class="flex gap-2">
-            <button
-              id="chart-line"
-              class="chart-btn rounded-md cursor-pointer bg-ink px-3 py-1.5 text-xs font-medium text-canvas"
-              >Line</button
-            >
-            <button
-              id="chart-bar"
-              class="chart-btn rounded-md cursor-pointer bg-canvas-soft-2 px-3 py-1.5 text-xs font-medium text-body hover:text-ink"
-              >Bar</button
-            >
-          </div>
-        </div>
-        <div class="relative h-64 sm:h-80">
-          <canvas id="tax-drag-chart"></canvas>
-        </div>
+      <!-- Primary metric cards (2x2 grid) -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Final Portfolio Balance (No Tax Drag)"
+          valueId="dtd-result-ta"
+          value="—"
+          valueClass="text-success-deep text-2xl font-semibold tabular-nums"
+          description="Hypothetical growth in a tax-advantaged account (Roth IRA / 401k)"
+        />
+        <ResultCard
+          label="Final Portfolio Balance (With Tax Drag)"
+          valueId="dtd-result-taxable"
+          value="—"
+          description="Realized value after annual dividend taxes in a taxable account"
+        />
+        <ResultCard
+          label="Total Wealth Lost to Taxes"
+          valueId="dtd-result-lost"
+          value="—"
+          valueClass="text-error text-2xl font-semibold tabular-nums"
+          description="The gap between tax-advantaged and taxable account growth"
+        />
+        <ResultCard
+          label="Expense Ratio Equivalent"
+          valueId="dtd-result-drag"
+          value="—"
+          valueClass="text-warning text-2xl font-semibold tabular-nums"
+          description="Annualized percentage of portfolio value lost to dividend taxes"
+        />
       </div>
 
-      <!-- Yearly table -->
-      <div
-        class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm"
-      >
+      <!-- Chart section -->
+      <Card padding="lg">
+        <h3 class="mb-4 text-sm font-semibold text-ink">
+          Growth Trajectory: Tax-Advantaged vs Taxable
+        </h3>
+        <div class="relative h-64 sm:h-80">
+          <canvas id="dtd-chart"></canvas>
+        </div>
+      </Card>
+
+      <!-- Yearly breakdown table -->
+      <Card padding="lg">
         <div class="mb-4 flex items-center justify-between">
-          <h3 class="text-sm font-medium text-ink">Yearly Breakdown</h3>
+          <h3 class="text-sm font-semibold text-ink">Year-by-Year Breakdown</h3>
           <button
-            id="toggle-table"
+            id="dtd-toggle-table"
             class="cursor-pointer text-xs font-medium text-link hover:text-link-deep"
-            >Show All Years</button
           >
+            Show All Years
+          </button>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm">
@@ -454,70 +272,25 @@ import Card from '../ui/Card.astro';
                 <th class="pb-2 pr-4 text-xs font-medium text-mute">
                   Tax-Advantaged
                 </th>
-                <th class="pb-2 pr-4 text-xs font-medium text-mute">
-                  Taxable
-                </th>
-                <th
-                  class="hidden pb-2 pr-4 text-xs font-medium text-mute sm:table-cell"
-                >
+                <th class="pb-2 pr-4 text-xs font-medium text-mute">Taxable</th>
+                <th class="hidden pb-2 pr-4 text-xs font-medium text-mute sm:table-cell">
                   Gross Dividends
                 </th>
-                <th
-                  class="hidden pb-2 text-xs font-medium text-mute sm:table-cell"
-                >
+                <th class="hidden pb-2 pr-4 text-xs font-medium text-mute sm:table-cell">
                   Tax Owed
+                </th>
+                <th class="hidden pb-2 text-xs font-medium text-mute md:table-cell">
+                  Cumulative Tax Paid
                 </th>
               </tr>
             </thead>
             <tbody
-              id="yearly-body"
+              id="dtd-yearly-body"
               class="font-mono text-xs tabular-nums"
             ></tbody>
           </table>
         </div>
-      </div>
-
-      <!-- Liquidation summary -->
-      <div
-        class="rounded-lg border border-hairline bg-canvas p-5 shadow-sm"
-      >
-        <h3 class="mb-4 text-sm font-medium text-ink">
-          End-of-Horizon Liquidation Tax Event
-        </h3>
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div
-            class="rounded-lg p-4"
-            style="background: color-mix(in srgb, var(--color-success) 5%, transparent); border: 1px solid color-mix(in srgb, var(--color-success) 30%, transparent);"
-          >
-            <p class="mb-1 text-xs text-mute">Tax-Advantaged Account</p>
-            <p
-              id="liq-ta"
-              class="font-mono text-xl font-semibold tabular-nums"
-              style="color: var(--color-success-deep);"
-            >
-              $0
-            </p>
-            <p class="mt-1 text-xs text-body">
-              No taxes on liquidation (Roth/ISA)
-            </p>
-          </div>
-          <div
-            class="rounded-lg border border-hairline bg-canvas-soft-2 p-4"
-          >
-            <p class="mb-1 text-xs text-mute">Taxable Account</p>
-            <p
-              id="liq-taxable"
-              class="font-mono text-xl font-semibold text-ink tabular-nums"
-            >
-              $0
-            </p>
-            <p class="mt-1 text-xs text-body">
-              After capital gains tax of
-              <span id="liq-cgtax" class="font-medium">$0</span>
-            </p>
-          </div>
-        </div>
-      </div>
+      </Card>
     </div>
   </div>
 </div>
@@ -528,87 +301,122 @@ import Card from '../ui/Card.astro';
     defaultInput,
     presets,
   } from '../../utils/dividend-tax-drag-calculations';
-  import { formatCurrency, formatCurrencyShort } from '../../utils/formatters';
+  import {
+    formatCurrency,
+    formatCurrencyShort,
+  } from '../../utils/formatters';
 
-  let chart: any = null;
+  let chart = null;
   let showAllYears = false;
-  let reinvest = true;
-  let lastResult: any = null;
+  let lastResult = null;
 
-  // Get all slider elements
+  // ─── Helpers ────────────────────────────────────────────────
+
+  function formatDollar(val) {
+    if (Math.abs(val) >= 1_000_000) {
+      return '$' + (val / 1_000_000).toFixed(1) + 'M';
+    }
+    return '$' + Number(val).toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+  }
+
+  function formatPct(val) {
+    return Number(val).toFixed(1) + '%';
+  }
+
+  function formatDragPct(val) {
+    return Number(val).toFixed(2) + '%';
+  }
+
+  // ─── DOM References ─────────────────────────────────────────
+
   const sliders = {
-    initial: document.getElementById('slider-initial') as HTMLInputElement,
-    contribution: document.getElementById('slider-contribution') as HTMLInputElement,
-    horizon: document.getElementById('slider-horizon') as HTMLInputElement,
-    gc: document.getElementById('slider-gc') as HTMLInputElement,
-    yield: document.getElementById('slider-yield') as HTMLInputElement,
-    gd: document.getElementById('slider-gd') as HTMLInputElement,
-    td: document.getElementById('slider-td') as HTMLInputElement,
-    tcg: document.getElementById('slider-tcg') as HTMLInputElement,
+    initial: document.getElementById('dtd-initial'),
+    monthly: document.getElementById('dtd-monthly'),
+    horizon: document.getElementById('dtd-horizon'),
+    appreciation: document.getElementById('dtd-appreciation'),
+    yield: document.getElementById('dtd-yield'),
+    qualified: document.getElementById('dtd-qualified'),
+    stateTax: document.getElementById('dtd-state-tax'),
   };
 
   const displays = {
-    initial: document.getElementById('display-initial')!,
-    contribution: document.getElementById('display-contribution')!,
-    horizon: document.getElementById('display-horizon')!,
-    gc: document.getElementById('display-gc')!,
-    yield: document.getElementById('display-yield')!,
-    gd: document.getElementById('display-gd')!,
-    td: document.getElementById('display-td')!,
-    tcg: document.getElementById('display-tcg')!,
+    initial: document.getElementById('dtd-initial-display'),
+    monthly: document.getElementById('dtd-monthly-display'),
+    horizon: document.getElementById('dtd-horizon-display'),
+    appreciation: document.getElementById('dtd-appreciation-display'),
+    yield: document.getElementById('dtd-yield-display'),
+    qualified: document.getElementById('dtd-qualified-display'),
+    stateTax: document.getElementById('dtd-state-tax-display'),
   };
 
-  function formatDollar(val: number): string {
-    return '$' + Number(val).toLocaleString('en-US');
-  }
+  const ordinaryBracket = document.getElementById('dtd-ordinary-bracket');
+  const ltcgBracket = document.getElementById('dtd-ltcg-bracket');
+  const niitToggle = document.getElementById('dtd-niit-toggle');
+  const niitKnob = document.getElementById('dtd-niit-knob');
+  const niitHidden = document.querySelector(
+    'input[name="subjectToNIIT"]',
+  );
 
-  function formatPct(val: number): string {
-    return val.toFixed(1) + '%';
-  }
+  // ─── Input / Output ─────────────────────────────────────────
 
   function getInputs() {
     return {
       initialInvestment:
         Number(sliders.initial?.value) || defaultInput.initialInvestment,
-      annualContribution:
-        Number(sliders.contribution?.value) || defaultInput.annualContribution,
-      investmentHorizon:
-        Number(sliders.horizon?.value) || defaultInput.investmentHorizon,
-      capitalAppreciationRate:
-        (Number(sliders.gc?.value) || defaultInput.capitalAppreciationRate * 100) / 100,
+      monthlyContribution:
+        Number(sliders.monthly?.value) || defaultInput.monthlyContribution,
+      timeHorizon:
+        Number(sliders.horizon?.value) || defaultInput.timeHorizon,
+      priceAppreciation:
+        (Number(sliders.appreciation?.value) ||
+          defaultInput.priceAppreciation * 100) / 100,
       dividendYield:
         (Number(sliders.yield?.value) || defaultInput.dividendYield * 100) / 100,
-      dividendGrowthRate:
-        (Number(sliders.gd?.value) || defaultInput.dividendGrowthRate * 100) / 100,
-      dividendTaxRate:
-        (Number(sliders.td?.value) || defaultInput.dividendTaxRate * 100) / 100,
-      capitalGainsTaxRate:
-        (Number(sliders.tcg?.value) || defaultInput.capitalGainsTaxRate * 100) / 100,
-      reinvestDividends: reinvest,
+      percentQualified:
+        (Number(sliders.qualified?.value) ||
+          defaultInput.percentQualified * 100) / 100,
+      federalOrdinaryBracket:
+        Number(ordinaryBracket?.value || 32) / 100,
+      federalLTCGBracket:
+        Number(ltcgBracket?.value || 15) / 100,
+      stateTaxRate:
+        (Number(sliders.stateTax?.value) ||
+          defaultInput.stateTaxRate * 100) / 100,
+      subjectToNIIT: niitToggle?.getAttribute('aria-checked') === 'true',
     };
   }
 
   function updateDisplays() {
-    displays.initial.textContent = formatDollar(
-      sliders.initial?.value || 0,
-    );
-    displays.contribution.textContent = formatDollar(
-      sliders.contribution?.value || 0,
-    );
-    displays.horizon.textContent = sliders.horizon?.value + ' yrs';
-    displays.gc.textContent = formatPct(
-      Number(sliders.gc?.value) || 0,
-    );
-    displays.yield.textContent = formatPct(
-      Number(sliders.yield?.value) || 0,
-    );
-    displays.gd.textContent = formatPct(
-      Number(sliders.gd?.value) || 0,
-    );
-    displays.td.textContent = formatPct(Number(sliders.td?.value) || 0);
-    displays.tcg.textContent = formatPct(
-      Number(sliders.tcg?.value) || 0,
-    );
+    if (displays.initial)
+      displays.initial.textContent = formatDollar(
+        Number(sliders.initial?.value) || 0,
+      );
+    if (displays.monthly)
+      displays.monthly.textContent = formatDollar(
+        Number(sliders.monthly?.value) || 0,
+      );
+    if (displays.horizon)
+      displays.horizon.textContent =
+        (sliders.horizon?.value || 0) + ' years';
+    if (displays.appreciation)
+      displays.appreciation.textContent = formatPct(
+        Number(sliders.appreciation?.value) || 0,
+      );
+    if (displays.yield)
+      displays.yield.textContent = formatPct(
+        Number(sliders.yield?.value) || 0,
+      );
+    if (displays.qualified)
+      displays.qualified.textContent = formatPct(
+        Number(sliders.qualified?.value) || 0,
+      );
+    if (displays.stateTax)
+      displays.stateTax.textContent = formatPct(
+        Number(sliders.stateTax?.value) || 0,
+      );
   }
 
   function updateResults() {
@@ -616,48 +424,43 @@ import Card from '../ui/Card.astro';
     const result = calculateDividendTaxDrag(input);
     lastResult = result;
 
-    // Update metric cards
-    document.getElementById('result-ta')!.textContent = formatCurrency(
-      result.taxAdvantagedEndingBalance,
+    // Metric cards
+    document.getElementById('dtd-result-ta').textContent = formatCurrency(
+      result.taxAdvantagedFinal,
     );
-    document.getElementById('result-taxable')!.textContent = formatCurrency(
-      result.taxableRealizedValue,
+    document.getElementById('dtd-result-taxable').textContent = formatCurrency(
+      result.taxableFinal,
     );
-    document.getElementById('result-cost')!.textContent = formatCurrency(
-      result.absoluteOpportunityCost,
+    document.getElementById('dtd-result-lost').textContent = formatCurrency(
+      result.totalWealthLost,
     );
-    document.getElementById('result-pct')!.textContent =
-      result.percentageReturnLost.toFixed(1) + '%';
-    document.getElementById('result-drag')!.textContent =
-      result.effectiveAnnualDrag.toFixed(2) + '%';
-    document.getElementById('result-divtax')!.textContent = formatCurrency(
-      result.totalDividendTaxPaid,
+    document.getElementById('dtd-result-drag').textContent = formatDragPct(
+      result.totalTaxDragPercent * 100,
     );
 
-    // Update liquidation
-    document.getElementById('liq-ta')!.textContent = formatCurrency(
-      result.taxAdvantagedEndingBalance,
-    );
-    document.getElementById('liq-taxable')!.textContent = formatCurrency(
-      result.taxableRealizedValue,
-    );
-    document.getElementById('liq-cgtax')!.textContent = formatCurrency(
-      result.capitalGainsTaxDueAtExit,
-    );
+    // Expense ratio banner
+    const dragPct = (result.totalTaxDragPercent * 100).toFixed(2);
+    document.getElementById('dtd-expense-rate').textContent =
+      dragPct + '% of your portfolio every year';
 
     // Update table
-    updateTable(result.yearlyData);
+    updateTable(result.yearlyProjections);
 
     // Update chart
     updateChart(result);
   }
 
-  function updateTable(data: any[]) {
-    const tbody = document.getElementById('yearly-body')!;
+  // ─── Yearly Table ───────────────────────────────────────────
+
+  function updateTable(data) {
+    const tbody = document.getElementById('dtd-yearly-body');
+    if (!tbody) return;
+
     const displayData = showAllYears
       ? data
       : [...data.slice(0, 5), data[data.length - 1]];
-    // Deduplicate if horizon <= 6
+
+    // Deduplicate when horizon <= 6 (avoids showing same last year twice)
     const unique = showAllYears
       ? data
       : displayData.filter(
@@ -672,74 +475,59 @@ import Card from '../ui/Card.astro';
         <td class="py-2 pr-4 text-success-deep font-medium">${formatCurrency(d.taxAdvantagedBalance)}</td>
         <td class="py-2 pr-4 text-ink">${formatCurrency(d.taxableBalance)}</td>
         <td class="hidden py-2 pr-4 text-body sm:table-cell">${formatCurrency(d.grossDividends)}</td>
-        <td class="hidden py-2 text-error sm:table-cell">${formatCurrency(d.taxOwed)}</td>
+        <td class="hidden py-2 pr-4 text-error sm:table-cell">${formatCurrency(d.taxOwed)}</td>
+        <td class="hidden py-2 text-mute md:table-cell">${formatCurrency(d.cumulativeDividendsPaid)}</td>
       </tr>
     `,
       )
       .join('');
   }
 
-  function updateChart(result: any) {
-    const ctx = document.getElementById(
-      'tax-drag-chart',
-    ) as HTMLCanvasElement;
-    if (!ctx) return;
+  // ─── Chart ──────────────────────────────────────────────────
 
+  function getChartColors() {
     const isDark = document.documentElement.classList.contains('dark');
-    const gridColor = isDark ? '#262626' : '#ebebeb';
-    const textColor = isDark ? '#737373' : '#888888';
-    const tooltipBg = isDark ? '#ededed' : '#171717';
-    const tooltipText = isDark ? '#171717' : '#ffffff';
-    const greenColor = isDark ? '#50e3c2' : '#29bc9b';
-    const amberColor = isDark ? '#f5a623' : '#d97706';
-    const greenBg = isDark
-      ? 'rgba(80, 227, 194, 0.1)'
-      : 'rgba(41, 188, 155, 0.1)';
-    const amberBg = isDark
-      ? 'rgba(245, 166, 35, 0.1)'
-      : 'rgba(217, 119, 6, 0.1)';
+    return {
+      green: isDark ? '#22c55e' : '#16a34a',
+      amber: isDark ? '#fbbf24' : '#d97706',
+      greenBg: isDark
+        ? 'rgba(34, 197, 94, 0.12)'
+        : 'rgba(22, 163, 74, 0.1)',
+      amberBg: isDark
+        ? 'rgba(251, 191, 36, 0.12)'
+        : 'rgba(217, 119, 6, 0.1)',
+      grid: isDark ? '#262626' : '#ebebeb',
+      text: isDark ? '#737373' : '#888888',
+      tooltipBg: isDark ? '#ededed' : '#171717',
+      tooltipText: isDark ? '#171717' : '#ffffff',
+    };
+  }
 
-    const labels = result.yearlyData
-      .filter(
-        (_: any, i: number) =>
-          i % Math.max(1, Math.floor(result.yearlyData.length / 10)) === 0 ||
-          i === result.yearlyData.length - 1,
-      )
-      .map((d: any) => `Year ${d.year}`);
-    const taData = result.yearlyData
-      .filter(
-        (_: any, i: number) =>
-          i % Math.max(1, Math.floor(result.yearlyData.length / 10)) === 0 ||
-          i === result.yearlyData.length - 1,
-      )
-      .map((d: any) => d.taxAdvantagedBalance);
-    const taxableData = result.yearlyData
-      .filter(
-        (_: any, i: number) =>
-          i % Math.max(1, Math.floor(result.yearlyData.length / 10)) === 0 ||
-          i === result.yearlyData.length - 1,
-      )
-      .map((d: any) => d.taxableBalance);
+  function updateChart(result) {
+    const canvas = document.getElementById('dtd-chart');
+    if (!canvas || typeof Chart === 'undefined') return;
 
-    const activeBtn = document.getElementById('chart-line');
-    const chartType = activeBtn?.classList.contains('bg-ink')
-      ? 'line'
-      : 'bar';
+    const ctx = canvas.getContext('2d');
+    const colors = getChartColors();
+    const data = result.yearlyProjections;
 
     if (chart) chart.destroy();
 
-    chart = new (window as any).Chart(ctx, {
-      type: chartType,
+    const labels = data.map((d) => `Year ${d.year}`);
+    const taData = data.map((d) => d.taxAdvantagedBalance);
+    const taxableData = data.map((d) => d.taxableBalance);
+
+    chart = new Chart(ctx, {
+      type: 'line',
       data: {
         labels,
         datasets: [
           {
-            label: 'Tax-Advantaged (Roth/ISA)',
+            label: 'Tax-Advantaged (Roth/IRA)',
             data: taData,
-            borderColor: greenColor,
-            backgroundColor:
-              chartType === 'line' ? greenBg : greenColor + '80',
-            fill: chartType === 'line',
+            borderColor: colors.green,
+            backgroundColor: colors.greenBg,
+            fill: true,
             tension: 0.4,
             pointRadius: 0,
             pointHoverRadius: 4,
@@ -748,10 +536,9 @@ import Card from '../ui/Card.astro';
           {
             label: 'Taxable Account',
             data: taxableData,
-            borderColor: amberColor,
-            backgroundColor:
-              chartType === 'line' ? amberBg : amberColor + '80',
-            fill: chartType === 'line',
+            borderColor: colors.amber,
+            backgroundColor: colors.amberBg,
+            fill: true,
             tension: 0.4,
             pointRadius: 0,
             pointHoverRadius: 4,
@@ -776,14 +563,14 @@ import Card from '../ui/Card.astro';
                 family: 'Inter, system-ui, sans-serif',
                 size: 11,
               },
-              color: textColor,
+              color: colors.text,
             },
           },
           tooltip: {
-            backgroundColor: tooltipBg,
-            titleColor: tooltipText,
-            bodyColor: tooltipText,
-            borderColor: tooltipBg,
+            backgroundColor: colors.tooltipBg,
+            titleColor: colors.tooltipText,
+            bodyColor: colors.tooltipText,
+            borderColor: colors.tooltipBg,
             borderWidth: 1,
             padding: 12,
             titleFont: {
@@ -796,7 +583,7 @@ import Card from '../ui/Card.astro';
               size: 12,
             },
             callbacks: {
-              label: function (context: any) {
+              label: function (context) {
                 return (
                   context.dataset.label +
                   ': ' +
@@ -814,20 +601,24 @@ import Card from '../ui/Card.astro';
                 family: 'Inter, system-ui, sans-serif',
                 size: 11,
               },
-              color: textColor,
-              maxTicksLimit: 8,
+              color: colors.text,
+              maxTicksLimit: 10,
+              callback: function (value, index) {
+                const entry = data[index];
+                return entry ? 'Y' + entry.year : '';
+              },
             },
             border: { display: false },
           },
           y: {
-            grid: { color: gridColor },
+            grid: { color: colors.grid },
             ticks: {
               font: {
                 family: 'Inter, system-ui, sans-serif',
                 size: 11,
               },
-              color: textColor,
-              callback: function (value: any) {
+              color: colors.text,
+              callback: function (value) {
                 return formatCurrencyShort(value);
               },
             },
@@ -838,8 +629,37 @@ import Card from '../ui/Card.astro';
     });
   }
 
-  // Initialize sliders
-  Object.entries(sliders).forEach(([key, slider]) => {
+  // ─── Initialization ─────────────────────────────────────────
+
+  // Set slider initial values
+  sliders.initial.value = String(defaultInput.initialInvestment);
+  sliders.monthly.value = String(defaultInput.monthlyContribution);
+  sliders.horizon.value = String(defaultInput.timeHorizon);
+  sliders.appreciation.value = String(
+    Math.round(defaultInput.priceAppreciation * 100),
+  );
+  sliders.yield.value = String(Math.round(defaultInput.dividendYield * 100));
+  sliders.qualified.value = String(
+    Math.round(defaultInput.percentQualified * 100),
+  );
+  sliders.stateTax.value = String(
+    Math.round(defaultInput.stateTaxRate * 100),
+  );
+
+  // Set dropdown defaults
+  ordinaryBracket.value = String(
+    Math.round(defaultInput.federalOrdinaryBracket * 100),
+  );
+  ltcgBracket.value = String(
+    Math.round(defaultInput.federalLTCGBracket * 100),
+  );
+
+  updateDisplays();
+
+  // ─── Event Listeners ────────────────────────────────────────
+
+  // Slider inputs
+  Object.entries(sliders).forEach(([, slider]) => {
     if (!slider) return;
     slider.addEventListener('input', () => {
       updateDisplays();
@@ -847,101 +667,50 @@ import Card from '../ui/Card.astro';
     });
   });
 
-  // Initialize displays with default values
-  sliders.initial!.value = String(defaultInput.initialInvestment);
-  sliders.contribution!.value = String(defaultInput.annualContribution);
-  sliders.horizon!.value = String(defaultInput.investmentHorizon);
-  sliders.gc!.value = String(defaultInput.capitalAppreciationRate * 100);
-  sliders.yield!.value = String(defaultInput.dividendYield * 100);
-  sliders.gd!.value = String(defaultInput.dividendGrowthRate * 100);
-  sliders.td!.value = String(defaultInput.dividendTaxRate * 100);
-  sliders.tcg!.value = String(defaultInput.capitalGainsTaxRate * 100);
-  updateDisplays();
+  // Dropdown changes
+  ordinaryBracket?.addEventListener('change', updateResults);
+  ltcgBracket?.addEventListener('change', updateResults);
 
-  // Toggle reinvest
-  document
-    .getElementById('reinvest-toggle')
-    ?.addEventListener('click', function () {
-      reinvest = !reinvest;
-      this.setAttribute('aria-checked', String(reinvest));
-      const dot = document.getElementById('reinvest-dot')!;
-      if (reinvest) {
-        this.classList.add('bg-ink');
-        this.classList.remove('bg-mute');
-        dot.classList.add('translate-x-5');
-        dot.classList.remove('translate-x-0.5');
-      } else {
-        this.classList.remove('bg-ink');
-        this.classList.add('bg-mute');
-        dot.classList.remove('translate-x-5');
-        dot.classList.add('translate-x-0.5');
-      }
-      updateResults();
-    });
+  // NIIT toggle
+  niitToggle?.addEventListener('click', function () {
+    const isActive = this.getAttribute('aria-checked') === 'true';
+    const newState = !isActive;
+    this.setAttribute('aria-checked', String(newState));
+    if (newState) {
+      this.classList.remove('bg-hairline');
+      this.classList.add('bg-ink');
+      niitKnob.classList.remove('translate-x-1');
+      niitKnob.classList.add('translate-x-6');
+    } else {
+      this.classList.remove('bg-ink');
+      this.classList.add('bg-hairline');
+      niitKnob.classList.remove('translate-x-6');
+      niitKnob.classList.add('translate-x-1');
+    }
+    if (niitHidden) niitHidden.value = String(newState);
+    updateResults();
+  });
 
-  // Toggle table
+  // Table toggle
   document
-    .getElementById('toggle-table')
+    .getElementById('dtd-toggle-table')
     ?.addEventListener('click', function () {
       showAllYears = !showAllYears;
       this.textContent = showAllYears ? 'Show Less' : 'Show All Years';
-      if (lastResult) updateTable(lastResult.yearlyData);
-    });
-
-  // Chart type toggle
-  document
-    .getElementById('chart-line')
-    ?.addEventListener('click', function () {
-      this.classList.add('bg-ink', 'text-canvas');
-      this.classList.remove(
-        'bg-canvas-soft-2',
-        'text-body',
-        'hover:text-ink',
-      );
-      const barBtn = document.getElementById('chart-bar')!;
-      barBtn.classList.remove('bg-ink', 'text-canvas');
-      barBtn.classList.add(
-        'bg-canvas-soft-2',
-        'text-body',
-        'hover:text-ink',
-      );
-      if (lastResult) updateChart(lastResult);
-    });
-
-  document
-    .getElementById('chart-bar')
-    ?.addEventListener('click', function () {
-      this.classList.add('bg-ink', 'text-canvas');
-      this.classList.remove(
-        'bg-canvas-soft-2',
-        'text-body',
-        'hover:text-ink',
-      );
-      const lineBtn = document.getElementById('chart-line')!;
-      lineBtn.classList.remove('bg-ink', 'text-canvas');
-      lineBtn.classList.add(
-        'bg-canvas-soft-2',
-        'text-body',
-        'hover:text-ink',
-      );
-      if (lastResult) updateChart(lastResult);
+      if (lastResult) updateTable(lastResult.yearlyProjections);
     });
 
   // Preset buttons
   document.querySelectorAll('.preset-btn').forEach((btn) => {
     btn.addEventListener('click', function () {
-      const idx = Number((this as HTMLElement).dataset.preset);
+      const idx = Number(this.dataset.preset);
       const preset = presets[idx];
       if (!preset) return;
 
       // Update active state
       document.querySelectorAll('.preset-btn').forEach((b) => {
         b.classList.remove('bg-ink', 'text-canvas');
-        b.classList.add(
-          'bg-canvas-soft-2',
-          'text-body',
-          'hover:text-ink',
-        );
+        b.classList.add('bg-canvas-soft-2', 'text-body', 'hover:text-ink');
       });
       this.classList.add('bg-ink', 'text-canvas');
       this.classList.remove(
@@ -950,32 +719,40 @@ import Card from '../ui/Card.astro';
         'hover:text-ink',
       );
 
-      // Set slider values
-      sliders.initial!.value = String(preset.initialInvestment);
-      sliders.contribution!.value = String(preset.annualContribution);
-      sliders.horizon!.value = String(preset.investmentHorizon);
-      sliders.gc!.value = String(preset.capitalAppreciationRate * 100);
-      sliders.yield!.value = String(preset.dividendYield * 100);
-      sliders.gd!.value = String(preset.dividendGrowthRate * 100);
-      sliders.td!.value = String(preset.dividendTaxRate * 100);
-      sliders.tcg!.value = String(preset.capitalGainsTaxRate * 100);
+      const p = preset.input;
 
-      // Set reinvest toggle
-      reinvest = preset.reinvestDividends;
-      const toggle = document.getElementById('reinvest-toggle')!;
-      const dot = document.getElementById('reinvest-dot')!;
-      toggle.setAttribute('aria-checked', String(reinvest));
-      if (reinvest) {
-        toggle.classList.add('bg-ink');
-        toggle.classList.remove('bg-mute');
-        dot.classList.add('translate-x-5');
-        dot.classList.remove('translate-x-0.5');
+      // Set sliders
+      sliders.initial.value = String(p.initialInvestment);
+      sliders.monthly.value = String(p.monthlyContribution);
+      sliders.horizon.value = String(p.timeHorizon);
+      sliders.appreciation.value = String(
+        Math.round(p.priceAppreciation * 100),
+      );
+      sliders.yield.value = String(Math.round(p.dividendYield * 100));
+      sliders.qualified.value = String(Math.round(p.percentQualified * 100));
+      sliders.stateTax.value = String(Math.round(p.stateTaxRate * 100));
+
+      // Set dropdowns
+      ordinaryBracket.value = String(
+        Math.round(p.federalOrdinaryBracket * 100),
+      );
+      ltcgBracket.value = String(Math.round(p.federalLTCGBracket * 100));
+
+      // Set NIIT toggle
+      const niitState = p.subjectToNIIT;
+      niitToggle.setAttribute('aria-checked', String(niitState));
+      if (niitState) {
+        niitToggle.classList.remove('bg-hairline');
+        niitToggle.classList.add('bg-ink');
+        niitKnob.classList.remove('translate-x-1');
+        niitKnob.classList.add('translate-x-6');
       } else {
-        toggle.classList.remove('bg-ink');
-        toggle.classList.add('bg-mute');
-        dot.classList.remove('translate-x-5');
-        dot.classList.add('translate-x-0.5');
+        niitToggle.classList.remove('bg-ink');
+        niitToggle.classList.add('bg-hairline');
+        niitKnob.classList.remove('translate-x-6');
+        niitKnob.classList.add('translate-x-1');
       }
+      if (niitHidden) niitHidden.value = String(niitState);
 
       updateDisplays();
       updateResults();

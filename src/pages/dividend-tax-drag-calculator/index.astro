@@ -1,0 +1,362 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import DividendTaxDragCalculator from '../../components/calculator/DividendTaxDragCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is dividend tax drag?',
+    answerHtml: 'Dividend tax drag is the invisible cost of paying taxes on dividend distributions in a taxable brokerage account. When dividends are taxed, that cash is permanently removed from the compounding base. Over decades, this "leakage" can cost tens of thousands in lost wealth compared to holding the same investments in a tax-advantaged account like a Roth IRA or 401(k).',
+    answerText: 'Dividend tax drag is the invisible cost of paying taxes on dividend distributions in a taxable brokerage account. Each year the tax on dividends is permanently removed from the compounding base, costing tens of thousands in lost wealth over decades.',
+  },
+  {
+    question: 'Do I pay taxes on dividends if I reinvest them (DRIP)?',
+    answerHtml: 'Yes. Even if you automatically reinvest dividends through a DRIP (Dividend Reinvestment Plan), you still owe taxes on the distribution in a taxable account. The IRS treats the dividend as income in the year it is paid, regardless of whether you reinvest it. This is a common misconception — DRIP does not avoid the tax drag.',
+    answerText: 'Yes, even with DRIP, you owe taxes on dividends in a taxable account. The IRS treats the dividend as income the year it is paid, regardless of reinvestment. DRIP does not avoid the tax drag.',
+  },
+  {
+    question: 'How are qualified dividends taxed differently from ordinary dividends?',
+    answerHtml: 'Qualified dividends are taxed at the lower long-term capital gains rates (0%, 15%, or 20%) instead of ordinary income rates (10%-37%). Most dividends from US corporations and qualified foreign companies qualify. REITs, bond funds, and money market funds typically pay ordinary (non-qualified) dividends, which face higher tax rates.',
+    answerText: 'Qualified dividends are taxed at lower long-term capital gains rates (0%, 15%, or 20%) while ordinary dividends are taxed at income rates (10%-37%). REITs, bond funds, and money market funds typically pay ordinary dividends.',
+  },
+  {
+    question: 'Is tax drag worse than a high expense ratio?',
+    answerHtml: 'Yes, for most investors. A typical index fund charges 0.03%-0.10% in fees. Dividend tax drag can range from 0.3% to over 2% depending on your yield, tax bracket, and whether dividends are qualified. A 2% annual tax drag on a $500K portfolio costs $10,000 per year — equivalent to a 2% expense ratio, which would be considered extremely high.',
+    answerText: 'Yes. Dividend tax drag can range from 0.3% to over 2%, far exceeding typical fund fees of 0.03%-0.10%. A 2% drag on a $500K portfolio costs $10,000 per year — equivalent to a 2% expense ratio.',
+  },
+  {
+    question: 'How do I avoid dividend tax drag?',
+    answerHtml: 'The most effective strategy is <b>asset location</b> — hold dividend-heavy investments (REITs, high-yield bonds, value funds) in tax-advantaged accounts like IRAs, 401(k)s, or Roth IRAs. Keep tax-efficient growth stocks and index funds with low turnover in taxable accounts. You can also use <b>tax-loss harvesting</b> to offset dividend income.',
+    answerText: 'The most effective strategy is asset location — hold dividend-heavy investments in tax-advantaged accounts and tax-efficient growth stocks in taxable accounts. Tax-loss harvesting can also offset dividend income.',
+  },
+  {
+    question: 'Does the 3.8% NIIT surtax apply to all dividends?',
+    answerHtml: 'The Net Investment Income Tax (NIIT) of 3.8% applies to investment income, including dividends, for taxpayers with modified adjusted gross income (MAGI) above $200,000 (single) or $250,000 (married filing jointly). This applies to both qualified and ordinary dividends, effectively adding 3.8% to your dividend tax rate.',
+    answerText: 'The NIIT of 3.8% applies to dividends for taxpayers with MAGI above $200K (single) or $250K (married). It adds 3.8% to both qualified and ordinary dividend tax rates.',
+  },
+  {
+    question: 'What is the expense ratio equivalent of dividend tax drag?',
+    answerHtml: 'The expense ratio equivalent is the total tax drag percentage expressed as a hidden fee. For example, if your dividend yield is 3% and your blended tax rate is 25%, your effective annual drag is 0.75%. This acts identically to a mutual fund charging 0.75% in annual fees — except it comes out of your returns invisibly through the tax code.',
+    answerText: 'The expense ratio equivalent expresses the total tax drag as a hidden fee. For example, a 3% yield with a 25% blended tax rate creates a 0.75% annual drag — like a mutual fund charging 0.75% in fees.',
+  },
+  {
+    question: 'How do state taxes affect dividend tax drag?',
+    answerHtml: 'Most US states tax dividend income as ordinary income, adding to your federal tax burden. States like California (13.3%), New York (10.9%), and New Jersey (10.75%) have high rates that significantly increase tax drag. States with no income tax (Texas, Florida, Nevada, etc.) eliminate this additional layer, reducing total drag by 5-10% of dividends.',
+    answerText: 'Most US states tax dividends as ordinary income. High-rate states like California (13.3%) and New York (10.9%) add significant drag. No-income-tax states (Texas, Florida, Nevada) eliminate this layer, reducing total drag by 5-10%.',
+  },
+];
+---
+
+<PageLayout
+  title="Dividend Tax Drag Calculator — Visualize Tax Cost on Taxable Accounts"
+  description="Calculate the hidden cost of dividend tax drag in your taxable brokerage account. Compare qualified vs ordinary dividends and visualize lost compounding growth."
+  canonical="https://truefinancetools.com/dividend-tax-drag-calculator"
+  ogImage="https://truefinancetools.com/og-dividend-tax-drag-calculator.png"
+  ogImageAlt="Dividend Tax Drag Calculator — Visualize Tax Cost on Taxable Accounts"
+  pageType="website"
+  keywords="dividend tax drag calculator, taxable account vs ira calculator, cost of dividend taxes, qualified dividends tax, dividend tax impact, investment tax drag, asset location calculator"
+>
+  <StructuredData
+    title="Dividend Tax Drag Calculator"
+    description="Calculate the hidden cost of dividend tax drag in your taxable brokerage account. Compare qualified vs ordinary dividends and visualize lost compounding growth."
+    url="https://truefinancetools.com/dividend-tax-drag-calculator"
+    toolName="Dividend Tax Drag Calculator"
+    toolDescription="Calculate the hidden cost of dividend tax drag in your taxable brokerage account. Compare qualified vs ordinary dividends and visualize lost compounding growth."
+    faqItems={toolFaqItems}
+    features={[
+      'Qualified vs ordinary dividend tax modeling',
+      'Federal + State + NIIT blended tax rate calculation',
+      'Tax-advantaged vs taxable account comparison',
+      'Interactive projection chart with dark mode',
+      'Expense ratio equivalent visualization',
+      '5 preset scenarios for common portfolios',
+      'Year-by-year breakdown table',
+    ]}
+  />
+
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Dividend Tax Drag Calculator
+      </h1>
+      <p class="text-lg text-body">Calculate the hidden cost of dividend taxes on your taxable brokerage account.</p>
+    </div>
+  </section>
+
+  <DividendTaxDragCalculator />
+
+  <HowItWorks title="How the Dividend Tax Drag Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Portfolio Details</h3>
+      <p class="text-sm text-body">Input your investment amount, dividend yield, tax brackets, and choose from preset scenarios.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. See the Tax Drag Instantly</h3>
+      <p class="text-sm text-body">View your final balances side by side — tax-advantaged vs taxable — plus the total wealth lost to taxes.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. Analyze the Impact</h3>
+      <p class="text-sm text-body">Review the interactive chart, year-by-year breakdown, and expense ratio equivalent to understand your true investment cost.</p>
+    </div>
+  </HowItWorks>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is Dividend Tax Drag?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Dividend tax drag</strong> is the annual compounding cost of paying taxes on dividend distributions in a taxable brokerage account. When you hold dividend-paying investments in a taxable account, the IRS taxes those dividends each year — permanently removing that capital from your compounding base. Over decades, this hidden "leakage" can cost tens of thousands of dollars in lost growth compared to holding the same investments in a tax-advantaged account like a Roth IRA or 401(k).
+        </p>
+
+        <p class="mb-4">
+          This <strong>dividend tax drag calculator</strong> helps you visualize the exact cost of this invisible fee. By comparing the growth of identical investments in a taxable account versus a tax-advantaged account, you can see the real impact of dividend taxes on your long-term wealth.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Dividend Tax Drag Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Total Tax Drag = (Qualified Yield × Qualified Tax Rate) + (Ordinary Yield × Ordinary Tax Rate)
+        </div>
+
+        <p class="mb-4 mt-4">
+          For example, if you have a <strong>$100,000 portfolio</strong> with a 2% dividend yield and a 25% blended tax rate, you lose <strong>$500 per year</strong> in taxes on dividends. Over 25 years, assuming 7% annual returns, that small annual leak compounds to approximately <strong>$45,000 in lost wealth</strong> — money that could have grown tax-free in a Roth IRA.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Tax-Advantaged vs Taxable Account Comparison</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Metric</th>
+                <th class="p-3 font-medium text-ink">Tax-Advantaged (Roth IRA)</th>
+                <th class="p-3 font-medium text-ink">Taxable Account</th>
+                <th class="p-3 font-medium text-ink">Impact</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Dividend taxes</td>
+                <td class="p-3 text-ink">$0 (tax-free growth)</td>
+                <td class="p-3 text-ink">Paid annually</td>
+                <td class="p-3 text-error">— Annual leakage</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Capital gains taxes</td>
+                <td class="p-3 text-ink">$0 at withdrawal</td>
+                <td class="p-3 text-ink">Due at sale</td>
+                <td class="p-3 text-warning">— Taxable event</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Compounding base</td>
+                <td class="p-3 text-ink">Full (100%)</td>
+                <td class="p-3 text-ink">Reduced by taxes</td>
+                <td class="p-3 text-error">— Eroded annually</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">25-year growth ($100K, 2% yield, 25% tax)</td>
+                <td class="p-3 font-semibold text-success-deep">~$607,000</td>
+                <td class="p-3 text-ink">~$562,000</td>
+                <td class="p-3 font-semibold text-error">−$45,000 lost</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Use This Calculator?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">High Dividend Investors</h4>
+            <p class="text-sm text-body">Owners of REITs, high-yield ETFs, or value stocks who want to quantify how much they lose to dividend taxes each year and optimize their asset location.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">FIRE Seekers</h4>
+            <p class="text-sm text-body">Early retirees who need to understand the true cost of taxable accounts in their withdrawal strategy and optimize their portfolio for tax efficiency.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Index Fund Holders</h4>
+            <p class="text-sm text-body">Investors with broad market index funds in taxable accounts who want to see the real cost of the dividend yield on their total return.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Tax Professionals</h4>
+            <p class="text-sm text-body">Advisors and CPAs who need to illustrate the long-term impact of dividend tax drag to clients and recommend optimal account placement.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Common Dividend Tax Drag Scenarios</h3>
+        <p class="mb-4">The calculator includes 5 preset scenarios showing different portfolio types. Here is how the tax drag varies:</p>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-1 text-sm font-semibold text-ink">S&P 500 Index Fund</h4>
+            <p class="text-xs text-body"><strong>1.3% yield, 95% qualified</strong> — Low drag (~0.25%). Highly tax-efficient for taxable accounts.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-1 text-sm font-semibold text-ink">High-Dividend ETF</h4>
+            <p class="text-xs text-body"><strong>4% yield, 85% qualified</strong> — Moderate drag (~0.80%). Better held in tax-advantaged accounts.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-1 text-sm font-semibold text-ink">REIT Heavy</h4>
+            <p class="text-xs text-body"><strong>5% yield, 10% qualified</strong> — High drag (~1.80%). Strongly prefer tax-advantaged placement.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-1 text-sm font-semibold text-ink">Bond Fund</h4>
+            <p class="text-xs text-body"><strong>4.5% yield, 0% qualified</strong> — Very high drag (~1.70%). Most tax-inefficient in taxable accounts.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-1 text-sm font-semibold text-ink">High Earner + State Tax</h4>
+            <p class="text-xs text-body"><strong>37% bracket, 9.3% state, NIIT</strong> — Maximum drag scenario (~2.00%). Emphasizes asset location urgency.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-1 text-sm font-semibold text-ink">Growth Stock</h4>
+            <p class="text-xs text-body"><strong>Low or zero yield</strong> — Minimal drag. Most tax-efficient for taxable accounts. Ideal for buy-and-hold investors.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Dividend Tax Drag Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Why Awareness Matters</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Helps you optimize asset location between accounts</li>
+              <li>• Quantifies invisible costs that most investors ignore</li>
+              <li>• Guides fund selection for taxable accounts</li>
+              <li>• Supports the case for Roth IRAs and 401(k)s</li>
+              <li>• Reveals hidden fee equivalent of dividend taxes</li>
+              <li>• Informs withdrawal sequencing in retirement</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Limitations to Consider</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Does not model capital gains taxes at sale</li>
+              <li>• Tax rates and brackets change over time</li>
+              <li>• Assumes constant dividend yield throughout</li>
+              <li>• Does not account for tax-loss harvesting benefits</li>
+              <li>• State tax treatment varies widely</li>
+              <li>• Does not model step-up in basis at death</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Dividend Tax Drag
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Dividend Tax Drag
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>dividend tax drag calculator</strong> is the most comprehensive free tool available for understanding the hidden cost of dividend taxes in your taxable investment accounts. Unlike generic investment calculators that ignore tax effects, this tool specifically models the annual leakage caused by dividend taxation and shows how it compounds over time.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose This Dividend Tax Drag Calculator?</h3>
+
+        <p class="mb-4">
+          Most investors focus on expense ratios and trading commissions while ignoring the far larger cost of dividend tax drag. A 2% dividend yield in a 32% tax bracket loses 0.64% of your portfolio every year — more than ten times the expense ratio of a typical index fund. Over a 30-year investment horizon, this hidden cost can consume more than 15% of your total returns.
+        </p>
+
+        <p class="mb-4">
+          This <strong>taxable account vs IRA calculator</strong> makes the invisible visible. By comparing identical investments in a tax-advantaged account (Roth IRA, 401(k)) against a taxable brokerage account, you can see exactly how much wealth dividend taxes destroy. The interactive chart plots both trajectories, and the year-by-year table shows the growing gap.
+        </p>
+
+        <p class="mb-4">
+          Whether you are deciding between a Roth IRA and a taxable brokerage account, evaluating whether to hold dividend stocks in your 401(k), or simply trying to understand your true after-tax investment returns, this tool gives you the clarity to make better asset location decisions.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Dividend Tax Drag Calculator</h3>
+
+        <p class="mb-4">
+          Unlike other <strong>dividend tax drag calculators</strong> that are simple blog illustrations, our calculator is fully interactive and real-time. It handles qualified vs ordinary dividend tax rates, federal and state income taxes, the 3.8% Net Investment Income Tax (NIIT), and works through 5 preset scenarios covering common portfolio types.
+        </p>
+
+        <p class="mb-4">
+          The <strong>expense ratio equivalent</strong> display shows your dividend tax drag as a percentage of your portfolio, making it easy to compare against fund fees. The interactive chart automatically adapts to dark mode, and all calculations run in your browser — no data is sent to any server.
+        </p>
+
+        <p class="mb-4">
+          Use the preset buttons to quickly compare how different portfolio types affect your tax drag. Start with the S&amp;P 500 Index Fund preset (low drag), then switch to the REIT Heavy or High Earner + State Tax preset to see how dramatically the tax cost can increase. Every adjustment updates the results, chart, and table instantly.
+        </p>
+
+        <p class="mb-4">
+          Understanding dividend tax drag is essential for anyone investing in taxable accounts. By optimizing your asset location — holding tax-inefficient funds in tax-advantaged accounts and tax-efficient funds in taxable accounts — you can keep more of your returns and reach your financial goals faster. Start calculating today to see how much dividend taxes are really costing you.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore More Tax &amp; Investment Tools
+      </h2>
+      <p class="mb-8 text-body">Compare other calculators to optimize your tax efficiency and investment strategy.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/tax-gain-harvesting-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Tax Gain Harvesting Calculator</h3>
+          <p class="text-xs text-body">Model the long-term benefit of harvesting capital gains at the 0% rate.</p>
+        </a>
+        <a href="/fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Calculate your FIRE number using the 4% rule across multiple strategies.</p>
+        </a>
+        <a href="/coast-fire-number" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Coast FIRE Number</h3>
+          <p class="text-xs text-body">Find how much you need saved today to reach FIRE through compound interest alone.</p>
+        </a>
+        <a href="/sepp-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">SEPP / 72(t) Calculator</h3>
+          <p class="text-xs text-body">Compare IRS-approved methods for penalty-free early IRA withdrawals.</p>
+        </a>
+        <a href="/aca-subsidy-cliff-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">ACA Subsidy Cliff Calculator</h3>
+          <p class="text-xs text-body">Calculate MAGI thresholds for ACA premium tax credits.</p>
+        </a>
+        <a href="/salary-sacrifice-pension-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Salary Sacrifice Pension Calculator</h3>
+          <p class="text-xs text-body">Compare standard vs salary sacrifice pension contributions with NI savings.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
