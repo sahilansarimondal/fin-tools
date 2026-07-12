@@ -1,0 +1,415 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="pta-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="pta-form" class="space-y-6">
+          <Input
+            label="Base Salary"
+            name="baseSalary"
+            type="number"
+            value={80000}
+            min={0}
+            step={1000}
+            suffix="£"
+            hideArrows
+            required
+            tooltip="Your annual base salary before any deductions."
+          />
+
+          <Input
+            label="Bonuses & Commissions"
+            name="bonusesCommissions"
+            type="number"
+            value={0}
+            min={0}
+            step={1000}
+            suffix="£"
+            hideArrows
+            tooltip="Annual bonuses, commissions, and other variable compensation."
+          />
+
+          <Input
+            label="Other Taxable Income"
+            name="otherTaxableIncome"
+            type="number"
+            value={0}
+            min={0}
+            step={1000}
+            suffix="£"
+            hideArrows
+            tooltip="Dividends, rental income, savings interest, and other taxable income."
+          />
+
+          <Input
+            label="Employee Pension Contributions (net)"
+            name="employeeContributions"
+            type="number"
+            value={0}
+            min={0}
+            step={500}
+            suffix="£"
+            hideArrows
+            tooltip="Your personal pension contributions. For Relief at Source, enter the net amount you pay. For Net Pay / Salary Sacrifice, enter the gross amount."
+            helpText="Enter net for Relief at Source, gross for Net Pay"
+          />
+
+          <Input
+            label="Employer Pension Contributions"
+            name="employerContributions"
+            type="number"
+            value={0}
+            min={0}
+            step={500}
+            suffix="£"
+            hideArrows
+            tooltip="Your employer's pension contributions including any salary sacrifice amounts."
+          />
+
+          <!-- Contribution Method Toggle -->
+          <fieldset class="space-y-2">
+            <legend class="text-sm font-medium text-ink">Contribution Method</legend>
+            <div class="flex gap-4">
+              <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-hairline bg-canvas px-4 py-2.5 text-sm font-medium text-ink transition-colors has-[:checked]:border-link has-[:checked]:bg-link/5">
+                <input
+                  type="radio"
+                  name="contributionMethod"
+                  value="relief-at-source"
+                  id="pta-method-ras"
+                  checked
+                  class="h-4 w-4 accent-link"
+                />
+                Relief at Source
+              </label>
+              <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-hairline bg-canvas px-4 py-2.5 text-sm font-medium text-ink transition-colors has-[:checked]:border-link has-[:checked]:bg-link/5">
+                <input
+                  type="radio"
+                  name="contributionMethod"
+                  value="net-pay"
+                  id="pta-method-netpay"
+                  class="h-4 w-4 accent-link"
+                />
+                Net Pay / Salary Sacrifice
+              </label>
+            </div>
+          </fieldset>
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Warning Banner -->
+      <div id="pta-warnings" class="hidden rounded-lg border border-yellow-300 bg-yellow-50 p-4 dark:border-yellow-700 dark:bg-yellow-900/20">
+        <div class="flex items-start gap-3">
+          <svg class="mt-0.5 h-5 w-5 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg>
+          <div>
+            <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-200">Taper Alert</h3>
+            <ul id="pta-warnings-list" class="mt-1 text-sm text-yellow-700 dark:text-yellow-300"></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Metric: Tapered Annual Allowance -->
+      <div class="rounded-lg border border-hairline bg-canvas p-6 text-center shadow-sm">
+        <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Your Tapered Annual Allowance</p>
+        <p id="pta-tapered-allowance" class="text-3xl font-semibold tabular-nums text-ink sm:text-4xl">—</p>
+        <p class="mt-1 text-xs text-mute">2024/25 tax year annual allowance</p>
+      </div>
+
+      <!-- KPI Cards Grid -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Threshold Income"
+          valueId="pta-threshold-income"
+          value="—"
+          valueClass="text-ink"
+          description="Income after pension deductions"
+        />
+
+        <ResultCard
+          label="Adjusted Income"
+          valueId="pta-adjusted-income"
+          value="—"
+          valueClass="text-ink"
+          description="Income including pension contributions"
+        />
+
+        <ResultCard
+          label="Total Pension Input"
+          valueId="pta-total-input"
+          value="—"
+          valueClass="text-ink"
+          description="Employee + employer contributions"
+        />
+
+        <ResultCard
+          label="Remaining Allowance"
+          valueId="pta-remaining"
+          value="—"
+          valueClass="text-ink"
+          description="Headroom before tax charge"
+        />
+      </div>
+
+      <!-- Plain English Explanation -->
+      <div id="pta-explanation" class="rounded-lg border border-hairline bg-canvas-soft p-4">
+        <p class="text-sm text-body" id="pta-explanation-text"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    'use strict';
+
+    // --- Constants ---
+    var STANDARD_ANNUAL_ALLOWANCE = 60000;
+    var THRESHOLD_INCOME_LIMIT = 200000;
+    var ADJUSTED_INCOME_LIMIT = 260000;
+    var MINIMUM_ANNUAL_ALLOWANCE = 10000;
+    var TAPER_RATE = 0.5;
+    var BASIC_RATE_TAX = 0.2;
+
+    // --- Helpers ---
+
+    function round2(n) {
+      return Math.round(n * 100) / 100;
+    }
+
+    function formatGBP(n) {
+      return '£' + n.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    }
+
+    function getFormData() {
+      var form = document.getElementById('pta-form');
+      var fd = new FormData(form);
+      return {
+        baseSalary: parseFloat(fd.get('baseSalary')) || 0,
+        bonusesCommissions: parseFloat(fd.get('bonusesCommissions')) || 0,
+        otherTaxableIncome: parseFloat(fd.get('otherTaxableIncome')) || 0,
+        employeeContributions: parseFloat(fd.get('employeeContributions')) || 0,
+        employerContributions: parseFloat(fd.get('employerContributions')) || 0,
+        contributionMethod: fd.get('contributionMethod') || 'relief-at-source',
+      };
+    }
+
+    // --- Calculation Engine ---
+
+    function calculatePensionTaper(inputs) {
+      var warnings = [];
+      var baseSalary = inputs.baseSalary;
+      var bonusesCommissions = inputs.bonusesCommissions;
+      var otherTaxableIncome = inputs.otherTaxableIncome;
+      var employeeContributions = inputs.employeeContributions;
+      var employerContributions = inputs.employerContributions;
+      var contributionMethod = inputs.contributionMethod;
+
+      // Step 1: Total Taxable Income
+      var totalIncome = round2(baseSalary + bonusesCommissions + otherTaxableIncome);
+
+      // Step 2: Threshold Income
+      var thresholdIncome;
+      var grossEmployeeContributions = 0;
+
+      if (contributionMethod === 'relief-at-source') {
+        grossEmployeeContributions = round2(employeeContributions / (1 - BASIC_RATE_TAX));
+        thresholdIncome = round2(totalIncome - grossEmployeeContributions);
+      } else {
+        thresholdIncome = totalIncome;
+      }
+
+      var taperedAnnualAllowance;
+      var reduction;
+      var isTapered;
+      var exceedsThreshold;
+      var exceedsAdjusted;
+      var adjustedIncome;
+
+      // Step 3: Check Threshold
+      exceedsThreshold = thresholdIncome > THRESHOLD_INCOME_LIMIT;
+
+      if (!exceedsThreshold) {
+        taperedAnnualAllowance = STANDARD_ANNUAL_ALLOWANCE;
+        reduction = 0;
+        adjustedIncome = 0;
+        exceedsAdjusted = false;
+        isTapered = false;
+      } else {
+        warnings.push('Your Threshold Income exceeds £200,000, so the tapered annual allowance applies.');
+
+        // Step 4: Adjusted Income
+        if (contributionMethod === 'relief-at-source') {
+          adjustedIncome = round2(totalIncome + employerContributions + grossEmployeeContributions);
+        } else {
+          adjustedIncome = round2(totalIncome + employerContributions);
+        }
+
+        // Step 5: Tapered Allowance
+        exceedsAdjusted = adjustedIncome > ADJUSTED_INCOME_LIMIT;
+
+        if (!exceedsAdjusted) {
+          taperedAnnualAllowance = STANDARD_ANNUAL_ALLOWANCE;
+          reduction = 0;
+          isTapered = false;
+        } else {
+          warnings.push('Your Adjusted Income exceeds £260,000, so your annual allowance is being reduced.');
+
+          var excess = round2(adjustedIncome - ADJUSTED_INCOME_LIMIT);
+          reduction = round2(excess * TAPER_RATE);
+          taperedAnnualAllowance = round2(Math.max(MINIMUM_ANNUAL_ALLOWANCE, STANDARD_ANNUAL_ALLOWANCE - reduction));
+          isTapered = true;
+
+          if (taperedAnnualAllowance <= MINIMUM_ANNUAL_ALLOWANCE) {
+            warnings.push('You have reached the minimum tapered annual allowance of £10,000.');
+          }
+        }
+      }
+
+      // Step 6: Headroom / Tax Charge
+      var totalPensionInput = round2(employeeContributions + employerContributions);
+      var remainingAllowance = round2(taperedAnnualAllowance - totalPensionInput);
+      var hasTaxCharge = remainingAllowance < 0;
+
+      if (hasTaxCharge) {
+        warnings.push('Your pension contributions exceed your tapered annual allowance. You may face an annual allowance tax charge.');
+      }
+
+      // Step 7: Explanation
+      var explanationParts = [];
+
+      if (!exceedsThreshold) {
+        explanationParts.push(
+          'Your Threshold Income of ' + formatGBP(thresholdIncome) + ' does not exceed the ' + formatGBP(THRESHOLD_INCOME_LIMIT) + ' limit, so the pension taper does not apply. Your annual allowance remains the full ' + formatGBP(STANDARD_ANNUAL_ALLOWANCE) + '.'
+        );
+      } else {
+        explanationParts.push(
+          'Your Threshold Income of ' + formatGBP(thresholdIncome) + ' exceeds the ' + formatGBP(THRESHOLD_INCOME_LIMIT) + ' limit, so the taper applies.'
+        );
+
+        if (exceedsAdjusted) {
+          var excessAmt = round2(adjustedIncome - ADJUSTED_INCOME_LIMIT);
+          explanationParts.push(
+            'Your Adjusted Income of ' + formatGBP(adjustedIncome) + ' is ' + formatGBP(excessAmt) + ' above the ' + formatGBP(ADJUSTED_INCOME_LIMIT) + ' threshold, reducing your annual allowance by ' + formatGBP(reduction) + ' from ' + formatGBP(STANDARD_ANNUAL_ALLOWANCE) + ' to ' + formatGBP(taperedAnnualAllowance) + '.'
+          );
+        } else {
+          explanationParts.push(
+            'However, your Adjusted Income of ' + formatGBP(adjustedIncome) + ' does not exceed ' + formatGBP(ADJUSTED_INCOME_LIMIT) + ', so your annual allowance remains the full ' + formatGBP(STANDARD_ANNUAL_ALLOWANCE) + '.'
+          );
+        }
+      }
+
+      if (hasTaxCharge) {
+        explanationParts.push(
+          'Your total pension input of ' + formatGBP(totalPensionInput) + ' exceeds your tapered annual allowance of ' + formatGBP(taperedAnnualAllowance) + ' by ' + formatGBP(Math.abs(remainingAllowance)) + '. You may face an annual allowance tax charge on the excess.'
+        );
+      }
+
+      var explanation = explanationParts.join(' ');
+
+      return {
+        totalIncome: totalIncome,
+        thresholdIncome: thresholdIncome,
+        adjustedIncome: adjustedIncome,
+        taperedAnnualAllowance: taperedAnnualAllowance,
+        totalPensionInput: totalPensionInput,
+        remainingAllowance: remainingAllowance,
+        isTapered: isTapered,
+        exceedsThreshold: exceedsThreshold,
+        exceedsAdjusted: exceedsAdjusted,
+        hasTaxCharge: hasTaxCharge,
+        reduction: reduction,
+        explanation: explanation,
+        warnings: warnings,
+      };
+    }
+
+    // --- UI Update Functions ---
+
+    function updateResults() {
+      var inputs = getFormData();
+      var r = calculatePensionTaper(inputs);
+
+      // Update label based on method
+      var contribLabel = document.querySelector('label[for="input-employeeContributions"]');
+      if (contribLabel) {
+        if (inputs.contributionMethod === 'relief-at-source') {
+          contribLabel.childNodes[0].textContent = 'Employee Pension Contributions (net)';
+        } else {
+          contribLabel.childNodes[0].textContent = 'Employee Pension Contributions (gross)';
+        }
+      }
+
+      // Warnings
+      var warningsEl = document.getElementById('pta-warnings');
+      var warningsList = document.getElementById('pta-warnings-list');
+      if (r.warnings.length > 0) {
+        warningsEl.classList.remove('hidden');
+        warningsList.innerHTML = '';
+        r.warnings.forEach(function (w) {
+          var li = document.createElement('li');
+          li.className = 'text-xs text-yellow-700 dark:text-yellow-300';
+          li.textContent = w;
+          warningsList.appendChild(li);
+        });
+      } else {
+        warningsEl.classList.add('hidden');
+      }
+
+      // Hero Metric: Tapered Annual Allowance
+      var allowanceEl = document.getElementById('pta-tapered-allowance');
+      allowanceEl.textContent = formatGBP(r.taperedAnnualAllowance);
+      if (r.isTapered) {
+        allowanceEl.className = 'text-3xl font-semibold tabular-nums text-warning sm:text-4xl';
+      } else if (r.hasTaxCharge) {
+        allowanceEl.className = 'text-3xl font-semibold tabular-nums text-error sm:text-4xl';
+      } else {
+        allowanceEl.className = 'text-3xl font-semibold tabular-nums text-success-deep sm:text-4xl';
+      }
+
+      // KPI Cards
+      document.getElementById('pta-threshold-income').textContent = formatGBP(r.thresholdIncome);
+      document.getElementById('pta-adjusted-income').textContent = formatGBP(r.adjustedIncome);
+      document.getElementById('pta-total-input').textContent = formatGBP(r.totalPensionInput);
+
+      var remainingEl = document.getElementById('pta-remaining');
+      remainingEl.textContent = formatGBP(r.remainingAllowance);
+      if (r.remainingAllowance < 0) {
+        remainingEl.className = 'text-2xl font-semibold tabular-nums text-error';
+      } else if (r.remainingAllowance === 0) {
+        remainingEl.className = 'text-2xl font-semibold tabular-nums text-warning';
+      } else {
+        remainingEl.className = 'text-2xl font-semibold tabular-nums text-success-deep';
+      }
+
+      // Explanation
+      var explanationEl = document.getElementById('pta-explanation-text');
+      explanationEl.textContent = r.explanation;
+    }
+
+    // --- Initialization ---
+
+    function initFormListeners() {
+      var form = document.getElementById('pta-form');
+      if (form) {
+        form.addEventListener('input', function () {
+          updateResults();
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      initFormListeners();
+      updateResults();
+    });
+  })();
+</script>
