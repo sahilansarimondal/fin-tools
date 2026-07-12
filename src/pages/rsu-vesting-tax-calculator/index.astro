@@ -1,0 +1,323 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import RsuVestingTaxCalculator from '../../components/calculator/RsuVestingTaxCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'How are RSUs taxed when they vest in the US?',
+    answerHtml: '<b>RSUs are taxed as ordinary income (W-2 wages) at the moment they vest</b>, regardless of whether you sell the shares. The value taxed is the Fair Market Value (FMV) on the vesting date multiplied by the number of shares. Your employer withholds federal supplemental income tax (22% or 37%), Social Security (6.2% up to the $184,500 wage base for 2026), Medicare (1.45%), and any applicable state taxes.',
+    answerText: 'RSUs are taxed as ordinary income at vesting. The FMV on the vest date is the taxable amount. Employers withhold federal, state, and FICA taxes automatically.',
+  },
+  {
+    question: 'What is the 22% vs 37% federal supplemental withholding rate?',
+    answerHtml: 'The IRS requires employers to withhold <b>22% flat</b> on supplemental wages (like RSUs) up to <b>$1 million per year</b>. Once your total supplemental wages exceed $1M, the excess is withheld at <b>37%</b>. This is <b>withholding</b>, not your final tax rate. At tax time, RSU income is taxed at your marginal rate (10%–37%), so high earners often owe additional taxes if the 22% withholding was too low.',
+    answerText: '22% applies to supplemental wages up to $1M/year. Above $1M, the excess is withheld at 37%. This is withholding only — your actual tax rate depends on your total income and filing status.',
+  },
+  {
+    question: 'What is the 2026 Social Security wage base for RSU vests?',
+    answerHtml: 'For 2026, the Social Security wage base is <b>$184,500</b>. Social Security tax (6.2%) only applies to wages up to this limit. If your year-to-date income before the RSU vest already exceeds $184,500, no additional Social Security tax is due on the vest. If the vest pushes you over the cap, only the portion up to $184,500 is taxed at 6.2%.',
+    answerText: 'The 2026 Social Security wage base is $184,500. SS tax (6.2%) only applies to wages up to this limit. If your YTD income already exceeds it, no SS tax is due on the vest.',
+  },
+  {
+    question: 'What is the Additional Medicare Tax and when does it apply?',
+    answerHtml: 'The <b>0.9% Additional Medicare Tax</b> applies to wages exceeding <b>$200,000</b> for single filers ($250,000 for married filing jointly). Unlike regular Medicare (1.45%), this surcharge is <b>employee-only</b> — your employer does not match it. If your year-to-date income is already above $200K, the entire RSU vest is subject to the 0.9% surcharge. If the vest pushes you over, only the excess amount is taxed.',
+    answerText: 'The 0.9% Additional Medicare Tax applies to wages over $200K (single). It is employee-only with no employer match. If your YTD income exceeds $200K, the entire vest gets the surcharge.',
+  },
+  {
+    question: 'What is sell-to-cover and how does the cash refund work?',
+    answerHtml: '<b>Sell-to-cover</b> is the default method employers use to withhold taxes on RSU vests. The brokerage automatically sells enough <b>whole shares</b> to cover the total tax bill. Because brokers can only sell whole shares (not fractions), they often sell slightly more than needed. The <b>excess cash</b> from overshooting the tax bill is refunded to you — either deposited into your brokerage account or sent as a cash payment.',
+    answerText: 'Sell-to-cover means your broker sells whole shares to pay your taxes. Since they round up to the nearest whole share, any excess cash is refunded to you.',
+  },
+  {
+    question: 'Does selling shares to cover taxes trigger capital gains?',
+    answerHtml: '<b>No.</b> The sell-to-cover transaction itself does not trigger capital gains tax. The RSU value at vesting is taxed as ordinary income (W-2 wages). Capital gains tax only applies to any <b>appreciation after the vesting date</b>. For example, if your RSUs vest at $150/share and you later sell at $180/share, you owe long-term or short-term capital gains on the $30 gain. The initial $150 is already taxed as ordinary income.',
+    answerText: 'No. The sell-to-cover sale does not trigger capital gains. Only appreciation after the vesting date is subject to capital gains tax.',
+  },
+  {
+    question: 'How does year-to-date income affect my RSU tax withholding?',
+    answerHtml: 'Your <b>year-to-date (YTD) income</b> determines which tax thresholds you\'ve already crossed. It affects three calculations: (1) <b>Federal</b>: if YTD + vest value exceeds $1M, the excess is withheld at 37% instead of 22%. (2) <b>Social Security</b>: if YTD exceeds $184,500, no additional SS tax is withheld. (3) <b>Additional Medicare</b>: if YTD exceeds $200K, the 0.9% surcharge applies to the entire vest. This calculator uses your YTD income to make these precise calculations.',
+    answerText: 'YTD income determines which tax thresholds you\'ve crossed. It affects the federal 22%/37% split, SS cap ($184,500), and Additional Medicare threshold ($200K).',
+  },
+  {
+    question: 'What tax bracket do RSUs fall under for 2026?',
+    answerHtml: 'RSUs are taxed as <b>ordinary income</b>, meaning they fall under the same marginal tax brackets as your regular salary. For 2026, the federal brackets are: 10%, 12%, 22%, 24%, 32%, 35%, and 37%. Your RSU income stacks on top of your existing W-2 income, so it may push you into a higher bracket. The supplemental withholding rates (22% and 37%) are <b>withholding estimates only</b> — your actual tax rate is determined by your total taxable income for the year when you file your return.',
+    answerText: 'RSUs are ordinary income taxed at your marginal bracket (10%–37%). RSU income stacks on your existing W-2 income and may push you into a higher bracket. The 22%/37% supplemental rates are withholding only, not your final tax rate.',
+  },
+];
+---
+
+<PageLayout
+  title="RSU Vesting Tax Calculator — 2026 US Withholding Estimator"
+  description="Calculate RSU vesting taxes with 2026 IRS rules. Estimate federal supplemental withholding, Social Security, Medicare, and state taxes on stock vesting."
+  canonical="https://truefinancetools.com/rsu-vesting-tax-calculator"
+  ogImage="https://truefinancetools.com/og-rsu-vesting-tax-calculator.png"
+  ogImageAlt="RSU Vesting Tax Calculator — Estimate Your 2026 US Withholding"
+  pageType="website"
+  keywords="RSU vesting tax calculator, RSU tax withholding, restricted stock units tax, stock vesting tax calculator, RSU sell to cover, federal supplemental withholding, FICA RSU, 2026 tax calculator"
+>
+  <StructuredData
+    title="RSU Vesting Tax Calculator"
+    description="Free RSU vesting tax calculator with 2026 IRS rules. Estimate federal, Social Security, Medicare, and state withholding on stock vesting events."
+    url="https://truefinancetools.com/rsu-vesting-tax-calculator"
+    toolName="RSU Vesting Tax Calculator"
+    toolDescription="Calculate federal supplemental withholding (22%/37%), Social Security, Medicare, and state taxes on RSU vesting. Uses 2026 IRS wage bases and thresholds."
+    faqItems={toolFaqItems}
+    features={[
+      'Federal supplemental withholding with 22%/37% split at $1M',
+      'Social Security tax with 2026 wage base cap ($184,500)',
+      'Additional Medicare Tax calculation (0.9% above $200K)',
+      'State supplemental withholding rate input',
+      'Sell-to-cover whole-share rounding and cash refund',
+      'Year-to-date income tracking for accurate cap calculations'
+    ]}
+  />
+
+  <!-- Hero -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        RSU Vesting Tax Calculator
+      </h1>
+      <p class="text-lg text-body">Estimate your 2026 federal, state, and FICA withholding when your Restricted Stock Units vest.</p>
+    </div>
+  </section>
+
+  <!-- Calculator Component -->
+  <RsuVestingTaxCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the RSU Vesting Tax Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18a50.975 50.975 0 01-11.756 0 2.01 2.01 0 01-1.872-2.18v-4.25m11.475-4.575a48.947 48.947 0 00-6.95 0 2.008 2.008 0 00-1.837 1.525c-.215.9-.215 1.826 0 2.726.215.9.997 1.525 1.837 1.525h0a2.008 2.008 0 001.838-1.525c.215-.9.215-1.826 0-2.726a2.008 2.008 0 00-1.838-1.525zM8.25 6.75h7.5M8.25 9.75h7.5" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Vest Details</h3>
+      <p class="text-sm text-body">Input the number of RSUs vesting, the FMV per share, and your year-to-date income to set the baseline.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Apply 2026 Tax Rules</h3>
+      <p class="text-sm text-body">The calculator applies federal supplemental rates, FICA caps, and your state withholding rate automatically.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See Your Net Shares</h3>
+      <p class="text-sm text-body">View your total withholding, net shares deposited, cash refund, and a detailed breakdown of every tax component.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is RSU Vesting Tax? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is RSU Vesting Tax?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Restricted Stock Units (RSUs)</strong> are a form of equity compensation where your employer grants you shares that vest over time. When RSUs vest, the fair market value of the shares is treated as <strong>ordinary W-2 income</strong> — just like your salary. Your employer is required to withhold federal income tax, Social Security, Medicare, and applicable state taxes at the time of vesting, typically through a sell-to-cover process.
+        </p>
+
+        <p class="mb-4">
+          The complexity arises because different tax components have different rates, caps, and thresholds. Federal supplemental wages are withheld at 22% (or 37% above $1M), Social Security has a wage base cap ($184,500 for 2026), and there is an Additional Medicare surcharge of 0.9% once you exceed $200,000 in wages. Your year-to-date income before the vest determines which caps and thresholds have already been reached, making the calculation highly personalized.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The RSU Vesting Tax Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Total Withholding = Federal Supplemental + Social Security + Medicare + Additional Medicare + State
+        </div>
+
+        <p class="mb-4 mt-4">
+          Where each component is calculated based on 2026 IRS rules. For example, if you have 500 RSUs vesting at $200/share with $180,000 year-to-date income: the federal supplemental is 22% of $100,000, Social Security applies 6.2% to the portion below $184,500, Medicare is 1.45% on the full amount, and the 0.9% Additional Medicare surcharge applies to the portion above $200K.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Sell-to-Cover vs. Same-Day Sale vs. Cash Payment</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Method</th>
+                <th class="p-3 font-medium text-ink">How It Works</th>
+                <th class="p-3 font-medium text-ink">Tax Impact</th>
+                <th class="p-3 font-medium text-ink">Best For</th>
+              </tr>
+            </thead>
+            <tbody class="text-xs">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 font-medium text-ink">Sell-to-Cover</td>
+                <td class="p-3 text-body">Broker sells enough whole shares to cover the tax bill; excess cash refunded</td>
+                <td class="p-3 text-body">No capital gains triggered; cash refund reflects oversold shares</td>
+                <td class="p-3 text-body">Most employees — hands-off, automatic</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 font-medium text-ink">Same-Day Sale</td>
+                <td class="p-3 text-body">All shares vested are sold immediately, taxes paid from proceeds</td>
+                <td class="p-3 text-body">No appreciation — no capital gains; cash-only proceeds</td>
+                <td class="p-3 text-body">Diversification vs holding single stock</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 font-medium text-ink">Cash Payment</td>
+                <td class="p-3 text-body">You pay the tax bill out-of-pocket; keep all shares</td>
+                <td class="p-3 text-body">Same withholding, but you retain full share count</td>
+                <td class="p-3 text-body">Bulls who want maximum equity exposure</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Use This Calculator?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">RSU Employees</h4>
+            <p class="text-sm text-body">Tech and finance professionals with RSU compensation who want to know exactly how many shares they will keep after taxes.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Tax Planners</h4>
+            <p class="text-sm text-body">Individuals who want to estimate quarterly estimated tax payments or understand if their RSU withholding will be sufficient.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">HR & Payroll</h4>
+            <p class="text-sm text-body">Compensation professionals who need to model tax scenarios for employees receiving equity grants across different states.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Financial Advisors</h4>
+            <p class="text-sm text-body">Advisors helping clients optimize their equity compensation strategies and understand the true after-tax value of RSU vests.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">RSU Vesting Tax Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Withholding is automatic — no manual tax payments required</li>
+              <li>• Sell-to-cover eliminates the need to fund taxes from cash</li>
+              <li>• Ordinary income treatment means any post-vest appreciation is capital gains</li>
+              <li>• Employer typically covers the employer portion of FICA taxes</li>
+              <li>• RSUs can be a powerful wealth-building tool when held long-term</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Full ordinary income tax at vesting — potentially large tax bill</li>
+              <li>• 22% supplemental withholding may be too low for high earners</li>
+              <li>• Additional Medicare Tax above $200K adds 0.9% employee-only surcharge</li>
+              <li>• State taxes vary widely — some states treat RSUs differently</li>
+              <li>• Sell-to-cover rounding means you may lose more shares than necessary</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        RSU Vesting Tax FAQs
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to RSU Vesting Tax Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>RSU vesting tax calculator</strong> is the most comprehensive free tool available for estimating your tax withholding on restricted stock unit vesting events. Unlike generic calculators that apply a flat rate, this tool accounts for every IRS threshold that affects your actual withholding: the supplemental wage 22%/37% split, the Social Security wage base cap, the Additional Medicare surcharge, and your specific state rate.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose This RSU Tax Withholding Calculator?</h3>
+
+        <p class="mb-4">
+          Most RSU employees are surprised on tax day when they owe thousands more than what was withheld. The culprit? The 22% flat supplemental rate is often too low for employees in higher marginal brackets (24%, 32%, 35%, or 37%). Our calculator shows you exactly what will be withheld versus what you might owe, so you can plan for estimated payments or adjust your W-4 accordingly.
+        </p>
+
+        <p class="mb-4">
+          This <strong>restricted stock unit tax calculator</strong> is designed for the millions of tech, finance, and pharmaceutical professionals who receive equity compensation. Whether you are at a public company with quarterly vests or a startup approaching IPO, this tool helps you understand the true after-tax value of your RSU awards and avoid surprises at filing time.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This RSU Vesting Tax Calculator</h3>
+
+        <p class="mb-4">
+          Unlike other <strong>RSU tax calculators</strong> that give you a single number, our tool provides a full breakdown of every tax component. You can see exactly how much is withheld for federal supplemental tax, Social Security, Medicare, Additional Medicare, and state taxes. The sell-to-cover model shows how many whole shares are sold, the cash refund from rounding, and the net shares deposited into your account.
+        </p>
+
+        <p class="mb-4">
+          Year-to-date income tracking is a critical feature that most calculators miss. Enter your YTD wages and the calculator automatically adjusts the Social Security cap ($184,500) and Additional Medicare threshold ($200K) to reflect your actual position. If you have already crossed these thresholds through salary alone, the calculator correctly shows no additional SS tax or full 0.9% surcharge on the vest.
+        </p>
+
+        <p class="mb-4">
+          Plan your next RSU vest with confidence — no signup required, completely free, and results in seconds. Adjust any input to see how it changes your withholding, and use the results to plan your quarterly estimated tax payments or W-4 adjustments.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Tax & Equity Tools
+      </h2>
+      <p class="mb-8 text-body">Compare different tax optimization strategies and equity compensation calculators.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/rsu-sell-to-cover-tax-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">RSU Sell-to-Cover Tax</h3>
+          <p class="text-xs text-body">Calculate the exact share impact of sell-to-cover tax withholding on your RSUs.</p>
+        </a>
+        <a href="/tax-gain-harvesting-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Tax Gain Harvesting</h3>
+          <p class="text-xs text-body">Optimize capital gains by harvesting gains in low-income years.</p>
+        </a>
+        <a href="/hsa-shoebox-strategy-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">HSA Shoebox Strategy</h3>
+          <p class="text-xs text-body">Compare immediate vs. delayed reimbursement for maximum HSA tax benefits.</p>
+        </a>
+        <a href="/owner-earnings-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Owner Earnings</h3>
+          <p class="text-xs text-body">Calculate Buffett-style owner earnings and intrinsic value for any stock.</p>
+        </a>
+        <a href="/mega-backdoor-roth-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mega Backdoor Roth</h3>
+          <p class="text-xs text-body">Model after-tax 401k contributions and Roth conversions for tax-free growth.</p>
+        </a>
+        <a href="/aca-subsidy-cliff-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">ACA Subsidy Cliff</h3>
+          <p class="text-xs text-body">Avoid ACA subsidy cliffs by understanding your MAGI thresholds.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

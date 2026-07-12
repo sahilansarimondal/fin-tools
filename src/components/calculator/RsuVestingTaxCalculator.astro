@@ -1,0 +1,307 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="rvtc-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="rvtc-form" class="space-y-4">
+          <Input
+            label="Shares Vesting"
+            name="sharesVesting"
+            type="number"
+            value={500}
+            min={1}
+            max={100000}
+            step={1}
+            suffix=""
+            hideArrows
+            required
+            tooltip="The number of RSU shares vesting in this event."
+          />
+
+          <Input
+            label="FMV per Share"
+            name="fmvPerShare"
+            type="number"
+            value={150}
+            min={0.01}
+            max={10000}
+            step={0.01}
+            suffix="$"
+            hideArrows
+            required
+            tooltip="Fair Market Value (FMV) of one share on the vesting date."
+          />
+
+          <Input
+            label="Year-to-Date Income"
+            name="ytdIncome"
+            type="number"
+            value={120000}
+            min={0}
+            max={10000000}
+            step={1000}
+            suffix="$"
+            hideArrows
+            required
+            tooltip="Your total earned income this year BEFORE this RSU vest. Used to check Social Security cap ($184,500) and Additional Medicare threshold ($200,000)."
+          />
+
+          <Slider
+            label="State Tax Rate"
+            name="stateTaxRate"
+            value={0}
+            min={0}
+            max={15}
+            step={0.1}
+            suffix="%"
+            inputId="rvtc-stateRate"
+            displayId="rvtc-stateRateValue"
+            tooltip="Your state's supplemental withholding rate. CA ≈ 10.23%, TX/NV/FL = 0%."
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Headline KPI -->
+      <div id="rvtc-headline-card" class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm text-center">
+        <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Net Shares You Keep</p>
+        <p id="rvtc-net-shares-headline" class="text-3xl font-semibold tabular-nums text-ink sm:text-4xl">—</p>
+        <p id="rvtc-net-label" class="mt-1 text-sm text-mute">Adjust inputs to see your results</p>
+      </div>
+
+      <!-- KPI ResultCards (2x2 grid) -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Gross Vest Value"
+          valueId="rvtc-gross-value"
+          value="—"
+          description="Total value of this vest"
+        />
+        <ResultCard
+          label="Total Tax Liability"
+          valueId="rvtc-total-tax"
+          value="—"
+          valueClass="text-error"
+          description="All taxes combined"
+        />
+        <ResultCard
+          label="Net Shares Delivered"
+          valueId="rvtc-net-shares"
+          value="—"
+          description="Shares delivered to your account"
+        />
+        <ResultCard
+          label="Cash Refund (Surplus)"
+          valueId="rvtc-cash-refund"
+          value="—"
+          valueClass="text-success-deep"
+          description="Excess from whole-share rounding"
+        />
+      </div>
+
+      <!-- Detailed Tax Breakdown Table -->
+      <Card padding="lg">
+        <h2 class="mb-4 text-sm font-medium text-ink">Detailed Tax Breakdown</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline">
+                <th class="pb-2 font-medium text-mute">Item</th>
+                <th class="pb-2 text-right font-medium text-mute">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="rvtc-breakdown-table" class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Gross Vest Value</td>
+                <td id="rvtc-tb-gross" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td id="rvtc-tb-federal-label" class="py-2 font-sans text-body">Federal Supplemental Withholding (22%)</td>
+                <td id="rvtc-tb-federal" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td id="rvtc-tb-ss-label" class="py-2 font-sans text-body">Social Security (6.2%)</td>
+                <td id="rvtc-tb-ss" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Medicare (1.45%)</td>
+                <td id="rvtc-tb-medicare" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr id="rvtc-tb-additional-medicare-row" class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Additional Medicare Tax (0.9%)</td>
+                <td id="rvtc-tb-additional-medicare" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td id="rvtc-tb-state-label" class="py-2 font-sans text-body">State Withholding (0%)</td>
+                <td id="rvtc-tb-state" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline bg-canvas-soft">
+                <td class="py-2 font-sans font-semibold text-ink">Total Estimated Withholding</td>
+                <td id="rvtc-tb-total" class="py-2 text-right font-semibold text-ink">—</td>
+              </tr>
+              <tr>
+                <td class="py-2 font-sans text-body">Effective Tax Rate</td>
+                <td id="rvtc-tb-effective-rate" class="py-2 text-right font-semibold text-ink">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <!-- Warning Banner -->
+      <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+        <p class="text-sm font-medium text-error">⚠ Withholding Is Not Your Final Tax Bill</p>
+        <p class="mt-1 text-xs text-body">This calculator estimates withholding only. Your actual tax liability depends on your total income, deductions, filing status, and applicable credits. The flat 22% supplemental rate is often lower than high earners' marginal bracket.</p>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="rounded-lg bg-canvas-soft p-4">
+        <p class="text-xs text-mute"><strong>Disclaimer:</strong> This calculator is for educational and planning purposes only. It estimates withholding based on 2026 IRS supplemental wage rules and FICA thresholds. Consult a licensed tax professional for personalized advice.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { calculateRsuVestingTax } from '../../utils/rsu-vesting-tax-calculations';
+  import { formatCurrency } from '../../utils/formatters';
+
+  function getFormData() {
+    var form = document.getElementById('rvtc-form');
+    var formData = new FormData(form);
+
+    return {
+      sharesVesting: Number(formData.get('sharesVesting')) || 500,
+      fmvPerShare: Number(formData.get('fmvPerShare')) || 150,
+      ytdIncome: Number(formData.get('ytdIncome')) || 120000,
+      stateTaxRate: Number(formData.get('stateTaxRate')) || 0,
+    };
+  }
+
+  function updateResults() {
+    var input = getFormData();
+    var r = calculateRsuVestingTax(input);
+
+    // ---- Headline ----
+    var netHeadline = document.getElementById('rvtc-net-shares-headline');
+    var netLabel = document.getElementById('rvtc-net-label');
+    var headlineCard = document.getElementById('rvtc-headline-card');
+
+    netHeadline.textContent = r.netSharesDelivered.toLocaleString();
+
+    if (r.netSharesDelivered <= 0) {
+      netLabel.textContent = 'All shares sold to cover taxes';
+      headlineCard.className = 'rounded-lg border border-error/30 bg-error/5 p-6 shadow-sm text-center';
+    } else {
+      netLabel.textContent = 'Worth ' + formatCurrency(r.netSharesDelivered * input.fmvPerShare) + ' at vest price';
+      headlineCard.className = 'rounded-lg border border-success/30 bg-success/5 p-6 shadow-sm text-center';
+    }
+
+    // ---- KPI Cards ----
+    document.getElementById('rvtc-gross-value').textContent = formatCurrency(r.grossVestValue);
+    document.getElementById('rvtc-total-tax').textContent = formatCurrency(r.totalTaxLiability);
+    document.getElementById('rvtc-net-shares').textContent = r.netSharesDelivered.toLocaleString();
+    document.getElementById('rvtc-cash-refund').textContent = formatCurrency(r.cashRefund);
+
+    // ---- Detailed Table ----
+    // Gross
+    document.getElementById('rvtc-tb-gross').textContent = formatCurrency(r.grossVestValue);
+
+    // Federal
+    document.getElementById('rvtc-tb-federal-label').textContent =
+      'Federal Supplemental Withholding (' + r.federalRateApplied + ')';
+    document.getElementById('rvtc-tb-federal').textContent = formatCurrency(r.federalSupplementalTax);
+
+    // Social Security
+    var ssAmount = document.getElementById('rvtc-tb-ss');
+    var ssLabel = document.getElementById('rvtc-tb-ss-label');
+    if (r.socialSecurityTax === 0) {
+      ssAmount.textContent = 'N/A — cap reached';
+      ssLabel.textContent = 'Social Security (6.2%)';
+    } else {
+      ssAmount.textContent = formatCurrency(r.socialSecurityTax);
+      // Check if partially taxed (some of the vest falls within the SS wage base)
+      var fullSsAmount = r.grossVestValue * 0.062;
+      if (r.socialSecurityTax < fullSsAmount - 0.01) {
+        var ssTaxablePortion = Math.round((r.socialSecurityTax / 0.062) * 100) / 100;
+        ssLabel.textContent =
+          'Social Security (6.2%) — ' + formatCurrency(ssTaxablePortion) + ' of ' + formatCurrency(r.grossVestValue) + ' taxed';
+      } else {
+        ssLabel.textContent = 'Social Security (6.2%)';
+      }
+    }
+
+    // Medicare
+    document.getElementById('rvtc-tb-medicare').textContent = formatCurrency(r.medicareTax);
+
+    // Additional Medicare
+    var amAmount = document.getElementById('rvtc-tb-additional-medicare');
+    if (r.additionalMedicareTax === 0) {
+      amAmount.textContent = 'N/A — below $200K';
+    } else {
+      amAmount.textContent = formatCurrency(r.additionalMedicareTax);
+    }
+
+    // State
+    document.getElementById('rvtc-tb-state-label').textContent =
+      'State Withholding (' + input.stateTaxRate + '%)';
+    document.getElementById('rvtc-tb-state').textContent = formatCurrency(r.stateTax);
+
+    // Totals
+    document.getElementById('rvtc-tb-total').textContent = formatCurrency(r.totalTaxLiability);
+    document.getElementById('rvtc-tb-effective-rate').textContent = r.effectiveTaxRate.toFixed(1) + '%';
+  }
+
+  function initSliders() {
+    var sliders = [
+      { id: 'rvtc-stateRate', displayId: 'rvtc-stateRateValue', suffix: '%' },
+    ];
+
+    sliders.forEach(function (s) {
+      var el = document.getElementById(s.id);
+      var display = document.getElementById(s.displayId);
+      if (el && display) {
+        el.addEventListener('input', function () {
+          display.textContent = el.value + s.suffix;
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('rvtc-form');
+    if (form) {
+      form.addEventListener('input', function () {
+        updateResults();
+      });
+      form.addEventListener('change', function () {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initSliders();
+    initFormListeners();
+    updateResults();
+
+    // Theme change observer
+    var observer = new MutationObserver(function () {
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
