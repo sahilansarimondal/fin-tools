@@ -1,0 +1,489 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import Slider from '../ui/Slider.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="cs-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="cs-form" class="space-y-4">
+          <Input
+            label="Initial Contribution"
+            name="cs-initial"
+            type="number"
+            value={10000}
+            min={0}
+            max={1000000}
+            step={1000}
+            suffix="$"
+            hideArrows
+            required
+          />
+          <Slider
+            label="Monthly Contribution"
+            name="cs-monthly"
+            value={500}
+            min={0}
+            max={2000}
+            step={50}
+            suffix="/mo"
+            inputId="cs-monthly"
+            displayId="cs-monthlyValue"
+            tooltip="Amount added each month to the account"
+          />
+          <Slider
+            label="Child's Current Age"
+            name="cs-childAge"
+            value={5}
+            min={0}
+            max={17}
+            step={1}
+            suffix=" yrs"
+            inputId="cs-childAge"
+            displayId="cs-childAgeValue"
+            tooltip="Current age of the child"
+          />
+          <Slider
+            label="Withdrawal Age"
+            name="cs-withdrawalAge"
+            value={18}
+            min={18}
+            max={26}
+            step={1}
+            suffix=" yrs"
+            inputId="cs-withdrawalAge"
+            displayId="cs-withdrawalAgeValue"
+            tooltip="Age when funds will be withdrawn for college"
+          />
+          <Slider
+            label="Expected Annual Return"
+            name="cs-annualReturn"
+            value={7}
+            min={1}
+            max={15}
+            step={0.5}
+            suffix="%"
+            inputId="cs-annualReturn"
+            displayId="cs-annualReturnValue"
+            tooltip="Expected average annual pre-tax return"
+          />
+          <Slider
+            label="Portfolio Taxable Yield"
+            name="cs-portfolioYield"
+            value={2}
+            min={0}
+            max={8}
+            step={0.25}
+            suffix="%"
+            inputId="cs-portfolioYield"
+            displayId="cs-portfolioYieldValue"
+            helpText="% of return from dividends/interest"
+            tooltip="Portion of annual return subject to annual taxes"
+          />
+          <Slider
+            label="Parents' Marginal Tax Rate"
+            name="cs-parentTaxRate"
+            value={24}
+            min={10}
+            max={40}
+            step={1}
+            suffix="%"
+            inputId="cs-parentTaxRate"
+            displayId="cs-parentTaxRateValue"
+            tooltip="Federal + state marginal tax bracket"
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Status Badge -->
+      <div id="cs-status" class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-success/10 text-success-deep border border-success/20">
+        <span id="cs-status-text">529 Advantage</span>
+      </div>
+
+      <!-- KPI cards row (6 cards, 3 cols) -->
+      <div class="grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <ResultCard
+          label="529 Final Balance"
+          valueId="cs-final529"
+          value="$0"
+          valueClass="text-success-deep"
+          description="529 plan ending balance at withdrawal"
+        />
+        <ResultCard
+          label="UTMA Final Balance"
+          valueId="cs-finalUtma"
+          value="$0"
+          valueClass="text-ink"
+          description="UTMA/UGMA ending balance at withdrawal"
+        />
+        <ResultCard
+          label="529 Advantage"
+          valueId="cs-advantage"
+          value="$0"
+          valueClass="text-link"
+          description="Extra savings with 529 plan"
+        />
+        <ResultCard
+          label="Total Tax Saved"
+          valueId="cs-taxSaved"
+          value="$0"
+          valueClass="text-success-deep"
+          description="Tax saved by using 529 vs UTMA"
+        />
+        <ResultCard
+          label="FAFSA Impact Saved"
+          valueId="cs-fafsaSaved"
+          value="$0"
+          valueClass="text-link"
+          description="Aid retained by 529's lower FAFSA rate"
+        />
+        <ResultCard
+          label="Total Contributed"
+          valueId="cs-totalContributed"
+          value="$0"
+          valueClass="text-ink"
+          description="Total contributions over the period"
+        />
+      </div>
+
+      <!-- Chart -->
+      <Card padding="lg">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-sm font-medium text-ink">Portfolio Growth Projection</h2>
+        </div>
+        <div class="relative h-72 sm:h-80">
+          <canvas
+            id="cs-chart"
+            role="img"
+            aria-label="Chart comparing 529 plan vs UTMA/UGMA account growth over time"
+          ></canvas>
+        </div>
+      </Card>
+
+      <!-- Year-by-Year Table (collapsible) -->
+      <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+        <summary class="cursor-pointer py-2 text-sm font-medium text-ink">Show Year-by-Year Breakdown</summary>
+        <div class="mt-4 overflow-x-auto">
+          <table id="cs-table" class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-2 text-xs font-medium text-mute">Year</th>
+                <th class="p-2 text-xs font-medium text-mute">Age</th>
+                <th class="p-2 text-xs font-medium text-mute">529 Balance</th>
+                <th class="p-2 text-xs font-medium text-mute">UTMA Balance</th>
+                <th class="p-2 text-xs font-medium text-mute">Annual UTMA Tax</th>
+                <th class="p-2 text-xs font-medium text-mute">Cumulative Tax</th>
+              </tr>
+            </thead>
+            <tbody id="cs-table-body" class="font-mono text-xs tabular-nums"></tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  </div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+  import { calculateCollegeSavingsComparison } from '../../utils/college-savings-calculations';
+  import { formatCurrency } from '../../utils/formatters';
+
+  function formatCurrencyFull(n) {
+    return n.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  let chart = null;
+
+  function getFormData() {
+    const form = document.getElementById('cs-form');
+    const formData = new FormData(form);
+
+    return {
+      initialContribution: Number(formData.get('cs-initial')) || 10000,
+      monthlyContribution: Number(formData.get('cs-monthly')) || 500,
+      childAge: Number(formData.get('cs-childAge')) || 5,
+      withdrawalAge: Number(formData.get('cs-withdrawalAge')) || 18,
+      annualReturn: Number(formData.get('cs-annualReturn')) || 7,
+      portfolioYield: Number(formData.get('cs-portfolioYield')) || 2,
+      parentTaxRate: Number(formData.get('cs-parentTaxRate')) || 24,
+    };
+  }
+
+  function updateStatusBadge(advantage) {
+    var badge = document.getElementById('cs-status');
+    var text = document.getElementById('cs-status-text');
+
+    if (advantage > 0) {
+      badge.className = 'inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-success/10 text-success-deep border border-success/20';
+      text.textContent = '529 Advantage';
+    } else if (advantage < 0) {
+      badge.className = 'inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-error/10 text-error border border-error/20';
+      text.textContent = 'UTMA Advantage';
+    } else {
+      badge.className = 'inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium bg-mute/10 text-mute border border-hairline';
+      text.textContent = 'Equal';
+    }
+  }
+
+  function updateResults() {
+    const input = getFormData();
+    const result = calculateCollegeSavingsComparison(input);
+    const advantage = result.advantage529;
+
+    // Update status badge
+    updateStatusBadge(advantage);
+
+    // Update KPI cards
+    document.getElementById('cs-final529').textContent = formatCurrency(result.finalBalance529);
+    document.getElementById('cs-finalUtma').textContent = formatCurrency(result.finalBalanceUtma);
+
+    var advEl = document.getElementById('cs-advantage');
+    advEl.textContent = (advantage >= 0 ? '+' : '') + formatCurrency(Math.abs(advantage));
+    advEl.className = advantage >= 0
+      ? 'text-2xl font-semibold tabular-nums text-link'
+      : 'text-2xl font-semibold tabular-nums text-error';
+
+    document.getElementById('cs-taxSaved').textContent = formatCurrency(result.totalTaxPaidUtma);
+    document.getElementById('cs-fafsaSaved').textContent = formatCurrency(result.fafsaAdvantage529);
+    document.getElementById('cs-totalContributed').textContent = formatCurrency(result.totalContributions);
+
+    updateChart(result);
+    updateTable(result);
+  }
+
+  function updateChart(result) {
+    var ctx = document.getElementById('cs-chart');
+    if (!ctx) return;
+    if (chart) chart.destroy();
+
+    var isDark = document.documentElement.classList.contains('dark');
+    var gridColor = isDark ? '#262626' : '#ebebeb';
+    var textColor = isDark ? '#737373' : '#888888';
+    var tooltipBg = isDark ? '#ededed' : '#171717';
+    var tooltipText = isDark ? '#171717' : '#ffffff';
+    var linkColor = isDark ? '#3291ff' : '#0070f3';
+    var errorColor = isDark ? '#ff4444' : '#ee0000';
+    var successColor = isDark ? '#22c55e' : '#16a34a';
+
+    var labels = result.timeline.map(function (d) {
+      return 'Age ' + d.age;
+    });
+
+    var data529 = result.timeline.map(function (d) {
+      return d.balance529;
+    });
+
+    var dataUtma = result.timeline.map(function (d) {
+      return d.balanceUtma;
+    });
+
+    chart = new window.Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: '529 Plan',
+            data: data529,
+            borderColor: linkColor,
+            backgroundColor: isDark
+              ? 'rgba(50,145,255,0.1)'
+              : 'rgba(0,112,243,0.1)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+          },
+          {
+            label: 'UTMA/UGMA',
+            data: dataUtma,
+            borderColor: errorColor,
+            backgroundColor: isDark
+              ? 'rgba(255,68,68,0.1)'
+              : 'rgba(238,0,0,0.1)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            borderWidth: 2,
+            borderDash: [5, 5],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 2,
+              usePointStyle: false,
+              padding: 16,
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+            },
+          },
+          tooltip: {
+            backgroundColor: tooltipBg,
+            titleColor: tooltipText,
+            bodyColor: tooltipText,
+            borderColor: tooltipBg,
+            borderWidth: 1,
+            padding: 12,
+            titleFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+              weight: 500,
+            },
+            bodyFont: {
+              family: 'Inter, system-ui, sans-serif',
+              size: 12,
+            },
+            callbacks: {
+              label: function (context) {
+                return (
+                  context.dataset.label +
+                  ': ' +
+                  formatCurrency(context.parsed.y)
+                );
+              },
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              maxTicksLimit: 10,
+            },
+            border: {
+              display: false,
+            },
+          },
+          y: {
+            grid: {
+              color: gridColor,
+            },
+            ticks: {
+              font: {
+                family: 'Inter, system-ui, sans-serif',
+                size: 11,
+              },
+              color: textColor,
+              callback: function (value) {
+                if (value >= 1000000) return '$' + (value / 1000000).toFixed(1) + 'M';
+                if (value >= 1000) return '$' + (value / 1000).toFixed(0) + 'K';
+                return '$' + value.toFixed(0);
+              },
+            },
+            border: {
+              display: false,
+            },
+            min: 0,
+          },
+        },
+      },
+    });
+  }
+
+  function updateTable(result) {
+    var tbody = document.getElementById('cs-table-body');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    result.timeline.forEach(function (d) {
+      var row = document.createElement('tr');
+      row.className = 'border-b border-hairline/50';
+
+      row.innerHTML =
+        '<td class="p-2 text-body font-sans">' + d.year + '</td>' +
+        '<td class="p-2 text-mute">' + d.age + '</td>' +
+        '<td class="p-2 text-success-deep">' + formatCurrency(d.balance529) + '</td>' +
+        '<td class="p-2 text-body">' + formatCurrency(d.balanceUtma) + '</td>' +
+        '<td class="p-2 text-error">' + formatCurrencyFull(d.annualTaxUtma) + '</td>' +
+        '<td class="p-2 text-mute">' + formatCurrencyFull(d.cumulativeTaxUtma) + '</td>';
+
+      tbody.appendChild(row);
+    });
+  }
+
+  function initSliders() {
+    var sliders = [
+      { id: 'cs-monthly', displayId: 'cs-monthlyValue', suffix: '/mo' },
+      { id: 'cs-childAge', displayId: 'cs-childAgeValue', suffix: ' yrs' },
+      { id: 'cs-withdrawalAge', displayId: 'cs-withdrawalAgeValue', suffix: ' yrs' },
+      { id: 'cs-annualReturn', displayId: 'cs-annualReturnValue', suffix: '%' },
+      { id: 'cs-portfolioYield', displayId: 'cs-portfolioYieldValue', suffix: '%' },
+      { id: 'cs-parentTaxRate', displayId: 'cs-parentTaxRateValue', suffix: '%' },
+    ];
+
+    sliders.forEach(function (slider) {
+      var el = document.getElementById(slider.id);
+      var display = document.getElementById(slider.displayId);
+
+      if (el && display) {
+        el.addEventListener('input', function () {
+          display.textContent = el.value + slider.suffix;
+          updateResults();
+        });
+      }
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('cs-form');
+    if (form) {
+      form.addEventListener('input', function () {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initSliders();
+    initFormListeners();
+    updateResults();
+
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', function () {
+        updateResults();
+      });
+
+    var observer = new MutationObserver(function () {
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
