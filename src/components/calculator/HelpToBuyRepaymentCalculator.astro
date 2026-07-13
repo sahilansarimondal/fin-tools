@@ -1,0 +1,303 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import ResultCard from '../ui/ResultCard.astro';
+import Slider from '../ui/Slider.astro';
+---
+
+<div id="htb-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="htb-form" class="space-y-4">
+          <Input
+            label="Original Purchase Price"
+            name="purchasePrice"
+            type="number"
+            value={300000}
+            min={1}
+            max={20000000}
+            step={1000}
+            suffix="£"
+            hideArrows
+            required
+            tooltip="The original purchase price of your property when you bought it with Help to Buy."
+          />
+
+          <Slider
+            label="Equity Loan Percentage"
+            name="equityLoanPercent"
+            value={20}
+            min={5}
+            max={40}
+            step={1}
+            suffix="%"
+            inputId="htb-equity-percent"
+            displayId="htb-equity-percent-display"
+            tooltip="The percentage of the purchase price covered by your Help to Buy equity loan. Usually 20% (or 40% in London)."
+          />
+
+          <Input
+            label="Current Estimated Value"
+            name="currentValue"
+            type="number"
+            value={350000}
+            min={1}
+            max={20000000}
+            step={1000}
+            suffix="£"
+            hideArrows
+            required
+            tooltip="The current estimated market value of your property. This affects how much capital you owe on the equity share."
+          />
+
+          <div class="flex flex-col gap-1.5">
+            <label for="htb-scheme-type" class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              Scheme Type
+              <span class="group relative inline-flex shrink-0">
+                <span class="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full bg-hairline text-[10px] font-semibold leading-none text-mute transition-colors hover:bg-hairline-strong hover:text-ink" aria-label="Select your Help to Buy scheme to apply the correct interest rate inflation formula.">?</span>
+                <span class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 rounded-lg border border-hairline bg-canvas px-3 py-2 text-xs leading-relaxed text-body opacity-0 shadow-lg transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100" role="tooltip">
+                  The 2013-2021 scheme uses RPI + 1% for annual rate increases. The 2021-2023 scheme uses CPI + 2%.
+                  <span class="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-hairline"></span>
+                </span>
+              </span>
+            </label>
+            <select
+              id="htb-scheme-type"
+              name="schemeType"
+              class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
+            >
+              <option value="2013-2021" selected>2013–2021 Scheme (RPI-linked)</option>
+              <option value="2021-2023">2021–2023 Scheme (CPI-linked)</option>
+            </select>
+          </div>
+
+          <Slider
+            label="Estimated Inflation Rate"
+            name="inflationRate"
+            value={5}
+            min={0}
+            max={15}
+            step={0.1}
+            suffix="%"
+            inputId="htb-inflation-rate"
+            displayId="htb-inflation-rate-display"
+            formatValue={(v) => v.toFixed(1)}
+            tooltip="Your expected average annual RPI or CPI inflation rate. This drives how fast the interest rate compounds from Year 7 onwards."
+          />
+
+          <Slider
+            label="Years Since Purchase"
+            name="yearsSincePurchase"
+            value={6}
+            min={1}
+            max={25}
+            step={1}
+            suffix=" years"
+            inputId="htb-years"
+            displayId="htb-years-display"
+            tooltip="How many years since you bought the property. Year 6 is when interest starts at 1.75%."
+          />
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Interest Rate Badge -->
+      <div id="htb-rate-badge-container" class="rounded-lg border border-hairline bg-canvas p-4 shadow-sm text-center">
+        <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Current Interest Rate</p>
+        <div id="htb-rate-badge" class="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold bg-success/10 text-success-deep">
+          0.00% — Interest-Free Period
+        </div>
+        <p id="htb-rate-description" class="mt-1 text-xs text-mute">Years 1-5 are interest-free. Year 6: 1.75% flat.</p>
+      </div>
+
+      <!-- 4 KPI cards -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Monthly Cost"
+          valueId="htb-monthly-cost"
+          value="—"
+          valueClass="text-ink"
+          description="Monthly interest + £1 management fee in selected year"
+        />
+        <ResultCard
+          label="Annual Interest"
+          valueId="htb-annual-interest"
+          value="—"
+          valueClass="text-ink"
+          description="Annual interest fee on the original loan amount"
+        />
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Capital Owed (Equity Share)"
+          valueId="htb-capital-owed"
+          value="—"
+          valueClass="text-ink"
+          description="Current property value × equity loan percentage"
+        />
+        <ResultCard
+          label="Capital Growth Trap"
+          valueId="htb-capital-growth-trap"
+          value="—"
+          valueClass="text-ink"
+          description="Extra owed vs. original loan due to property appreciation"
+        />
+      </div>
+
+      <!-- Amortization Table -->
+      <Card padding="lg">
+        <h2 class="mb-4 text-sm font-medium text-ink">25-Year Amortization Schedule</h2>
+        <div class="max-h-80 overflow-y-auto">
+          <table class="w-full text-left text-sm" id="htb-amortization-table">
+            <thead>
+              <tr class="border-b border-hairline">
+                <th class="pb-2 font-medium text-mute sticky top-0 bg-canvas">Year</th>
+                <th class="pb-2 font-medium text-mute sticky top-0 bg-canvas">Interest Rate</th>
+                <th class="pb-2 text-right font-medium text-mute sticky top-0 bg-canvas">Annual Fee</th>
+                <th class="pb-2 text-right font-medium text-mute sticky top-0 bg-canvas">Monthly Cost</th>
+              </tr>
+            </thead>
+            <tbody id="htb-table-body" class="font-mono text-xs tabular-nums">
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <!-- Validation Warning -->
+      <div id="htb-validation-warning" class="hidden rounded-lg border border-error/30 bg-error/5 p-4">
+        <p class="text-sm font-medium text-error">⚠ Input Error</p>
+        <p id="htb-validation-message" class="mt-1 text-xs text-body">Please check your inputs and try again.</p>
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="rounded-lg bg-canvas-soft p-4">
+        <p class="text-xs text-mute">
+          <strong>Disclaimer:</strong> This calculator provides estimates based on the Help to Buy equity loan rules. Actual interest rates, RPI/CPI figures, and fees may differ. Always check your specific loan documentation and consult a qualified financial adviser before making decisions about your Help to Buy equity loan.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { calculateHelpToBuy } from '../../utils/help-to-buy-calculations';
+  import { formatGBP } from '../../utils/formatters';
+
+  function getFormData() {
+    var form = document.getElementById('htb-form');
+    var formData = new FormData(form);
+
+    return {
+      purchasePrice: Number(formData.get('purchasePrice')) || 300000,
+      equityLoanPercent: Number(formData.get('equityLoanPercent')) || 20,
+      currentValue: Number(formData.get('currentValue')) || 350000,
+      schemeType: formData.get('schemeType') || '2013-2021',
+      inflationRate: (Number(formData.get('inflationRate')) || 5) / 100,
+      yearsSincePurchase: Number(formData.get('yearsSincePurchase')) || 6,
+    };
+  }
+
+  function formatPercentDisplay(value) {
+    return value.toFixed(2) + '%';
+  }
+
+  function updateResults() {
+    var input = getFormData();
+    var r = calculateHelpToBuy(input);
+
+    // Validation
+    var validationWarning = document.getElementById('htb-validation-warning');
+    var validationMessage = document.getElementById('htb-validation-message');
+    if (r.validationError) {
+      validationWarning.classList.remove('hidden');
+      validationMessage.textContent = r.validationError;
+    } else {
+      validationWarning.classList.add('hidden');
+    }
+
+    // KPI Cards
+    document.getElementById('htb-monthly-cost').textContent = formatGBP(Math.round(r.monthlyCostAtSelectedYear));
+    document.getElementById('htb-annual-interest').textContent = formatGBP(Math.round(r.annualCostAtSelectedYear));
+    document.getElementById('htb-capital-owed').textContent = formatGBP(Math.round(r.currentCapitalOwed));
+    document.getElementById('htb-capital-growth-trap').textContent = formatGBP(Math.round(r.capitalGrowthTrap));
+
+    // Capital Growth Trap color
+    var trapEl = document.getElementById('htb-capital-growth-trap');
+    if (r.capitalGrowthTrap > 0) {
+      trapEl.className = 'text-2xl font-semibold tabular-nums text-error';
+    } else if (r.capitalGrowthTrap < 0) {
+      trapEl.className = 'text-2xl font-semibold tabular-nums text-success-deep';
+    } else {
+      trapEl.className = 'text-2xl font-semibold tabular-nums text-ink';
+    }
+
+    // Rate badge
+    var rateBadge = document.getElementById('htb-rate-badge');
+    var rateDescription = document.getElementById('htb-rate-description');
+    var rate = r.interestRateAtSelectedYear;
+
+    if (input.yearsSincePurchase <= 5) {
+      rateBadge.textContent = '0.00% — Interest-Free Period';
+      rateBadge.className = 'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold bg-success/10 text-success-deep';
+      rateDescription.textContent = 'Years 1-5 are interest-free. Year 6: 1.75% flat.';
+    } else if (rate > 0) {
+      rateBadge.textContent = formatPercentDisplay(rate) + ' — Interest Accruing';
+      rateBadge.className = 'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold bg-error/10 text-error';
+      rateDescription.textContent = 'Interest compounds annually on the original loan amount.';
+    } else {
+      rateBadge.textContent = '0.00% — Interest-Free Period';
+      rateBadge.className = 'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold bg-success/10 text-success-deep';
+      rateDescription.textContent = 'No interest charged in year ' + input.yearsSincePurchase + '.';
+    }
+
+    // Amortization table
+    var tableBody = document.getElementById('htb-table-body');
+    var html = '';
+    var selectedYear = input.yearsSincePurchase;
+
+    for (var i = 0; i < r.yearData.length; i++) {
+      var yd = r.yearData[i];
+      var isSelected = yd.year === selectedYear;
+      var rowClass = isSelected ? 'bg-link/5 border-y-2 border-link' : 'border-b border-hairline/50';
+
+      var rateDisplay = yd.interestRate === 0 ? '0%' : formatPercentDisplay(yd.interestRate);
+      var rateClass = yd.interestRate === 0 ? 'text-success-deep' : 'text-ink';
+
+      html += '<tr class="' + rowClass + '">';
+      html += '<td class="py-2 font-sans text-body font-medium">Year ' + yd.year + '</td>';
+      html += '<td class="py-2 ' + rateClass + '">' + rateDisplay + '</td>';
+      html += '<td class="py-2 text-right text-ink">' + formatGBP(Math.round(yd.annualFee)) + '</td>';
+      html += '<td class="py-2 text-right text-ink">' + formatGBP(Math.round(yd.monthlyPayment)) + '</td>';
+      html += '</tr>';
+    }
+
+    tableBody.innerHTML = html;
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('htb-form');
+    if (form) {
+      form.addEventListener('input', function () {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initFormListeners();
+    updateResults();
+
+    // Theme change observer
+    var observer = new MutationObserver(function () {
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>

@@ -1,0 +1,436 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import HelpToBuyRepaymentCalculator from '../../components/calculator/HelpToBuyRepaymentCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What happens to my Help to Buy loan after 5 years?',
+    answerHtml: 'After 5 years, your Help to Buy equity loan enters the <b>interest-paying phase</b>. Here is what changes:<br /><br /><ul><li><b>Year 1–5:</b> Interest-free period. You only pay a £1/month management fee.</li><li><b>Year 6:</b> Interest starts at a flat <b>1.75%</b> on the original loan amount.</li><li><b>Year 7+:</b> The rate increases annually based on RPI + 1% (2013-2021 scheme) or CPI + 2% (2021-2023 scheme).</li></ul><br />The interest is calculated on the original loan amount — not the current value of your property. If your house price has risen, your capital repayment amount increases separately as the equity loan is a share of the property value, not a fixed sum.',
+    answerText: 'After 5 years, interest begins at 1.75% (Year 6) on the original loan amount. From Year 7, the rate compounds annually based on RPI + 1% or CPI + 2% depending on your scheme. The equity loan is a share of property value, so the capital owed rises with house prices.',
+  },
+  {
+    question: 'How is Help to Buy interest calculated after the interest-free period?',
+    answerHtml: 'The Help to Buy interest calculation works as follows:<br /><br /><ol><li><b>Year 1–5:</b> 0% interest (free period). Only the £1/month management fee is payable.</li><li><b>Year 6:</b> 1.75% interest on the <b>original loan amount</b> (not the current property value).</li><li><b>Year 7 onwards:</b> The previous year\'s rate is multiplied by a compound factor:<br /><b>Rate<sub>n</sub> = Rate<sub>n-1</sub> × (1 + inflation + spread)</b><br />Where the spread is 1% for 2013-2021 (RPI-linked) or 2% for 2021-2023 (CPI-linked).</li></ol><br /><b>Example with 5% RPI (2013-2021 scheme):</b><br />• Year 6: 1.75%<br />• Year 7: 1.75% × 1.06 = <b>1.855%</b><br />• Year 8: 1.855% × 1.06 = <b>1.966%</b><br />• Year 9: 1.966% × 1.06 = <b>2.084%</b>',
+    answerText: 'Year 6: 1.75% flat on the original loan. Year 7+: Rate compounds as Rate_n = Rate_(n-1) × (1 + inflation + spread). The spread is 1% (RPI-linked) or 2% (CPI-linked). Interest is always on the original loan amount, not the current value.',
+  },
+  {
+    question: 'What is the difference between RPI and CPI for Help to Buy?',
+    answerHtml: 'The difference between RPI and CPI determines <b>how fast your interest rate grows</b> after Year 6:<br /><br /><ul><li><b>2013–2021 Scheme (RPI-linked):</b> Rate increases by RPI + 1% each year. RPI (Retail Prices Index) is typically higher than CPI — historically averaging around 3-5%. This scheme means your interest rate compounds faster.</li><li><b>2021–2023 Scheme (CPI-linked):</b> Rate increases by CPI + 2% each year. CPI (Consumer Prices Index) is usually 1-2% lower than RPI. The +2% spread compensates for this difference.</li></ul><br /><b>Example comparison at 5% RPI vs 5% CPI:</b><br />• RPI-linked Year 7: 1.75% × 1.06 = <b>1.855%</b><br />• CPI-linked Year 7: 1.75% × 1.07 = <b>1.873%</b><br /><br />In practice, RPI tends to run higher than CPI, so the RPI-linked scheme often results in higher rates over time despite the smaller spread.',
+    answerText: 'The 2013-2021 scheme uses RPI + 1% (RPI is typically higher, historically 3-5%). The 2021-2023 scheme uses CPI + 2% (CPI is usually 1-2% lower than RPI). The difference affects how quickly your interest rate compounds each year from Year 7.',
+  },
+  {
+    question: 'Do I pay interest on the original loan or the current property value?',
+    answerHtml: '<b>Interest is always calculated on the original loan amount</b>, not the current property value. This is a common misconception.<br /><br /><b>Example:</b><br />• Original purchase price: £300,000<br />• Equity loan (20%): <b>£60,000</b><br />• Current property value: £400,000<br />• Year 6 interest rate: 1.75%<br />• <b>Annual interest: £60,000 × 1.75% = £1,050</b> (not £7,000 on £400k)<br /><br />However, when you come to <b>repay the capital</b>, you repay the equity share of the <b>current market value</b>. So if your house rises to £400,000, you owe £80,000 (20% × £400k), not £60,000. This is the "capital growth trap" — interest is on the original loan, but the capital repayment is on the current value.',
+    answerText: 'Interest is calculated on the original loan amount, not the current property value. However, when you repay, you must repay the equity share of the current market value (e.g. 20% of £400k = £80k, not £60k). The capital growth trap means rising house prices increase your repayment, even though interest is on the original loan.',
+  },
+  {
+    question: 'How much extra will I owe if my house price goes up?',
+    answerHtml: 'The amount extra you owe due to house price increases is known as the <b>Capital Growth Trap</b>. Here is how it works:<br /><br /><b>The formula:</b> Extra Owed = (Current Value × Equity %) − (Original Price × Equity %)<br /><br /><b>Examples with 20% equity loan:</b><br /><ul><li>Price rises £0 (flat market): <b>£0 extra</b> — no trap</li><li>Price rises from £300k to £400k (+33%): <b>£20,000 extra</b> owed</li><li>Price rises from £300k to £500k (+67%): <b>£40,000 extra</b> owed</li><li>Price falls from £300k to £250k (−17%): <b>−£10,000</b> (you owe less!)</li></ul><br />This is why the Help to Buy scheme is most expensive in rising markets. You share in the property\'s appreciation, which can add tens of thousands to your repayment amount beyond the original loan.',
+    answerText: 'The extra owed (Capital Growth Trap) = (Current Value × Equity %) − (Original Price × Equity %). If a £300k property with 20% loan rises to £400k, you owe £20k extra. In a falling market, you owe less. Rising house prices directly increase your repayment amount.',
+  },
+  {
+    question: 'Can I repay my Help to Buy loan early to avoid interest?',
+    answerHtml: '<b>Yes, you can repay your Help to Buy equity loan at any time</b>, and doing so before Year 6 (when interest starts) saves you all future interest costs. Here is what you need to know:<br /><br /><ul><li><b>Full repayment:</b> You can repay the entire equity loan at any point. The repayment amount is based on the <b>current market value</b> of your property, not the original loan.</li><li><b>Staircasing (partial repayment):</b> You can repay in chunks — typically in 10% or 25% increments of the property value. Each repayment reduces your equity share proportionally.</li><li><b>Remortgaging:</b> Most homeowners repay the Help to Buy loan when they remortgage. The new mortgage absorbs the equity loan amount.</li><li><b>Porting:</b> If you sell and buy another property, you cannot transfer the Help to Buy loan — it must be repaid on sale.</li></ul><br /><b>Best time to repay:</b> Before Year 7 when compounding kicks in. Each year of delay costs more in accrued interest.',
+    answerText: 'Yes, you can repay the full loan or staircase (partial repayments) at any time. Most people repay when remortgaging. The best time is before Year 7 when compounding interest kicks in. The repayment amount is based on current market value, not the original loan.',
+  },
+  {
+    question: 'What is staircasing and how does it affect my Help to Buy loan?',
+    answerHtml: '<b>Staircasing</b> means repaying your Help to Buy equity loan in <b>partial installments</b> rather than all at once. Here is how it works:<br /><br /><ul><li>You can buy back additional shares of the equity loan, typically in <b>10% or 25% increments</b> of your property\'s current market value.</li><li>Each staircase payment <b>reduces your equity percentage</b>. For example, repaying 10% of a 20% loan leaves you with 10% still owed.</li><li>After staircasing, your <b>future interest is calculated on the reduced original loan</b> equivalent.</li><li>There is usually a <b>valuation fee</b> and <b>administration fee</b> for each staircase transaction.</li></ul><br /><b>Example:</b> Your property is worth £300,000 with a 20% (£60,000) equity loan. You staircase 10% (£30,000). Your remaining equity share is now 10% (£30,000). Future interest is on £30,000 rather than £60,000.<br /><br />Staircasing can be a good strategy if you cannot afford full repayment but want to reduce future interest costs.',
+    answerText: 'Staircasing means repaying the equity loan in partial installments (usually 10% or 25% chunks) based on the current market value. Each payment reduces your equity percentage and future interest costs. There are typically valuation and admin fees for each staircase transaction.',
+  },
+  {
+    question: 'Should I remortgage to pay off my Help to Buy equity loan?',
+    answerHtml: '<b>Remortgaging to pay off your Help to Buy loan is the most common strategy.</b> Here are the key considerations:<br /><br /><b>Advantages of remortgaging:</b><br /><ul><li><b>Fixed interest rates:</b> Mortgage rates (currently 4-6%) are predictable vs. Help to Buy\'s compounding inflation-linked rate.</li><li><b>Fixed repayment term:</b> You know exactly when the loan will be paid off.</li><li><b>No valuation surprises:</b> You fix the repayment amount at remortgage time rather than being exposed to future house price growth.</li></ul><br /><b>When to remortgage:</b><br /><ul><li><b>Year 5 (before interest starts):</b> Best case — you avoid all interest payments.</li><li><b>Year 6:</b> Still good — only 1.75% has accrued.</li><li><b>Year 7+:</b> The compounding rate can exceed mortgage rates within a few years, so remortgaging becomes increasingly urgent.</li></ul><br /><b>Important:</b> You will need to qualify for a new mortgage that absorbs the equity loan amount. Your loan-to-value (LTV) will be higher, which may affect your interest rate. Use a mortgage broker to find the best deal for your situation.',
+    answerText: 'Remortgaging is the most common way to repay Help to Buy. Best done before Year 7 when compounding accelerates. You absorb the equity loan into your mortgage at a fixed rate. Year 5 (before interest starts) is the ideal time. You will need to qualify for higher borrowing and may face higher LTV rates.',
+  },
+];
+---
+
+<PageLayout
+  title="Help to Buy Calculator | Equity Loan Interest & Fees (2026)"
+  description="Calculate your exact Help to Buy equity loan interest fees after 5 years. Project RPI/CPI rate increases and see how much your remortgage capital will cost."
+  canonical="https://truefinancetools.com/help-to-buy-repayment-calculator"
+  ogImage="https://truefinancetools.com/og-help-to-buy-repayment-calculator.png"
+  ogImageAlt="Help to Buy equity loan interest and repayment calculator showing projected costs after 5 years"
+  pageType="website"
+  keywords="help to buy calculator, help to buy equity loan, help to buy interest, help to buy repayment, RPI help to buy, CPI help to buy, help to buy remortgage, equity loan interest calculator, help to buy 2026"
+>
+  <StructuredData
+    title="Help to Buy Equity Loan Interest & Repayment Calculator"
+    description="Calculate your exact Help to Buy equity loan interest fees after 5 years. Project RPI/CPI rate increases and see how much your remortgage capital will cost."
+    url="https://truefinancetools.com/help-to-buy-repayment-calculator"
+    toolName="Help to Buy Equity Loan Repayment Calculator"
+    toolDescription="Free calculator to project Help to Buy equity loan interest costs after the 5-year interest-free period. See how RPI and CPI inflation drives up your monthly fees and understand the capital growth trap."
+    faqItems={toolFaqItems}
+    features={[
+      'RPI and CPI linked interest projections',
+      '25-year amortization schedule',
+      'Capital growth trap analysis',
+      'Scheme comparison (2013-2021 vs 2021-2023)',
+      'Interactive inflation rate slider',
+      'Monthly and annual cost breakdown',
+    ]}
+  />
+
+  <!-- Hero -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        Help to Buy Equity Loan Interest & Repayment Calculator
+      </h1>
+      <p class="mx-auto max-w-2xl text-lg text-body">
+        Project your Help to Buy equity loan costs after the interest-free period ends. See how RPI/CPI inflation drives up your monthly fees and understand the capital growth trap.
+      </p>
+    </div>
+  </section>
+
+  <!-- Calculator Component -->
+  <HelpToBuyRepaymentCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Help to Buy Repayment Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Details</h3>
+      <p class="text-sm text-body">Purchase price, equity loan %, current value, and scheme type — all the factors that determine your equity loan costs.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Set Inflation Expectation</h3>
+      <p class="text-sm text-body">Use the inflation slider to project how RPI or CPI will compound your interest rate year after year from Year 7 onwards.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See Your 25-Year Cost Projection</h3>
+      <p class="text-sm text-body">View monthly costs, annual fees, the full amortization schedule, and the capital growth trap — all updated instantly as you adjust inputs.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What Happens After 5 Years on Help to Buy? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What Happens After 5 Years on Help to Buy?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          The <strong>Help to Buy equity loan</strong> gives you an interest-free period for the first 5 years. During this time, you only pay a <strong>£1/month management fee</strong>. But when Year 6 arrives, the clock starts ticking on interest charges that can add up significantly over time.
+        </p>
+
+        <p class="mb-4">
+          In <strong>Year 6</strong>, interest kicks in at a flat <strong>1.75%</strong> on the original loan amount. For a typical £60,000 equity loan (20% on £300k), that is £1,050/year — or £88.50/month including the £1 management fee. This alone is manageable, but the real cost comes from what happens next.
+        </p>
+
+        <p class="mb-4">
+          From <strong>Year 7 onwards</strong>, the interest rate compounds annually based on inflation. The rate is multiplied each year by a factor linked to either RPI (for the 2013-2021 scheme) or CPI (for the 2021-2023 scheme). Over time, this can push your effective interest rate well above what you would pay on a standard mortgage — making early repayment a potentially smart financial move.
+        </p>
+
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Annual Interest = Original Loan Amount × Current Interest Rate<br />
+          Monthly Cost = (Annual Interest ÷ 12) + £1 management fee
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How Help to Buy Interest is Calculated (The Inflation Trap) -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        How Help to Buy Interest is Calculated (The Inflation Trap)
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          The Help to Buy interest calculation uses a <strong>compounding rate formula</strong> that means the interest rate itself grows each year — not just the amount you owe. This double-compounding effect can cause your costs to escalate faster than many homeowners expect.
+        </p>
+
+        <p class="mb-4">
+          For the <strong>2013–2021 scheme</strong>, the formula is: <strong>Rate<sub>n</sub> = Rate<sub>n-1</sub> × (1 + RPI + 1%)</strong>. For the <strong>2021-2023 scheme</strong>, it is: <strong>Rate<sub>n</sub> = Rate<sub>n-1</sub> × (1 + CPI + 2%)</strong>.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Rate Compounding Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Year 6: Rate = 1.75% (fixed)<br />
+          Year 7: Rate = 1.75% × (1 + Inflation + Spread)<br />
+          Year 8: Rate = Year 7 Rate × (1 + Inflation + Spread)<br />
+          ...
+        </div>
+
+        <p class="mb-4 mt-4">
+          <strong>Example with 5% CPI (2021-2023 scheme):</strong>
+        </p>
+
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Year</th>
+                <th class="p-3 font-medium text-ink">Rate Calculation</th>
+                <th class="p-3 font-medium text-ink">Interest Rate</th>
+                <th class="p-3 font-medium text-ink">Annual Fee (£60k loan)</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">6</td>
+                <td class="p-3 text-body font-sans">Flat 1.75%</td>
+                <td class="p-3 text-ink">1.7500%</td>
+                <td class="p-3 text-ink">£1,050</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">7</td>
+                <td class="p-3 text-body font-sans">1.75% × 1.07 (CPI 5% + 2%)</td>
+                <td class="p-3 text-ink">1.8725%</td>
+                <td class="p-3 text-ink">£1,124</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">8</td>
+                <td class="p-3 text-body font-sans">1.8725% × 1.07</td>
+                <td class="p-3 text-ink">2.0036%</td>
+                <td class="p-3 text-ink">£1,202</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">9</td>
+                <td class="p-3 text-body font-sans">2.0036% × 1.07</td>
+                <td class="p-3 text-ink">2.1438%</td>
+                <td class="p-3 text-ink">£1,286</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">10</td>
+                <td class="p-3 text-body font-sans">2.1438% × 1.07</td>
+                <td class="p-3 text-ink">2.2939%</td>
+                <td class="p-3 text-ink">£1,376</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="mb-4 mt-4">
+          As you can see, within just 5 years of the interest-paying period, the annual fee on a £60,000 loan grows by over 30% — from £1,050 to £1,376. Over the full 25-year term, the compounding effect becomes substantial.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Repaying the Capital: Why You Owe More Than You Borrowed -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Repaying the Capital: Why You Owe More Than You Borrowed
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          The Help to Buy equity loan is <strong>not a fixed debt</strong> — it is an equity share in your property. This means the amount you must repay depends on your property's current market value, not what you originally borrowed. This creates the <strong>Capital Growth Trap</strong>.
+        </p>
+
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Capital Owed = Current Property Value × Equity Loan Percentage<br />
+          Capital Growth Trap = Capital Owed − Original Loan
+        </div>
+
+        <p class="mb-4 mt-4">
+          <strong>Example:</strong> You bought a £300,000 property with a 20% equity loan (£60,000). Five years later, the property is worth £400,000. Your equity share is now 20% × £400,000 = <strong>£80,000</strong>. That is £20,000 more than the £60,000 you originally borrowed — the capital growth trap in action.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Capital Growth Trap Examples</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Property Value Change</th>
+                <th class="p-3 font-medium text-ink">Original Loan (20%)</th>
+                <th class="p-3 font-medium text-ink">Current Capital Owed</th>
+                <th class="p-3 font-medium text-ink">Growth Trap</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Falls to £250,000 (−17%)</td>
+                <td class="p-3 text-body font-sans">£60,000</td>
+                <td class="p-3 text-body font-sans">£50,000</td>
+                <td class="p-3 text-success-deep">−£10,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Stays at £300,000 (0%)</td>
+                <td class="p-3 text-body font-sans">£60,000</td>
+                <td class="p-3 text-body font-sans">£60,000</td>
+                <td class="p-3 text-ink">£0</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Rises to £400,000 (+33%)</td>
+                <td class="p-3 text-body font-sans">£60,000</td>
+                <td class="p-3 text-body font-sans">£80,000</td>
+                <td class="p-3 text-error">+£20,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Rises to £500,000 (+67%)</td>
+                <td class="p-3 text-body font-sans">£60,000</td>
+                <td class="p-3 text-body font-sans">£100,000</td>
+                <td class="p-3 text-error">+£40,000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="mb-4 mt-4">
+          This equity structure is why it is crucial to model both the <strong>interest costs</strong> and the <strong>capital growth trap</strong> when planning your Help to Buy repayment strategy. Our calculator shows you both numbers side by side.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Should I Remortgage to Pay Off Help to Buy? -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Should I Remortgage to Pay Off Help to Buy?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Remortgaging is the most common way to repay the Help to Buy equity loan.</strong> You take out a new mortgage large enough to cover both your existing mortgage balance and the equity loan, paying off the government in one transaction.
+        </p>
+
+        <p class="mb-4">
+          The <strong>ideal time to remortgage is in Year 5</strong>, just before the interest-free period ends. This way you avoid paying any interest on the equity loan entirely. If you miss that window, Year 6 (1.75% rate) is still very manageable. But once the compounding kicks in from Year 7, the urgency increases.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Advantages of Remortgaging</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Fixed Rate Certainty</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Lock in a known mortgage rate (currently 4-6%)</li>
+              <li>• Avoid unpredictable RPI/CPI-linked increases</li>
+              <li>• Fixed term means you know when it is paid off</li>
+              <li>• No capital growth trap exposure after repayment</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Key Considerations</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Higher LTV may mean higher mortgage rates</li>
+              <li>• You need to qualify for the higher borrowing</li>
+              <li>• Valuation and legal fees on remortgage</li>
+              <li>• Early repayment charges on existing mortgage?</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="mb-4 mt-6">
+          Use our calculator above to see exactly what your Help to Buy loan will cost in each future year. Compare that against a remortgage quote to decide which route makes financial sense for your situation.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Frequently Asked Questions About Help to Buy Equity Loans
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide to Help to Buy Repayment Planning -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Help to Buy Repayment Planning
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>Help to Buy equity loan calculator</strong> helps you understand the true cost of your government-backed loan after the 5-year interest-free period ends. Whether you are planning to remortgage, staircase, or simply want to know what your monthly costs will look like in 10 years, this tool provides instant clarity.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose This Help to Buy Calculator?</h3>
+
+        <p class="mb-4">
+          Unlike generic loan calculators that treat all debt the same, this tool correctly models the <strong>unique Help to Buy interest structure</strong> — a 5-year interest-free period, a flat 1.75% Year 6 rate, and then annual compounding linked to RPI or CPI. It also separately tracks the <strong>capital growth trap</strong>, showing you how house price appreciation increases your repayment amount independently of the interest you pay.
+        </p>
+
+        <p class="mb-4">
+          The calculator supports both the <strong>2013-2021 scheme (RPI-linked)</strong> and the <strong>2021-2023 scheme (CPI-linked)</strong>, so you can see how different inflation scenarios affect your costs. Adjust the inflation rate slider to test optimistic vs pessimistic scenarios, and the 25-year amortization table shows every year in detail.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Help to Buy Repayment Calculator</h3>
+
+        <p class="mb-4">
+          The calculator provides <strong>instant results</strong> as you adjust any input. Enter your original purchase price, equity loan percentage, current property value, scheme type, and inflation expectation. You will see your current monthly cost, annual interest fee, capital owed, and the capital growth trap — plus a full 25-year amortization table showing every year's rate and cost.
+        </p>
+
+        <p class="mb-4">
+          For more UK financial planning tools, explore our <a href="/mortgage-overpayment-vs-investing-calculator-uk" class="text-link hover:underline">Mortgage Overpayment vs Investing Calculator</a> to compare paying down your mortgage against investing. Our <a href="/salary-sacrifice-pension-calculator" class="text-link hover:underline">Salary Sacrifice Pension Calculator</a> helps you optimise pension contributions, and the <a href="/uk-redundancy-tax-calculator" class="text-link hover:underline">UK Redundancy Tax Calculator</a> helps with termination planning. For broader retirement planning, see our <a href="/fire-calculator" class="text-link hover:underline">FIRE Calculator</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other UK Finance Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other UK Finance Tools
+      </h2>
+      <p class="mb-8 text-body">Free calculators for UK property planning, tax efficiency, and retirement strategies.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/mortgage-overpayment-vs-investing-calculator-uk" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mortgage vs ISA (UK)</h3>
+          <p class="text-xs text-body">Compare overpaying your mortgage against investing in a stocks &amp; shares ISA.</p>
+        </a>
+        <a href="/salary-sacrifice-pension-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Salary Sacrifice Pension (UK)</h3>
+          <p class="text-xs text-body">Compare standard pension contributions vs salary sacrifice with employer NI savings.</p>
+        </a>
+        <a href="/sipp-drawdown-tax-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">SIPP Drawdown Tax (UK)</h3>
+          <p class="text-xs text-body">Model your SIPP drawdown strategy with UK tax bands and 25% tax-free cash.</p>
+        </a>
+        <a href="/uk-redundancy-tax-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">UK Redundancy Tax</h3>
+          <p class="text-xs text-body">Calculate your net take-home pay after redundancy with HMRC rules.</p>
+        </a>
+        <a href="/lisa-vs-workplace-pension-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">LISA vs Workplace Pension (UK)</h3>
+          <p class="text-xs text-body">Compare a Lifetime ISA against a workplace pension for retirement savings.</p>
+        </a>
+        <a href="/plan-5-student-loan-repayment-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Plan 5 Student Loan (UK)</h3>
+          <p class="text-xs text-body">Calculate your UK Plan 5 student loan repayments using the new £25,000 threshold.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
