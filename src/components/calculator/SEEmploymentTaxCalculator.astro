@@ -1,0 +1,287 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="se-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="se-form" class="space-y-4">
+          <Input
+            label="Side Hustle Gross Revenue"
+            name="grossRevenue"
+            type="number"
+            value={50000}
+            min={0}
+            max={1000000}
+            step={1000}
+            suffix="$"
+            hideArrows
+            required
+            tooltip="Total 1099 income before any deductions."
+          />
+
+          <Input
+            label="Deductible Business Expenses"
+            name="deductibleExpenses"
+            type="number"
+            value={5000}
+            min={0}
+            max={1000000}
+            step={500}
+            suffix="$"
+            hideArrows
+            required
+            tooltip="Business expenses you can deduct (supplies, software, home office, etc.)."
+          />
+
+          <Input
+            label="W-2 Salary (Day Job)"
+            name="w2Salary"
+            type="number"
+            value={120000}
+            min={0}
+            max={1000000}
+            step={5000}
+            suffix="$"
+            hideArrows
+            required
+            tooltip="Your W-2 salary from your primary employer. Used to calculate the Social Security wage cap."
+          />
+
+          <div class="flex flex-col gap-1.5">
+            <label for="se-filingStatus" class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              Filing Status
+              <span class="group relative inline-flex shrink-0">
+                <span class="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full bg-hairline text-[10px] font-semibold leading-none text-mute transition-colors hover:bg-hairline-strong hover:text-ink" aria-label="Your IRS filing status determines the Additional Medicare Tax threshold.">?</span>
+                <span class="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 rounded-lg border border-hairline bg-canvas px-3 py-2 text-xs leading-relaxed text-body opacity-0 shadow-lg transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100" role="tooltip">
+                  Your IRS filing status determines the Additional Medicare Tax threshold.
+                  <span class="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-hairline"></span>
+                </span>
+              </span>
+            </label>
+            <select
+              id="se-filingStatus"
+              name="filingStatus"
+              class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
+            >
+              <option value="single" selected>Single</option>
+              <option value="mfj">Married Filing Jointly</option>
+              <option value="mfs">Married Filing Separately</option>
+              <option value="hoh">Head of Household</option>
+            </select>
+          </div>
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Headline KPI -->
+      <div id="se-headline-card" class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm text-center">
+        <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Total Self-Employment Tax</p>
+        <p id="se-headline-total" class="text-3xl font-semibold tabular-nums text-ink sm:text-4xl">—</p>
+        <p id="se-headline-label" class="mt-1 text-sm text-mute">Enter your side hustle details to see your tax liability.</p>
+      </div>
+
+      <!-- KPI cards (4 cards in 2-column grid) -->
+      <div class="grid gap-4 sm:grid-cols-2">
+        <ResultCard
+          label="Social Security Tax (12.4%)"
+          valueId="se-ss-tax"
+          value="—"
+          valueClass="text-ink"
+          description="On taxable SE earnings up to SS cap"
+        />
+        <ResultCard
+          label="Medicare Tax (2.9%)"
+          valueId="se-medicare-tax"
+          value="—"
+          valueClass="text-ink"
+          description="On all NESE, no cap"
+        />
+        <ResultCard
+          label="Additional Medicare Tax (0.9%)"
+          valueId="se-addl-medicare-tax"
+          value="—"
+          valueClass="text-ink"
+          description="On SE income above filing status threshold"
+        />
+        <ResultCard
+          label="Take-Home After SE Tax"
+          valueId="se-take-home"
+          value="—"
+          valueClass="text-ink"
+          description="Net profit minus total SE tax"
+        />
+      </div>
+
+      <!-- Detailed Breakdown Table -->
+      <Card padding="lg">
+        <h2 class="mb-4 text-sm font-medium text-ink">Tax Breakdown Details</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline">
+                <th class="pb-2 font-medium text-mute">Item</th>
+                <th class="pb-2 text-right font-medium text-mute">Amount</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Gross Revenue</td>
+                <td id="tb-gross-revenue" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Deductible Expenses</td>
+                <td id="tb-expenses" class="py-2 text-right text-error">—</td>
+              </tr>
+              <tr class="border-b border-hairline bg-canvas-soft">
+                <td class="py-2 font-sans font-semibold text-ink">Net Profit</td>
+                <td id="tb-net-profit" class="py-2 text-right font-semibold text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">SE Deduction (7.65%)</td>
+                <td id="tb-se-deduction" class="py-2 text-right text-mute">—</td>
+              </tr>
+              <tr class="border-b border-hairline bg-canvas-soft">
+                <td class="py-2 font-sans font-semibold text-ink">NESE (92.35% × Net Profit)</td>
+                <td id="tb-nese" class="py-2 text-right font-semibold text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Remaining SS Cap</td>
+                <td id="tb-remaining-ss" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Taxable SS Earnings</td>
+                <td id="tb-taxable-ss" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">W-2 Salary</td>
+                <td id="tb-w2" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Additional Medicare Threshold</td>
+                <td id="tb-addl-threshold" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr id="se-addl-med-row" class="border-b border-hairline/50 hidden">
+                <td class="py-2 font-sans text-error">SE Income Subject to Addl Medicare</td>
+                <td id="tb-addl-subject" class="py-2 text-right text-error">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <!-- Warnings area -->
+      <div id="se-warnings" class="hidden rounded-lg border border-error/30 bg-error/5 p-4">
+      </div>
+
+      <!-- Disclaimer -->
+      <div class="rounded-lg bg-canvas-soft p-4">
+        <p class="text-xs text-mute"><strong>Disclaimer:</strong> This calculator is for educational and planning purposes only. It does not constitute tax, legal, or financial advice. Self-employment tax calculations are estimates based on 2026 IRS rules and rates. Actual tax liability may vary based on your specific situation. Consult a qualified tax professional before making tax decisions.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { calculateSEEmploymentTax } from '../../utils/se-employment-calculations';
+  import { formatCurrency } from '../../utils/formatters';
+
+  function getFormData() {
+    var form = document.getElementById('se-form');
+    var formData = new FormData(form);
+    return {
+      grossRevenue: Number(formData.get('grossRevenue')) || 0,
+      deductibleExpenses: Number(formData.get('deductibleExpenses')) || 0,
+      w2Salary: Number(formData.get('w2Salary')) || 0,
+      filingStatus: String(formData.get('filingStatus')) || 'single',
+    };
+  }
+
+  function updateResults() {
+    var input = getFormData();
+    var r = calculateSEEmploymentTax(input);
+
+    // Headline
+    var headlineEl = document.getElementById('se-headline-total');
+    var headlineCard = document.getElementById('se-headline-card');
+    var headlineLabel = document.getElementById('se-headline-label');
+
+    headlineEl.textContent = formatCurrency(r.totalSETax);
+
+    if (r.netProfit === 0) {
+      headlineCard.className = 'rounded-lg border border-hairline bg-canvas p-6 shadow-sm text-center';
+      headlineLabel.textContent = 'Enter your side hustle details to see your tax liability.';
+    } else {
+      headlineCard.className = 'rounded-lg border border-error/30 bg-error/5 p-6 shadow-sm text-center';
+      headlineLabel.textContent = 'That is ' + r.effectiveRate.toFixed(1) + '% of your net profit';
+    }
+
+    // KPI cards
+    document.getElementById('se-ss-tax').textContent = formatCurrency(r.socialSecurityTax);
+    document.getElementById('se-medicare-tax').textContent = formatCurrency(r.medicareTax);
+    var addlMedEl = document.getElementById('se-addl-medicare-tax');
+    addlMedEl.textContent = r.additionalMedicareTax > 0 ? formatCurrency(r.additionalMedicareTax) : '$0';
+    document.getElementById('se-take-home').textContent = formatCurrency(r.takeHome);
+
+    // Table
+    var b = r.breakdown;
+    document.getElementById('tb-gross-revenue').textContent = formatCurrency(b.grossRevenue);
+    document.getElementById('tb-expenses').textContent = '−' + formatCurrency(b.deductibleExpenses);
+    document.getElementById('tb-net-profit').textContent = formatCurrency(b.netProfit);
+    document.getElementById('tb-se-deduction').textContent = '−' + formatCurrency(b.seDeduction);
+    document.getElementById('tb-nese').textContent = formatCurrency(b.nese);
+    document.getElementById('tb-remaining-ss').textContent = formatCurrency(b.remainingSSCap);
+    document.getElementById('tb-taxable-ss').textContent = formatCurrency(b.taxableSSEarnings);
+    document.getElementById('tb-w2').textContent = formatCurrency(b.w2Salary);
+    document.getElementById('tb-addl-threshold').textContent = formatCurrency(b.addlMedThreshold);
+
+    var addlMedRow = document.getElementById('se-addl-med-row');
+    var addlMedTableCell = document.getElementById('tb-addl-subject');
+    if (b.addlMedIncomeSubjectToTax > 0) {
+      addlMedRow.classList.remove('hidden');
+      addlMedTableCell.textContent = formatCurrency(b.addlMedIncomeSubjectToTax);
+    } else {
+      addlMedRow.classList.add('hidden');
+    }
+
+    // Warnings
+    var warningsEl = document.getElementById('se-warnings');
+    if (r.warnings.length > 0) {
+      warningsEl.innerHTML = r.warnings.map(function(w) {
+        return '<p class="text-sm text-error">' + w + '</p>';
+      }).join('');
+      warningsEl.classList.remove('hidden');
+    } else {
+      warningsEl.classList.add('hidden');
+    }
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('se-form');
+    if (form) {
+      form.addEventListener('input', function () {
+        updateResults();
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initFormListeners();
+    updateResults();
+
+    // Theme change observer
+    var observer = new MutationObserver(function () {
+      updateResults();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>

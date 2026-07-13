@@ -1,0 +1,529 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import SEEmploymentTaxCalculator from '../../components/calculator/SEEmploymentTaxCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'What is the self-employment tax rate for 2026?',
+    answerHtml: '<b>The self-employment tax rate is 15.3%</b>, which consists of two parts:<br /><br /><ul><li><b>Social Security tax: 12.4%</b> — applies to net earnings up to the $184,500 wage base (2026)</li><li><b>Medicare tax: 2.9%</b> — applies to all net earnings with no cap</li><li><b>Additional Medicare tax: 0.9%</b> — applies when total earned income exceeds $200,000 (Single), $250,000 (MFJ), or $125,000 (MFS)</li></ul>W-2 employees split this 15.3% with their employer (each pays 7.65%). Self-employed individuals pay the full 15.3% but get to deduct the employer-equivalent portion (7.65%) when calculating net earnings.',
+    answerText: 'The SE tax rate is 15.3%: 12.4% for Social Security (up to $184,500) and 2.9% for Medicare (no cap). An additional 0.9% Medicare applies above income thresholds. Self-employed workers pay the full amount but deduct the employer half.',
+  },
+  {
+    question: 'How does my W-2 job affect my side hustle taxes?',
+    answerHtml: '<b>Your W-2 salary is applied against the Social Security wage base first.</b> The 2026 Social Security cap is $184,500. If your W-2 salary is $150,000, only $34,500 of your side hustle earnings are subject to the 12.4% Social Security tax. If your W-2 salary already exceeds $184,500, you owe <b>zero</b> Social Security tax on your side hustle — only the 2.9% Medicare tax applies.<br /><br />For the Additional Medicare Tax (0.9%), your W-2 income also reduces the threshold available for self-employment income. For example, if you file Single and earn $180,000 at your W-2 job, only $20,000 of your side hustle income would be subject to the Additional Medicare Tax.',
+    answerText: 'Your W-2 salary reduces the remaining Social Security wage base for side hustle income. If W-2 already exceeds $184,500, you only owe Medicare (2.9%) on side hustle income. W-2 income also reduces the Additional Medicare Tax threshold.',
+  },
+  {
+    question: 'Can I deduct business expenses before calculating SE tax?',
+    answerHtml: '<b>Yes.</b> You subtract your legitimate business expenses from your gross revenue to arrive at your <b>Net Profit</b>. This Net Profit is what gets taxed. Deductible expenses include:<br /><br /><ul><li>Home office expenses (dedicated space, utilities, internet)</li><li>Business software, subscriptions, and tools</li><li>Professional services (accounting, legal, consulting)</li><li>Marketing and advertising costs</li><li>Business travel and meals (50% for meals)</li><li>Supplies and materials</li><li>Self-employed health insurance deduction (above-the-line)</li><li>SEP-IRA or Solo 401(k) contributions</li></ul>The IRS also allows an additional 7.65% deduction on your Net Profit before calculating SE tax. This is the employer-equivalent portion of FICA.',
+    answerText: 'Yes. Subtract business expenses from gross revenue to get Net Profit. The IRS then applies an additional 7.65% deduction before calculating SE tax. Deductible expenses include home office, software, marketing, travel, and professional services.',
+  },
+  {
+    question: 'How do I pay taxes on my side hustle income?',
+    answerHtml: 'If you expect to owe $1,000 or more in taxes for the year, you must make <b>quarterly estimated tax payments</b> using <b>Form 1040-ES</b>. The 2026 due dates are:<br /><br /><ul><li><b>Q1:</b> April 15, 2026</li><li><b>Q2:</b> June 15, 2026</li><li><b>Q3:</b> September 15, 2026</li><li><b>Q4:</b> January 15, 2027</li></ul>You can pay via IRS Direct Pay, EFTPS, or mail a check with the voucher. Missing quarterly payments can result in <b>underpayment penalties</b>, even if you pay the full amount when you file your annual return. A safe harbor is to pay 100% of last year\'s tax liability (110% if AGI > $150k) spread across four quarters.',
+    answerText: 'Pay quarterly estimated taxes using Form 1040-ES if you expect to owe $1,000+. Due dates: April 15, June 15, September 15, and January 15. Use IRS Direct Pay or EFTPS. Missing payments triggers underpayment penalties.',
+  },
+  {
+    question: 'What is the difference between self-employment tax and income tax?',
+    answerHtml: '<b>They are separate taxes that you owe simultaneously.</b><br /><br /><ul><li><b>Self-Employment Tax (15.3%)</b> — Funds Social Security and Medicare. This is the equivalent of FICA taxes that W-2 employees and employers split. It is calculated on your NESE (net earnings from self-employment).</li><li><b>Federal Income Tax</b> — Calculated on your total taxable income (W-2 + net profit − deductions). Self-employment tax is NOT deductible from your income tax base, but you CAN deduct 50% of SE tax as an above-the-line deduction.</li></ul>For example, if your net profit is $50,000 and you are Single with the standard deduction:<br />• SE Tax ≈ $7,081 (15.3% × 92.35% × $50,000)<br />• Income Tax is calculated on ~$50,000 − $3,540 (half SE tax) − $15,700 (standard deduction) = ~$30,760 taxable income<br />• Total federal tax burden could be $7,081 + ~$3,491 = ~$10,572',
+    answerText: 'SE tax (15.3%) funds Social Security and Medicare and is separate from federal income tax. Both apply to side hustle income. You can deduct half of SE tax from your income tax base. They stack on top of each other.',
+  },
+  {
+    question: 'Do I need to file Schedule SE if I have side income?',
+    answerHtml: '<b>Yes.</b> If your net self-employment earnings exceed <b>$400</b>, you must file <b>Schedule SE (Form 1040)</b> with your annual tax return. This is true even if you are not required to file a tax return for other income. Schedule SE calculates your self-employment tax, which flows to Schedule 2 of Form 1040. You also need to report your business income on <b>Schedule C (Form 1040)</b>.',
+    answerText: 'Yes. If net self-employment earnings exceed $400, you must file Schedule SE with Form 1040. Report business income on Schedule C. Both are required even if you have no other filing obligation.',
+  },
+  {
+    question: 'Can I reduce my self-employment tax?',
+    answerHtml: '<b>There are several legal strategies to reduce SE tax:</b><br /><br /><ul><li><b>Deduct all legitimate business expenses</b> — This reduces your Net Profit directly, lowering both SE tax and income tax.</li><li><b>Form an S-Corp</b> — If your side hustle earns enough (typically $50K+ net), electing S-Corp status lets you pay yourself a "reasonable salary" (subject to SE tax) and take the rest as distributions (not subject to SE tax). This is the single biggest SE tax reduction strategy.</li><li><b>Max out retirement contributions</b> — SEP-IRA or Solo 401(k) contributions reduce your income tax but NOT your SE tax directly.</li><li><b>Use the Qualified Business Income (QBI) deduction</b> — Section 199A allows a 20% deduction on qualified business income, reducing your income tax (not SE tax).</li></ul>The S-Corp strategy requires careful planning, payroll setup, and compliance. Consult a tax professional before making this election.',
+    answerText: 'Yes. Deduct all business expenses, consider S-Corp election for high earners ($50K+ net), maximize retirement contributions, and use the QBI deduction. S-Corp election is the most impactful strategy but requires professional guidance.',
+  },
+  {
+    question: 'What happens if I don\'t pay quarterly estimated taxes?',
+    answerHtml: 'The IRS charges an <b>underpayment penalty</b> if you owe $1,000+ in taxes and did not pay enough through withholding or estimated payments. The penalty is calculated quarterly based on how much you underpaid and for how long.<br /><br /><b>Safe harbor rules to avoid penalties:</b><br /><ul><li>Pay at least <b>90% of current year\'s tax liability</b> through withholding/estimated payments</li><li>Pay at least <b>100% of last year\'s tax liability</b> (110% if AGI > $150,000) through withholding/estimated payments</li><li>You owe less than $1,000 in tax after subtracting withholding and credits</li></ul>The safest approach is to use the <b>annualized income installment method</b> if your income is uneven throughout the year, or simply set aside 25-30% of each side hustle payment for taxes.',
+    answerText: 'The IRS charges underpayment penalties if you owe $1,000+ and didn\'t pay enough quarterly. Avoid penalties by paying 100% of last year\'s liability (110% if AGI > $150k) or 90% of current year\'s liability through estimated payments.',
+  },
+];
+---
+
+<PageLayout
+  title="Side Hustle Tax Calculator (2026) | 1099 & Self-Employment"
+  description="Calculate exactly how much self-employment tax you owe on your side hustle. Free 2026 calculator accounting for 1099 income, W-2 caps, and IRS deductions."
+  canonical="https://truefinancetools.com/side-hustle-tax-calculator"
+  ogImage="https://truefinancetools.com/og-side-hustle-tax-calculator.png"
+  ogImageAlt="Side Hustle Tax Calculator - Self-Employment Tax for 1099 Income"
+  pageType="website"
+  keywords="side hustle tax calculator, self employment tax calculator, 1099 tax calculator, SE tax calculator, gig economy tax, freelance tax calculator, self employed tax rate, side income tax, 1099 NEC tax, Schedule SE calculator"
+>
+  <StructuredData
+    title="Side Hustle Tax Calculator"
+    description="Free self-employment tax calculator for 1099 side hustle income. Calculate Social Security, Medicare, and Additional Medicare taxes with W-2 interaction."
+    url="https://truefinancetools.com/side-hustle-tax-calculator"
+    toolName="Side Hustle Tax Calculator"
+    toolDescription="Calculate your exact self-employment tax liability on side hustle income. Accounts for W-2 Social Security caps, Medicare taxes, and filing status thresholds."
+    faqItems={toolFaqItems}
+    features={[
+      'Self-employment tax calculation with 2026 IRS rates',
+      'W-2 Social Security wage base interaction',
+      'Additional Medicare Tax threshold analysis by filing status',
+      'Detailed tax breakdown with NESE calculation',
+      'Real-time results with no page reloads'
+    ]}
+  />
+
+  <!-- Hero -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        2026 Side Hustle & Self-Employment Tax Calculator
+      </h1>
+      <p class="text-lg text-body">Calculate your exact self-employment tax liability. Free, instant, and accurate for 2026 IRS rules.</p>
+    </div>
+  </section>
+
+  <!-- Calculator Component -->
+  <SEEmploymentTaxCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Side Hustle Tax Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Income</h3>
+      <p class="text-sm text-body">Input your side hustle revenue, business expenses, and W-2 salary from your day job.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Select Filing Status</h3>
+      <p class="text-sm text-body">Choose your IRS filing status to determine Additional Medicare Tax thresholds.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See Your Tax Breakdown</h3>
+      <p class="text-sm text-body">Instantly see your Social Security, Medicare, and Additional Medicare tax amounts with a detailed breakdown.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- What is the Side Hustle Tax? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        What is the Side Hustle Tax (Self-Employment Tax)?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Self-employment tax</strong> is the Social Security and Medicare tax that self-employed individuals, freelancers, and side hustlers pay. When you are a W-2 employee, your employer pays half of these taxes (7.65%) and you pay the other half (7.65%) through payroll withholding. But when you work as a <strong>1099 independent contractor</strong> or run a side business, <strong>you pay both halves</strong> — totaling 15.3% on your net earnings.
+        </p>
+
+        <p class="mb-4">
+          This is why many side hustlers are shocked when tax season arrives. If you earned $50,000 from your side hustle, roughly $7,065 goes to self-employment taxes before you even pay a dollar of federal income tax. Understanding this <strong>self-employment tax calculator</strong> helps you plan ahead, set aside the right amount, and avoid surprises in April.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Self-Employment Tax Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          SE Tax = (Gross Revenue − Expenses) × 92.35% × 15.3%
+        </div>
+
+        <p class="mb-4 mt-4">
+          The 92.35% factor is the IRS deduction for the employer-equivalent portion of SE tax (7.65%). The 15.3% rate breaks down as <strong>12.4% for Social Security</strong> (up to the $184,500 wage base) and <strong>2.9% for Medicare</strong> (no cap). An <strong>Additional 0.9% Medicare Tax</strong> applies when your total earned income exceeds thresholds based on your filing status.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">W-2 Employee vs Self-Employed</h3>
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Factor</th>
+                <th class="p-3 font-medium text-ink">W-2 Employee</th>
+                <th class="p-3 font-medium text-ink">Self-Employed (1099)</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Social Security</td>
+                <td class="p-3 text-body font-sans">6.2% (paid by employee)</td>
+                <td class="p-3 text-body font-sans">12.4% (full amount)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Medicare</td>
+                <td class="p-3 text-body font-sans">1.45% (paid by employee)</td>
+                <td class="p-3 text-body font-sans">2.9% (full amount)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Employer Match</td>
+                <td class="p-3 text-success-deep">Employer pays 7.65%</td>
+                <td class="p-3 text-body font-sans">You pay both halves</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Tax Deduction</td>
+                <td class="p-3 text-body font-sans">None on employee FICA</td>
+                <td class="p-3 text-success-deep">Deduct 7.65% (employer half)</td>
+              </tr>
+              <tr class="bg-success/5">
+                <td class="p-3 font-sans font-semibold text-ink">Total FICA Burden</td>
+                <td class="p-3 text-body font-sans">7.65% of wages</td>
+                <td class="p-3 font-semibold text-ink">15.3% of NESE (up to cap)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Who Should Use This Calculator?</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Side Hustlers</h4>
+            <p class="text-sm text-body">Ride-share drivers, delivery workers, Etsy sellers, and anyone earning extra income on the side of their day job.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Freelancers</h4>
+            <p class="text-sm text-body">Writers, designers, developers, consultants, and creative professionals who work on 1099 contracts.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Gig Economy Workers</h4>
+            <p class="text-sm text-body">Uber, Lyft, DoorDash, TaskRabbit, and other platform-based workers who receive 1099-NEC forms.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-4">
+            <h4 class="mb-2 text-sm font-semibold text-ink">Small Business Owners</h4>
+            <p class="text-sm text-body">Sole proprietors and single-member LLC owners who need to estimate their quarterly tax payments.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 mt-8 text-lg font-semibold text-ink">Self-Employment Pros and Cons</h3>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Advantages</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Set your own schedule and be your own boss</li>
+              <li>• Deduct legitimate business expenses</li>
+              <li>• Use SEP-IRA or Solo 401(k) for higher retirement limits</li>
+              <li>• QBI deduction lowers income tax (20% of qualified income)</li>
+              <li>• No employer cap on 401(k) matching decisions</li>
+              <li>• Potentially higher earning potential</li>
+            </ul>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Trade-offs</h4>
+            <ul class="space-y-1 text-sm text-body">
+              <li>• Pay both halves of FICA (15.3% vs 7.65%)</li>
+              <li>• No employer-provided health insurance or benefits</li>
+              <li>• No unemployment insurance</li>
+              <li>• Quarterly estimated tax filing required</li>
+              <li>• Variable, unpredictable income</li>
+              <li>• No employer 401(k) match</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How W-2 Affects Side Hustle Taxes -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        How Your W-2 Day Job Affects Your Side Hustle Taxes
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          One of the most important factors in your side hustle tax calculation is your <strong>W-2 salary</strong>. The IRS applies your W-2 earnings against the Social Security wage base <strong>first</strong>, which means your side hustle may owe less Social Security tax than you think.
+        </p>
+
+        <p class="mb-4">
+          The 2026 Social Security wage base is <strong>$184,500</strong>. This is the maximum amount of earned income subject to the 12.4% Social Security tax. Once your total earned income (W-2 + self-employment) exceeds this cap, you stop paying Social Security tax for the year.
+        </p>
+
+        <div class="mb-4 rounded-lg bg-canvas-soft-2 p-4">
+          <p class="mb-2 text-sm font-medium text-ink">Example:</p>
+          <ul class="space-y-1 text-sm text-body">
+            <li><strong>W-2 Salary:</strong> $150,000</li>
+            <li><strong>Side Hustle NESE:</strong> $40,000</li>
+            <li><strong>SS Cap:</strong> $184,500</li>
+            <li><strong>Remaining SS Cap for Side Hustle:</strong> $184,500 − $150,000 = <strong>$34,500</strong></li>
+            <li><strong>Result:</strong> Only $34,500 of your $40,000 side hustle earnings are subject to Social Security tax. The remaining $5,500 is only subject to Medicare tax (2.9%).</li>
+          </ul>
+        </div>
+
+        <p class="mb-4">
+          If your W-2 salary already exceeds $184,500, you owe <strong>zero Social Security tax</strong> on your side hustle income. You still owe the 2.9% Medicare tax (and potentially the 0.9% Additional Medicare Tax), but the 12.4% Social Security portion drops to $0.
+        </p>
+
+        <h3 class="mb-3 mt-6 text-lg font-semibold text-ink">Additional Medicare Tax Thresholds</h3>
+        <p class="mb-4">
+          The <strong>0.9% Additional Medicare Tax</strong> applies when your total earned income (W-2 + self-employment) exceeds:
+        </p>
+        <div class="mb-4 overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Filing Status</th>
+                <th class="p-3 font-medium text-ink">Threshold</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Single / Head of Household</td>
+                <td class="p-3 text-ink">$200,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Married Filing Jointly</td>
+                <td class="p-3 text-ink">$250,000</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Married Filing Separately</td>
+                <td class="p-3 text-ink">$125,000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mb-4">
+          Your W-2 income consumes part of this threshold first. For example, if you file Single with a $180,000 W-2 salary, only <strong>$20,000</strong> of the $200,000 threshold remains for your side hustle income. Any side hustle earnings above that are subject to the additional 0.9%.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Can I Deduct Business Expenses? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Can I Deduct Business Expenses?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          <strong>Yes.</strong> One of the biggest advantages of self-employment is the ability to deduct legitimate business expenses from your gross revenue. Every dollar you deduct reduces your Net Profit, which directly lowers both your self-employment tax and your federal income tax.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Common Deductible Business Expenses</h3>
+        <div class="mb-4 grid gap-3 sm:grid-cols-2">
+          <div class="rounded-lg border border-hairline bg-canvas p-3">
+            <h4 class="mb-1 text-sm font-semibold text-ink">Home Office</h4>
+            <p class="text-xs text-body">Dedicated space used regularly and exclusively for business. Simplified option: $5/sq ft up to 300 sq ft.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-3">
+            <h4 class="mb-1 text-sm font-semibold text-ink">Software & Subscriptions</h4>
+            <p class="text-xs text-body">Business software, cloud services, website hosting, domain names, and tools.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-3">
+            <h4 class="mb-1 text-sm font-semibold text-ink">Marketing & Advertising</h4>
+            <p class="text-xs text-body">Social media ads, Google Ads, sponsored content, business cards, and branding.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-3">
+            <h4 class="mb-1 text-sm font-semibold text-ink">Travel & Meals</h4>
+            <p class="text-xs text-body">Business travel costs. Meals are 50% deductible. Mileage: 67¢/mile (2026 rate).</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-3">
+            <h4 class="mb-1 text-sm font-semibold text-ink">Professional Services</h4>
+            <p class="text-xs text-body">Accountant, bookkeeper, attorney, consultant, and coaching fees.</p>
+          </div>
+          <div class="rounded-lg border border-hairline bg-canvas p-3">
+            <h4 class="mb-1 text-sm font-semibold text-ink">Supplies & Equipment</h4>
+            <p class="text-xs text-body">Office supplies, computer equipment, furniture, and tools. Section 179 allows expensing.</p>
+          </div>
+        </div>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The 7.65% SE Deduction</h3>
+        <p class="mb-4">
+          In addition to your business expenses, the IRS allows you to deduct the <strong>employer-equivalent portion</strong> of self-employment tax (7.65%) before calculating the tax itself. This is already built into our calculator. The formula works as follows:
+        </p>
+        <div class="mb-4 rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          NESE = Net Profit × 92.35% (which is 100% − 7.65%)
+        </div>
+        <p class="mb-4">
+          This deduction recognizes that if you were a W-2 employee, your employer would pay that 7.65% — so the IRS gives you the same benefit by reducing your taxable self-employment base.
+        </p>
+
+        <h3 class="mb-3 mt-6 text-lg font-semibold text-ink">The Double Benefit of Deductions</h3>
+        <p class="mb-4">
+          Business expenses reduce both your SE tax and your income tax. Every $1,000 in deductible expenses saves you:
+        </p>
+        <ul class="mb-4 space-y-1 text-sm text-body">
+          <li>• <strong>~$141</strong> in self-employment tax (15.3% × 92.35%)</li>
+          <li>• <strong>~$220</strong> in federal income tax (22% bracket assumption)</li>
+          <li>• <strong>~$40</strong> in state income tax (4% average assumption)</li>
+          <li>• <strong>Total savings: ~$400</strong> per $1,000 of deductions</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- How to Pay Taxes on Side Income -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        How to Pay Taxes on Side Income
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Unlike W-2 employees who have taxes withheld from every paycheck, self-employed individuals must make <strong>quarterly estimated tax payments</strong> directly to the IRS. This is one of the most common traps for new side hustlers — they earn money throughout the year, fail to pay quarterly, and get hit with an <strong>underpayment penalty</strong> at tax time.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">2026 Quarterly Estimated Tax Due Dates</h3>
+        <div class="mb-4 overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Quarter</th>
+                <th class="p-3 font-medium text-ink">Income Period</th>
+                <th class="p-3 font-medium text-ink">Due Date</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Q1</td>
+                <td class="p-3 text-body font-sans">January 1 — March 31</td>
+                <td class="p-3 text-ink">April 15, 2026</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Q2</td>
+                <td class="p-3 text-body font-sans">April 1 — May 31</td>
+                <td class="p-3 text-ink">June 15, 2026</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Q3</td>
+                <td class="p-3 text-body font-sans">June 1 — August 31</td>
+                <td class="p-3 text-ink">September 15, 2026</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Q4</td>
+                <td class="p-3 text-body font-sans">September 1 — December 31</td>
+                <td class="p-3 text-ink">January 15, 2027</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Safe Harbor Rules to Avoid Penalties</h3>
+        <p class="mb-4">
+          The IRS will not charge an underpayment penalty if you meet any of these safe harbor conditions:
+        </p>
+        <ul class="mb-4 space-y-1 text-sm text-body">
+          <li>• Pay at least <strong>90% of your current year\'s tax liability</strong> through withholding and estimated payments</li>
+          <li>• Pay at least <strong>100% of your prior year\'s tax liability</strong> (110% if your prior year AGI exceeded $150,000)</li>
+          <li>• You owe <strong>less than $1,000</strong> in tax after subtracting withholding and refundable credits</li>
+        </ul>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">How to Pay</h3>
+        <ul class="mb-4 space-y-1 text-sm text-body">
+          <li>• <strong>IRS Direct Pay</strong> — Free online payment from your bank account (irs.gov/payments)</li>
+          <li>• <strong>EFTPS</strong> — Electronic Federal Tax Payment System (enrollment required)</li>
+          <li>• <strong>Form 1040-ES vouchers</strong> — Mail a check with the payment voucher</li>
+          <li>• <strong>Payroll withholding increase</strong> — Increase W-2 withholding to cover side hustle tax</li>
+        </ul>
+
+        <p class="mb-4">
+          <strong>Pro tip:</strong> The easiest strategy is to set aside <strong>25–30%</strong> of every side hustle payment in a separate savings account. This covers both your self-employment tax (15.3%) and a portion of your federal income tax, ensuring you have enough when quarterly payments are due.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Side Hustle Tax FAQs
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Self-Employment Tax
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>side hustle tax calculator</strong> is the most accurate free tool for estimating your self-employment tax liability. Unlike generic tax calculators that apply a flat 15.3% to all self-employment income, this tool accounts for the critical interaction between your <strong>W-2 salary and the Social Security wage base</strong>, the <strong>7.65% employer-equivalent deduction</strong>, and the <strong>Additional Medicare Tax thresholds</strong> that vary by filing status.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose This Side Hustle Tax Calculator?</h3>
+
+        <p class="mb-4">
+          The biggest mistake freelancers and side hustlers make is assuming they owe 15.3% on every dollar of their 1099 income. In reality, your <strong>W-2 salary changes everything</strong>. If you earn $150,000 at your day job, only $34,500 of your side hustle income is subject to the 12.4% Social Security tax. Our calculator handles this automatically, giving you a precise estimate rather than a rough approximation.
+        </p>
+
+        <p class="mb-4">
+          Use this tool alongside our <a href="/fire-calculator" class="text-link hover:underline">FIRE calculator</a> to see how maximizing your side hustle income accelerates your path to financial independence. Pair it with our <a href="/bonus-tax-calculator" class="text-link hover:underline">bonus tax calculator</a> to understand your complete tax picture, or use our <a href="/mega-backdoor-roth-calculator" class="text-link hover:underline">Mega Backdoor Roth calculator</a> to model how to shelter more of your side hustle income in tax-advantaged accounts.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Self-Employment Tax Calculator</h3>
+
+        <p class="mb-4">
+          The calculator uses the <strong>2026 IRS rates and thresholds</strong> throughout. It calculates Net Profit from your gross revenue and expenses, applies the 7.65% SE deduction to compute Net Earnings from Self-Employment (NESE), and then splits the SE tax into Social Security (12.4% up to the wage cap), Medicare (2.9% on all NESE), and Additional Medicare (0.9% above thresholds). The detailed breakdown table shows every step of the calculation, and the warnings system alerts you to important edge cases like exceeding the SS wage base or having a net loss.
+        </p>
+
+        <p class="mb-4">
+          For the most comprehensive tax planning, use this calculator alongside our <a href="/tax-gain-harvesting-calculator" class="text-link hover:underline">tax gain harvesting calculator</a> and <a href="/hsa-shoebox-strategy-calculator" class="text-link hover:underline">HSA Shoebox Strategy calculator</a> to minimize your total tax burden across all income sources.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Tax & FIRE Tools
+      </h2>
+      <p class="mb-8 text-body">Run the numbers on your complete financial picture with our free calculators.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/side-hustle-tax-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Side Hustle Tax (SE)</h3>
+          <p class="text-xs text-body">Calculate self-employment tax on 1099 income with W-2 cap interaction.</p>
+        </a>
+        <a href="/fire-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">FIRE Calculator</h3>
+          <p class="text-xs text-body">Calculate your Financial Independence number and retirement timeline.</p>
+        </a>
+        <a href="/bonus-tax-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">US Bonus Withholding Tax</h3>
+          <p class="text-xs text-body">Calculate net bonus payout after federal and FICA withholding.</p>
+        </a>
+        <a href="/tax-gain-harvesting-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Tax Gain Harvesting</h3>
+          <p class="text-xs text-body">Model the long-term benefit of harvesting capital gains at the 0% rate.</p>
+        </a>
+        <a href="/hsa-shoebox-strategy-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">HSA Shoebox Strategy</h3>
+          <p class="text-xs text-body">Delay HSA reimbursements to maximize tax-free compound growth.</p>
+        </a>
+        <a href="/mega-backdoor-roth-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mega Backdoor Roth</h3>
+          <p class="text-xs text-body">Calculate your maximum after-tax 401(k) contribution space.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>
