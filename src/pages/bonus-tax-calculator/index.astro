@@ -1,0 +1,375 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import BonusTaxCalculator from '../../components/calculator/BonusTaxCalculator.astro';
+import HowItWorks from '../../components/ui/HowItWorks.astro';
+import StructuredData from '../../components/seo/StructuredData.astro';
+import type { FAQItem } from '../../utils/faq-data';
+
+const toolFaqItems: FAQItem[] = [
+  {
+    question: 'How are bonuses taxed differently from regular salary?',
+    answerHtml: 'Bonuses are classified as <b>supplemental wages</b> by the IRS. They use either a flat <b>22% rate</b> (percentage method) or combine with your regular paycheck <b>(aggregate method)</b>. Your actual year-end tax depends on total income and marginal bracket, not the withholding rate.',
+    answerText: 'Bonuses are supplemental wages taxed via a flat 22% rate or combined with regular pay. Your final tax depends on total income and marginal bracket.',
+  },
+  {
+    question: 'Why does my bonus show a 22% federal withholding?',
+    answerHtml: 'The IRS requires a flat <b>22% withholding</b> on supplemental wages under $1 million. This is a <b>withholding rate</b>, not your final tax rate. If your marginal bracket is lower, you get a refund. If higher, you owe more at filing.',
+    answerText: 'The 22% is the required withholding rate for supplemental wages under $1M. Your actual tax rate depends on your total income and marginal bracket.',
+  },
+  {
+    question: 'What is the difference between percentage method and aggregate method?',
+    answerHtml: 'The <b>percentage method</b> applies a flat 22% to your bonus. The <b>aggregate method</b> combines your bonus with your regular paycheck, then uses IRS wage bracket tables. The aggregate method often results in <b>higher withholding</b> because it can push you into a higher bracket for that pay period.',
+    answerText: 'Percentage method uses a flat 22% rate. Aggregate method combines bonus with regular pay, often causing higher withholding by pushing you into a higher bracket.',
+  },
+  {
+    question: 'Will I get a tax refund on my bonus?',
+    answerHtml: 'It depends on your <b>marginal tax bracket</b>. If you are in the 10%, 12%, or 22% bracket, the 22% flat withholding may exceed your actual liability, resulting in a <b>refund</b>. If you are in the 24%+ bracket, you may owe <b>additional taxes</b> at filing.',
+    answerText: 'If you are in the 12% or 22% bracket, you may get a refund. If in the 24%+ bracket, you may owe more at filing.',
+  },
+  {
+    question: 'Is Social Security tax deducted from bonuses?',
+    answerHtml: '<b>Yes, at 6.2%</b>, but only up to the <b>2026 wage base of $184,500</b>. If your year-to-date earnings already exceed this cap, no Social Security is withheld from your bonus. This calculator automatically tracks the cap based on your YTD earnings input.',
+    answerText: 'Yes, Social Security at 6.2% applies up to the $184,500 wage base. Once YTD earnings exceed the cap, no further SS is withheld.',
+  },
+  {
+    question: 'What is the additional Medicare tax on bonuses?',
+    answerHtml: 'If total compensation exceeds <b>$200,000 (single)</b> or <b>$250,000 (married)</b>, an extra <b>0.9%</b> applies to the portion above these thresholds. The standard <b>1.45%</b> applies regardless. This calculator accounts for both the base and additional Medicare taxes.',
+    answerText: 'An extra 0.9% applies above $200K (single) or $250K (married). The standard 1.45% applies regardless of income.',
+  },
+  {
+    question: 'Do bonuses get taxed at a higher rate than salary?',
+    answerHtml: '<b>Not necessarily.</b> The 22% flat withholding may be higher or lower than your actual marginal rate. Your <b>final tax</b> is determined at filing based on total income. Bonuses are not inherently taxed at a higher rate — the withholding method simply creates timing differences.',
+    answerText: 'No. The 22% withholding rate may differ from your marginal rate. Your actual tax is based on total income at filing.',
+  },
+  {
+    question: 'Are state taxes also withheld from bonuses?',
+    answerHtml: '<b>Yes</b>, most states withhold state income tax from bonuses. Rules vary by state. This calculator shows <b>federal and FICA taxes only</b>. Check your state\'s supplemental wage withholding rules for a complete picture.',
+    answerText: 'Yes, most states withhold state income tax from bonuses. This calculator covers federal and FICA taxes only.',
+  },
+];
+---
+
+<PageLayout
+  title="Bonus Tax Calculator (2026) | Federal & FICA Withholding"
+  description="Calculate your net bonus payout after federal and FICA taxes. Free US supplemental wage tax calculator using 2026 IRS percentage and aggregate methods."
+  canonical="https://truefinancetools.com/bonus-tax-calculator"
+  ogImage="https://truefinancetools.com/og-bonus-tax-calculator.png"
+  ogImageAlt="Bonus Tax Calculator — Calculate net bonus payout after federal and FICA withholding"
+  pageType="website"
+  keywords="bonus tax calculator, bonus withholding calculator, supplemental wage tax, how are bonuses taxed, federal bonus withholding, FICA bonus tax, percentage method bonus, aggregate method bonus, bonus tax rate 2026, net bonus payout calculator"
+>
+  <StructuredData
+    title="Bonus Tax Calculator (2026)"
+    description="Calculate your net bonus payout after federal and FICA taxes. Supports both IRS percentage method (22% flat) and aggregate method (wage bracket tables)."
+    url="https://truefinancetools.com/bonus-tax-calculator"
+    toolName="Bonus Tax Calculator"
+    toolDescription="Free US supplemental wage tax calculator that models federal income tax withholding, Social Security (6.2% up to $184,500), Medicare (1.45% + 0.9% additional), and net payout using 2026 IRS rules."
+    faqItems={toolFaqItems}
+    features={[
+      'Percentage method (22% flat) and aggregate method',
+      'Social Security wage base cap ($184,500) tracking',
+      'Additional Medicare tax for high earners',
+      'Chart.js doughnut visualization of tax breakdown',
+      'Instant results with no page reloads'
+    ]}
+  />
+
+  <!-- Hero -->
+  <section class="border-b border-hairline bg-canvas py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h1 class="mb-4 text-3xl font-semibold tracking-tight text-ink sm:text-4xl" style="letter-spacing: -0.02em;">
+        US Bonus Tax Withholding Calculator
+      </h1>
+      <p class="text-lg text-body">Calculate your net bonus payout after federal income tax, Social Security, and Medicare withholding using 2026 IRS rules.</p>
+    </div>
+  </section>
+
+  <!-- Calculator Component -->
+  <BonusTaxCalculator />
+
+  <!-- How It Works -->
+  <HowItWorks title="How the Bonus Tax Calculator Works">
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">1. Enter Your Bonus Details</h3>
+      <p class="text-sm text-body">Input your gross bonus amount, year-to-date earnings, and choose your calculation method.</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">2. Choose Your Withholding Method</h3>
+      <p class="text-sm text-body">Select the percentage method (22% flat) or the aggregate method (combines bonus with regular pay for progressive withholding).</p>
+    </div>
+
+    <div class="text-center">
+      <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-canvas-soft-2 text-ink">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+          <path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="mb-2 text-sm font-semibold text-ink">3. See Your Net Payout Breakdown</h3>
+      <p class="text-sm text-body">Instantly see your net bonus after federal withholding, Social Security, and Medicare — with a detailed tax breakdown chart and table.</p>
+    </div>
+  </HowItWorks>
+
+  <!-- How Are Bonuses Taxed? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        How Are Bonuses Taxed in the US?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          The IRS classifies bonuses and other non-regular compensation as <strong>supplemental wages</strong>. Employers have two approved methods for withholding federal income tax on supplemental wages: the <strong>percentage method</strong> (22% flat rate) and the <strong>aggregate method</strong> (combined with regular wages).
+        </p>
+
+        <p class="mb-4">
+          In addition to federal income tax withholding, bonuses are subject to <strong>FICA taxes</strong>: Social Security at 6.2% (up to the annual wage base of $184,500 in 2026) and Medicare at 1.45% (with an additional 0.9% for high earners above $200,000 or $250,000). State income tax may also apply depending on where you live.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">The Bonus Tax Formula</h3>
+        <div class="rounded-lg bg-canvas-soft-2 p-4 font-mono text-sm text-ink">
+          Net Bonus = Gross Bonus − Federal Withholding − Social Security − Medicare − Additional Medicare
+        </div>
+
+        <p class="mb-4 mt-4">
+          Understanding how each tax applies helps you plan for the true net amount you will receive. This <strong>bonus tax calculator</strong> handles all four components automatically, supporting both IRS withholding methods and accounting for Social Security caps and additional Medicare thresholds.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Percentage Method vs Aggregate Method -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Percentage Method vs Aggregate Method
+      </h2>
+
+      <div class="overflow-x-auto rounded-lg border border-hairline">
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr class="border-b border-hairline bg-canvas-soft-2">
+              <th class="p-3 font-medium text-ink">Factor</th>
+              <th class="p-3 font-medium text-ink">Percentage Method</th>
+              <th class="p-3 font-medium text-ink">Aggregate Method</th>
+            </tr>
+          </thead>
+          <tbody class="font-mono text-xs tabular-nums">
+            <tr class="border-b border-hairline/50">
+              <td class="p-3 text-body font-sans">Federal Rate</td>
+              <td class="p-3 text-ink">Flat 22% (up to $1M)</td>
+              <td class="p-3 text-ink">Progressive (marginal brackets)</td>
+            </tr>
+            <tr class="border-b border-hairline/50">
+              <td class="p-3 text-body font-sans">Calculation</td>
+              <td class="p-3 text-ink">Bonus × 22%</td>
+              <td class="p-3 text-ink">Tax(reg + bonus) − Tax(reg)</td>
+            </tr>
+            <tr class="border-b border-hairline/50">
+              <td class="p-3 text-body font-sans">When Used</td>
+              <td class="p-3 text-ink">Most common (default)</td>
+              <td class="p-3 text-ink">Employer discretion</td>
+            </tr>
+            <tr class="border-b border-hairline/50">
+              <td class="p-3 text-body font-sans">Result for Low Brackets</td>
+              <td class="p-3 text-success-deep">May over-withhold (refund at filing)</td>
+              <td class="p-3 text-body">More accurate withholding</td>
+            </tr>
+            <tr class="border-b border-hairline/50">
+              <td class="p-3 font-sans text-ink">Result for High Brackets</td>
+              <td class="p-3 text-body">May under-withhold (owe at filing)</td>
+              <td class="p-3 text-body">More accurate withholding</td>
+            </tr>
+            <tr class="bg-canvas-soft">
+              <td class="p-3 font-sans font-semibold text-ink">Complexity</td>
+              <td class="p-3 font-semibold text-success-deep">Simple</td>
+              <td class="p-3 font-semibold text-ink">Requires salary + filing status</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Will I Get a Tax Refund? -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Will I Get a Tax Refund on My Bonus?
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Whether you get a refund or owe more depends on your <strong>marginal tax bracket</strong> relative to the withholding method your employer uses. Since the percentage method withholds a flat 22%, your actual tax liability depends on your total taxable income for the year.
+        </p>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-success/30 bg-success/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-success-deep">Likely Refund</h4>
+            <p class="text-sm text-body">You may get a refund if your marginal tax bracket is <strong>10%, 12%, or 22%</strong> — the flat 22% withholding exceeds your actual tax rate. Common for early-career professionals and moderate earners.</p>
+          </div>
+          <div class="rounded-lg border border-error/30 bg-error/5 p-4">
+            <h4 class="mb-2 text-sm font-semibold text-error">Likely Owe</h4>
+            <p class="text-sm text-body">You may owe additional tax if your marginal bracket is <strong>24%, 32%, 35%, or 37%</strong> — the flat 22% withholding falls short. Common for senior professionals and executives.</p>
+          </div>
+        </div>
+
+        <p class="mt-4">
+          This calculator shows you the withholding amount only. Your actual tax liability is determined at filing based on your total income, deductions, and credits. The aggregate method often provides more accurate withholding for high earners.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2026 Social Security & Medicare Limits -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        2026 Social Security & Medicare Limits
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Understanding the Social Security and Medicare thresholds is critical for accurately estimating your bonus taxes:
+        </p>
+
+        <div class="overflow-x-auto rounded-lg border border-hairline">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline bg-canvas-soft-2">
+                <th class="p-3 font-medium text-ink">Tax</th>
+                <th class="p-3 font-medium text-ink">Rate</th>
+                <th class="p-3 font-medium text-ink">Cap / Threshold</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Social Security</td>
+                <td class="p-3 text-ink">6.2%</td>
+                <td class="p-3 text-ink">$184,500 wage base (2026)</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="p-3 text-body font-sans">Medicare (base)</td>
+                <td class="p-3 text-ink">1.45%</td>
+                <td class="p-3 text-ink">No cap</td>
+              </tr>
+              <tr class="bg-canvas-soft">
+                <td class="p-3 text-body font-sans">Additional Medicare</td>
+                <td class="p-3 text-ink">0.9%</td>
+                <td class="p-3 text-ink">$200K (single/HoH) / $250K (married)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="mt-4">
+          Once your year-to-date earnings reach the Social Security wage base of $184,500, no additional Social Security tax is withheld from your bonus. The additional Medicare tax applies only to compensation exceeding the threshold for your filing status. This calculator automatically checks both conditions using your YTD earnings input.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-8 text-center text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Bonus Tax FAQs
+      </h2>
+
+      <div class="space-y-4">
+        {toolFaqItems.map((item) => (
+          <details class="group rounded-lg border border-hairline bg-canvas p-4 shadow-sm">
+            <summary class="cursor-pointer py-2 text-sm font-medium text-ink">{item.question}</summary>
+            <p class="mt-3 text-sm text-body" set:html={item.answerHtml} />
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Guide -->
+  <section class="border-t border-hairline bg-canvas py-16">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6">
+      <h2 class="mb-6 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Complete Guide to Bonus Tax Withholding
+      </h2>
+
+      <div class="prose prose-gray max-w-none text-body">
+        <p class="mb-4">
+          Our <strong>bonus tax calculator</strong> is a comprehensive free tool for estimating your net bonus payout after federal and FICA taxes. Unlike simple percentage calculators, this tool also models the aggregate method using 2026 IRS wage bracket tables, Social Security wage base caps, and additional Medicare surcharges for high earners.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Why Choose This Bonus Tax Calculator?</h3>
+
+        <p class="mb-4">
+          Most simple bonus calculators apply a flat rate and ignore critical details like Social Security caps and additional Medicare taxes. This calculator handles all the edge cases: if your year-to-date earnings already exceed the Social Security wage base, it correctly shows $0 SS withholding. If your total compensation pushes you over the additional Medicare threshold, it computes the 0.9% surcharge on the correct portion of your bonus.
+        </p>
+
+        <p class="mb-4">
+          Whether you are negotiating a year-end bonus, planning around RSU vesting, or simply want to know what your next bonus will actually pay out, this tool gives you the clarity you need in seconds. Compare both IRS methods side by side to see which one better matches your tax situation.
+        </p>
+
+        <h3 class="mb-3 text-lg font-semibold text-ink">Key Features of This Bonus Tax Calculator</h3>
+
+        <p class="mb-4">
+          The calculator supports both <strong>IRS withholding methods</strong> — the standard percentage method (22% flat rate, 37% above $1 million) and the aggregate method (progressive withholding using 2026 IRS wage bracket tables for all filing statuses). It automatically computes Social Security at 6.2% up to the $184,500 wage base, Medicare at 1.45%, and the additional 0.9% Medicare surcharge for high earners. Results update instantly as you adjust any input, and the doughnut chart gives you a visual breakdown of where your bonus goes.
+        </p>
+
+        <p class="mb-4">
+          Pair this calculator with our <a href="/tax-gain-harvesting-calculator" class="text-link hover:underline">Tax Gain Harvesting Calculator</a> to optimize your overall tax strategy, or use it alongside our <a href="/mega-backdoor-roth-calculator" class="text-link hover:underline">Mega Backdoor Roth Calculator</a> to model how bonus income affects your retirement contribution room.
+        </p>
+
+        <p class="mb-4">
+          Start estimating your net bonus payout today — no signup required, completely free, and results in seconds. Adjust any input to see how your tax withholding changes. Understanding your true net bonus helps you make better financial decisions throughout the year.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore Other Tools -->
+  <section class="border-t border-hairline bg-canvas-soft py-16">
+    <div class="mx-auto max-w-4xl px-4 text-center sm:px-6">
+      <h2 class="mb-4 text-2xl font-semibold tracking-tight text-ink" style="letter-spacing: -0.02em;">
+        Explore Other Tax & Finance Tools
+      </h2>
+      <p class="mb-8 text-body">Run the numbers on your compensation and tax strategy with our free calculators.</p>
+
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/bonus-tax-calculator" class="group rounded-lg border-2 border-ink bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Bonus Tax Calculator</h3>
+          <p class="text-xs text-body">Calculate your net bonus payout after federal and FICA taxes.</p>
+        </a>
+        <a href="/rsu-sell-to-cover-tax-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">RSU Sell-to-Cover Tax</h3>
+          <p class="text-xs text-body">Estimate shares sold for tax withholding when your RSUs vest.</p>
+        </a>
+        <a href="/rsu-vesting-tax-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">RSU Vesting Tax</h3>
+          <p class="text-xs text-body">Estimate federal, FICA, and state taxes on RSU vesting events.</p>
+        </a>
+        <a href="/tax-gain-harvesting-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Tax Gain Harvesting</h3>
+          <p class="text-xs text-body">Model the long-term benefit of harvesting capital gains at the 0% rate.</p>
+        </a>
+        <a href="/mega-backdoor-roth-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">Mega Backdoor Roth</h3>
+          <p class="text-xs text-body">Calculate your maximum after-tax 401(k) contribution space.</p>
+        </a>
+        <a href="/hsa-shoebox-strategy-calculator" class="group rounded-lg border border-hairline bg-canvas p-5 text-left shadow-sm transition-all hover:shadow-md">
+          <h3 class="mb-2 text-sm font-semibold text-ink group-hover:text-link">HSA Shoebox Strategy</h3>
+          <p class="text-xs text-body">Delay HSA reimbursements to maximize tax-free compound growth.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</PageLayout>

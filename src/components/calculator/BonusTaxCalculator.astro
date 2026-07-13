@@ -1,0 +1,487 @@
+---
+import Card from '../ui/Card.astro';
+import Input from '../ui/Input.astro';
+import ResultCard from '../ui/ResultCard.astro';
+---
+
+<div id="bt-calculator" class="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-12">
+  <div class="grid gap-6 lg:grid-cols-12">
+    <!-- LEFT PANEL: Inputs (5 cols, sticky) -->
+    <div class="lg:col-span-5">
+      <Card padding="lg" class="lg:sticky lg:top-24">
+        <form id="bt-form" class="space-y-4">
+          <Input
+            label="Gross Bonus Amount"
+            name="grossBonus"
+            type="number"
+            value={25000}
+            min={0}
+            max={10000000}
+            step={1000}
+            suffix="$"
+            hideArrows
+            required
+            tooltip="The total gross bonus amount before any taxes."
+          />
+
+          <Input
+            label="Year-to-Date Gross Earnings"
+            name="ytdEarnings"
+            type="number"
+            value={150000}
+            min={0}
+            max={1000000}
+            step={1000}
+            suffix="$"
+            hideArrows
+            required
+            tooltip="Your total gross earnings so far this year (before the bonus)."
+          />
+
+          <div class="flex flex-col gap-1.5">
+            <label class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+              Calculation Method
+            </label>
+            <div id="bt-method-toggle" class="flex rounded-lg border border-hairline overflow-hidden">
+              <button
+                type="button"
+                data-method="percentage"
+                class="bt-method-btn flex-1 px-4 py-2.5 text-sm font-medium transition-colors bg-ink text-canvas"
+              >
+                Percentage Method
+              </button>
+              <button
+                type="button"
+                data-method="aggregate"
+                class="bt-method-btn flex-1 px-4 py-2.5 text-sm font-medium transition-colors bg-canvas-soft text-body"
+              >
+                Aggregate Method
+              </button>
+            </div>
+          </div>
+
+          <div id="bt-aggregate-fields" class="space-y-4 hidden">
+            <Input
+              label="Annual Salary"
+              name="regularPay"
+              type="number"
+              value={100000}
+              min={0}
+              max={1000000}
+              step={1000}
+              suffix="$"
+              hideArrows
+              tooltip="Your annual salary before taxes. Used with the aggregate method to calculate withholding as if bonus and salary were in the same paycheck."
+            />
+
+            <div class="flex flex-col gap-1.5">
+              <label for="bt-filingStatus" class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+                Filing Status
+              </label>
+              <select
+                id="bt-filingStatus"
+                name="filingStatus"
+                class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
+              >
+                <option value="single">Single</option>
+                <option value="married">Married Filing Jointly</option>
+                <option value="headOfHousehold">Head of Household</option>
+              </select>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label for="bt-payFrequency" class="inline-flex items-center gap-1.5 text-sm font-medium text-ink">
+                Pay Frequency
+              </label>
+              <select
+                id="bt-payFrequency"
+                name="payFrequency"
+                class="h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-base text-ink transition-colors focus:border-link focus:outline-none focus:ring-2 focus:ring-link/20"
+              >
+                <option value="weekly">Weekly</option>
+                <option value="biweekly" selected>Biweekly</option>
+                <option value="semimonthly">Semimonthly</option>
+                <option value="monthly">Monthly</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </Card>
+    </div>
+
+    <!-- RIGHT PANEL: Results (7 cols) -->
+    <div class="space-y-6 lg:col-span-7">
+      <!-- Headline KPI -->
+      <div id="bt-headline-card" class="rounded-lg border border-hairline bg-canvas p-6 shadow-sm text-center">
+        <p class="mb-1 text-xs font-medium uppercase tracking-wider text-mute">Your Net Bonus Payout</p>
+        <p id="bt-net-payout" class="text-3xl font-semibold tabular-nums text-ink sm:text-4xl">—</p>
+        <p id="bt-net-label" class="mt-1 text-sm text-mute">Adjust inputs to see your net payout</p>
+      </div>
+
+      <!-- KPI cards (6 cards, 3x2 grid) -->
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ResultCard
+          label="Federal Withholding"
+          valueId="bt-federal"
+          value="—"
+          valueClass="text-ink"
+          description="Effective rate: —"
+        />
+        <ResultCard
+          label="Social Security"
+          valueId="bt-social-security"
+          value="—"
+          valueClass="text-ink"
+          description="6.2% up to $184,500"
+        />
+        <ResultCard
+          label="Medicare"
+          valueId="bt-medicare"
+          value="—"
+          valueClass="text-ink"
+          description="1.45% + additional 0.9% if applicable"
+        />
+        <ResultCard
+          label="Additional Medicare"
+          valueId="bt-additional-medicare"
+          value="—"
+          valueClass="text-ink"
+          description="0.9% surcharge for high earners"
+        />
+        <ResultCard
+          label="Total Withholding"
+          valueId="bt-total-withholding"
+          value="—"
+          valueClass="text-ink"
+          description="All federal and FICA taxes"
+        />
+        <ResultCard
+          label="Effective Tax Rate"
+          valueId="bt-effective-rate-card"
+          value="—"
+          valueClass="text-ink"
+          description="Total taxes ÷ gross bonus"
+        />
+      </div>
+
+      <!-- Doughnut Chart -->
+      <Card padding="lg">
+        <h2 class="mb-4 text-sm font-medium text-ink">Tax Breakdown</h2>
+        <div class="relative mx-auto" style="max-width: 360px;">
+          <canvas id="bt-chart"></canvas>
+        </div>
+      </Card>
+
+      <!-- Detailed Breakdown Table -->
+      <Card padding="lg">
+        <h2 class="mb-4 text-sm font-medium text-ink">Detailed Breakdown</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="border-b border-hairline">
+                <th class="pb-2 font-medium text-mute">Item</th>
+                <th class="pb-2 text-right font-medium text-mute">Amount</th>
+              </tr>
+            </thead>
+            <tbody class="font-mono text-xs tabular-nums">
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Gross Bonus</td>
+                <td id="tb-gross-bonus" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Federal Withholding <span id="tb-federal-rate" class="text-mute"></span></td>
+                <td id="tb-federal" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Social Security <span id="tb-ss-note" class="text-mute"></span></td>
+                <td id="tb-social-security" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline/50">
+                <td class="py-2 font-sans text-body">Medicare (1.45%)</td>
+                <td id="tb-medicare" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr id="tb-additional-medicare-row" class="border-b border-hairline/50 hidden">
+                <td class="py-2 font-sans text-body">Additional Medicare (0.9%)</td>
+                <td id="tb-additional-medicare" class="py-2 text-right text-ink">—</td>
+              </tr>
+              <tr class="border-b border-hairline bg-canvas-soft">
+                <td class="py-2 font-sans font-semibold text-ink">Total Withholding</td>
+                <td id="tb-total" class="py-2 text-right font-semibold text-ink">—</td>
+              </tr>
+              <tr class="bg-canvas-soft">
+                <td class="py-2 font-sans font-semibold text-ink">Net Payout</td>
+                <td id="tb-net" class="py-2 text-right font-semibold text-success-deep">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      <!-- Disclaimer -->
+      <div class="rounded-lg bg-canvas-soft p-4">
+        <p class="text-xs text-mute">This calculator is for educational and planning purposes only. Tax rates and thresholds are based on projected 2026 IRS rules. Actual withholding may vary based on your W-4 elections, state taxes, and employer payroll system. Consult a tax professional for advice.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+<script>
+  import { calculateBonusTax } from '../../utils/bonus-tax-calculations';
+  import { formatCurrency, formatPercent } from '../../utils/formatters';
+
+  var chartInstance = null;
+
+  function getFormData() {
+    var form = document.getElementById('bt-form');
+    var formData = new FormData(form);
+
+    var grossBonus = Number(formData.get('grossBonus')) || 25000;
+    var ytdEarnings = Number(formData.get('ytdEarnings')) || 150000;
+    var regularPay = Number(formData.get('regularPay')) || 100000;
+
+    // Determine method from toggle buttons
+    var activeBtn = document.querySelector('.bt-method-btn.bg-ink');
+    var method = activeBtn ? activeBtn.getAttribute('data-method') : 'percentage';
+
+    var filingStatus = document.getElementById('bt-filingStatus')?.value || 'single';
+    var payFrequency = document.getElementById('bt-payFrequency')?.value || 'biweekly';
+
+    return {
+      grossBonus: grossBonus,
+      ytdEarnings: ytdEarnings,
+      method: method,
+      regularPay: regularPay,
+      filingStatus: filingStatus,
+      payFrequency: payFrequency,
+    };
+  }
+
+  function getChartColors() {
+    var isDark = document.documentElement.classList.contains('dark');
+    return {
+      takeHome: isDark ? '#34d399' : '#10b981',       // emerald
+      federal: isDark ? '#fb923c' : '#f97316',         // orange
+      socialSecurity: isDark ? '#fbbf24' : '#eab308',   // amber
+      medicare: isDark ? '#a78bfa' : '#8b5cf6',         // violet
+      additionalMedicare: isDark ? '#c084fc' : '#a855f7', // purple
+      textBody: isDark ? '#a3a3a3' : '#6b7280',
+    };
+  }
+
+  function updateChart(r, colors) {
+    var canvas = document.getElementById('bt-chart');
+    if (!canvas) return;
+
+    var labels = ['Take Home', 'Federal Tax', 'Social Security', 'Medicare'];
+    var data = [r.netPayout, r.federalWithholding, r.socialSecurityWithholding, r.medicareWithholding];
+    var bgColors = [colors.takeHome, colors.federal, colors.socialSecurity, colors.medicare];
+    var borderColors = bgColors;
+
+    if (r.additionalMedicare > 0) {
+      // Split Medicare into base and additional
+      var baseMedicare = r.medicareWithholding - r.additionalMedicare;
+      labels.push('Additional Medicare');
+      data.push(r.additionalMedicare);
+      bgColors.push(colors.additionalMedicare);
+      borderColors.push(colors.additionalMedicare);
+      // Update base medicare to show only the base portion
+      labels[3] = 'Medicare (1.45%)';
+    }
+
+    if (chartInstance) {
+      chartInstance.data.labels = labels;
+      chartInstance.data.datasets[0].data = data;
+      chartInstance.data.datasets[0].backgroundColor = bgColors;
+      chartInstance.data.datasets[0].borderColor = borderColors;
+      chartInstance.update();
+    } else {
+      chartInstance = new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: bgColors,
+            borderColor: borderColors,
+            borderWidth: 2,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: colors.textBody,
+                padding: 16,
+                font: {
+                  size: 12,
+                },
+              },
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  var value = context.parsed || 0;
+                  var total = context.dataset.data.reduce(function (a, b) { return a + b; }, 0);
+                  var pct = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
+                  return ' ' + context.label + ': ' + formatCurrency(value) + ' (' + pct + '%)';
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+  }
+
+  function updateResults() {
+    var input = getFormData();
+    var r = calculateBonusTax(input);
+
+    // Headline card
+    var netPayoutEl = document.getElementById('bt-net-payout');
+    var netLabelEl = document.getElementById('bt-net-label');
+    netPayoutEl.textContent = formatCurrency(r.netPayout);
+    netPayoutEl.className = 'text-3xl font-semibold tabular-nums text-success-deep sm:text-4xl';
+    netLabelEl.textContent = 'Effective total tax rate: ' + r.totalEffectiveRate.toFixed(1) + '%';
+
+    // KPI cards
+    document.getElementById('bt-federal').textContent = formatCurrency(r.federalWithholding);
+    document.querySelector('#bt-federal').closest('[class*="rounded-lg"]').querySelector('p:last-child').textContent = 'Effective rate: ' + r.federalEffectiveRate.toFixed(1) + '%';
+
+    var ssEl = document.getElementById('bt-social-security');
+    if (r.socialSecurityWithholding === 0 && r.breakdown.ssCapped) {
+      ssEl.textContent = '$0';
+      ssEl.className = 'text-2xl font-semibold tabular-nums text-ink';
+      var ssDesc = document.querySelector('#bt-social-security').closest('[class*="rounded-lg"]').querySelector('p:last-child');
+      ssDesc.textContent = 'Capped (YTD ≥ $184,500)';
+    } else {
+      ssEl.textContent = formatCurrency(r.socialSecurityWithholding);
+      ssEl.className = 'text-2xl font-semibold tabular-nums text-ink';
+    }
+
+    document.getElementById('bt-medicare').textContent = formatCurrency(r.medicareWithholding);
+    var medicareDesc = document.querySelector('#bt-medicare').closest('[class*="rounded-lg"]').querySelector('p:last-child');
+    medicareDesc.textContent = r.additionalMedicare > 0
+      ? '1.45% + 0.9% additional applies'
+      : '1.45% base rate';
+
+    // Additional Medicare card
+    var addMedEl = document.getElementById('bt-additional-medicare');
+    if (r.additionalMedicare > 0) {
+      addMedEl.textContent = formatCurrency(r.additionalMedicare);
+      addMedEl.className = 'text-2xl font-semibold tabular-nums text-ink';
+    } else {
+      addMedEl.textContent = '$0';
+      addMedEl.className = 'text-2xl font-semibold tabular-nums text-mute';
+    }
+
+    // Total Withholding card
+    document.getElementById('bt-total-withholding').textContent = formatCurrency(r.totalTaxes);
+
+    // Effective Tax Rate card
+    document.getElementById('bt-effective-rate-card').textContent = r.totalEffectiveRate.toFixed(1) + '%';
+    document.getElementById('bt-effective-rate-card').className = 'text-2xl font-semibold tabular-nums text-ink';
+
+    // Chart
+    var colors = getChartColors();
+    updateChart(r, colors);
+
+    // Table
+    document.getElementById('tb-gross-bonus').textContent = formatCurrency(r.grossBonus);
+    document.getElementById('tb-federal').textContent = formatCurrency(r.federalWithholding);
+    document.getElementById('tb-federal-rate').textContent = '(' + r.breakdown.federalRate + ')';
+    document.getElementById('tb-social-security').textContent = formatCurrency(r.socialSecurityWithholding);
+
+    var ssNote = document.getElementById('tb-ss-note');
+    if (r.breakdown.ssCapped) {
+      ssNote.textContent = '(capped)';
+    } else {
+      ssNote.textContent = '';
+    }
+
+    document.getElementById('tb-medicare').textContent = formatCurrency(r.medicareWithholding - r.additionalMedicare);
+
+    var additionalMedRow = document.getElementById('tb-additional-medicare-row');
+    if (r.additionalMedicare > 0) {
+      additionalMedRow.classList.remove('hidden');
+      document.getElementById('tb-additional-medicare').textContent = formatCurrency(r.additionalMedicare);
+    } else {
+      additionalMedRow.classList.add('hidden');
+    }
+
+    document.getElementById('tb-total').textContent = formatCurrency(r.totalTaxes);
+    document.getElementById('tb-net').textContent = formatCurrency(r.netPayout);
+  }
+
+  // Method toggle logic
+  function initMethodToggle() {
+    var buttons = document.querySelectorAll('.bt-method-btn');
+    var aggregateFields = document.getElementById('bt-aggregate-fields');
+
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        // Deactivate all
+        buttons.forEach(function (b) {
+          b.className = 'bt-method-btn flex-1 px-4 py-2.5 text-sm font-medium transition-colors bg-canvas-soft text-body';
+        });
+
+        // Activate clicked
+        btn.className = 'bt-method-btn flex-1 px-4 py-2.5 text-sm font-medium transition-colors bg-ink text-canvas';
+
+        // Show/hide aggregate fields
+        var method = btn.getAttribute('data-method');
+        if (method === 'aggregate') {
+          aggregateFields.classList.remove('hidden');
+        } else {
+          aggregateFields.classList.add('hidden');
+        }
+
+        updateResults();
+      });
+    });
+  }
+
+  function initFormListeners() {
+    var form = document.getElementById('bt-form');
+    if (form) {
+      form.addEventListener('input', function () {
+        updateResults();
+      });
+    }
+
+    // Select change events
+    var selects = ['bt-filingStatus', 'bt-payFrequency'];
+    selects.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('change', function () {
+          updateResults();
+        });
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    initMethodToggle();
+    initFormListeners();
+    updateResults();
+
+    // Theme change observer
+    var observer = new MutationObserver(function () {
+      var colors = getChartColors();
+      if (chartInstance) {
+        chartInstance.options.plugins.legend.labels.color = colors.textBody;
+        chartInstance.update();
+      }
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  });
+</script>
